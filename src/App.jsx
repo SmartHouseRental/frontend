@@ -1,10 +1,19 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
+import { Button } from './components/ui/button';
+import { User } from 'lucide-react';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<h1>Welcoem</h1>} />
+        <Route
+          path="/"
+          element={
+            <Button>
+              Welcoem <User />
+            </Button>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
