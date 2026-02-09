@@ -67,7 +67,7 @@
   --secondary-foreground: oklch(0.38 0.14 262);
 
   --muted: oklch(0.95 0.01 250);
-  --muted-foreground: oklch(0.45 0.02 270);
+  --muted-foreground: oklch(53.487% 0.01305 269.453);
 
   /* Accent – Sky Blue */
   --accent: oklch(0.72 0.16 220); /* #38BDF8 */
