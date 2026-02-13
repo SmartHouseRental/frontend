@@ -20,7 +20,7 @@ function Overview() {
         </div>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <div className="border-accent rounded-2xl border-l-4 bg-white p-6 shadow-sm">
+        <div className="border-accent bg-card rounded-2xl border-l-4 p-6 shadow-sm">
           <div className="mb-4 flex items-start justify-between">
             <span className="bg-accent/10 text-accent rounded-lg p-2">
               <Users />
@@ -35,7 +35,7 @@ function Overview() {
           </p>
           <h3 className="mt-1 text-3xl font-bold">12,450</h3>
         </div>
-        <div className="border-accent rounded-2xl border-l-4 bg-white p-6 shadow-sm">
+        <div className="border-accent bg-card rounded-2xl border-l-4 p-6 shadow-sm">
           <div className="mb-4 flex items-start justify-between">
             <span className="bg-accent/10 text-accent rounded-lg p-2">
               <Home />
@@ -63,7 +63,7 @@ function Overview() {
           </p>
           <h3 className="mt-1 text-3xl font-bold">42</h3>
         </div>
-        <div className="border-accent rounded-2xl border-l-4 bg-white p-6 shadow-sm">
+        <div className="border-accent bg-card rounded-2xl border-l-4 p-6 shadow-sm">
           <div className="mb-4 flex items-start justify-between">
             <span className="bg-accent/10 text-accent rounded-lg p-2">
               <Handshake />
