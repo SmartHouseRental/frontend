@@ -1,3 +1,4 @@
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { CircleDot } from 'lucide-react';
 import { Home } from 'lucide-react';
 import { TrendingUp } from 'lucide-react';
@@ -10,7 +11,7 @@ function Overview() {
       <div className="flex items-end justify-between">
         <div>
           <h2 className="text-3xl font-black tracking-tight text-slate-900">Dashboard Overview</h2>
-          <p className="mt-1 font-medium text-slate-500">
+          <p className="text-muted-foreground mt-1 font-medium">
             Real-time platform metrics and system control center.
           </p>
         </div>
@@ -20,51 +21,61 @@ function Overview() {
         </div>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <div className="border-accent bg-card rounded-2xl border-l-4 p-6 shadow-sm">
-          <div className="mb-4 flex items-start justify-between">
-            <span className="bg-accent/10 text-accent rounded-lg p-2">
+        <Card className="border-0 border-l-4 border-blue-400">
+          <CardHeader className="flex justify-between">
+            <span className="text-accent rounded-lg bg-blue-400/10 p-2">
               <Users />
+            </span>
+            <span className="flex items-center gap-1 text-xs font-bold text-blue-500">
+              <TrendingUp />
+              +12%
+            </span>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
+              Total Users
+            </p>
+            <h3 className="mt-1 text-3xl font-bold">12,450</h3>
+          </CardContent>
+        </Card>
+
+        <Card className="border-accent border-0 border-l-4">
+          <CardHeader className="flex justify-between">
+            <span className="bg-accent/10 text-accent rounded-lg p-2">
+              <Home />
             </span>
             <span className="flex items-center gap-1 text-xs font-bold text-emerald-500">
               <TrendingUp />
               +12%
             </span>
-          </div>
-          <p className="text-sm font-semibold tracking-wider text-slate-500 uppercase">
-            Total Users
-          </p>
-          <h3 className="mt-1 text-3xl font-bold">12,450</h3>
-        </div>
-        <div className="border-accent bg-card rounded-2xl border-l-4 p-6 shadow-sm">
-          <div className="mb-4 flex items-start justify-between">
-            <span className="bg-accent/10 text-accent rounded-lg p-2">
-              <Home />
-            </span>
-            <span className="flex items-center gap-1 text-xs font-bold text-emerald-500">
-              <TrendingUp /> +5%
-            </span>
-          </div>
-          <p className="text-sm font-semibold tracking-wider text-slate-500 uppercase">
-            Active Listings
-          </p>
-          <h3 className="mt-1 text-3xl font-bold">3,820</h3>
-        </div>
-        <div className="rounded-2xl border-l-4 border-rose-400 bg-white p-6 shadow-sm">
-          <div className="mb-4 flex items-start justify-between">
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
+              Active Listings
+            </p>
+            <h3 className="mt-1 text-3xl font-bold">3,820</h3>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 border-l-4 border-rose-400">
+          <CardHeader className="flex justify-between">
             <span className="rounded-lg bg-rose-400/10 p-2 text-rose-500">
               <CircleDot />{' '}
             </span>
             <span className="flex items-center gap-1 text-xs font-bold text-rose-500">
               Action Needed
             </span>
-          </div>
-          <p className="text-sm font-semibold tracking-wider text-slate-500 uppercase">
-            Pending Verifications
-          </p>
-          <h3 className="mt-1 text-3xl font-bold">42</h3>
-        </div>
-        <div className="border-accent bg-card rounded-2xl border-l-4 p-6 shadow-sm">
-          <div className="mb-4 flex items-start justify-between">
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
+              Pending
+            </p>
+            <h3 className="mt-1 text-3xl font-bold">42</h3>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 border-l-4 border-rose-400">
+          <CardHeader className="flex justify-between">
             <span className="bg-accent/10 text-accent rounded-lg p-2">
               <Handshake />
             </span>
@@ -74,12 +85,14 @@ function Overview() {
               </span>{' '}
               +15%
             </span>
-          </div>
-          <p className="text-sm font-semibold tracking-wider text-slate-500 uppercase">
-            Agreements
-          </p>
-          <h3 className="mt-1 text-3xl font-bold">890</h3>
-        </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
+              Agreements
+            </p>
+            <h3 className="mt-1 text-3xl font-bold">890</h3>
+          </CardContent>
+        </Card>
       </div>
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-1">
         <div className="space-y-8 lg:col-span-2">
@@ -90,11 +103,15 @@ function Overview() {
                 <div className="mt-1 flex items-center gap-4">
                   <div className="flex items-center gap-1.5">
                     <span className="bg-accent size-2 rounded-full"></span>
-                    <span className="text-xs font-medium text-slate-500">Current Period</span>
+                    <span className="text-muted-foreground text-xs font-medium">
+                      Current Period
+                    </span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="size-2 rounded-full border border-dashed border-slate-400"></span>
-                    <span className="text-xs font-medium text-slate-500">Previous Period</span>
+                    <span className="text-muted-foreground text-xs font-medium">
+                      Previous Period
+                    </span>
                   </div>
                 </div>
               </div>
@@ -102,7 +119,7 @@ function Overview() {
                 <button className="text-primary rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold">
                   Monthly
                 </button>
-                <button className="rounded-lg px-3 py-1.5 text-xs font-bold text-slate-500 transition-colors hover:bg-slate-50">
+                <button className="text-muted-foreground rounded-lg px-3 py-1.5 text-xs font-bold transition-colors hover:bg-slate-50">
                   Weekly
                 </button>
               </div>
@@ -165,7 +182,7 @@ function Overview() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
-                <h4 className="text-xs font-bold tracking-wider text-slate-500 uppercase">
+                <h4 className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
                   Listings by City
                 </h4>
                 <span className="material-symbols-outlined text-lg text-slate-400">
@@ -223,7 +240,7 @@ function Overview() {
                 </div>
               </div>
               <div className="flex-1">
-                <h4 className="mb-2 text-xs font-bold tracking-wider text-slate-500 uppercase">
+                <h4 className="text-muted-foreground mb-2 text-xs font-bold tracking-wider uppercase">
                   Payment Success
                 </h4>
                 <div className="flex flex-col gap-1">
@@ -243,7 +260,7 @@ function Overview() {
         <div className="flex items-center justify-between border-b border-slate-100 p-6">
           <div>
             <h4 className="text-lg font-bold">Recently Submitted Properties</h4>
-            <p className="text-sm text-slate-500">
+            <p className="text-muted-foreground text-sm">
               Review new listings awaiting platform approval.
             </p>
           </div>
@@ -277,7 +294,7 @@ function Overview() {
                 </td>
                 <td className="px-6 py-4">
                   <p className="text-sm font-bold">Horizon Peak Villa</p>
-                  <p className="text-xs text-slate-500">ID: PR-9402</p>
+                  <p className="text-muted-foreground text-xs">ID: PR-9402</p>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
@@ -297,7 +314,7 @@ function Overview() {
                     Pending
                   </span>
                 </td>
-                <td className="px-6 py-4 text-sm text-slate-500">Oct 24, 2023</td>
+                <td className="text-muted-foreground px-6 py-4 text-sm">Oct 24, 2023</td>
                 <td className="px-6 py-4">
                   <button className="text-accent hover:text-primary text-xs font-bold">
                     Review Details
@@ -316,7 +333,7 @@ function Overview() {
                 </td>
                 <td className="px-6 py-4">
                   <p className="text-sm font-bold">Urban Loft 42</p>
-                  <p className="text-xs text-slate-500">ID: PR-8210</p>
+                  <p className="text-muted-foreground text-xs">ID: PR-8210</p>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
@@ -336,7 +353,7 @@ function Overview() {
                     Needs Review
                   </span>
                 </td>
-                <td className="px-6 py-4 text-sm text-slate-500">Oct 23, 2023</td>
+                <td className="text-muted-foreground px-6 py-4 text-sm">Oct 23, 2023</td>
                 <td className="px-6 py-4">
                   <button className="text-accent hover:text-primary text-xs font-bold">
                     Review Details
@@ -355,7 +372,7 @@ function Overview() {
                 </td>
                 <td className="px-6 py-4">
                   <p className="text-sm font-bold">Cottage by the Lake</p>
-                  <p className="text-xs text-slate-500">ID: PR-7731</p>
+                  <p className="text-muted-foreground text-xs">ID: PR-7731</p>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
@@ -375,7 +392,7 @@ function Overview() {
                     Pending
                   </span>
                 </td>
-                <td className="px-6 py-4 text-sm text-slate-500">Oct 22, 2023</td>
+                <td className="text-muted-foreground px-6 py-4 text-sm">Oct 22, 2023</td>
                 <td className="px-6 py-4">
                   <button className="text-accent hover:text-primary text-xs font-bold">
                     Review Details
