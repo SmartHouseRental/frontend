@@ -43,7 +43,7 @@ function AdminHeader() {
   });
 
   return (
-    <header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-slate-200 bg-white px-8">
+    <header className="border-border bg-sidebar sticky top-0 z-40 flex h-19.5 items-center justify-between border-b px-8">
       <div className="flex flex-1 items-center gap-6">
         <nav className="flex items-center text-sm font-medium">
           {breadcrumbs.map((crumb, index) => {

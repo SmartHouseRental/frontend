@@ -2,6 +2,9 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import AdminLayout from './components/AdminLayout';
 import Overview from './pages/admin/Overview';
 import UserManagment from './pages/admin/UserManagment';
+import PropertiesPage from './pages/admin/PropertiesPage';
+import ReportsPage from './pages/admin/ReportPages';
+import AgreementsPage from './pages/admin/AgreementsPage';
 
 function App() {
   return (
@@ -20,6 +23,9 @@ function App() {
           <Route index element={<Navigate replace to="overview" />} />
           <Route path="overview" element={<Overview />} />
           <Route path="users" element={<UserManagment />} />
+          <Route path="properties" element={<PropertiesPage />} />
+          <Route path="reports" element={<ReportsPage />} />
+          <Route path="agreements" element={<AgreementsPage />} />
 
           {/*<Route path="listings" element={<ListingsPage />} /> 
           <Route path="verifications" element={<VerificationsPage />} />

@@ -1,8 +1,7 @@
 import { Users } from 'lucide-react';
 import { Handshake } from 'lucide-react';
-import { BugOff } from 'lucide-react';
 import { LogOut } from 'lucide-react';
-import { Gavel } from 'lucide-react';
+import { TriangleAlert } from 'lucide-react';
 import { Settings } from 'lucide-react';
 import { ShieldUser } from 'lucide-react';
 import { TableProperties } from 'lucide-react';
@@ -43,18 +42,14 @@ function AdminSidebar() {
     {
       to: 'reports',
       label: 'Reports',
-      Icon: Gavel,
+      Icon: TriangleAlert,
     },
     {
       to: 'admins',
       label: 'Admins',
       Icon: ShieldUser,
     },
-    {
-      to: 'maintenance',
-      label: 'Maintenance',
-      Icon: BugOff,
-    },
+
     {
       to: 'settings',
       label: 'Settings',
@@ -63,19 +58,23 @@ function AdminSidebar() {
   ];
 
   const getNavLinkClass = ({ isActive }) =>
-    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-      isActive ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white'
+    `flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors ${
+      isActive
+        ? 'bg-sidebar-primary/15  text-sidebar-primary border-r-sidebar-primary border-r-4'
+        : ' hover:bg-sidebar-primary/10 hover:text-sidebar-primary'
     }`;
 
   return (
-    <aside className="bg-primary fixed inset-y-0 left-0 z-50 flex w-72 flex-col text-white">
-      <div className="flex items-center gap-3 p-6">
+    <aside className="bg-sidebar text-primary fixed inset-y-0 left-0 z-50 flex w-72 flex-col">
+      <div className="border-b-border flex items-center gap-3 border-b px-5 py-4">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20">
           <Building2 size={24} />
         </div>
         <div>
-          <h1 className="text-lg leading-tight font-bold">SmartRental</h1>
-          <p className="text-[10px] tracking-widest text-white/60 uppercase">Admin Control</p>
+          <h1 className="text-2xl leading-tight font-extrabold">Bet Connect</h1>
+          <p className="text-sidebar-primary text-[10px] tracking-widest uppercase">
+            Admin Control
+          </p>
         </div>
       </div>
 
