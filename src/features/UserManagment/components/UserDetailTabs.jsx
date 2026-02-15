@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import OverviewTab from './OverviewTab';
-import VerifyTab from './VerficationTab';
+import VerficationTab from './VerficationTab';
 
 const tabs = {
   overview: {
     barStyle: 'bottom-0 left-0 w-15',
     rank: 1,
+    Component: OverviewTab,
   },
   verfication: {
     label: 'Verfication and Documents',
     barStyle: 'bottom-0 left-23 w-44',
     rank: 2,
+    Component: VerficationTab,
   },
   properties: {
     barStyle: 'bottom-0 left-74.5 w-17.5',
@@ -26,8 +28,13 @@ const tabs = {
 function UserDetailTabs() {
   const [activeTab, setActiveTab] = useState({
     current: 'overview',
-    pervious: '',
+    previous: 'overview',
   });
+
+  const { Component, rank } = tabs[activeTab.current];
+  const previousRank = tabs[activeTab.previous]?.rank || 0;
+
+  const animationClass = rank > previousRank ? 'slide-in-from-right' : 'slide-in-from-left';
 
   return (
     <div className="col-span-12 space-y-4 lg:col-span-8 xl:col-span-9">
@@ -38,7 +45,7 @@ function UserDetailTabs() {
               onClick={() =>
                 setActiveTab((act) => ({
                   current: key,
-                  pervious: act.current,
+                  previous: act.current,
                 }))
               }
               key={key}
@@ -61,18 +68,15 @@ function UserDetailTabs() {
       </div>
 
       <div className="relative">
-        {activeTab.current === 'overview' && (
-          <div>
-            <OverviewTab />
-          </div>
-        )}
-      </div>
-
-      {activeTab.current === 'verfication' && (
-        <div>
-          <VerifyTab />
+        <div
+          className={cn(
+            'border-border/30 absolute top-0 w-full rounded-2xl border px-4 py-4',
+            animationClass,
+          )}
+        >
+          {Component && <Component />}
         </div>
-      )}
+      </div>
     </div>
   );
 }

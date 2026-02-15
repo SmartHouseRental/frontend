@@ -1,7 +1,7 @@
 import { Check, EyeOff, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-function VerifyTab() {
+function VerficationTab() {
   return (
     <div className="col-span-12 space-y-8 lg:col-span-8 xl:col-span-9">
       <div className="border-primary/10 rounded-xl border bg-white p-8 dark:bg-zinc-900">
@@ -146,4 +146,4 @@ function VerifyTab() {
   );
 }
 
-export default VerifyTab;
+export default VerficationTab;
