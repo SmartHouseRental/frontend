@@ -4,23 +4,17 @@ import {
   ChartBar,
   Mail,
   CircleUserRound,
-  House,
-  Star,
   MoveLeft,
-  Info,
   ShieldBan,
-  Calendar,
   ShieldCheck,
   BadgeCheck,
 } from 'lucide-react';
 import { useState } from 'react';
 import Overview from './Overview';
 import { cn } from '@/lib/utils';
-import { CircleCheck } from 'lucide-react';
-import { Check } from 'lucide-react';
-import { EyeOff } from 'lucide-react';
-import { X } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
+import UserDetailTabs from '@/features/UserManagment/components/UserDetailTabs';
 
 const tabs = {
   overview: {
@@ -44,9 +38,9 @@ function USerDetailPage() {
   return (
     <div className="p-8 pt-4">
       <div className="flex items-center gap-4">
-        <Button className="hover:bg-primary/10 rounded-lg p-2 transition-colors">
+        <button className="hover:bg-primary/10 rounded-lg p-2 transition-colors">
           <MoveLeft className="text-primary" />
-        </Button>
+        </button>
         <h1 className="text-primary text-xl font-bold tracking-tight">Admin Control Panel</h1>
       </div>
 
@@ -131,92 +125,7 @@ function USerDetailPage() {
                 />
               </div>
             </div>
-
-            <div className="grid grid-cols-1 gap-8">
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <Card className="border-primary/10 gap-0 rounded-xl p-6">
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="bg-accent/10 text-accent rounded-lg p-2">
-                      <House />
-                    </span>
-                    <span className="text-primary/40 text-[10px] font-bold uppercase">
-                      Total Assets
-                    </span>
-                  </div>
-                  <h3 className="text-primary text-3xl font-black">8</h3>
-                  <p className="text-primary/60 text-sm font-medium">Active Listings</p>
-                </Card>
-                <Card className="border-primary/10 gap-0 rounded-xl p-6">
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="bg-accent/10 text-accent rounded-lg p-2">
-                      <Calendar />
-                    </span>
-                    <span className="text-primary/40 text-[10px] font-bold uppercase">
-                      Engagement
-                    </span>
-                  </div>
-                  <h3 className="text-primary text-3xl font-black">45</h3>
-                  <p className="text-primary/60 text-sm font-medium">Total Appointments</p>
-                </Card>
-                <Card className="border-primary/10 gap-0 rounded-xl p-6">
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="rounded-lg bg-yellow-400/10 p-2 text-yellow-600">
-                      <Star />
-                    </span>
-                    <span className="text-primary/40 text-[10px] font-bold uppercase">
-                      Reputation
-                    </span>
-                  </div>
-                  <h3 className="text-primary text-3xl font-black">4.8</h3>
-                  <p className="text-primary/60 text-sm font-medium">Average Rating</p>
-                </Card>
-              </div>
-
-              <Card className="border-primary/10 gap-0 overflow-hidden py-0">
-                <div className="bg-primary/5 border-primary/10 border-b px-6 py-4">
-                  <h3 className="text-primary flex items-center gap-2 font-bold">
-                    <Info className="text-[18px]" />
-                    Personal Details
-                  </h3>
-                </div>
-                <div className="grid grid-cols-1 gap-x-12 gap-y-8 p-8 md:grid-cols-2">
-                  <div className="space-y-1">
-                    <label className="text-primary/40 text-[10px] font-bold tracking-widest uppercase">
-                      Email Address
-                    </label>
-                    <p className="text-primary font-bold">dawit.gebre@example.et</p>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-primary/40 text-[10px] font-bold tracking-widest uppercase">
-                      Phone Number
-                    </label>
-                    <p className="text-primary font-bold">+251 911 234 567</p>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-primary/40 text-[10px] font-bold tracking-widest uppercase">
-                      Registration Date
-                    </label>
-                    <p className="text-primary font-bold">October 14, 2023</p>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-primary/40 text-[10px] font-bold tracking-widest uppercase">
-                      Preferred Language
-                    </label>
-                    <p className="text-primary font-bold">Amharic (Primary), English</p>
-                  </div>
-                  <div className="space-y-1 md:col-span-2">
-                    <label className="text-primary/40 text-[10px] font-bold tracking-widest uppercase">
-                      Residential Address
-                    </label>
-                    <p className="text-primary font-bold">
-                      Bole Sub City, House #452, Addis Ababa, Ethiopia
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </div>
-
-            {/* Verify Tab*/}
+            <UserDetailTabs />
           </div>
           <aside className="col-span-12 lg:col-span-4 xl:col-span-3">
             <div className="sticky top-28 space-y-6">

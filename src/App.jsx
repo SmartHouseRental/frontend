@@ -3,7 +3,7 @@ import AdminLayout from './components/AdminLayout';
 import Overview from './pages/admin/Overview';
 import UserManagment from './pages/admin/UserManagment';
 import PropertiesPage from './pages/admin/PropertiesPage';
-import ReportsPage from './pages/admin/ReportPages';
+import ReportsPage from './pages/admin/ReportsPages';
 import AgreementsPage from './pages/admin/AgreementsPage';
 import USerDetailPage from './pages/admin/UserDetailPage';
 
