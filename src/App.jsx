@@ -5,6 +5,7 @@ import UserManagment from './pages/admin/UserManagment';
 import PropertiesPage from './pages/admin/PropertiesPage';
 import ReportsPage from './pages/admin/ReportPages';
 import AgreementsPage from './pages/admin/AgreementsPage';
+import USerDetailPage from './pages/admin/UserDetailPage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="properties" element={<PropertiesPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="agreements" element={<AgreementsPage />} />
+          <Route path="userdetails" element={<USerDetailPage />} />
 
           {/*<Route path="listings" element={<ListingsPage />} /> 
           <Route path="verifications" element={<VerificationsPage />} />

@@ -88,7 +88,7 @@ function UserManagment() {
       <div className="flex-1 overflow-auto pb-8">
         <Card className="gap-0 overflow-hidden p-0">
           <Table className="w-full min-w-full border-collapse text-left">
-            <TableHeader className="w-full bg-slate-50">
+            <TableHeader className="bg-muted w-full">
               <TableRow>
                 <TableHead className="px-6 py-4">
                   <input
