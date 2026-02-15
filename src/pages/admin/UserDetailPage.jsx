@@ -9,38 +9,18 @@ import {
   ShieldCheck,
   BadgeCheck,
 } from 'lucide-react';
-import { useState } from 'react';
 import Overview from './Overview';
-import { cn } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
 import UserDetailTabs from '@/features/UserManagment/components/UserDetailTabs';
 
-const tabs = {
-  overview: {
-    barStyle: 'bottom-0 left-0 w-15',
-  },
-  verfication: {
-    label: 'Verfication and Documents',
-    barStyle: 'bottom-0 left-23 w-44',
-  },
-  properties: {
-    barStyle: 'bottom-0 left-74.5 w-17.5',
-  },
-  reports: {
-    barStyle: 'bottom-0 left-99.5 w-13.5',
-  },
-};
-
 function USerDetailPage() {
-  const [activeTab, setActiveTab] = useState('overview');
-
   return (
     <div className="p-8 pt-4">
       <div className="flex items-center gap-4">
-        <button className="hover:bg-primary/10 rounded-lg p-2 transition-colors">
+        <butto className="hover:bg-primary/10 rounded-lg p-2 transition-colors">
           <MoveLeft className="text-primary" />
-        </button>
+        </butto>
         <h1 className="text-primary text-xl font-bold tracking-tight">Admin Control Panel</h1>
       </div>
 
@@ -101,32 +81,7 @@ function USerDetailPage() {
         </Card>
 
         <div className="grid grid-cols-12 gap-8">
-          <div className="col-span-12 space-y-8 lg:col-span-8 xl:col-span-9">
-            <div className="border-primary/10 border-b">
-              <div className="scrollbar-hide relative flex gap-8 overflow-x-auto">
-                {Object.entries(tabs).map(([key, value]) => (
-                  <button
-                    onClick={() => setActiveTab(key)}
-                    key={key}
-                    className={cn(
-                      'text-primary/80 hover:text-primary border-b-2 border-transparent pb-4 text-sm font-medium whitespace-nowrap transition-all',
-                      key === activeTab && 'text-primary',
-                    )}
-                  >
-                    {value['label'] || key.charAt(0).toUpperCase().concat(key.slice(1))}
-                  </button>
-                ))}
-
-                <div
-                  className={cn(
-                    'bg-primary absolute bottom-0 h-0.5 transition-all duration-300 ease-in-out',
-                    tabs[activeTab].barStyle,
-                  )}
-                />
-              </div>
-            </div>
-            <UserDetailTabs />
-          </div>
+          <UserDetailTabs />
           <aside className="col-span-12 lg:col-span-4 xl:col-span-3">
             <div className="sticky top-28 space-y-6">
               <div className="border-primary/10 gap-0 rounded-xl p-6">
