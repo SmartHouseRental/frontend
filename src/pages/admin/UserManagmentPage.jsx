@@ -18,7 +18,7 @@ import { Search } from 'lucide-react';
 import { ChevronRight } from 'lucide-react';
 import { EllipsisVertical } from 'lucide-react';
 
-function UserManagment() {
+function UserManagmentPage() {
   return (
     <div className="relative flex min-w-0 flex-1 flex-col gap-6 overflow-hidden p-8">
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4">
@@ -35,7 +35,7 @@ function UserManagment() {
             </span>
             Add New User
           </button>
-          <div className="mx-2 h-8 w-[1px] bg-slate-200 dark:bg-slate-800"></div>
+          <div className="mx-2 h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
         </div>
       </div>
 
@@ -288,4 +288,4 @@ function UserManagment() {
   );
 }
 
-export default UserManagment;
+export default UserManagmentPage;

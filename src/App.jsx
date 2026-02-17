@@ -1,9 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import AdminLayout from './components/AdminLayout';
-import Overview from './pages/admin/Overview';
-import UserManagment from './pages/admin/UserManagment';
+import OverviewPage from './pages/admin/OverviewPage';
+import UserManagmentPage from './pages/admin/UserManagmentPage';
 import PropertiesPage from './pages/admin/PropertiesPage';
-import ReportsPage from './pages/admin/ReportsPages';
+import ReportsPage from './pages/admin/ReportsPage';
 import AgreementsPage from './pages/admin/AgreementsPage';
 import USerDetailPage from './pages/admin/UserDetailPage';
 
@@ -22,8 +22,8 @@ function App() {
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate replace to="overview" />} />
-          <Route path="overview" element={<Overview />} />
-          <Route path="users" element={<UserManagment />} />
+          <Route path="overview" element={<OverviewPage />} />
+          <Route path="users" element={<UserManagmentPage />} />
           <Route path="properties" element={<PropertiesPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="agreements" element={<AgreementsPage />} />

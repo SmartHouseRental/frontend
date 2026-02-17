@@ -1,6 +1,6 @@
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
-import Overview from '@/pages/admin/Overview';
+import Overview from '@/pages/admin/OverviewPage';
 import { Outlet } from 'react-router';
 
 function AdminLayout() {

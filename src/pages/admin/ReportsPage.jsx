@@ -31,7 +31,7 @@ function ReportsPage() {
         <p className="text-foreground text-sm">Managing reports actively</p>
       </div>
       <Card className="flex flex-row flex-wrap items-center justify-between gap-4 px-6">
-        <div className="relative max-w-2xl min-w-[200px] flex-1">
+        <div className="relative max-w-2xl min-w-50 flex-1">
           <span className="text-muted-foreground/90 absolute top-1/2 left-3 -translate-y-1/2">
             <Search />
           </span>

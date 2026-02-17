@@ -9,10 +9,9 @@ import {
   ShieldCheck,
   BadgeCheck,
 } from 'lucide-react';
-import Overview from './Overview';
 
 import { Button } from '@/components/ui/button';
-import UserDetailTabs from '@/features/UserManagment/components/UserDetailTabs';
+import UserDetailTabs from '@/features/users/components/UserDetailTab';
 
 function USerDetailPage() {
   return (
@@ -82,6 +81,7 @@ function USerDetailPage() {
 
         <div className="grid grid-cols-12 gap-8">
           <UserDetailTabs />
+
           <aside className="col-span-12 lg:col-span-4 xl:col-span-3">
             <div className="sticky top-28 space-y-6">
               <div className="border-primary/10 gap-0 rounded-xl p-6">

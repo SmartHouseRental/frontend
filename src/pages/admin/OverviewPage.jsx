@@ -5,7 +5,7 @@ import { TrendingUp } from 'lucide-react';
 import { Handshake } from 'lucide-react';
 import { Users } from 'lucide-react';
 
-function Overview() {
+function OverviewPage() {
   return (
     <div className="space-y-8 p-8">
       <div className="flex items-end justify-between">
@@ -160,7 +160,7 @@ function Overview() {
                   strokeWidth="3"
                 ></circle>
               </svg>
-              <div className="chart-tooltip bg-primary pointer-events-none absolute top-[60px] left-[580px] z-10 rounded-xl p-3 text-xs text-white">
+              <div className="chart-tooltip bg-primary pointer-events-none absolute top-15 left-145 z-10 rounded-xl p-3 text-xs text-white">
                 <p className="font-medium opacity-70">May 2024</p>
                 <p className="mt-0.5 text-sm font-bold">2,480 New Users</p>
                 <div className="mt-1 flex items-center gap-1 text-emerald-400">
@@ -407,4 +407,4 @@ function Overview() {
   );
 }
 
-export default Overview;
+export default OverviewPage;

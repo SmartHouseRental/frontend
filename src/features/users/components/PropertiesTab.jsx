@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -17,106 +17,58 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+
 import { Filter, EllipsisVertical, ChevronLeft, MapPin, ChevronRight, Search } from 'lucide-react';
 
-function PropertiesPage() {
+function PropertiesTab() {
   return (
-    <div className="scrollbar-hide h-screen space-y-8 overflow-y-auto p-8">
-      <div className="space-y-8 pb-0">
-        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-          <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Property Management</h1>
-            <p className="text-muted-foreground mt-1">
-              Review, approve, or manage residential listings in Addis Ababa.
-            </p>
-          </div>
+    <>
+      <Card className="mb-6 flex-row flex-wrap items-center justify-between gap-4 rounded-xl border p-4">
+        <div className="relative max-w-2xl min-w-[200px] flex-1">
+          <span className="text-muted-foreground/90 absolute top-1/2 left-3 -translate-y-1/2">
+            <Search />
+          </span>
+          <Input
+            className="py-2 pr-4 pl-10 outline-none focus:ring-2"
+            placeholder="Search by ID, Title or Owner..."
+            type="text"
+          />
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-4">
-          <Card className="border-0">
-            <CardContent>
-              <p className="text-muted-foreground/90 text-sm font-medium tracking-wider uppercase">
-                Total Listings
-              </p>
-              <p className="mt-1 text-2xl font-extrabold">1,284</p>
-            </CardContent>
-          </Card>
+        <div className="flex items-center justify-between gap-4">
+          <Select>
+            <SelectTrigger className="w-full max-w-48">
+              <SelectValue placeholder="Property Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="villa">Villa</SelectItem>
+                <SelectItem value="apartmenta">Apartment</SelectItem>
+                <SelectItem value="service">Service</SelectItem>
+                <SelectItem value="full-compound">Full Compound</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
 
-          <Card className="border-0">
-            <CardContent>
-              <p className="text-muted-foreground/90 text-sm font-medium tracking-wider uppercase">
-                Available
-              </p>
-              <p className="mt-1 text-2xl font-extrabold text-green-600">842</p>
-            </CardContent>
-          </Card>
+          <Select>
+            <SelectTrigger className="w-full max-w-48">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="available">Available</SelectItem>
+                <SelectItem value="service">Service</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
 
-          <Card className="border-0">
-            <CardContent>
-              <p className="text-muted-foreground/90 text-sm font-medium tracking-wider uppercase">
-                Pending
-              </p>
-              <p className="text-primary mt-1 text-2xl font-extrabold">24</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0">
-            <CardContent>
-              <p className="text-muted-foreground/90 text-sm font-medium tracking-wider uppercase">
-                Rented
-              </p>
-              <p className="mt-1 text-2xl font-extrabold">418</p>
-            </CardContent>
-          </Card>
+          <Button className="rounded-lg px-5 py-2">
+            <Filter />
+          </Button>
         </div>
-
-        <Card className="flex-row flex-wrap items-center justify-between gap-4 rounded-xl border p-4">
-          <div className="relative max-w-2xl min-w-50 flex-1">
-            <span className="text-muted-foreground/90 absolute top-1/2 left-3 -translate-y-1/2">
-              <Search />
-            </span>
-            <Input
-              className="py-2 pr-4 pl-10 outline-none focus:ring-2"
-              placeholder="Search by ID, Title or Owner..."
-              type="text"
-            />
-          </div>
-
-          <div className="flex items-center justify-between gap-4">
-            <Select>
-              <SelectTrigger className="w-full max-w-48">
-                <SelectValue placeholder="Property Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="villa">Villa</SelectItem>
-                  <SelectItem value="apartmenta">Apartment</SelectItem>
-                  <SelectItem value="service">Service</SelectItem>
-                  <SelectItem value="full-compound">Full Compound</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-
-            <Select>
-              <SelectTrigger className="w-full max-w-48">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="available">Available</SelectItem>
-                  <SelectItem value="service">Service</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-
-            <Button className="rounded-lg px-5 py-2">
-              <Filter />
-            </Button>
-          </div>
-        </Card>
-      </div>
+      </Card>
 
       <section className="">
         <Card className="border-primary/5 gap-0 overflow-hidden rounded-xl border p-0 shadow-sm">
@@ -125,7 +77,6 @@ function PropertiesPage() {
               <TableRow>
                 <TableHead className="px-6 py-4">ID</TableHead>
                 <TableHead className="px-6 py-4">Title / Location</TableHead>
-                <TableHead className="px-6 py-4">Owner</TableHead>
                 <TableHead className="px-6 py-4">Type</TableHead>
                 <TableHead className="px-6 py-4">Price</TableHead>
                 <TableHead className="px-6 py-4">Status</TableHead>
@@ -155,11 +106,6 @@ function PropertiesPage() {
                       </p>
                     </div>
                   </div>
-                </TableCell>
-
-                <TableCell className="px-6 py-4">
-                  <p className="text-sm font-medium">Abebe Kebede</p>
-                  <p className="text-muted-foreground/90 text-xs">abebe.k@email.com</p>
                 </TableCell>
 
                 <TableCell className="px-6 py-4">
@@ -220,8 +166,8 @@ function PropertiesPage() {
           </div>
         </Card>
       </section>
-    </div>
+    </>
   );
 }
 
-export default PropertiesPage;
+export default PropertiesTab;
