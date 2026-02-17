@@ -5,7 +5,8 @@ import UserManagmentPage from './pages/admin/UserManagmentPage';
 import PropertiesPage from './pages/admin/PropertiesPage';
 import ReportsPage from './pages/admin/ReportsPage';
 import AgreementsPage from './pages/admin/AgreementsPage';
-import USerDetailPage from './pages/admin/UserDetailPage';
+import UserDetailPage from './pages/admin/UserDetailPage';
+import PropertiesDetailPage from './pages/admin/PropertiesDetailPage';
 
 function App() {
   return (
@@ -24,7 +25,8 @@ function App() {
           <Route path="properties" element={<PropertiesPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="agreements" element={<AgreementsPage />} />
-          <Route path="userdetails" element={<USerDetailPage />} />
+          <Route path="userdetails" element={<UserDetailPage />} />
+          <Route path="propertiesdetail" element={<PropertiesDetailPage />} />
         </Route>
 
         {/* <Route path="*" element={<NotFound />} /> */}

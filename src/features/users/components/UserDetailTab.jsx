@@ -42,7 +42,7 @@ function UserDetailTabs() {
   // Tabs - End
 
   return (
-    <div className="col-span-12 space-y-4 lg:col-span-8 xl:col-span-9">
+    <div className="">
       <Tabs
         defaultValue="overview"
         className="relative"
