@@ -11,14 +11,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} /> */}
+        {/*  Public rounting
 
-        {/* <Route path="/dashboard" element={<UserLayout />}>
-          <Route index element={<UserDashboard />} /> 
-          <Route path="profile" element={<UserProfile />} />
-          <Route path="rentals" element={<UserRentals />} />
-        </Route> */}
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />   
+        */}
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate replace to="overview" />} />
@@ -28,11 +25,6 @@ function App() {
           <Route path="reports" element={<ReportsPage />} />
           <Route path="agreements" element={<AgreementsPage />} />
           <Route path="userdetails" element={<USerDetailPage />} />
-
-          {/*<Route path="listings" element={<ListingsPage />} /> 
-          <Route path="verifications" element={<VerificationsPage />} />
-          <Route path="agreements" element={<AgreementsPage />} />
-          <Route path="financials" element={<FinancialsPage />} /> */}
         </Route>
 
         {/* <Route path="*" element={<NotFound />} /> */}
