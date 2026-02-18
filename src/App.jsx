@@ -29,6 +29,8 @@ function App() {
           <Route path="agreements" element={<AgreementsPage />} />
           <Route path="userdetails" element={<UserDetailPage />} />
           <Route path="reportdetail" element={<ReportDetailPage />} />
+          <Route path="propertiesdetail" element={<PropertiesDetailPage />} />
+          <Route path="agreementdetail" element={<AgreementDetailPage />} />
         </Route>
 
         {/* <Route path="*" element={<NotFound />} /> */}

@@ -30,6 +30,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 
 import OwnerChat from '@/features/message/components/OwnerChat';
+import { Flag } from 'lucide-react';
 
 function GallerySection() {
   return (
@@ -86,7 +87,7 @@ function GallerySection() {
   );
 }
 
-function PropertyInfoCard({ userRating, setUserRating, hoveredRating, setHoveredRating }) {
+function PropertyInfoCard() {
   const averageRating = 4.5;
   const reviewCount = 18;
   const views = '1.2k';
@@ -168,35 +169,6 @@ function PropertyInfoCard({ userRating, setUserRating, hoveredRating, setHovered
         </div>
 
         {/* Rate this property */}
-        <div className="mt-6 border-t pt-5">
-          <p className="mb-2.5 text-sm font-medium">Rate this property</p>
-          <div className="flex items-center gap-1">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                type="button"
-                className="transition-transform hover:scale-110 focus:outline-none"
-                onClick={() => setUserRating(star)}
-                onMouseEnter={() => setHoveredRating(star)}
-                onMouseLeave={() => setHoveredRating(0)}
-              >
-                <Star
-                  className={`h-6 w-6 transition-colors ${
-                    hoveredRating >= star || userRating >= star
-                      ? 'fill-yellow-400 text-yellow-400'
-                      : 'text-muted-foreground hover:text-yellow-300'
-                  }`}
-                />
-              </button>
-            ))}
-
-            {userRating > 0 && (
-              <Button size="sm" className="ml-4">
-                Submit {userRating} ★
-              </Button>
-            )}
-          </div>
-        </div>
       </CardContent>
     </Card>
   );
@@ -248,12 +220,7 @@ export default function PropertiesDetailPage() {
           {/* Left column */}
           <div className="space-y-6 lg:col-span-8 lg:space-y-8">
             <GallerySection />
-            <PropertyInfoCard
-              userRating={userRating}
-              setUserRating={setUserRating}
-              hoveredRating={hoveredRating}
-              setHoveredRating={setHoveredRating}
-            />
+            <PropertyInfoCard />
             <DescriptionSection />
           </div>
 
@@ -261,6 +228,76 @@ export default function PropertiesDetailPage() {
           <aside className="lg:col-span-4">
             <div className="sticky top-6 space-y-6">
               <OwnerChat />
+              <Card>
+                <CardContent>
+                  <div className="mt-6 border-t pt-5">
+                    <p className="text-foreground mb-3 text-sm font-medium">
+                      Your feedback matters
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-6">
+                      {/* Rating */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground text-sm font-medium whitespace-nowrap">
+                          Rate this listing:
+                        </span>
+                        <div className="flex items-center gap-0.5">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              className="focus-visible:ring-ring rounded-full p-0.5 transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                              onClick={() => setUserRating(star)}
+                              onMouseEnter={() => setHoveredRating(star)}
+                              onMouseLeave={() => setHoveredRating(0)}
+                              aria-label={`Rate ${star} stars`}
+                            >
+                              <Star
+                                className={`h-6 w-6 transition-colors ${
+                                  hoveredRating >= star || userRating >= star
+                                    ? 'fill-yellow-400 text-yellow-400'
+                                    : 'text-muted-foreground hover:text-yellow-300'
+                                }`}
+                              />
+                            </button>
+                          ))}
+                        </div>
+
+                        {userRating > 0 && (
+                          <Button
+                            size="sm"
+                            variant="default"
+                            className="ml-3 h-9 px-4 text-sm font-medium"
+                          >
+                            Submit {userRating} ★
+                          </Button>
+                        )}
+                      </div>
+
+                      {/* Report button */}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="gap-1.5 text-sm text-red-600 transition-colors hover:bg-red-50/80 hover:text-red-700 dark:hover:bg-red-950/30"
+                        onClick={() => {
+                          // In real app: open report modal / dialog
+                          alert(
+                            'Report feature coming soon – thank you for helping keep listings trustworthy.',
+                          );
+                        }}
+                      >
+                        <Flag className="h-4 w-4" />
+                        Report listing
+                      </Button>
+                    </div>
+
+                    {/* Optional helper text */}
+                    <p className="text-muted-foreground mt-2 text-xs">
+                      Honest ratings and reports help the community find reliable listings.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </aside>
         </div>
@@ -345,11 +382,11 @@ export default function PropertiesDetailPage() {
                   alt="Satellite map view of Bole, Addis Ababa"
                   className="h-full w-full object-cover opacity-85 grayscale-[0.4]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/5" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-black/5" />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                   <MapPin className="h-12 w-12 text-red-500 drop-shadow-lg" />
                 </div>
-                <div className="absolute bottom-5 left-5 max-w-xs rounded-xl bg-white/90 p-4 text-sm shadow-lg backdrop-blur-md dark:bg-black/75">
+                <div className="bg-card/90 absolute bottom-5 left-5 max-w-xs rounded-xl p-4 text-sm shadow-lg backdrop-blur-md">
                   <p className="text-muted-foreground mb-2.5 text-xs font-semibold uppercase">
                     Nearby Landmarks
                   </p>
@@ -388,7 +425,7 @@ export default function PropertiesDetailPage() {
                 <div className="flex-1 space-y-3">
                   <Textarea
                     placeholder="Add a comment about this property..."
-                    className="min-h-[88px] resize-none text-base"
+                    className="min-h-22 resize-none text-base"
                   />
                   <div className="flex justify-end">
                     <Button className="gap-2 px-6">
