@@ -12,7 +12,7 @@ import AgreementDetailPage from './pages/admin/AgreementDetailPage';
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/frontend">
       <Routes>
         {/*  Public rounting
 
