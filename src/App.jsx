@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
+import { BrowserRouter, HashRouter, Navigate, Route, Routes } from 'react-router';
 import AdminLayout from './components/AdminLayout';
 import OverviewPage from './pages/admin/OverviewPage';
 import UserManagmentPage from './pages/admin/UserManagmentPage';
@@ -12,7 +12,7 @@ import AgreementDetailPage from './pages/admin/AgreementDetailPage';
 
 function App() {
   return (
-    <BrowserRouter basename="/frontend">
+    <HashRouter basename="/frontend">
       <Routes>
         {/*  Public rounting
 
@@ -35,7 +35,7 @@ function App() {
 
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
