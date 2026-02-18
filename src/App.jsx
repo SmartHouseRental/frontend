@@ -7,6 +7,8 @@ import ReportsPage from './pages/admin/ReportsPage';
 import AgreementsPage from './pages/admin/AgreementsPage';
 import UserDetailPage from './pages/admin/UserDetailPage';
 import PropertiesDetailPage from './pages/admin/PropertiesDetailPage';
+import ReportDetailPage from './pages/admin/ReportDetailPage';
+import AgreementDetailPage from './pages/admin/AgreementDetailPage';
 
 function App() {
   return (
@@ -26,7 +28,7 @@ function App() {
           <Route path="reports" element={<ReportsPage />} />
           <Route path="agreements" element={<AgreementsPage />} />
           <Route path="userdetails" element={<UserDetailPage />} />
-          <Route path="propertiesdetail" element={<PropertiesDetailPage />} />
+          <Route path="reportdetail" element={<ReportDetailPage />} />
         </Route>
 
         {/* <Route path="*" element={<NotFound />} /> */}
