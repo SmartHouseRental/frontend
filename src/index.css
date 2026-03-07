@@ -183,3 +183,15 @@
 .slide-in-from-left {
   animation: slideInFromLeft 0.5s ease-out forwards;
 }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.ethiopian-pattern {
+  background-image: radial-gradient(#d97645 0.5px, transparent 0.5px),
+    radial-gradient(#d97645 0.5px, #F5F0E6 0.5px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  opacity: 0.1;
+}
