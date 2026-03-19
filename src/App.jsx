@@ -12,7 +12,7 @@ import AgreementDetailPage from './pages/admin/AgreementDetailPage';
 
 function App() {
   return (
-    <HashRouter basename="/frontend">
+    <BrowserRouter>
       <Routes>
         {/*  Public rounting
 
@@ -35,7 +35,7 @@ function App() {
 
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
 

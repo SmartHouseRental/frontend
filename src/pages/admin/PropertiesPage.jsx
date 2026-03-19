@@ -17,9 +17,29 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Filter, EllipsisVertical, ChevronLeft, MapPin, ChevronRight, Search } from 'lucide-react';
+import {
+  Filter,
+  MoreVertical,
+  ChevronLeft,
+  MapPin,
+  ChevronRight,
+  Search,
+  Eye,
+  CheckCircle2,
+  XCircle,
+  MessageSquare,
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import { useNavigate } from 'react-router';
 
 function PropertiesPage() {
+  const navigate = useNavigate();
   return (
     <div className="scrollbar-hide h-screen space-y-8 overflow-y-auto p-8">
       <div className="space-y-8 pb-0">
@@ -177,9 +197,32 @@ function PropertiesPage() {
                 </TableCell>
 
                 <TableCell className="px-6 py-4">
-                  <Button className="bg-transparent" variant="outline">
-                    <EllipsisVertical />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => navigate('/admin/propertiesdetail')} className="cursor-pointer">
+                        <Eye className="mr-2 h-4 w-4" />
+                        <span>View Details</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer text-emerald-600 focus:text-emerald-600">
+                        <CheckCircle2 className="mr-2 h-4 w-4" />
+                        <span>Approve Property</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
+                        <XCircle className="mr-2 h-4 w-4" />
+                        <span>Reject Property</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="cursor-pointer">
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        <span>Contact Owner</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             </TableBody>
