@@ -10,9 +10,11 @@ import USerDetailPage from './pages/admin/UserDetailPage';
 import LandingPage from "./pages/LandingPage";
 import ExplorePage from "./pages/ExplorePage"
 import MainLayout from "./components/MainLayout";
-
+import  VerificationPage  from "./pages/owner/VerificationPage";
 import OwnerLayout from "./components/OwnerLayout";
 import OwnerDashboard from "./pages/owner/OwnerDashboard";
+
+import AddPropertyPage from './pages/owner/AddPropertyPage';
 
 import PropertyDetails from "./pages/PropertyDetails";
 
@@ -50,11 +52,21 @@ function App() {
             }
           />
 
+          <Route
+          path="/verify"
+          element={
+            <MainLayout>
+              <VerificationPage />
+            </MainLayout>
+          }
+        />
+
         {/* Owner */}
-        <Route path="/owner" element={<OwnerLayout />}>
-          <Route index element={<OwnerDashboard />} />
-          {/* <Route path="properties" element={<OwnerPropertiesPage />} /> */}
-        </Route>
+          <Route path="/owner" element={<OwnerLayout />}>
+            <Route index element={<OwnerDashboard />} />
+            <Route path="properties" element={<PropertiesPage />} />
+            <Route path="properties/new" element={<AddPropertyPage />} />
+          </Route>
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate replace to="overview" />} />

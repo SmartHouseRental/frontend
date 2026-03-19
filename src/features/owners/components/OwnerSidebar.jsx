@@ -1,5 +1,5 @@
 import { Home, LayoutDashboard, Calendar, MessageSquare, DollarSign } from "lucide-react";
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 export default function OwnerSidebar() {
