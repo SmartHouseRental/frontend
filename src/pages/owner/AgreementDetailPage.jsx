@@ -3,7 +3,16 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router';
-import { ArrowLeft, FileText, Download, CheckCircle2, Clock, DollarSign, MessageSquare, Send, User, MapPin, Calendar, AlertCircle } from 'lucide-react';
+import {
+    ArrowLeft, FileText, Download, CheckCircle2, Clock, DollarSign,
+    MessageSquare, Send, User, MapPin, Calendar, AlertCircle, MoreVertical, Eye
+} from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const paymentHistory = [
     { month: 'March 2026', amount: '45,000 ETB', date: 'Mar 5, 2026', status: 'Confirmed' },
@@ -105,7 +114,7 @@ function AgreementDetailPage() {
                             </div>
                             <div className="space-y-3">
                                 {paymentHistory.map((p, i) => (
-                                    <div key={i} className="flex items-center justify-between py-3 border-b border-border last:border-0 hover:bg-muted/20 rounded-lg px-2 -mx-2 transition-colors">
+                                    <div key={i} className="flex items-center justify-between py-3 border-b border-border last:border-0 hover:bg-muted/10 rounded-lg px-2 -mx-2 transition-colors group">
                                         <div className="flex items-center gap-3">
                                             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/10">
                                                 <CheckCircle2 size={16} className="text-emerald-500" />
@@ -115,9 +124,26 @@ function AgreementDetailPage() {
                                                 <p className="text-xs text-muted-foreground">Paid on {p.date}</p>
                                             </div>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-sm font-bold text-foreground">{p.amount}</p>
-                                            <p className="text-[10px] font-bold text-emerald-500 uppercase">{p.status}</p>
+                                        <div className="flex items-center gap-4">
+                                            <div className="text-right">
+                                                <p className="text-sm font-bold text-foreground">{p.amount}</p>
+                                                <p className="text-[10px] font-bold text-emerald-500 uppercase">{p.status}</p>
+                                            </div>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <MoreVertical size={14} />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="w-40">
+                                                    <DropdownMenuItem className="gap-2 cursor-pointer">
+                                                        <Eye size={14} /> View Receipt
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem className="gap-2 cursor-pointer">
+                                                        <Download size={14} /> Download PDF
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
                                         </div>
                                     </div>
                                 ))}

@@ -3,7 +3,17 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { HelpCircle, Send, Clock, CheckCircle2, MessageSquare, ChevronRight, Search, Loader2, ChevronDown, AlertCircle } from 'lucide-react';
+import {
+    HelpCircle, Send, Clock, CheckCircle2, MessageSquare, ChevronRight,
+    Search, Loader2, ChevronDown, AlertCircle, MoreVertical, XCircle,
+} from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 
 const initialTickets = [
     {
@@ -166,11 +176,11 @@ function HelpSupportPage() {
                             filteredTickets.map((ticket) => (
                                 <Card key={ticket.id} className={`group transition-all duration-300 ${expandedTicket === ticket.id ? 'shadow-md border-primary/20' : 'hover:shadow-md hover:border-primary/10'}`}>
                                     <CardContent>
-                                        <div className="flex items-center gap-4 cursor-pointer" onClick={() => setExpandedTicket(expandedTicket === ticket.id ? null : ticket.id)}>
+                                        <div className="flex items-center gap-4">
                                             <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${ticket.status === 'Open' ? 'bg-amber-500/10' : 'bg-emerald-500/10'}`}>
                                                 {ticket.status === 'Open' ? <Clock size={18} className="text-amber-500" /> : <CheckCircle2 size={18} className="text-emerald-500" />}
                                             </div>
-                                            <div className="flex-1 min-w-0">
+                                            <div className="flex-1 min-w-0 cursor-pointer" onClick={() => setExpandedTicket(expandedTicket === ticket.id ? null : ticket.id)}>
                                                 <div className="flex items-center gap-2">
                                                     <p className="font-bold text-foreground text-sm">{ticket.subject}</p>
                                                     <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${statusColors[ticket.status]}`}>{ticket.status}</span>
@@ -184,7 +194,34 @@ function HelpSupportPage() {
                                                 </div>
                                                 <p className="text-xs text-muted-foreground/80 mt-1 flex items-center gap-1"><MessageSquare size={10} /> {ticket.lastReply}</p>
                                             </div>
-                                            <ChevronDown size={16} className={`text-muted-foreground transition-transform duration-200 ${expandedTicket === ticket.id ? 'rotate-180' : ''}`} />
+
+                                            <div className="flex items-center gap-2">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground outline-none">
+                                                            <MoreVertical size={16} />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="w-44">
+                                                        <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => setExpandedTicket(expandedTicket === ticket.id ? null : ticket.id)}>
+                                                            <MessageSquare size={14} /> {expandedTicket === ticket.id ? 'Hide Chat' : 'View Chat'}
+                                                        </DropdownMenuItem>
+                                                        {ticket.status === 'Open' && (
+                                                            <DropdownMenuItem className="gap-2 cursor-pointer text-emerald-600 focus:text-emerald-600">
+                                                                <CheckCircle2 size={14} /> Mark Resolved
+                                                            </DropdownMenuItem>
+                                                        )}
+                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuItem className="gap-2 cursor-pointer text-destructive focus:text-destructive">
+                                                            <XCircle size={14} /> Close Ticket
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+
+                                                <button onClick={() => setExpandedTicket(expandedTicket === ticket.id ? null : ticket.id)} className="p-1 hover:bg-muted rounded-full transition-colors">
+                                                    <ChevronDown size={18} className={`text-muted-foreground transition-transform duration-200 ${expandedTicket === ticket.id ? 'rotate-180' : ''}`} />
+                                                </button>
+                                            </div>
                                         </div>
 
                                         {/* Expanded Thread */}

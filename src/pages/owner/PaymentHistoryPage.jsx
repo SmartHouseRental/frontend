@@ -4,7 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, Filter, Download, DollarSign, CheckCircle2, Clock, ExternalLink, ChevronLeft, ChevronRight, TrendingUp, AlertCircle } from 'lucide-react';
+import { Search, Filter, Download, DollarSign, CheckCircle2, Clock, ExternalLink, ChevronLeft, ChevronRight, TrendingUp, AlertCircle, MoreVertical } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const initialPayments = [
     { id: 'PAY-501', agreement: '#AG-2001', property: 'Bole Skyline Apt', renter: 'Mulugeta K.', amount: 45000, date: 'Mar 5, 2026', proofUrl: '#', status: 'Confirmed' },
@@ -146,15 +152,30 @@ function PaymentHistoryPage() {
                                     <TableCell className="px-6 py-4">
                                         <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${p.status === 'Confirmed' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{p.status}</span>
                                     </TableCell>
-                                    <TableCell className="px-6 py-4">
-                                        <div className="flex items-center gap-1">
-                                            <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-primary"><ExternalLink size={12} /> Proof</Button>
-                                            {p.status === 'Pending' && (
-                                                <Button size="sm" className="h-7 text-xs gap-1" onClick={() => handleConfirm(p.id)}>
-                                                    <CheckCircle2 size={12} /> Confirm
+                                    <TableCell className="px-6 py-4 text-right">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground outline-none">
+                                                    <MoreVertical size={16} />
                                                 </Button>
-                                            )}
-                                        </div>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="w-40">
+                                                <DropdownMenuItem className="gap-2 cursor-pointer text-primary focus:text-primary">
+                                                    <ExternalLink size={14} /> View Proof
+                                                </DropdownMenuItem>
+                                                {p.status === 'Pending' && (
+                                                    <DropdownMenuItem
+                                                        className="gap-2 cursor-pointer font-bold text-emerald-600 focus:text-emerald-600"
+                                                        onClick={() => handleConfirm(p.id)}
+                                                    >
+                                                        <CheckCircle2 size={14} /> Confirm Payment
+                                                    </DropdownMenuItem>
+                                                )}
+                                                <DropdownMenuItem className="gap-2 cursor-pointer">
+                                                    <Download size={14} /> Download Receipt
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </TableCell>
                                 </TableRow>
                             ))

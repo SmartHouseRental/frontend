@@ -1,7 +1,14 @@
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { TrendingUp, Eye, DollarSign, Building2, Percent, BarChart3, ArrowUpRight, ArrowDownRight, Download } from 'lucide-react';
+import { TrendingUp, Eye, DollarSign, Building2, Percent, BarChart3, ArrowUpRight, ArrowDownRight, Download, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Link } from 'react-router';
 
 const topProperties = [
     { name: 'Penthouse Suite CMC', views: 1560, bookingRate: 45, revenue: '360K ETB' },
@@ -145,10 +152,11 @@ function AnalyticsPage() {
                             <thead>
                                 <tr className="text-[11px] font-bold tracking-widest text-muted-foreground uppercase border-b border-border">
                                     <th className="pb-3 pr-4">#</th>
-                                    <th className="pb-3 pr-4">Property</th>
-                                    <th className="pb-3 pr-4">Views</th>
-                                    <th className="pb-3 pr-4">Booking Rate</th>
-                                    <th className="pb-3">Revenue</th>
+                                    <th className="pb-3 pr-4 text-left">Property</th>
+                                    <th className="pb-3 pr-4 text-left">Views</th>
+                                    <th className="pb-3 pr-4 text-left">Booking Rate</th>
+                                    <th className="pb-3 text-left">Revenue</th>
+                                    <th className="pb-3 pr-4 text-center w-20">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -159,7 +167,7 @@ function AnalyticsPage() {
                                         </td>
                                         <td className="py-3 pr-4 text-sm font-semibold text-foreground">{p.name}</td>
                                         <td className="py-3 pr-4 text-sm font-medium">{p.views.toLocaleString()}</td>
-                                        <td className="py-3 pr-4">
+                                        <td className="py-3 pr-4 text-left">
                                             <div className="flex items-center gap-2">
                                                 <div className="h-1.5 w-20 rounded-full bg-muted overflow-hidden">
                                                     <div className={`h-full rounded-full transition-all duration-700 ${p.bookingRate >= 80 ? 'bg-emerald-500' : p.bookingRate >= 60 ? 'bg-primary' : 'bg-amber-500'}`} style={{ width: `${p.bookingRate}%` }}></div>
@@ -168,6 +176,25 @@ function AnalyticsPage() {
                                             </div>
                                         </td>
                                         <td className="py-3 text-sm font-bold text-primary">{p.revenue}</td>
+                                        <td className="py-3 pr-4 text-center">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground outline-none">
+                                                        <MoreVertical size={16} />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="w-40">
+                                                    <DropdownMenuItem asChild>
+                                                        <Link to="/owner/property-detail" className="flex items-center gap-2 cursor-pointer text-sm">
+                                                            <Eye size={14} /> View Details
+                                                        </Link>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem className="gap-2 cursor-pointer text-sm">
+                                                        <TrendingUp size={14} /> Detailed Stats
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>

@@ -5,8 +5,14 @@ import { Link } from 'react-router';
 import {
     Building2, Eye, CalendarDays, FileText, TrendingUp, DollarSign,
     Plus, ArrowRight, Clock, CheckCircle2, XCircle, Star, MapPin,
-    MessageCircle, ArrowUpRight, Handshake, Bell,
+    MessageCircle, ArrowUpRight, Handshake, Bell, MoreVertical, BarChart3,
 } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const kpiData = [
     { label: 'Active Listings', value: '12', change: '+2', changeType: 'up', icon: Building2, color: 'primary', borderColor: 'border-primary' },
@@ -250,16 +256,17 @@ function OverviewPage() {
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-muted/30 text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
-                                <th className="px-6 py-3.5">Property</th>
-                                <th className="px-6 py-3.5">Views</th>
-                                <th className="px-6 py-3.5">Inquiries</th>
-                                <th className="px-6 py-3.5">Status</th>
-                                <th className="px-6 py-3.5">Rent / Month</th>
+                                <th className="px-6 py-3.5 text-left">Property</th>
+                                <th className="px-6 py-3.5 text-left">Views</th>
+                                <th className="px-6 py-3.5 text-left">Inquiries</th>
+                                <th className="px-6 py-3.5 text-left">Status</th>
+                                <th className="px-6 py-3.5 text-left">Rent / Month</th>
+                                <th className="px-6 py-3.5 border-l border-border/50 text-center w-20">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
                             {topProperties.map((p, i) => (
-                                <tr key={i} className="transition-colors hover:bg-muted/20 cursor-pointer">
+                                <tr key={i} className="transition-colors hover:bg-muted/20">
                                     <td className="px-6 py-4">
                                         <Link to="/owner/property-detail" className="flex items-center gap-3">
                                             <img src={p.img} alt={p.name} className="size-11 rounded-lg object-cover" />
@@ -279,6 +286,27 @@ function OverviewPage() {
                                         <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${p.statusColor}`}>{p.status}</span>
                                     </td>
                                     <td className="px-6 py-4 text-sm font-bold text-primary">{p.revenue}</td>
+                                    <td className="px-6 py-4 text-center">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground outline-none">
+                                                    <MoreVertical size={16} />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="w-40">
+                                                <DropdownMenuItem asChild>
+                                                    <Link to="/owner/property-detail" className="flex items-center gap-2 cursor-pointer">
+                                                        <Eye size={14} /> View Details
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem asChild>
+                                                    <Link to="/owner/analytics" className="flex items-center gap-2 cursor-pointer">
+                                                        <BarChart3 size={14} /> View Analytics
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

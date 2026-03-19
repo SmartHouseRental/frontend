@@ -6,6 +6,12 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Link } from 'react-router';
 import { Search, Filter, Download, Handshake, CheckCircle2, Clock, EllipsisVertical, ChevronLeft, ChevronRight, FileText, Eye, XCircle } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const initialAgreements = [
     { id: '#AG-2001', property: 'Bole Skyline Apartment', renter: 'Mulugeta Kebede', rent: '45,000 ETB', deposit: '90,000 ETB', duration: '12 Months', status: 'Active', startDate: 'Jan 15, 2026', paymentDay: '5th' },
@@ -166,14 +172,27 @@ function AgreementsPage() {
                                     <TableCell className="px-6 py-4">
                                         <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${statusColors[a.status]}`}>{a.status}</span>
                                     </TableCell>
-                                    <TableCell className="px-6 py-4">
-                                        <div className="flex items-center gap-1">
-                                            <Link to="/owner/agreement-detail">
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary"><Eye size={14} /></Button>
-                                            </Link>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary"><FileText size={14} /></Button>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground"><EllipsisVertical size={14} /></Button>
-                                        </div>
+                                    <TableCell className="px-6 py-4 text-right">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground outline-none">
+                                                    <EllipsisVertical size={16} />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="w-40">
+                                                <DropdownMenuItem asChild>
+                                                    <Link to="/owner/agreement-detail" className="flex items-center gap-2 cursor-pointer">
+                                                        <Eye size={14} /> View Details
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem className="gap-2 cursor-pointer">
+                                                    <FileText size={14} /> Download PDF
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem className="gap-2 cursor-pointer text-destructive focus:text-destructive">
+                                                    <XCircle size={14} /> Terminate
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </TableCell>
                                 </TableRow>
                             ))

@@ -9,7 +9,14 @@ import {
     Search, Plus, Eye, Edit, Trash2, Building2, MapPin,
     ChevronLeft, ChevronRight, LayoutGrid, List,
     TrendingUp, BedDouble, Home, DollarSign, Filter,
+    MoreVertical,
 } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const initialProperties = [
     { id: 'P-101', name: 'Luxury Villa in Bole Atlas', type: 'Villa', location: 'Bole, Addis Ababa', bedrooms: 5, bathrooms: 4, size: '450 sqm', rent: '85,000 ETB', status: 'Available', views: 1245, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBnuoTFnm7eiUv3aKP_BJ5piF4y8mlzYH5ClM5cBXvCWiUBoKTyYq1fVvBa1ON_b343Lnm8gmkoCZu--XjCNHqF0C_MeQTDaVpBbPejgSOMxhesm8QdPtka1Sf7nq8DJL7UhC_eZs_rTsy4xIu6xuYQGKmdGUEc1F9lQPDNQ6jWkuyV_vzyE-JvOZVwndSvv4-arIqjshonMQ_Cvrc8GSp1iaQcWcbzTUNuOqCFGwTWZutx9kXsgtmfjULDan6j82KWu2NOo2-Z_dXl' },
@@ -200,23 +207,45 @@ function MyPropertiesPage() {
                                         <TableCell className="px-6 py-4">
                                             <span className="text-sm font-medium flex items-center gap-1"><Eye size={14} className="text-muted-foreground" /> {p.views.toLocaleString()}</span>
                                         </TableCell>
-                                        <TableCell className="px-6 py-4">
-                                            <div className="flex items-center gap-1">
-                                                <Link to="/owner/property-detail">
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary"><Eye size={14} /></Button>
-                                                </Link>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary"><Edit size={14} /></Button>
-                                                {deleteConfirm === p.id ? (
-                                                    <div className="flex items-center gap-1 animate-in fade-in-0">
-                                                        <Button variant="destructive" size="sm" className="h-7 text-xs" onClick={() => handleDelete(p.id)}>Delete</Button>
-                                                        <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setDeleteConfirm(null)}>Cancel</Button>
-                                                    </div>
-                                                ) : (
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => setDeleteConfirm(p.id)}>
-                                                        <Trash2 size={14} />
+                                        <TableCell className="px-6 py-4 text-right">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground outline-none">
+                                                        <MoreVertical size={16} />
                                                     </Button>
-                                                )}
-                                            </div>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="w-36">
+                                                    <DropdownMenuItem asChild>
+                                                        <Link to="/owner/property-detail" className="flex items-center gap-2 cursor-pointer">
+                                                            <Eye size={14} /> View Details
+                                                        </Link>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem className="gap-2 cursor-pointer">
+                                                        <Edit size={14} /> Edit Property
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+                                                        onClick={() => setDeleteConfirm(p.id)}
+                                                    >
+                                                        <Trash2 size={14} /> Delete
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+
+                                            {deleteConfirm === p.id && (
+                                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm animate-in fade-in duration-200">
+                                                    <Card className="w-80 shadow-xl border-destructive/20">
+                                                        <CardHeader className="pb-2">
+                                                            <h4 className="text-sm font-bold text-foreground">Confirm Delete</h4>
+                                                            <p className="text-xs text-muted-foreground mt-1">Are you sure you want to delete "{p.name}"? This action cannot be undone.</p>
+                                                        </CardHeader>
+                                                        <CardContent className="flex justify-end gap-2 pt-2">
+                                                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold" onClick={() => setDeleteConfirm(null)}>Cancel</Button>
+                                                            <Button variant="destructive" size="sm" className="h-8 text-xs font-bold" onClick={() => handleDelete(p.id)}>Yes, Delete</Button>
+                                                        </CardContent>
+                                                    </Card>
+                                                </div>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))

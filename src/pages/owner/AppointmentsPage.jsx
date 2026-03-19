@@ -2,7 +2,19 @@ import { useState, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CalendarDays, Clock, CheckCircle2, XCircle, User, MapPin, MessageSquare, ChevronRight, Phone, Mail, AlertCircle } from 'lucide-react';
+import {
+    CalendarDays, Clock, CheckCircle2, XCircle, User, MapPin,
+    MessageSquare, ChevronRight, Phone, Mail, AlertCircle, MoreVertical,
+    Building2,
+} from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import { Link } from 'react-router';
 
 const initialAppointments = [
     { id: 'APT-301', renter: 'Sara Tesfaye', phone: '+251 91 111 2222', email: 'sara.t@email.com', property: 'Luxury Villa in Bole Atlas', date: 'Mar 22, 2026', time: '10:00 AM', status: 'Pending', avatar: 'S', notes: '' },
@@ -89,14 +101,14 @@ function AppointmentsPage() {
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                             {apt.status === 'Pending' && !isConfirming && (
-                                <>
+                                <div className="hidden md:flex items-center gap-2">
                                     <Button size="sm" className="h-8 text-xs gap-1" onClick={() => setConfirmAction({ id: apt.id, action: 'accept' })}>
                                         <CheckCircle2 size={12} /> Accept
                                     </Button>
                                     <Button size="sm" variant="outline" className="h-8 text-xs text-destructive border-destructive/30 hover:bg-destructive/5 gap-1" onClick={() => setConfirmAction({ id: apt.id, action: 'reject' })}>
                                         <XCircle size={12} /> Reject
                                     </Button>
-                                </>
+                                </div>
                             )}
                             {isConfirming && (
                                 <div className="flex items-center gap-2 animate-in fade-in-0 duration-200">
@@ -111,12 +123,43 @@ function AppointmentsPage() {
                                     <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setConfirmAction(null)}>No</Button>
                                 </div>
                             )}
-                            {apt.status === 'Confirmed' && (
-                                <Button size="sm" variant="outline" className="h-8 text-xs gap-1">
-                                    <MessageSquare size={12} /> Notes
-                                </Button>
-                            )}
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={() => setExpandedId(isExpanded ? null : apt.id)}>
+
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground outline-none">
+                                        <MoreVertical size={16} />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-48">
+                                    <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => setExpandedId(isExpanded ? null : apt.id)}>
+                                        <ChevronRight size={14} className={isExpanded ? 'rotate-90' : ''} /> {isExpanded ? 'Collapse' : 'View Details'}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <Link to="/owner/property-detail" className="flex items-center gap-2 cursor-pointer">
+                                            <Building2 size={14} /> View Property
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="gap-2 cursor-pointer">
+                                        <Mail size={14} /> Email Renter
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="gap-2 cursor-pointer">
+                                        <Phone size={14} /> Call Renter
+                                    </DropdownMenuItem>
+                                    {apt.status === 'Pending' && (
+                                        <>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem className="gap-2 cursor-pointer text-emerald-600 focus:text-emerald-600" onClick={() => handleAccept(apt.id)}>
+                                                <CheckCircle2 size={14} /> Accept Request
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="gap-2 cursor-pointer text-destructive focus:text-destructive" onClick={() => handleReject(apt.id)}>
+                                                <XCircle size={14} /> Reject Request
+                                            </DropdownMenuItem>
+                                        </>
+                                    )}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary hidden md:flex" onClick={() => setExpandedId(isExpanded ? null : apt.id)}>
                                 <ChevronRight size={16} className={`transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`} />
                             </Button>
                         </div>
