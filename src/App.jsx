@@ -10,9 +10,26 @@ import PropertiesDetailPage from './pages/admin/PropertiesDetailPage';
 import ReportDetailPage from './pages/admin/ReportDetailPage';
 import AgreementDetailPage from './pages/admin/AgreementDetailPage';
 
+// Owner Dashboard
+import OwnerLayout from './components/OwnerLayout';
+import OwnerOverviewPage from './pages/owner/OverviewPage';
+import MyPropertiesPage from './pages/owner/MyPropertiesPage';
+import PropertyDetailPage from './pages/owner/PropertyDetailPage';
+import OwnerAppointmentsPage from './pages/owner/AppointmentsPage';
+import OwnerAgreementsPage from './pages/owner/AgreementsPage';
+import OwnerAgreementDetailPage from './pages/owner/AgreementDetailPage';
+import MessagesPage from './pages/owner/MessagesPage';
+import ReviewsPage from './pages/owner/ReviewsPage';
+import NotificationsPage from './pages/owner/NotificationsPage';
+import OwnerReportsPage from './pages/owner/ReportsPage';
+import AnalyticsPage from './pages/owner/AnalyticsPage';
+import ProfilePage from './pages/owner/ProfilePage';
+import PaymentHistoryPage from './pages/owner/PaymentHistoryPage';
+import HelpSupportPage from './pages/owner/HelpSupportPage';
+
 function App() {
   return (
-    <HashRouter basename="/frontend">
+    <BrowserRouter>
       <Routes>
         {/*  Public rounting
 
@@ -33,9 +50,28 @@ function App() {
           <Route path="agreementdetail" element={<AgreementDetailPage />} />
         </Route>
 
+        {/* Owner Dashboard */}
+        <Route path="/owner" element={<OwnerLayout />}>
+          <Route index element={<Navigate replace to="overview" />} />
+          <Route path="overview" element={<OwnerOverviewPage />} />
+          <Route path="properties" element={<MyPropertiesPage />} />
+          <Route path="property-detail" element={<PropertyDetailPage />} />
+          <Route path="appointments" element={<OwnerAppointmentsPage />} />
+          <Route path="agreements" element={<OwnerAgreementsPage />} />
+          <Route path="agreement-detail" element={<OwnerAgreementDetailPage />} />
+          <Route path="messages" element={<MessagesPage />} />
+          <Route path="reviews" element={<ReviewsPage />} />
+          <Route path="notifications" element={<NotificationsPage />} />
+          <Route path="reports" element={<OwnerReportsPage />} />
+          <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="payments" element={<PaymentHistoryPage />} />
+          <Route path="help" element={<HelpSupportPage />} />
+        </Route>
+
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
 
