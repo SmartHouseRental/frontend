@@ -13,13 +13,20 @@ import {
 import { Button } from '@/components/ui/button';
 import UserDetailTabs from '@/features/users/components/UserDetailTab';
 
+import { useNavigate } from 'react-router';
+
 function UserDetailPage() {
+  const navigate = useNavigate();
+
   return (
     <div className="p-8 pt-4">
       <div className="flex items-center gap-4">
-        <butto className="hover:bg-primary/10 rounded-lg p-2 transition-colors">
+        <button
+          onClick={() => navigate(-1)}
+          className="hover:bg-primary/10 rounded-lg p-2 transition-colors"
+        >
           <MoveLeft className="text-primary" />
-        </butto>
+        </button>
         <h1 className="text-primary text-xl font-bold tracking-tight">Admin Control Panel</h1>
       </div>
 
