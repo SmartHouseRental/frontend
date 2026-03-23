@@ -31,12 +31,14 @@ function AdminHeader() {
 
   const breadcrumbMap = {
     overview: 'Overview',
-    users: 'Users Managment',
+    users: 'User Management',
     properties: 'Properties',
     agreements: 'Agreements',
     reports: 'Reports',
-    admins: 'Admins',
-    maintenance: 'Maintenance',
+    'pending-verifications': 'Pending Verifications',
+    notifications: 'Notifications',
+    'audit-logs': 'Audit Logs',
+    analytics: 'Analytics',
     settings: 'Settings',
     detail: 'Detail',
     edit: 'Edit',

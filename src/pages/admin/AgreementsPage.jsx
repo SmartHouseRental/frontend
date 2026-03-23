@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -17,21 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Newspaper } from 'lucide-react';
-import { CircleDot } from 'lucide-react';
-import { Filter } from 'lucide-react';
-
-import {
-  Download,
-  MoreVertical,
-  Search,
-  CircleCheckBig,
-  ChevronLeft,
-  ChevronRight,
-  Eye,
-  FileText,
-  XCircle,
-} from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,215 +24,311 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import {
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  MoreVertical,
+  Search,
+  Eye,
+  CheckCircle2,
+  XCircle,
+  Handshake,
+  FileText,
+  CreditCard,
+} from 'lucide-react';
 import { useNavigate } from 'react-router';
+
+const agreements = [
+  {
+    id: 'AG-9428',
+    property: 'Horizon Peak Villa',
+    propertyId: 'PRP-9402',
+    renter: 'Mulugeta K.',
+    owner: 'Michael Chen',
+    monthlyRent: '85,000 ETB',
+    startDate: 'Mar 1, 2026',
+    endDate: 'Aug 31, 2026',
+    status: 'active',
+    paymentStatus: 'confirmed',
+  },
+  {
+    id: 'AG-9425',
+    property: 'Urban Loft 42',
+    propertyId: 'PRP-8210',
+    renter: 'Tigist H.',
+    owner: 'Sarah Jenkins',
+    monthlyRent: '45,000 ETB',
+    startDate: 'Feb 15, 2026',
+    endDate: 'Feb 14, 2027',
+    status: 'pending_renter',
+    paymentStatus: 'proof_uploaded',
+  },
+  {
+    id: 'AG-9418',
+    property: 'Cottage by the Lake',
+    propertyId: 'PRP-7731',
+    renter: 'Abebe T.',
+    owner: 'David Miller',
+    monthlyRent: '32,000 ETB',
+    startDate: 'Jan 1, 2026',
+    endDate: 'Dec 31, 2026',
+    status: 'pending_owner',
+    paymentStatus: 'pending',
+  },
+  {
+    id: 'AG-9410',
+    property: 'Bole Skyline Apt',
+    propertyId: 'PRP-8829',
+    renter: 'Sara K.',
+    owner: 'Dawit T.',
+    monthlyRent: '55,000 ETB',
+    startDate: 'Mar 1, 2026',
+    endDate: 'Mar 1, 2027',
+    status: 'draft',
+    paymentStatus: 'pending',
+  },
+  {
+    id: 'AG-7102',
+    property: 'Megenagna Studio',
+    propertyId: 'PRP-6210',
+    renter: 'Henok B.',
+    owner: 'Marta K.',
+    monthlyRent: '28,000 ETB',
+    startDate: 'Nov 1, 2025',
+    endDate: 'Apr 30, 2026',
+    status: 'terminated',
+    paymentStatus: 'confirmed',
+  },
+  {
+    id: 'AG-6891',
+    property: 'CMC Area House',
+    propertyId: 'PRP-5832',
+    renter: 'Yonas G.',
+    owner: 'Hana B.',
+    monthlyRent: '120,000 ETB',
+    startDate: 'Jun 1, 2025',
+    endDate: 'May 31, 2026',
+    status: 'expired',
+    paymentStatus: 'confirmed',
+  },
+];
+
+const statusStyles = {
+  active: { label: 'Active', style: 'bg-emerald-100 text-emerald-700' },
+  pending_renter: { label: 'Pending Renter', style: 'bg-amber-100 text-amber-700' },
+  pending_owner: { label: 'Pending Owner', style: 'bg-orange-100 text-orange-700' },
+  draft: { label: 'Draft', style: 'bg-slate-100 text-slate-600' },
+  terminated: { label: 'Terminated', style: 'bg-rose-100 text-rose-700' },
+  expired: { label: 'Expired', style: 'bg-red-100 text-red-700' },
+};
+
+const paymentStatusStyles = {
+  confirmed: { label: 'Confirmed', style: 'bg-emerald-100 text-emerald-700' },
+  proof_uploaded: { label: 'Proof Uploaded', style: 'bg-blue-100 text-blue-700' },
+  pending: { label: 'Pending', style: 'bg-slate-100 text-slate-600' },
+};
 
 function AgreementsPage() {
   const navigate = useNavigate();
+
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+    <div className="space-y-6 px-4 py-8">
+      <div className="flex items-end justify-between">
         <div>
-          <h2 className="text-charcoal text-3xl font-extrabold dark:text-white">
-            Agreements Management
-          </h2>
-          <p className="text-muted-foreground/60 mt-1 font-medium italic">
-            Review and manage rental contracts across Ethiopia
+          <h2 className="text-3xl font-semibold">Agreements</h2>
+          <p className="text-muted-foreground text-sm">
+            Manage rental agreements between owners and renters
           </p>
         </div>
-        <div className="">
-          <button className="border-primary/20 text-primary hover:bg-primary/5 flex items-center gap-2 rounded-lg border-2 px-4 py-2 font-bold transition-all">
-            <Download /> Export CSV
-          </button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <Card className="border-0 border-l-4 border-emerald-400 p-5">
+          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">Active</p>
+          <p className="mt-1 text-2xl font-extrabold text-emerald-600">890</p>
+        </Card>
+        <Card className="border-0 border-l-4 border-amber-400 p-5">
+          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+            Pending
+          </p>
+          <p className="mt-1 text-2xl font-extrabold text-amber-600">248</p>
+        </Card>
+        <Card className="border-0 border-l-4 border-slate-300 p-5">
+          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">Draft</p>
+          <p className="mt-1 text-2xl font-extrabold text-slate-600">146</p>
+        </Card>
+        <Card className="border-0 border-l-4 border-rose-400 p-5">
+          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+            Terminated
+          </p>
+          <p className="mt-1 text-2xl font-extrabold text-rose-600">38</p>
+        </Card>
+      </div>
+
+      <Card className="flex flex-row flex-wrap items-center justify-between gap-4 px-6 py-4">
+        <div className="relative max-w-xl flex-1">
+          <span className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2">
+            <Search size={18} />
+          </span>
+          <Input
+            placeholder="Search by ID, property, renter, or owner..."
+            type="text"
+            className="pl-10"
+          />
         </div>
-      </div>
-
-      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader className="mb-4 flex items-center justify-between">
-            <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-xl">
-              <Newspaper />
-            </div>
-            <span className="rounded bg-green-500/10 px-2 py-1 text-xs font-bold text-green-500">
-              +12%
-            </span>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground/60 text-sm font-medium">Total Agreements</p>
-            <h3 className="text-charcoal mt-1 text-2xl font-extrabold dark:text-white">1,482</h3>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="mb-4 flex items-center justify-between">
-            <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-xl">
-              <CircleCheckBig />
-            </div>
-            <span className="text-primary bg-primary/10 rounded px-2 py-1 text-xs font-bold">
-              Target 90%
-            </span>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground/60 text-sm font-medium">Active Agreements</p>
-            <h3 className="text-charcoal mt-1 text-2xl font-extrabold dark:text-white">86.4%</h3>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="mb-4 flex items-center justify-between">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
-              <CircleDot />{' '}
-            </div>
-            <span className="rounded bg-red-500/10 px-2 py-1 text-xs font-bold text-red-500">
-              Priority
-            </span>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground/60 text-sm font-medium">Pending Disputes</p>
-            <h3 className="text-charcoal mt-1 text-2xl font-extrabold dark:text-white">14</h3>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card className="mb-8 overflow-hidden px-6">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <div className="relative col-span-2">
-            <span className="text-muted-foreground/60 absolute top-1/2 left-3 -translate-y-1/2 text-sm">
-              <Search />
-            </span>
-            <Input
-              className="w-full py-3 pr-4 pl-10 text-sm font-medium"
-              placeholder="Search ID or Name..."
-              type="text"
-            />
-          </div>
-          <div className="col-start-5 flex gap-2">
-            <Select>
-              <SelectTrigger className="w-full max-w-48">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <Button className="bg-secondary hover:bg-secondary/90 flex-1 rounded-lg py-2 text-sm font-bold text-white transition-all">
-              <Filter />
-            </Button>
-          </div>
+        <div className="flex items-center gap-3">
+          <Select>
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="pending_renter">Pending Renter</SelectItem>
+                <SelectItem value="pending_owner">Pending Owner</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="terminated">Terminated</SelectItem>
+                <SelectItem value="expired">Expired</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Payment" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="confirmed">Confirmed</SelectItem>
+                <SelectItem value="proof_uploaded">Proof Uploaded</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Button variant="outline" size="icon">
+            <Filter size={16} />
+          </Button>
         </div>
       </Card>
 
       <Card className="gap-0 overflow-hidden p-0">
-        <div className="overflow-x-auto">
-          <Table className="w-full min-w-full border-collapse text-left">
-            <TableHeader className="bg-muted w-full">
-              <TableRow>
-                <TableHead className="px-6 py-4">ID</TableHead>
-                <TableHead className="px-6 py-4">Property</TableHead>
-                <TableHead className="px-6 py-4"> Renter / Owner</TableHead>
-                <TableHead className="px-6 py-4"> Rent (ETB)</TableHead>
-                <TableHead className="px-6 py-4">Duration</TableHead>
-                <TableHead className="px-6 py-4">Status</TableHead>
-                <TableHead className="px-4 py-4">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="px-6 py-4">
-                  <span className="text-primary font-bold">#AG-9428</span>
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                      <img
-                        className="h-full w-full object-cover"
-                        data-alt="Modern apartment exterior"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnMOprguOjuAF8Qrb9Zd77c1Dv3YD3zqIUHFferta0hg3M0BhOsuEjs4O_4XyLTcQeDis92itJDmNWfCf7sy2_GMPcRJGLNNoZi4RqrpfxnlK7WLDtwdFZGhxbku7hQ6YL-ASEw6-EE9YyfsL9N6Z6OXwn6g3wmL91rwoCvxYx3_AwAZMvS4ylMV7aDwjyFozB0ZAubsD-X1Ey6TZjkd3k7BMNUGWIWCQ-LXJf6xaPd6ggQzeLbaO9HZax_anf1nmVTEXakADTFq-C"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold">Bole Skyline Apt.</p>
-                      <p className="text-muted-foreground/60 text-xs">Addis Ababa, Bole</p>
-                    </div>
-                  </div>
-                </TableCell>
-
-                <TableCell className="px-6 py-4">
-                  <p className="text-sm font-bold">Mulugeta K.</p>
-                  <p className="text-muted-foreground/60 text-[10px]">Owner: Tadesse W.</p>
-                </TableCell>
-
-                <TableCell className="px-6 py-4">
-                  <p className="text-sm font-bold">45,000 ETB</p>
-                  <p className="text-muted-foreground/60 text-[10px]">Dep: 90,000 ETB</p>
-                </TableCell>
-                <TableCell className="py-4text-sm px-6 font-medium">12 Months</TableCell>
-
-                <TableCell className="px-6 py-4">
-                  <span className="rounded-full bg-green-500/10 px-3 py-1 text-[10px] font-extrabold tracking-wider text-green-600 uppercase">
-                    Active
-                  </span>
-                </TableCell>
-
-                <TableCell className="px-6 py-4">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => navigate('/admin/agreementdetail')} className="cursor-pointer">
-                        <Eye className="mr-2 h-4 w-4" />
-                        <span>View Agreement</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-pointer">
-                        <FileText className="mr-2 h-4 w-4" />
-                        <span>Download PDF</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
-                        <XCircle className="mr-2 h-4 w-4" />
-                        <span>Terminate Lease</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-        <div className="border-primary/10 flex flex-col items-center justify-between gap-4 border-t p-6 sm:flex-row">
-          <p className="text-muted-foreground/60 text-sm font-medium">
-            Showing <span className="text-charcoal font-bold dark:text-white">1 - 4</span> of 1,482
-            agreements
-          </p>
-          <div className="flex items-center gap-2">
-            <button className="border-primary/20 text-muted-foreground/60 hover:bg-primary flex h-8 w-8 items-center justify-center rounded border transition-all hover:text-white">
-              <span className="material-icons-round text-sm">
-                <ChevronLeft />
-              </span>
+        <Table className="w-full min-w-full border-collapse text-left">
+          <TableHeader className="bg-muted w-full">
+            <TableRow>
+              <TableHead className="px-6 py-4">ID</TableHead>
+              <TableHead className="px-6 py-4">Property</TableHead>
+              <TableHead className="px-6 py-4">Parties</TableHead>
+              <TableHead className="px-6 py-4">Rent</TableHead>
+              <TableHead className="px-6 py-4">Duration</TableHead>
+              <TableHead className="px-6 py-4">Status</TableHead>
+              <TableHead className="px-6 py-4">Payment</TableHead>
+              <TableHead className="px-4 py-4">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {agreements.map((agreement) => {
+              const sState = statusStyles[agreement.status];
+              const pState = paymentStatusStyles[agreement.paymentStatus];
+              return (
+                <TableRow
+                  key={agreement.id}
+                  className="cursor-pointer transition-colors hover:bg-slate-50/80"
+                  onClick={() => navigate(`/admin/agreements/${agreement.id}`)}
+                >
+                  <TableCell className="px-6 py-4 text-sm font-bold">#{agreement.id}</TableCell>
+                  <TableCell className="px-6 py-4">
+                    <p className="text-sm font-semibold">{agreement.property}</p>
+                    <p className="text-muted-foreground text-[10px]">{agreement.propertyId}</p>
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    <p className="text-xs">
+                      <span className="font-semibold">{agreement.renter}</span>
+                      <span className="text-muted-foreground"> → </span>
+                      <span className="font-semibold">{agreement.owner}</span>
+                    </p>
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-sm font-bold">{agreement.monthlyRent}</TableCell>
+                  <TableCell className="px-6 py-4">
+                    <p className="text-xs">{agreement.startDate}</p>
+                    <p className="text-muted-foreground text-[10px]">to {agreement.endDate}</p>
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[10px] font-bold whitespace-nowrap uppercase ${sState.style}`}
+                    >
+                      {sState.label}
+                    </span>
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[10px] font-bold whitespace-nowrap uppercase ${pState.style}`}
+                    >
+                      {pState.label}
+                    </span>
+                  </TableCell>
+                  <TableCell className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => navigate(`/admin/agreements/${agreement.id}`)}
+                        >
+                          <Eye className="mr-2 h-4 w-4" />
+                          <span>View Agreement</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer">
+                          <FileText className="mr-2 h-4 w-4" />
+                          <span>View Contract</span>
+                        </DropdownMenuItem>
+                        {agreement.paymentStatus === 'proof_uploaded' && (
+                          <DropdownMenuItem className="cursor-pointer text-blue-600 focus:text-blue-600">
+                            <CreditCard className="mr-2 h-4 w-4" />
+                            <span>Verify Payment</span>
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
+                          <XCircle className="mr-2 h-4 w-4" />
+                          <span>Terminate Agreement</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+        <div className="flex items-center justify-between border-t bg-slate-50 px-6 py-4">
+          <span className="text-muted-foreground text-xs font-medium">
+            Showing 1-{agreements.length} of 1,284 agreements
+          </span>
+          <div className="flex items-center gap-1">
+            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-white">
+              <ChevronLeft size={16} />
             </button>
-            <button className="bg-primary flex h-8 w-8 items-center justify-center rounded text-xs font-bold text-white">
+            <button className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-white">
               1
             </button>
-            <button className="border-primary/20 text-muted-foreground/60 hover:bg-primary/10 flex h-8 w-8 items-center justify-center rounded border text-xs font-bold transition-all">
+            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-white">
               2
             </button>
-            <button className="border-primary/20 text-muted-foreground/60 hover:bg-primary/10 flex h-8 w-8 items-center justify-center rounded border text-xs font-bold transition-all">
+            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-white">
               3
             </button>
-            <span className="px-1">...</span>
-            <button className="border-primary/20 text-muted-foreground/60 hover:bg-primary/10 flex h-8 w-8 items-center justify-center rounded border text-xs font-bold transition-all">
-              42
+            <span className="text-muted-foreground px-1">...</span>
+            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-white">
+              214
             </button>
-            <button className="border-primary/20 text-muted-foreground/60 hover:bg-primary flex h-8 w-8 items-center justify-center rounded border transition-all hover:text-white">
-              <span className="material-icons-round text-sm">
-                <ChevronRight />
-              </span>
+            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-white">
+              <ChevronRight size={16} />
             </button>
           </div>
         </div>
