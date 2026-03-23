@@ -20,8 +20,9 @@ import {
   ShieldCheck,
   ShieldBan,
   UserX,
-  Trash2,
 } from 'lucide-react';
+import StatusBadge from '@/components/StatusBadge';
+import DataTablePagination from '@/components/DataTablePagination';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -119,7 +120,7 @@ const statusStyles = {
   banned: { label: 'Banned', dotColor: 'bg-red-600', style: 'bg-red-100 text-red-700' },
 };
 
-function UserManagmentPage() {
+function UserManagementPage() {
   const navigate = useNavigate();
   return (
     <div className="relative flex min-w-0 flex-1 flex-col gap-6 overflow-hidden p-8">
@@ -226,9 +227,7 @@ function UserManagmentPage() {
                       </span>
                     </TableCell>
                     <TableCell className="px-6 py-4">
-                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${vState.style}`}>
-                        {vState.label}
-                      </span>
+                      <StatusBadge status={user.verificationState} statusMap={verificationStateStyles} />
                     </TableCell>
                     <TableCell className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${sState.style}`}>
@@ -285,29 +284,17 @@ function UserManagmentPage() {
             </TableBody>
           </Table>
 
-          <div className="flex items-center justify-between bg-slate-50 p-4">
-            <p className="text-muted-foreground text-sm">
-              Showing <span className="font-bold">1 - {users.length}</span> of{' '}
-              <span className="font-bold">12,450</span> users
-            </p>
-            <div className="flex items-center gap-2">
-              <button className="hover:text-muted-foreground rounded-lg border border-slate-200 bg-white p-1.5 text-slate-400">
-                <ChevronLeft size={16} />
-              </button>
-              <button className="bg-primary size-8 rounded-lg text-xs font-bold text-white">1</button>
-              <button className="text-muted-foreground size-8 rounded-lg text-xs font-bold hover:bg-slate-200">2</button>
-              <button className="text-muted-foreground size-8 rounded-lg text-xs font-bold hover:bg-slate-200">3</button>
-              <span className="mx-1 text-slate-400">...</span>
-              <button className="text-muted-foreground size-8 rounded-lg text-xs font-bold hover:bg-slate-200">125</button>
-              <button className="hover:text-muted-foreground rounded-lg border border-slate-200 bg-white p-1.5 text-slate-400">
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
+          <DataTablePagination
+            currentPage={1}
+            totalPages={125}
+            totalItems={12450}
+            itemsPerPage={users.length}
+            itemLabel="users"
+          />
         </Card>
       </div>
     </div>
   );
 }
 
-export default UserManagmentPage;
+export default UserManagementPage;

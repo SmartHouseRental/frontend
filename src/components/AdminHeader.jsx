@@ -6,6 +6,8 @@ import {
   Settings,
   LogOut,
   ChevronDown,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -16,10 +18,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from './ui/button';
+import { useTheme } from './ThemeProvider';
 
 function AdminHeader() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   const handleLogout = () => {
     navigate('/login');
@@ -40,6 +44,7 @@ function AdminHeader() {
     'audit-logs': 'Audit Logs',
     analytics: 'Analytics',
     settings: 'Settings',
+    reviews: 'Reviews',
     detail: 'Detail',
     edit: 'Edit',
   };
@@ -124,10 +129,20 @@ function AdminHeader() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <button className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100">
+        <button className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700">
           <MessageCircle size={20} />
         </button>
-        <div className="mx-2 h-8 w-px bg-slate-200"></div>
+
+        {/* Dark Mode Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700"
+          aria-label="Toggle theme"
+        >
+          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+
+        <div className="mx-2 h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
 
         {/* User Profile Dropdown */}
         <DropdownMenu>

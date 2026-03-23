@@ -11,6 +11,7 @@ import {
   Bell,
   ScrollText,
   BarChart3,
+  Star,
 } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router';
 
@@ -47,6 +48,11 @@ function AdminSidebar() {
       to: 'reports',
       label: 'Reports',
       Icon: TriangleAlert,
+    },
+    {
+      to: 'reviews',
+      label: 'Reviews',
+      Icon: Star,
     },
   ];
 
