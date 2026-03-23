@@ -1,5 +1,6 @@
 import OwnerSidebar from './OwnerSidebar';
 import OwnerHeader from './OwnerHeader';
+import VerificationBanner from './VerificationBanner';
 import { Outlet } from 'react-router';
 
 function OwnerLayout() {
@@ -8,6 +9,9 @@ function OwnerLayout() {
             <OwnerSidebar />
             <main className="ml-72 flex-1">
                 <OwnerHeader />
+                <div className="px-8 pt-2">
+                    <VerificationBanner verificationState="pending_documents" />
+                </div>
                 <Outlet />
             </main>
         </div>

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Link } from 'react-router';
-import { ArrowLeft, Edit, Eye, Star, MapPin, Bed, Bath, Maximize, Calendar, DollarSign, TrendingUp, Camera, Upload, Trash2, Heart, Share2, Copy, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Edit, Eye, Star, MapPin, Bed, Bath, Maximize, Calendar, DollarSign, TrendingUp, Camera, Upload, Trash2, Heart, Share2, Copy, CheckCircle2, Lock } from 'lucide-react';
 
 const allImages = [
     'https://lh3.googleusercontent.com/aida-public/AB6AXuCAenV_3qVcY9Qwk4wakHFXyVXSOEDbP8zpfnM2v9TbZZ2Dx6DLWg5WzQMyNUilW90Vq6f0sOyGmDlljmxE7SRGuPZ-mGD-mS_QOap5qzI1l0B9w5oqkoaVuzgP0alYz1POLq1Z7wdkOyl9G_RiBmtBc7JBDBBkBfJWkaugjSN-COItg-1H_5I30pLWoet3qEwRfjR7o65lqEoboTysrWFX5ACBJPW9fma8PplImAgccKF74CzCl70Hn_SR2cYk6Y1xVSWEP6nDHyYs',
@@ -46,13 +46,22 @@ function PropertyDetailPage() {
                 </div>
                 <div className="flex items-center gap-2">
                     <Badge className="bg-emerald-100 text-emerald-700 border-0 uppercase text-xs font-bold">Available</Badge>
+                    <div className="flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1 text-xs font-medium">
+                        {0 >= 1 ? (
+                            <><Lock size={11} className="text-rose-500" /> <span className="text-rose-500">No edits left</span></>
+                        ) : (
+                            <><CheckCircle2 size={11} className="text-emerald-500" /> <span className="text-emerald-600">1 edit left</span></>
+                        )}
+                    </div>
                     <Button variant="outline" size="icon" className={`h-9 w-9 ${isFavorited ? 'text-rose-500' : ''}`} onClick={() => setIsFavorited(!isFavorited)}>
                         <Heart size={16} fill={isFavorited ? 'currentColor' : 'none'} />
                     </Button>
                     <Button variant="outline" size="icon" className="h-9 w-9" onClick={handleCopyLink}>
                         {copied ? <CheckCircle2 size={16} className="text-emerald-500" /> : <Share2 size={16} />}
                     </Button>
-                    <Button variant="outline" className="gap-2"><Edit size={14} /> Edit</Button>
+                    <Link to="/owner/edit-property">
+                        <Button variant="outline" className="gap-2"><Edit size={14} /> Edit</Button>
+                    </Link>
                 </div>
             </div>
 

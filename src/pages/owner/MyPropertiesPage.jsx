@@ -78,7 +78,9 @@ function MyPropertiesPage() {
                     <h1 className="text-3xl font-extrabold tracking-tight text-foreground">My Properties</h1>
                     <p className="text-muted-foreground mt-1">Manage and track all your rental listings.</p>
                 </div>
-                <Button className="gap-2 shadow-sm"><Plus size={16} /> Add Property</Button>
+                <Link to="/owner/add-property">
+                    <Button className="gap-2 shadow-sm"><Plus size={16} /> Add Property</Button>
+                </Link>
             </div>
 
             {/* Stats */}
@@ -220,8 +222,10 @@ function MyPropertiesPage() {
                                                             <Eye size={14} /> View Details
                                                         </Link>
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem className="gap-2 cursor-pointer">
-                                                        <Edit size={14} /> Edit Property
+                                                    <DropdownMenuItem asChild>
+                                                        <Link to="/owner/edit-property" className="flex items-center gap-2 cursor-pointer">
+                                                            <Edit size={14} /> Edit Property
+                                                        </Link>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem
                                                         className="gap-2 cursor-pointer text-destructive focus:text-destructive"
@@ -307,7 +311,9 @@ function MyPropertiesPage() {
                                         <Link to="/owner/property-detail" className="flex-1">
                                             <Button variant="outline" className="w-full gap-1 text-xs h-8"><Eye size={12} /> View</Button>
                                         </Link>
-                                        <Button variant="outline" size="icon" className="h-8 w-8"><Edit size={12} /></Button>
+                                        <Link to="/owner/edit-property">
+                                            <Button variant="outline" size="icon" className="h-8 w-8"><Edit size={12} /></Button>
+                                        </Link>
                                         <Button variant="outline" size="icon" className="h-8 w-8 text-destructive border-destructive/30 hover:bg-destructive/5" onClick={() => handleDelete(p.id)}><Trash2 size={12} /></Button>
                                     </div>
                                 </CardContent>

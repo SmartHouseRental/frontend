@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
     CalendarDays, Clock, CheckCircle2, XCircle, User, MapPin,
     MessageSquare, ChevronRight, Phone, Mail, AlertCircle, MoreVertical,
-    Building2,
+    Building2, Handshake,
 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -153,6 +153,16 @@ function AppointmentsPage() {
                                             </DropdownMenuItem>
                                             <DropdownMenuItem className="gap-2 cursor-pointer text-destructive focus:text-destructive" onClick={() => handleReject(apt.id)}>
                                                 <XCircle size={14} /> Reject Request
+                                            </DropdownMenuItem>
+                                        </>
+                                    )}
+                                    {(apt.status === 'Confirmed' || apt.status === 'Completed') && (
+                                        <>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem asChild>
+                                                <Link to="/owner/agreements" className="flex items-center gap-2 cursor-pointer text-primary focus:text-primary">
+                                                    <Handshake size={14} /> Initiate Agreement
+                                                </Link>
                                             </DropdownMenuItem>
                                         </>
                                     )}

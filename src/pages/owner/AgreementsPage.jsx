@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Link } from 'react-router';
-import { Search, Filter, Download, Handshake, CheckCircle2, Clock, EllipsisVertical, ChevronLeft, ChevronRight, FileText, Eye, XCircle } from 'lucide-react';
+import { Search, Filter, Download, Handshake, CheckCircle2, Clock, EllipsisVertical, ChevronLeft, ChevronRight, FileText, Eye, XCircle, DollarSign } from 'lucide-react';
+import StatusBadge from '@/components/StatusBadge';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,18 +16,21 @@ import {
 
 const initialAgreements = [
     { id: '#AG-2001', property: 'Bole Skyline Apartment', renter: 'Mulugeta Kebede', rent: '45,000 ETB', deposit: '90,000 ETB', duration: '12 Months', status: 'Active', startDate: 'Jan 15, 2026', paymentDay: '5th' },
-    { id: '#AG-2002', property: 'Luxury Villa in Bole Atlas', renter: 'Sara Tesfaye', rent: '85,000 ETB', deposit: '170,000 ETB', duration: '24 Months', status: 'Pending', startDate: 'Mar 01, 2026', paymentDay: '1st' },
+    { id: '#AG-2002', property: 'Luxury Villa in Bole Atlas', renter: 'Sara Tesfaye', rent: '85,000 ETB', deposit: '170,000 ETB', duration: '24 Months', status: 'Pending Renter', startDate: 'Mar 01, 2026', paymentDay: '1st' },
     { id: '#AG-2003', property: 'Cottage by the Lake', renter: 'Helen Girma', rent: '32,000 ETB', deposit: '64,000 ETB', duration: '6 Months', status: 'Active', startDate: 'Feb 10, 2026', paymentDay: '10th' },
     { id: '#AG-2004', property: 'Modern Studio in Kazanchis', renter: 'Abebe Wolde', rent: '28,000 ETB', deposit: '56,000 ETB', duration: '12 Months', status: 'Expired', startDate: 'Mar 20, 2025', paymentDay: '20th' },
-    { id: '#AG-2005', property: 'Penthouse Suite CMC', renter: 'Yonas Desta', rent: '120,000 ETB', deposit: '240,000 ETB', duration: '12 Months', status: 'Active', startDate: 'Dec 01, 2025', paymentDay: '1st' },
+    { id: '#AG-2005', property: 'Penthouse Suite CMC', renter: 'Yonas Desta', rent: '120,000 ETB', deposit: '240,000 ETB', duration: '12 Months', status: 'Pending Payment', startDate: 'Dec 01, 2025', paymentDay: '1st' },
     { id: '#AG-2006', property: 'Riverside Garden Home', renter: 'Tigist Haile', rent: '55,000 ETB', deposit: '110,000 ETB', duration: '12 Months', status: 'Terminated', startDate: 'Oct 15, 2025', paymentDay: '15th' },
+    { id: '#AG-2007', property: 'Studio near Mexico', renter: 'Daniel Fikru', rent: '22,000 ETB', deposit: '44,000 ETB', duration: '6 Months', status: 'Draft', startDate: '—', paymentDay: '—' },
 ];
 
 const statusColors = {
     Active: 'bg-emerald-100 text-emerald-700',
-    Pending: 'bg-amber-100 text-amber-700',
+    'Pending Renter': 'bg-amber-100 text-amber-700',
+    'Pending Payment': 'bg-blue-100 text-blue-700',
     Expired: 'bg-slate-100 text-slate-600',
     Terminated: 'bg-rose-100 text-rose-700',
+    Draft: 'bg-slate-100 text-slate-600',
 };
 
 function AgreementsPage() {
@@ -52,7 +56,7 @@ function AgreementsPage() {
     const stats = useMemo(() => ({
         total: agreements.length,
         active: agreements.filter(a => a.status === 'Active').length,
-        pending: agreements.filter(a => a.status === 'Pending').length,
+        pending: agreements.filter(a => a.status === 'Pending Renter' || a.status === 'Pending Payment' || a.status === 'Draft').length,
     }), [agreements]);
 
     return (
@@ -122,7 +126,9 @@ function AgreementsPage() {
                             <SelectGroup>
                                 <SelectItem value="all">All Statuses</SelectItem>
                                 <SelectItem value="active">Active</SelectItem>
-                                <SelectItem value="pending">Pending</SelectItem>
+                                <SelectItem value="draft">Draft</SelectItem>
+                                <SelectItem value="pending renter">Pending Renter</SelectItem>
+                                <SelectItem value="pending payment">Pending Payment</SelectItem>
                                 <SelectItem value="expired">Expired</SelectItem>
                                 <SelectItem value="terminated">Terminated</SelectItem>
                             </SelectGroup>
@@ -170,7 +176,7 @@ function AgreementsPage() {
                                     </TableCell>
                                     <TableCell className="px-6 py-4 text-sm">{a.duration}</TableCell>
                                     <TableCell className="px-6 py-4">
-                                        <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${statusColors[a.status]}`}>{a.status}</span>
+                                        <StatusBadge status={a.status} statusMap={statusColors} />
                                     </TableCell>
                                     <TableCell className="px-6 py-4 text-right">
                                         <DropdownMenu>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router';
-import { Bell, MessageCircle, ChevronDown, LogOut, User, Settings, HelpCircle } from 'lucide-react';
+import { Bell, MessageCircle, ChevronDown, LogOut, User, Settings, HelpCircle, Sun, Moon } from 'lucide-react';
+import { useTheme } from '@/components/ThemeProvider';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -19,6 +20,7 @@ const notifications = [
 function OwnerHeader() {
     const location = useLocation();
     const [notifOpen, setNotifOpen] = useState(false);
+    const { theme, setTheme } = useTheme();
     const unreadCount = notifications.filter(n => n.unread).length;
 
     const segments = location.pathname.split('/').filter(Boolean);
@@ -37,6 +39,8 @@ function OwnerHeader() {
         notifications: 'Notifications',
         reports: 'Reports',
         analytics: 'Analytics',
+        'add-property': 'Add Property',
+        'edit-property': 'Edit Property',
         profile: 'Profile & Settings',
         payments: 'Payment History',
         help: 'Help & Support',
@@ -72,6 +76,14 @@ function OwnerHeader() {
 
             {/* Right Side */}
             <div className="flex items-center gap-2">
+                {/* Dark Mode Toggle */}
+                <button
+                    className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                    title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                >
+                    {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                </button>
                 {/* Notifications Dropdown */}
                 <DropdownMenu open={notifOpen} onOpenChange={setNotifOpen}>
                     <DropdownMenuTrigger asChild>

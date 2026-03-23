@@ -112,27 +112,70 @@ function ProfilePage() {
 
                 {/* Verification */}
                 <TabsContent value="verification" className="mt-6 space-y-6">
+                    {/* Verification State Timeline */}
+                    <Card>
+                        <CardContent className="space-y-4">
+                            <h3 className="font-bold text-foreground flex items-center gap-2"><Shield size={16} /> Verification Status</h3>
+                            <div className="flex items-center gap-0">
+                                {[
+                                    { label: 'Email Verified', status: 'complete' },
+                                    { label: 'Documents Uploaded', status: 'current' },
+                                    { label: 'Admin Review', status: 'pending' },
+                                    { label: 'Verified Owner', status: 'pending' },
+                                ].map((step, i, arr) => (
+                                    <div key={i} className="flex items-center flex-1 last:flex-none">
+                                        <div className="flex flex-col items-center text-center">
+                                            <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all ${step.status === 'complete' ? 'bg-emerald-500 text-white' :
+                                                    step.status === 'current' ? 'bg-primary text-primary-foreground ring-4 ring-primary/20' :
+                                                        'bg-muted text-muted-foreground'
+                                                }`}>
+                                                {step.status === 'complete' ? <CheckCircle2 size={14} /> : i + 1}
+                                            </div>
+                                            <p className={`text-[10px] font-semibold mt-1.5 max-w-16 ${step.status === 'current' ? 'text-primary' : step.status === 'complete' ? 'text-emerald-600' : 'text-muted-foreground'}`}>{step.label}</p>
+                                        </div>
+                                        {i < arr.length - 1 && <div className={`flex-1 h-0.5 mx-1 rounded-full ${step.status === 'complete' ? 'bg-emerald-400' : 'bg-muted'}`} />}
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Documents */}
                     <Card>
                         <CardContent className="space-y-5">
                             <h3 className="font-bold text-foreground flex items-center gap-2"><Shield size={16} /> Verification Documents</h3>
                             <p className="text-sm text-muted-foreground">Upload documents to verify your identity and property ownership.</p>
                             {[
-                                { label: 'National ID / Passport', status: 'Verified', file: 'national_id.pdf' },
-                                { label: 'Business License', status: 'Verified', file: 'business_license.pdf' },
-                                { label: 'Property Ownership Deed', status: 'Pending', file: null },
+                                { label: 'National ID / Passport', status: 'Verified', file: 'national_id.pdf', description: 'Government-issued photo ID' },
+                                { label: 'Business License', status: 'Verified', file: 'business_license.pdf', description: 'Valid business or trade license' },
+                                { label: 'Property Ownership Deed', status: 'Pending', file: null, description: 'Proof of property ownership' },
                             ].map((doc, i) => (
-                                <div key={i} className="flex items-center justify-between py-3 border-b border-border last:border-0">
-                                    <div className="flex items-center gap-3">
-                                        {doc.status === 'Verified' ? <CheckCircle2 size={16} className="text-emerald-500" /> : <AlertCircle size={16} className="text-amber-500" />}
-                                        <div>
-                                            <p className="text-sm font-semibold text-foreground">{doc.label}</p>
-                                            {doc.file && <p className="text-xs text-muted-foreground mt-0.5">{doc.file}</p>}
+                                <div key={i} className={`rounded-xl border p-4 transition-all ${doc.status === 'Verified' ? 'border-emerald-200 bg-emerald-50/30' : 'border-amber-200 bg-amber-50/30'}`}>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            {doc.status === 'Verified' ? <CheckCircle2 size={18} className="text-emerald-500" /> : <AlertCircle size={18} className="text-amber-500" />}
+                                            <div>
+                                                <p className="text-sm font-bold text-foreground">{doc.label}</p>
+                                                <p className="text-xs text-muted-foreground mt-0.5">{doc.description}</p>
+                                                {doc.file && <p className="text-[10px] text-muted-foreground/70 mt-0.5">📎 {doc.file}</p>}
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${doc.status === 'Verified' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{doc.status}</span>
+                                            <label className="cursor-pointer">
+                                                <Button variant="outline" size="sm" className="h-7 text-xs gap-1 pointer-events-none"><Upload size={12} /> {doc.file ? 'Replace' : 'Upload'}</Button>
+                                                <input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" />
+                                            </label>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${doc.status === 'Verified' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{doc.status}</span>
-                                        <Button variant="outline" size="sm" className="h-7 text-xs gap-1"><Upload size={12} /> {doc.file ? 'Replace' : 'Upload'}</Button>
-                                    </div>
+                                    {!doc.file && (
+                                        <label className="mt-3 flex h-20 rounded-lg border-2 border-dashed border-amber-300 items-center justify-center gap-2 text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/3 transition-all cursor-pointer">
+                                            <Upload size={16} />
+                                            <span className="text-xs font-medium">Drag & drop or click to upload</span>
+                                            <span className="text-[10px] text-muted-foreground/60">PDF, JPG, PNG up to 5MB</span>
+                                            <input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" />
+                                        </label>
+                                    )}
                                 </div>
                             ))}
                         </CardContent>
