@@ -1,9 +1,22 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { CircleDot } from 'lucide-react';
-import { Home } from 'lucide-react';
-import { TrendingUp } from 'lucide-react';
-import { Handshake } from 'lucide-react';
-import { Users } from 'lucide-react';
+import {
+  CircleDot,
+  Home,
+  TrendingUp,
+  Handshake,
+  Users,
+  MoreVertical,
+  Eye,
+  CheckCircle2,
+  XCircle,
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 function OverviewPage() {
   return (
@@ -316,9 +329,27 @@ function OverviewPage() {
                 </td>
                 <td className="text-muted-foreground px-6 py-4 text-sm">Oct 24, 2023</td>
                 <td className="px-6 py-4">
-                  <button className="text-accent hover:text-primary text-xs font-bold">
-                    Review Details
-                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Eye className="mr-2 h-4 w-4" />
+                        <span>Review Details</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer text-emerald-600 focus:text-emerald-600">
+                        <CheckCircle2 className="mr-2 h-4 w-4" />
+                        <span>Approve Property</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
+                        <XCircle className="mr-2 h-4 w-4" />
+                        <span>Reject Property</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </td>
               </tr>
               <tr className="transition-colors hover:bg-slate-50/50">
@@ -355,9 +386,27 @@ function OverviewPage() {
                 </td>
                 <td className="text-muted-foreground px-6 py-4 text-sm">Oct 23, 2023</td>
                 <td className="px-6 py-4">
-                  <button className="text-accent hover:text-primary text-xs font-bold">
-                    Review Details
-                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Eye className="mr-2 h-4 w-4" />
+                        <span>Review Details</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer text-emerald-600 focus:text-emerald-600">
+                        <CheckCircle2 className="mr-2 h-4 w-4" />
+                        <span>Approve Property</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
+                        <XCircle className="mr-2 h-4 w-4" />
+                        <span>Reject Property</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </td>
               </tr>
               <tr className="transition-colors hover:bg-slate-50/50">
@@ -394,9 +443,27 @@ function OverviewPage() {
                 </td>
                 <td className="text-muted-foreground px-6 py-4 text-sm">Oct 22, 2023</td>
                 <td className="px-6 py-4">
-                  <button className="text-accent hover:text-primary text-xs font-bold">
-                    Review Details
-                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Eye className="mr-2 h-4 w-4" />
+                        <span>Review Details</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer text-emerald-600 focus:text-emerald-600">
+                        <CheckCircle2 className="mr-2 h-4 w-4" />
+                        <span>Approve Property</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
+                        <XCircle className="mr-2 h-4 w-4" />
+                        <span>Reject Property</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </td>
               </tr>
             </tbody>

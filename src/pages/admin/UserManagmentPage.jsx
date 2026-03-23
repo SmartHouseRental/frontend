@@ -10,15 +10,31 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ChevronLeft } from 'lucide-react';
-import { Plus } from 'lucide-react';
-import { ListFilter } from 'lucide-react';
-import { ChevronDown } from 'lucide-react';
-import { Search } from 'lucide-react';
-import { ChevronRight } from 'lucide-react';
-import { EllipsisVertical } from 'lucide-react';
+import {
+  ChevronLeft,
+  Plus,
+  ListFilter,
+  ChevronDown,
+  Search,
+  ChevronRight,
+  EllipsisVertical,
+  User,
+  Edit,
+  ShieldBan,
+
+  Trash2,
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import { useNavigate } from 'react-router';
 
 function UserManagmentPage() {
+  const navigate = useNavigate();
   return (
     <div className="relative flex min-w-0 flex-1 flex-col gap-6 overflow-hidden p-8">
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4">

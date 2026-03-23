@@ -144,13 +144,12 @@ function PropertyInfoCard() {
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star
                       key={star}
-                      className={`h-4 w-4 ${
-                        star <= Math.floor(averageRating)
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : star === Math.floor(averageRating) + 1 && averageRating % 1 >= 0.5
-                            ? 'fill-yellow-400/60 text-yellow-400'
-                            : 'text-muted'
-                      }`}
+                      className={`h-4 w-4 ${star <= Math.floor(averageRating)
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : star === Math.floor(averageRating) + 1 && averageRating % 1 >= 0.5
+                          ? 'fill-yellow-400/60 text-yellow-400'
+                          : 'text-muted'
+                        }`}
                     />
                   ))}
                 </div>
@@ -208,15 +207,29 @@ function DescriptionSection() {
   );
 }
 
-export default function PropertiesDetailPage() {
+import { useNavigate } from 'react-router';
+
+function PropertiesDetailPage() {
   const [userRating, setUserRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
+  const navigate = useNavigate();
 
   return (
     <main className="bg-background min-h-screen pb-16">
       <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8">
+        {/* Back Button & Header */}
+        <div className="flex items-center gap-4 pt-8 pb-2">
+          <button
+            onClick={() => navigate(-1)}
+            className="hover:bg-slate-100 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm transition-colors border"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Property Details</h1>
+        </div>
+
         {/* Gallery + Main Info + Sidebar */}
-        <div className="grid grid-cols-1 gap-6 pt-6 lg:grid-cols-12 lg:gap-8">
+        <div className="grid grid-cols-1 gap-6 pt-2 lg:grid-cols-12 lg:gap-8">
           {/* Left column */}
           <div className="space-y-6 lg:col-span-8 lg:space-y-8">
             <GallerySection />
@@ -253,11 +266,10 @@ export default function PropertiesDetailPage() {
                               aria-label={`Rate ${star} stars`}
                             >
                               <Star
-                                className={`h-6 w-6 transition-colors ${
-                                  hoveredRating >= star || userRating >= star
-                                    ? 'fill-yellow-400 text-yellow-400'
-                                    : 'text-muted-foreground hover:text-yellow-300'
-                                }`}
+                                className={`h-6 w-6 transition-colors ${hoveredRating >= star || userRating >= star
+                                  ? 'fill-yellow-400 text-yellow-400'
+                                  : 'text-muted-foreground hover:text-yellow-300'
+                                  }`}
                               />
                             </button>
                           ))}
@@ -597,3 +609,6 @@ export default function PropertiesDetailPage() {
     </main>
   );
 }
+
+
+export default PropertiesDetailPage

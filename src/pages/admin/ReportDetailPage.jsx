@@ -41,20 +41,44 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
+import { useNavigate } from 'react-router';
+
 export default function ReportDetailPage() {
+  const navigate = useNavigate();
+
   return (
     <main className="mx-auto max-w-[1440px] px-6 py-6">
       {/* Breadcrumb */}
       <div className="text-muted-foreground mb-6 flex items-center gap-2 text-sm font-medium">
-        <a href="#" className="hover:text-foreground transition-colors">
+        <button
+          onClick={() => navigate('/admin/reports')}
+          className="hover:text-foreground transition-colors"
+        >
           Investigations
-        </a>
+        </button>
         <ChevronRight className="h-3.5 w-3.5" />
-        <a href="#" className="hover:text-foreground transition-colors">
-          Fraud Reports
-        </a>
+        <span className="hover:text-foreground transition-colors">Fraud Reports</span>
         <ChevronRight className="h-3.5 w-3.5" />
         <span className="text-foreground font-semibold">#REP-45678</span>
+      </div>
+
+      {/* Header */}
+      <div className="mb-8 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="hover:bg-slate-200 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm transition-colors"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-slate-900">Report #RPT-7429</h1>
+              <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">In Review</Badge>
+            </div>
+            <p className="mt-1 text-slate-500">Filed on Oct 24, 2023 • 2 days ago</p>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">

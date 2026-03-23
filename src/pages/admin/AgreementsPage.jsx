@@ -21,14 +21,28 @@ import { Newspaper } from 'lucide-react';
 import { CircleDot } from 'lucide-react';
 import { Filter } from 'lucide-react';
 
-import { Download } from 'lucide-react';
-import { EllipsisVertical } from 'lucide-react';
-import { Search } from 'lucide-react';
-import { CircleCheckBig } from 'lucide-react';
-import { ChevronLeft } from 'lucide-react';
-import { ChevronRight } from 'lucide-react';
+import {
+  Download,
+  MoreVertical,
+  Search,
+  CircleCheckBig,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  FileText,
+  XCircle,
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import { useNavigate } from 'react-router';
 
 function AgreementsPage() {
+  const navigate = useNavigate();
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -179,9 +193,28 @@ function AgreementsPage() {
                 </TableCell>
 
                 <TableCell className="px-6 py-4">
-                  <Button className="bg-transparent" variant="outline">
-                    <EllipsisVertical />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => navigate('/admin/agreementdetail')} className="cursor-pointer">
+                        <Eye className="mr-2 h-4 w-4" />
+                        <span>View Agreement</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer">
+                        <FileText className="mr-2 h-4 w-4" />
+                        <span>Download PDF</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
+                        <XCircle className="mr-2 h-4 w-4" />
+                        <span>Terminate Lease</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             </TableBody>

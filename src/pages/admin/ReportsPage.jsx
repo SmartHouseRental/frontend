@@ -17,13 +17,28 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Filter } from 'lucide-react';
-import { ChevronLeft } from 'lucide-react';
-import { ChevronRight } from 'lucide-react';
-import { EllipsisVertical } from 'lucide-react';
-import { Search } from 'lucide-react';
+import {
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  MoreVertical,
+  Search,
+  Eye,
+  CheckCircle2,
+  XCircle,
+  UserX,
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import { useNavigate } from 'react-router';
 
 function ReportsPage() {
+  const navigate = useNavigate();
   return (
     <div className="space-y-6 px-4 py-8">
       <div>
@@ -133,9 +148,32 @@ function ReportsPage() {
                 </TableCell>
 
                 <TableCell className="px-6 py-4">
-                  <Button className="bg-transparent" variant="outline">
-                    <EllipsisVertical />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => navigate('/admin/reportdetail')} className="cursor-pointer">
+                        <Eye className="mr-2 h-4 w-4" />
+                        <span>Investigate</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer text-emerald-600 focus:text-emerald-600">
+                        <CheckCircle2 className="mr-2 h-4 w-4" />
+                        <span>Resolve Report</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer text-amber-600 focus:text-amber-600">
+                        <XCircle className="mr-2 h-4 w-4" />
+                        <span>Dismiss Report</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
+                        <UserX className="mr-2 h-4 w-4" />
+                        <span>Ban User</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             </TableBody>
