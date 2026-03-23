@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { BrowserRouter, HashRouter, Navigate, Route, Routes } from 'react-router';
-=======
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
->>>>>>> develop
 import { ThemeProvider } from './components/ThemeProvider';
 import AdminLayout from './components/AdminLayout';
 import OverviewPage from './pages/admin/OverviewPage';
@@ -14,7 +10,6 @@ import UserDetailPage from './pages/admin/UserDetailPage';
 import PropertiesDetailPage from './pages/admin/PropertiesDetailPage';
 import ReportDetailPage from './pages/admin/ReportDetailPage';
 import AgreementDetailPage from './pages/admin/AgreementDetailPage';
-<<<<<<< HEAD
 
 // Owner Dashboard
 import OwnerLayout from './components/OwnerLayout';
@@ -34,65 +29,28 @@ import AnalyticsPage from './pages/owner/AnalyticsPage';
 import ProfilePage from './pages/owner/ProfilePage';
 import PaymentHistoryPage from './pages/owner/PaymentHistoryPage';
 import HelpSupportPage from './pages/owner/HelpSupportPage';
-=======
 import PendingVerificationsPage from './pages/admin/PendingVerificationsPage';
-import NotificationsPage from './pages/admin/NotificationsPage';
+import NotificationsAdminPage from './pages/admin/NotificationsPage';
 import AuditLogsPage from './pages/admin/AuditLogsPage';
-import AnalyticsPage from './pages/admin/AnalyticsPage';
+import AnalyticsAdminPage from './pages/admin/AnalyticsPage';
 import SettingsPage from './pages/admin/SettingsPage';
-import ReviewsPage from './pages/admin/ReviewsPage';
->>>>>>> develop
+import ReviewsAdminPage from './pages/admin/ReviewsPage';
 
 function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
-<<<<<<< HEAD
           {/*  Public rounting
 
-=======
-          {/*  Public routing
->>>>>>> develop
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />   
         */}
 
+          {/* Admin Routing */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Navigate replace to="overview" />} />
             <Route path="overview" element={<OverviewPage />} />
-<<<<<<< HEAD
-            <Route path="users" element={<UserManagmentPage />} />
-            <Route path="properties" element={<PropertiesPage />} />
-            <Route path="reports" element={<ReportsPage />} />
-            <Route path="agreements" element={<AgreementsPage />} />
-            <Route path="userdetails" element={<UserDetailPage />} />
-            <Route path="reportdetail" element={<ReportDetailPage />} />
-            <Route path="propertiesdetail" element={<PropertiesDetailPage />} />
-            <Route path="agreementdetail" element={<AgreementDetailPage />} />
-          </Route>
-
-          {/* Owner Dashboard */}
-          <Route path="/owner" element={<OwnerLayout />}>
-            <Route index element={<Navigate replace to="overview" />} />
-            <Route path="overview" element={<OwnerOverviewPage />} />
-            <Route path="properties" element={<MyPropertiesPage />} />
-            <Route path="property-detail" element={<PropertyDetailPage />} />
-            <Route path="add-property" element={<AddPropertyPage />} />
-            <Route path="edit-property" element={<EditPropertyPage />} />
-            <Route path="appointments" element={<OwnerAppointmentsPage />} />
-            <Route path="agreements" element={<OwnerAgreementsPage />} />
-            <Route path="agreement-detail" element={<OwnerAgreementDetailPage />} />
-            <Route path="messages" element={<MessagesPage />} />
-            <Route path="reviews" element={<ReviewsPage />} />
-            <Route path="notifications" element={<NotificationsPage />} />
-            <Route path="reports" element={<OwnerReportsPage />} />
-            <Route path="analytics" element={<AnalyticsPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="payments" element={<PaymentHistoryPage />} />
-            <Route path="help" element={<HelpSupportPage />} />
-          </Route>
-=======
             <Route path="users" element={<UserManagementPage />} />
             <Route path="users/:id" element={<UserDetailPage />} />
             <Route path="properties" element={<PropertiesPage />} />
@@ -102,11 +60,11 @@ function App() {
             <Route path="agreements" element={<AgreementsPage />} />
             <Route path="agreements/:id" element={<AgreementDetailPage />} />
             <Route path="pending-verifications" element={<PendingVerificationsPage />} />
-            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="notifications" element={<NotificationsAdminPage />} />
             <Route path="audit-logs" element={<AuditLogsPage />} />
-            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="analytics" element={<AnalyticsAdminPage />} />
             <Route path="settings" element={<SettingsPage />} />
-            <Route path="reviews" element={<ReviewsPage />} />
+            <Route path="reviews" element={<ReviewsAdminPage />} />
           </Route>
 
           {/* Keep legacy routes working with redirects */}
@@ -126,7 +84,27 @@ function App() {
             path="/admin/agreementdetail"
             element={<Navigate replace to="/admin/agreements/AG-9428" />}
           />
->>>>>>> develop
+
+          {/* Owner Routing */}
+          <Route path="/owner" element={<OwnerLayout />}>
+            <Route index element={<Navigate replace to="overview" />} />
+            <Route path="overview" element={<OwnerOverviewPage />} />
+            <Route path="properties" element={<MyPropertiesPage />} />
+            <Route path="property-detail" element={<PropertyDetailPage />} />
+            <Route path="add-property" element={<AddPropertyPage />} />
+            <Route path="edit-property" element={<EditPropertyPage />} />
+            <Route path="appointments" element={<OwnerAppointmentsPage />} />
+            <Route path="agreements" element={<OwnerAgreementsPage />} />
+            <Route path="agreement-detail" element={<OwnerAgreementDetailPage />} />
+            <Route path="messages" element={<MessagesPage />} />
+            <Route path="reviews" element={<ReviewsPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="reports" element={<OwnerReportsPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="payments" element={<PaymentHistoryPage />} />
+            <Route path="help" element={<HelpSupportPage />} />
+          </Route>
 
           {/* <Route path="*" element={<NotFound />} /> */}
         </Routes>
@@ -136,4 +114,3 @@ function App() {
 }
 
 export default App;
-
