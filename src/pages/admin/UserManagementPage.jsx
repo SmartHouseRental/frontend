@@ -176,7 +176,7 @@ function UserManagementPage() {
       <div className="flex-1 overflow-auto pb-8">
         <Card className="gap-0 overflow-hidden p-0">
           <Table className="w-full min-w-full border-collapse text-left">
-            <TableHeader className="bg-muted w-full">
+            <TableHeader className="bg-muted/30 w-full">
               <TableRow>
                 <TableHead className="px-6 py-4">
                   <input className="text-primary focus:ring-primary rounded border-slate-300" type="checkbox" />
@@ -197,7 +197,7 @@ function UserManagementPage() {
                 return (
                   <TableRow
                     key={user.id}
-                    className="cursor-pointer transition-colors hover:bg-slate-50"
+                    className="cursor-pointer transition-colors hover:bg-muted/20"
                     onClick={() => navigate(`/admin/users/${user.id}`)}
                   >
                     <TableCell className="px-6 py-4" onClick={(e) => e.stopPropagation()}>

@@ -218,7 +218,7 @@ function PropertiesPage() {
 
       <Card className="gap-0 overflow-hidden p-0">
         <Table className="w-full min-w-full border-collapse text-left">
-          <TableHeader className="bg-muted w-full">
+          <TableHeader className="bg-muted/30 w-full">
             <TableRow>
               <TableHead className="px-6 py-4">Property</TableHead>
               <TableHead className="px-6 py-4">Owner</TableHead>
@@ -236,7 +236,7 @@ function PropertiesPage() {
               return (
                 <TableRow
                   key={property.id}
-                  className={`cursor-pointer transition-colors hover:bg-slate-50/80 ${property.isDeleted ? 'opacity-60' : ''}`}
+                  className={`cursor-pointer transition-colors hover:bg-muted/20 ${property.isDeleted ? 'opacity-60' : ''}`}
                   onClick={() => navigate(`/admin/properties/${property.id}`)}
                 >
                   <TableCell className="px-6 py-4">
@@ -279,8 +279,8 @@ function PropertiesPage() {
                   <TableCell className="px-6 py-4">
                     <span
                       className={`rounded px-2 py-0.5 text-xs font-bold ${property.editCount >= 1
-                          ? 'bg-amber-100 text-amber-700'
-                          : 'text-muted-foreground'
+                        ? 'bg-amber-100 text-amber-700'
+                        : 'text-muted-foreground'
                         }`}
                     >
                       {property.editCount}/1
@@ -333,7 +333,7 @@ function PropertiesPage() {
             })}
           </TableBody>
         </Table>
-        <div className="flex items-center justify-between border-t bg-slate-50 px-6 py-4">
+        <div className="flex items-center justify-between border-t border-border bg-muted/20 px-6 py-4">
           <span className="text-muted-foreground text-xs font-medium">
             Showing 1-{properties.length} of 3,820 properties
           </span>

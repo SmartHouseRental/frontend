@@ -27,35 +27,35 @@ import { useNavigate } from 'react-router';
 const recentActivity = [
   {
     icon: UserPlus,
-    iconColor: 'text-blue-600 bg-blue-50',
+    iconColor: 'text-blue-600 bg-blue-50 dark:bg-blue-900/40 dark:text-blue-400',
     text: 'New owner registration',
     detail: 'Hana Bekele signed up and submitted verification documents.',
     time: '12 min ago',
   },
   {
     icon: Home,
-    iconColor: 'text-emerald-600 bg-emerald-50',
+    iconColor: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/40 dark:text-emerald-400',
     text: 'Property auto-approved',
     detail: 'Luxury Villa in Bole Atlas by verified owner Michael Chen.',
     time: '45 min ago',
   },
   {
     icon: AlertTriangle,
-    iconColor: 'text-rose-600 bg-rose-50',
+    iconColor: 'text-rose-600 bg-rose-50 dark:bg-rose-900/40 dark:text-rose-400',
     text: 'Fraud report filed',
     detail: 'Report #RPT-7430 against property listing PRP-2841.',
     time: '1 hour ago',
   },
   {
     icon: Handshake,
-    iconColor: 'text-primary bg-primary/10',
+    iconColor: 'text-primary bg-primary/10 dark:bg-primary/20 dark:text-primary-foreground',
     text: 'Agreement activated',
     detail: 'Agreement #AG-9428 between Mulugeta K. and Tadesse W.',
     time: '2 hours ago',
   },
   {
     icon: FileText,
-    iconColor: 'text-amber-600 bg-amber-50',
+    iconColor: 'text-amber-600 bg-amber-50 dark:bg-amber-900/40 dark:text-amber-400',
     text: 'Documents submitted',
     detail: 'Tigist Hailu uploaded business license for verification.',
     time: '3 hours ago',
@@ -111,12 +111,12 @@ function OverviewPage() {
     <div className="space-y-8 p-8">
       <div className="flex items-end justify-between">
         <div>
-          <h2 className="text-3xl font-black tracking-tight text-slate-900">Dashboard Overview</h2>
+          <h2 className="text-3xl font-black tracking-tight text-foreground">Dashboard Overview</h2>
           <p className="text-muted-foreground mt-1 font-medium">
             Real-time platform metrics and system control center.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-400">
+        <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm text-muted-foreground">
           <Activity size={14} />
           <span>Last updated: 2 mins ago</span>
         </div>
@@ -202,7 +202,7 @@ function OverviewPage() {
       {/* Chart + Activity */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* User Growth Chart */}
-        <div className="shadow-soft rounded-2xl border border-slate-200 bg-white p-6 lg:col-span-2">
+        <div className="shadow-soft rounded-2xl border border-border bg-card p-6 lg:col-span-2">
           <div className="mb-8 flex items-center justify-between">
             <div>
               <h4 className="text-lg font-bold">User Growth</h4>
@@ -218,10 +218,10 @@ function OverviewPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <button className="text-primary rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold">
+              <button className="rounded-md bg-muted px-3 py-1.5 text-xs font-bold text-foreground shadow-sm">
                 Monthly
               </button>
-              <button className="text-muted-foreground rounded-lg px-3 py-1.5 text-xs font-bold transition-colors hover:bg-slate-50">
+              <button className="rounded-md px-3 py-1.5 text-xs font-bold text-muted-foreground transition-all hover:text-foreground">
                 Weekly
               </button>
             </div>
@@ -230,15 +230,15 @@ function OverviewPage() {
             <svg className="h-full w-full" preserveAspectRatio="none" viewBox="0 0 1000 300">
               <defs>
                 <linearGradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.25" />
-                  <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
                 </linearGradient>
               </defs>
               <path
                 d="M0,250 C100,240 200,270 300,230 C400,190 500,210 600,160 C700,110 800,140 900,120 L1000,100"
                 fill="none"
-                opacity="0.5"
-                stroke="#94a3b8"
+                opacity="0.4"
+                stroke="hsl(var(--muted-foreground))"
                 strokeDasharray="6,6"
                 strokeWidth="2"
               />
@@ -249,13 +249,13 @@ function OverviewPage() {
               <path
                 d="M0,220 C100,210 200,240 300,180 C400,120 500,150 600,90 C700,30 800,60 900,40 L1000,20"
                 fill="none"
-                stroke="#38bdf8"
+                stroke="hsl(var(--primary))"
                 strokeLinecap="round"
-                strokeWidth="4"
+                strokeWidth="3"
               />
-              <circle cx="600" cy="90" fill="#1e3a8a" r="6" stroke="#fff" strokeWidth="3" />
+              <circle cx="600" cy="90" fill="hsl(var(--primary))" r="5" stroke="hsl(var(--background))" strokeWidth="2.5" />
             </svg>
-            <div className="mt-6 flex justify-between px-2 text-[11px] font-bold tracking-widest text-slate-400 uppercase">
+            <div className="mt-6 flex justify-between px-2 text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
               <span>Oct</span>
               <span>Nov</span>
               <span>Dec</span>
@@ -267,21 +267,21 @@ function OverviewPage() {
         </div>
 
         {/* Recent Activity Feed */}
-        <div className="shadow-soft rounded-2xl border border-slate-200 bg-white p-6">
+        <div className="shadow-soft rounded-2xl border border-border bg-card p-6 flex flex-col">
           <div className="mb-4 flex items-center justify-between">
-            <h4 className="text-lg font-bold">Recent Activity</h4>
+            <h4 className="text-lg font-bold text-foreground">Recent Activity</h4>
             <button className="text-primary text-xs font-bold hover:underline">View All</button>
           </div>
           <div className="space-y-4">
             {recentActivity.map((item, index) => {
               const IconComp = item.icon;
               return (
-                <div key={index} className="flex gap-3">
+                <div key={index} className="flex gap-3 items-start group rounded-lg p-1.5 -m-1.5 hover:bg-muted/30 transition-colors">
                   <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${item.iconColor}`}>
                     <IconComp size={14} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold">{item.text}</p>
+                    <p className="text-sm font-semibold text-foreground">{item.text}</p>
                     <p className="text-muted-foreground mt-0.5 truncate text-xs">{item.detail}</p>
                     <p className="text-muted-foreground/60 mt-1 text-[10px]">{item.time}</p>
                   </div>
@@ -294,7 +294,7 @@ function OverviewPage() {
 
       {/* Quick Stats Row */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <h4 className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
               Listings by Area
@@ -312,21 +312,21 @@ function OverviewPage() {
                   <span>{item.area}</span>
                   <span>{item.count}</span>
                 </div>
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                   <div className="bg-primary h-full rounded-full" style={{ width: `${item.pct}%` }} />
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex items-center gap-6 rounded-2xl border border-border bg-card p-5 shadow-sm">
           <div className="relative flex size-20 shrink-0 items-center justify-center">
             <svg className="size-full -rotate-90 transform">
-              <circle cx="40" cy="40" fill="transparent" r="34" stroke="currentColor" strokeWidth="6" className="text-slate-100" />
+              <circle cx="40" cy="40" fill="transparent" r="34" stroke="currentColor" strokeWidth="6" className="text-muted/50" />
               <circle cx="40" cy="40" fill="transparent" r="34" stroke="currentColor" strokeDasharray="213.6" strokeDashoffset="21.36" strokeLinecap="round" strokeWidth="6" className="text-accent" />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-sm font-black">90%</span>
+              <span className="text-sm font-black text-foreground">90%</span>
             </div>
           </div>
           <div className="flex-1">
@@ -345,17 +345,17 @@ function OverviewPage() {
       </div>
 
       {/* Recently Submitted Properties */}
-      <div className="shadow-soft overflow-hidden rounded-2xl border border-slate-200 bg-white">
-        <div className="flex items-center justify-between border-b border-slate-100 p-6">
+      <div className="shadow-soft overflow-hidden rounded-2xl border border-border bg-card">
+        <div className="flex items-center justify-between border-b border-border p-6">
           <div>
-            <h4 className="text-lg font-bold">Recently Submitted Properties</h4>
+            <h4 className="text-lg font-bold text-foreground">Recently Submitted Properties</h4>
             <p className="text-muted-foreground text-sm">
               Review new listings awaiting platform approval.
             </p>
           </div>
           <button
             onClick={() => navigate('/admin/properties')}
-            className="text-primary rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold transition-colors hover:bg-slate-50"
+            className="text-primary rounded-lg border border-border px-4 py-2 text-sm font-bold transition-colors hover:bg-muted"
           >
             View Full Queue
           </button>
@@ -363,7 +363,7 @@ function OverviewPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-slate-50/50 text-[11px] font-bold tracking-widest text-slate-400 uppercase">
+              <tr className="bg-muted/30 text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
                 <th className="px-6 py-4">Preview</th>
                 <th className="px-6 py-4">Property Name</th>
                 <th className="px-6 py-4">Owner</th>
@@ -373,11 +373,11 @@ function OverviewPage() {
                 <th className="px-6 py-4">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-border">
               {recentProperties.map((property) => (
                 <tr
                   key={property.id}
-                  className="cursor-pointer transition-colors hover:bg-slate-50/50"
+                  className="cursor-pointer transition-colors hover:bg-muted/20"
                   onClick={() => navigate(`/admin/properties/${property.id}`)}
                 >
                   <td className="px-6 py-4">

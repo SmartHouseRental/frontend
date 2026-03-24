@@ -215,7 +215,7 @@ function AgreementsPage() {
 
       <Card className="gap-0 overflow-hidden p-0">
         <Table className="w-full min-w-full border-collapse text-left">
-          <TableHeader className="bg-muted w-full">
+          <TableHeader className="bg-muted/30 w-full">
             <TableRow>
               <TableHead className="px-6 py-4">ID</TableHead>
               <TableHead className="px-6 py-4">Property</TableHead>
@@ -234,7 +234,7 @@ function AgreementsPage() {
               return (
                 <TableRow
                   key={agreement.id}
-                  className="cursor-pointer transition-colors hover:bg-slate-50/80"
+                  className="cursor-pointer transition-colors hover:bg-muted/20"
                   onClick={() => navigate(`/admin/agreements/${agreement.id}`)}
                 >
                   <TableCell className="px-6 py-4 text-sm font-bold">#{agreement.id}</TableCell>
@@ -306,7 +306,7 @@ function AgreementsPage() {
             })}
           </TableBody>
         </Table>
-        <div className="flex items-center justify-between border-t bg-slate-50 px-6 py-4">
+        <div className="flex items-center justify-between border-t border-border bg-muted/20 px-6 py-4">
           <span className="text-muted-foreground text-xs font-medium">
             Showing 1-{agreements.length} of 1,284 agreements
           </span>

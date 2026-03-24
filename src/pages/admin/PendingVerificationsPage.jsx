@@ -152,7 +152,7 @@ function PendingVerificationsPage() {
 
             <Card className="gap-0 overflow-hidden p-0">
                 <Table className="w-full min-w-full border-collapse text-left">
-                    <TableHeader className="bg-muted w-full">
+                    <TableHeader className="bg-muted/30 w-full">
                         <TableRow>
                             <TableHead className="px-6 py-4">Owner</TableHead>
                             <TableHead className="px-6 py-4">Contact</TableHead>
@@ -166,7 +166,7 @@ function PendingVerificationsPage() {
                         {pendingOwners.map((owner) => (
                             <TableRow
                                 key={owner.id}
-                                className="cursor-pointer transition-colors hover:bg-slate-50/80"
+                                className="cursor-pointer transition-colors hover:bg-muted/20"
                                 onClick={() => navigate(`/admin/users/${owner.id}`)}
                             >
                                 <TableCell className="px-6 py-4">
@@ -192,10 +192,10 @@ function PendingVerificationsPage() {
                                 <TableCell className="px-6 py-4">
                                     <span
                                         className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${owner.daysWaiting >= 7
-                                                ? 'bg-rose-100 text-rose-700'
-                                                : owner.daysWaiting >= 3
-                                                    ? 'bg-amber-100 text-amber-700'
-                                                    : 'bg-emerald-100 text-emerald-700'
+                                            ? 'bg-rose-100 text-rose-700'
+                                            : owner.daysWaiting >= 3
+                                                ? 'bg-amber-100 text-amber-700'
+                                                : 'bg-emerald-100 text-emerald-700'
                                             }`}
                                     >
                                         {owner.daysWaiting} days
@@ -245,7 +245,7 @@ function PendingVerificationsPage() {
                         ))}
                     </TableBody>
                 </Table>
-                <div className="flex items-center justify-between border-t bg-slate-50 px-6 py-4">
+                <div className="flex items-center justify-between border-t border-border bg-muted/20 px-6 py-4">
                     <span className="text-muted-foreground text-xs font-medium">
                         Showing 1-{pendingOwners.length} of {pendingOwners.length} owners
                     </span>

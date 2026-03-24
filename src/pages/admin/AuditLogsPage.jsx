@@ -196,7 +196,7 @@ function AuditLogsPage() {
 
             <Card className="gap-0 overflow-hidden p-0">
                 <Table className="w-full min-w-full border-collapse text-left">
-                    <TableHeader className="bg-muted w-full">
+                    <TableHeader className="bg-muted/30 w-full">
                         <TableRow>
                             <TableHead className="px-6 py-4">Timestamp</TableHead>
                             <TableHead className="px-6 py-4">Admin</TableHead>
@@ -210,7 +210,7 @@ function AuditLogsPage() {
                         {auditLogs.map((log) => {
                             const IconComp = log.icon;
                             return (
-                                <TableRow key={log.id} className="transition-colors hover:bg-slate-50/80">
+                                <TableRow key={log.id} className="transition-colors hover:bg-muted/20">
                                     <TableCell className="px-6 py-4">
                                         <p className="whitespace-nowrap text-xs font-medium">{log.timestamp}</p>
                                     </TableCell>
@@ -247,7 +247,7 @@ function AuditLogsPage() {
                         })}
                     </TableBody>
                 </Table>
-                <div className="flex items-center justify-between border-t bg-slate-50 px-6 py-4">
+                <div className="flex items-center justify-between border-t border-border bg-muted/20 px-6 py-4">
                     <span className="text-muted-foreground text-xs font-medium">
                         Showing 1-{auditLogs.length} of 248 entries
                     </span>

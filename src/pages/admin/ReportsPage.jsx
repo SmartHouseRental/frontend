@@ -166,7 +166,7 @@ function ReportsPage() {
       <Card className="gap-0 overflow-visible p-0">
         <div className="overflow-x-auto overflow-y-visible">
           <Table className="w-full min-w-full border-collapse text-left">
-            <TableHeader className="bg-muted w-full">
+            <TableHeader className="bg-muted/30 w-full">
               <TableRow>
                 <TableHead className="px-6 py-4">ID</TableHead>
                 <TableHead className="px-6 py-4">Reporter</TableHead>
@@ -183,7 +183,7 @@ function ReportsPage() {
                 return (
                   <TableRow
                     key={report.id}
-                    className="cursor-pointer transition-colors hover:bg-slate-50/80"
+                    className="cursor-pointer transition-colors hover:bg-muted/20"
                     onClick={() => navigate(`/admin/reports/${report.id}`)}
                   >
                     <TableCell className="px-6 py-4 text-sm font-bold">#{report.id}</TableCell>

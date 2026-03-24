@@ -249,7 +249,7 @@ function ReviewsPage() {
             {/* Table */}
             <Card className="gap-0 overflow-hidden p-0">
                 <Table className="w-full min-w-full border-collapse text-left">
-                    <TableHeader className="bg-muted w-full">
+                    <TableHeader className="bg-muted/30 w-full">
                         <TableRow>
                             <TableHead className="px-6 py-4">Reviewer</TableHead>
                             <TableHead className="px-6 py-4">Target</TableHead>
@@ -264,7 +264,7 @@ function ReviewsPage() {
                         {reviews.map((review) => (
                             <TableRow
                                 key={review.id}
-                                className={`transition-colors hover:bg-slate-50/80 ${review.status === 'removed' ? 'opacity-50' : ''}`}
+                                className={`transition-colors hover:bg-muted/20 ${review.status === 'removed' ? 'opacity-50' : ''}`}
                             >
                                 <TableCell className="px-6 py-4">
                                     <div className="flex items-center gap-3">
