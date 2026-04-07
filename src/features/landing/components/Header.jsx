@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Home, Globe } from "lucide-react"
-import { Link } from "react-router-dom" 
+import { Link } from "react-router"
 
 export default function Header() {
   return (
@@ -17,22 +17,22 @@ export default function Header() {
         </div>
 
         <nav className="hidden md:flex items-center gap-8">
-        <Link to="/explore" className="text-sm font-semibold hover:text-primary">
-          Explore
-        </Link>
+          <Link to="/explore" className="text-sm font-semibold hover:text-primary">
+            Explore
+          </Link>
 
-        <Link to="/list" className="text-sm font-semibold hover:text-primary">
-          List Property
-        </Link>
+          <Link to="/list" className="text-sm font-semibold hover:text-primary">
+            List Property
+          </Link>
 
-        <Link to="/about" className="text-sm font-semibold hover:text-primary">
-          About
-        </Link>
+          <Link to="/about" className="text-sm font-semibold hover:text-primary">
+            About
+          </Link>
 
-        <Link to="/contact" className="text-sm font-semibold hover:text-primary">
-          Contact
-        </Link>
-</nav>
+          <Link to="/contact" className="text-sm font-semibold hover:text-primary">
+            Contact
+          </Link>
+        </nav>
 
         <div className="flex items-center gap-4">
           <Button variant="outline" className="rounded-full flex items-center gap-2">

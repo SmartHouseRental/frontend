@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import AdminLayout from './components/AdminLayout';
 import OverviewPage from './pages/admin/OverviewPage';
 import UserManagmentPage from './pages/admin/UserManagmentPage';
@@ -16,39 +16,49 @@ import OwnerDashboard from "./pages/owner/OwnerDashboard";
 
 import PropertyDetails from "./pages/PropertyDetails";
 
+// Auth Pages
+import LoginPage from './pages/auth/LoginPage';
+import SignUpPage from './pages/auth/SignUpPage';
+import OTPVerificationPage from './pages/auth/OTPVerificationPage';
+import RenterPreferencesWizard from './pages/auth/RenterPreferencesWizard';
+import WelcomePage from './pages/auth/WelcomePage';
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/*  Public rounting
-        <Route path="/login" element={<Login />} />   
-        */}
+        {/* Auth Routes */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/verify-otp" element={<OTPVerificationPage />} />
+        <Route path="/preferences" element={<RenterPreferencesWizard />} />
+        <Route path="/welcome" element={<WelcomePage />} />
         <Route
-            path="/"
-            element={
-              <MainLayout>
-                <LandingPage />
-              </MainLayout>
-            }
-          />
+          path="/"
+          element={
+            <MainLayout>
+              <LandingPage />
+            </MainLayout>
+          }
+        />
 
-          <Route
-            path="/explore"
-            element={
-              <MainLayout>
-                <ExplorePage />
-              </MainLayout>
-            }
-          />
+        <Route
+          path="/explore"
+          element={
+            <MainLayout>
+              <ExplorePage />
+            </MainLayout>
+          }
+        />
 
-          <Route
-            path="/property"
-            element={
-              <MainLayout>
-                <PropertyDetails />
-              </MainLayout>
-            }
-          />
+        <Route
+          path="/property"
+          element={
+            <MainLayout>
+              <PropertyDetails />
+            </MainLayout>
+          }
+        />
 
         {/* Owner */}
         <Route path="/owner" element={<OwnerLayout />}>
