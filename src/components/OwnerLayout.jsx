@@ -1,17 +1,21 @@
-import OwnerSidebar from "@/features/owners/components/OwnerSidebar";
-import OwnerHeader from "@/features/owners/components/OwnerHeader";
-import { Outlet } from "react-router";
+import OwnerSidebar from './OwnerSidebar';
+import OwnerHeader from './OwnerHeader';
+import VerificationBanner from './VerificationBanner';
+import { Outlet } from 'react-router';
 
-export default function OwnerLayout() {
+function OwnerLayout() {
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="bg-background font-display text-foreground flex min-h-screen">
       <OwnerSidebar />
-      <div className="flex-1 flex flex-col">
+      <main className="ml-72 flex-1">
         <OwnerHeader />
-        <main className="flex-1 p-6 bg-muted/30">
-          <Outlet />
-        </main>
-      </div>
+        <div className="px-8 pt-2">
+          <VerificationBanner verificationState="pending_documents" />
+        </div>
+        <Outlet />
+      </main>
     </div>
   );
 }
+
+export default OwnerLayout;

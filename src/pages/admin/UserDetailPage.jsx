@@ -13,13 +13,20 @@ import {
 import { Button } from '@/components/ui/button';
 import UserDetailTabs from '@/features/users/components/UserDetailTab';
 
-function USerDetailPage() {
+import { useNavigate } from 'react-router';
+
+function UserDetailPage() {
+  const navigate = useNavigate();
+
   return (
     <div className="p-8 pt-4">
       <div className="flex items-center gap-4">
-        <butto className="hover:bg-primary/10 rounded-lg p-2 transition-colors">
+        <button
+          onClick={() => navigate(-1)}
+          className="hover:bg-primary/10 rounded-lg p-2 transition-colors"
+        >
           <MoveLeft className="text-primary" />
-        </butto>
+        </button>
         <h1 className="text-primary text-xl font-bold tracking-tight">Admin Control Panel</h1>
       </div>
 
@@ -79,63 +86,12 @@ function USerDetailPage() {
           </div>
         </Card>
 
-        <div className="grid grid-cols-12 gap-8">
+        <div className="">
           <UserDetailTabs />
-
-          <aside className="col-span-12 lg:col-span-4 xl:col-span-3">
-            <div className="sticky top-28 space-y-6">
-              <div className="border-primary/10 gap-0 rounded-xl p-6">
-                <h4 className="text-primary/40 mb-4 text-xs font-bold tracking-widest uppercase">
-                  Risk Indicators
-                </h4>
-                <div className="flex items-center gap-4">
-                  <div className="bg-primary/10 h-2 flex-1 overflow-hidden rounded-full">
-                    <div className="h-full w-[15%] bg-green-500"></div>
-                  </div>
-                  <span className="text-sm font-black text-green-600">Low Risk (15%)</span>
-                </div>
-                <p className="text-primary/60 mt-3 text-xs leading-relaxed">
-                  System has flagged no suspicious login attempts or fraudulent listing activities
-                  in the last 6 months.
-                </p>
-              </div>
-              <div className="border-primary/10 gap-0 rounded-xl p-6">
-                <h4 className="text-primary/40 mb-4 flex items-center justify-between text-xs font-bold tracking-widest uppercase">
-                  Quick Admin Notes
-                  <span className="material-icons text-[14px] text-green-600">save</span>
-                </h4>
-                <textarea
-                  className="bg-primary/5 border-primary/10 text-primary focus:ring-primary focus:border-primary placeholder:text-primary/30 w-full rounded-lg border p-3 text-sm"
-                  placeholder="Add internal notes about this user..."
-                  rows="6"
-                ></textarea>
-                <p className="text-primary/40 mt-2 text-[10px] italic">
-                  Notes are only visible to administrators.
-                </p>
-              </div>
-
-              <div className="bg-accent/5 border-accent/20 group relative overflow-hidden rounded-xl border p-6 shadow-sm">
-                <div className="relative z-10">
-                  <h4 className="text-accent mb-2 text-xs font-bold tracking-widest uppercase">
-                    Direct Message
-                  </h4>
-                  <p className="text-primary/70 mb-4 text-xs leading-relaxed">
-                    Start an encrypted chat with Dawit regarding his recent listings.
-                  </p>
-                  <Button className="bg-accent w-full rounded-lg py-2 text-sm font-bold text-white transition-all hover:brightness-110">
-                    Open Chat
-                  </Button>
-                </div>
-                <span className="text-accent/10 absolute -right-4 -bottom-4 rotate-12 text-7xl transition-transform group-hover:scale-110">
-                  <ChartBar size={80} />
-                </span>
-              </div>
-            </div>
-          </aside>
         </div>
       </div>
     </div>
   );
 }
 
-export default USerDetailPage;
+export default UserDetailPage;
