@@ -35,6 +35,10 @@ import AuditLogsPage from './pages/admin/AuditLogsPage';
 import AnalyticsAdminPage from './pages/admin/AnalyticsPage';
 import SettingsPage from './pages/admin/SettingsPage';
 import ReviewsAdminPage from './pages/admin/ReviewsPage';
+import SignUpPage from './pages/auth/SignUpPage';
+import OTPVerificationPage from './pages/auth/OTPVerificationPage';
+import RenterPreferencesWizard from './pages/auth/RenterPreferencesWizard';
+import WelcomePage from './pages/auth/WelcomePage';
 
 function App() {
   return (
@@ -44,8 +48,14 @@ function App() {
           {/*  Public rounting
 
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />   
+        <Route path="/login" element={<Login />} />  
+        
         */}
+
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/verify-otp" element={<OTPVerificationPage />} />
+          <Route path="/preferences" element={<RenterPreferencesWizard />} />
+          <Route path="/welcome" element={<WelcomePage />} />
 
           {/* Admin Routing */}
           <Route path="/admin" element={<AdminLayout />}>
