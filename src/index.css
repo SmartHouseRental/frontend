@@ -195,3 +195,82 @@ body {
   background-position: 0 0, 10px 10px;
   opacity: 0.1;
 }
+
+/* ─── Heart / Favorites animations ─── */
+@keyframes heartPing {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  75% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-heart-ping {
+  animation: heartPing 0.6s cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+/* Smooth heart fill transition */
+.heart-btn svg {
+  transition: fill 0.3s ease, color 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.heart-btn:active svg {
+  transform: scale(0.85);
+}
+
+/* ─── Chat animations ─── */
+@keyframes chatMsgEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-msg-enter {
+  animation: chatMsgEnter 0.25s ease-out;
+}
+
+/* Typing indicator dots */
+@keyframes typingBounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.typing-dot {
+  animation: typingBounce 1.2s infinite ease-in-out;
+}
+
+/* Chat messages scrollbar */
+.chat-messages-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.chat-messages-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages-scroll::-webkit-scrollbar-thumb {
+  background: oklch(0.7 0.14 40 / 0.2);
+  border-radius: 10px;
+}
+
+.chat-messages-scroll::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.7 0.14 40 / 0.4);
+}

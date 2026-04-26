@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Link } from "react-router-dom" 
 
 export default function Hero() {
   return (
@@ -29,7 +30,9 @@ export default function Hero() {
               <Input placeholder="City..." />
               <Input placeholder="Price Range" />
               <Input placeholder="Bedrooms" />
-              <Button className="px-8">Search</Button>
+              <Button className="px-8" asChild>
+                <Link to="/explore">Search</Link>
+              </Button>
             </div>
           </div>
         </div>

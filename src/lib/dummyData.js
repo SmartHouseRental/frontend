@@ -1,0 +1,103 @@
+export const properties = [
+  {
+    id: "modern-villa-old-airport",
+    title: "Modern Villa, Old Airport",
+    price: "ETB 45,000 /mo",
+    beds: 4,
+    baths: 3,
+    size: "350 m²",
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCVgURC1lpKm2NhTjoN7OKXfArljV4h3wLH6LpjWuPeGCTDtBV4kJ6qriA-GgEEHF6goYhJeqb-X1HUf1VAFWd3UGza05kHoGe5oin8TRXd4XbpTFnTYCD_yhWbtJvRw3xGH18_ymJt-97r6da6q_0I4Fi7xHoi5Yj8CB4Z_W5cmZx0S9tnPh2ZcqMF6zmzAB503SOjajS9edta0m4A1QiiqKhVLEpN3y9o1OzCZILWZefKYilnrTnmZvmQmpcWFj8hUaP_rQKBv34",
+    tag: "Verified",
+    location: "Old Airport, Addis Ababa",
+    lat: 9.0021,
+    lng: 38.7214,
+  },
+  {
+    id: "spacious-bungalow-bole",
+    title: "Spacious Bungalow, Bole",
+    price: "ETB 60,000 /mo",
+    beds: 5,
+    baths: 4,
+    size: "2 Parking",
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB0EeJDohb-Y-fG5jl0JvchacLjGXSYKxJQ_Lsm74xhAr3GeVPK2Cb6MoifTfaU5VnXJhv7OwaJAvh9OW_0TDGAK6_bI0O-sU_-_ZbP75Qw2WnDclVfPrmeYlEFNvjNnqZ3z1uyXXVj486wfyCrxJNK5xzNHRUDvOoIwswYy4bjCr6wGZguGZcgARNNB8rh69u5gGzTCxau_iXfIygVW8UuF8E26CZd6QwajrWrotpwOgVe3gNXYOgB9ORMmKGsC6JlIIAyJObMu5U",
+    location: "Bole, Addis Ababa",
+    lat: 9.0054,
+    lng: 38.7842,
+  },
+  {
+    id: "garden-retreat-sarbet",
+    title: "Garden Retreat, Sarbet",
+    price: "ETB 35,000 /mo",
+    beds: 3,
+    baths: 2,
+    size: "Big Yard",
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDb6JVfIscuxpDpXY41W8u4msNauYJnhHhpGchHpF9_Znw-vuBj8leYM312fc8uhXapfNkWwQpR0A-6FT7dgffuTRaTIu-5hZKRHbSeKcU-_4nEx7VFmv-_Mxh7u0XQn4wqnRrmaZA-aCJd5ZC9alyuJcQ0_rm7Ba0f-g3Ir8Qmc9sLJIN9oHZ0tztXBZ-_nq_8sKJtxb0BPhLDqxeKAUs1PEbedCLbhvjWqFGZuIQvNxDkBmRakF1I1jE6F90GlviJJE2fHykwUnY",
+    tag: "New Listing",
+    location: "Sarbet, Addis Ababa",
+    lat: 9.0012,
+    lng: 38.7456,
+  },
+  {
+    id: "luxury-apt-kazanchis",
+    title: "Luxury Apt, Kazanchis",
+    price: "ETB 55,000 /mo",
+    beds: 3,
+    baths: 2,
+    size: "180 m²",
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCiBb1NM5847S207x5huwwcuv5kBXN_PLmy0vBJsL_6S2MX6L6qsm2c3tYAXii6b7lXV4Za110Kl4nEdSMr3YicFtJszfIMEiPdfSa32dEQidLxQwB62HsCcTREM1Ph03G5i32bq0LNEcvf1JT-027aG_i6f__iQHlipspzOd8HIWFP1c-uOx9IR8csqo4GX_P01JYtsG2q3StVskMxRtAHtSq-n1f5SdtD01_OcQcxsoRtHWZ71rzNvizcbMM0ySLjbCtJE9WbT2Y",
+    location: "Kazanchis, Addis Ababa",
+    lat: 9.0203,
+    lng: 38.7654,
+  },
+  {
+    id: "family-home-cmc",
+    title: "Family Home, CMC",
+    price: "ETB 40,000 /mo",
+    beds: 4,
+    baths: 3,
+    size: "250 m²",
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCba5ZphRpbXGDIK5FAj-MxG-cUqBFk3OfCyEKS2uZwRP0RcxNtIxH0qmyeMztLU4IVlmxmevPGSOxkz9d3d2NjqWzo7FsdyciWVAoxyA-kNK0zSIzWc5vCZBibD0NInrEE9elSVa5FSaQWwW4MqgldrAJWl28M1-cKXezHkfNW2-Jcsa9N3sk9_JrgehNLLcFGjSSe3CFvzijdFeOkzEnlEIp7lscFo0PztZXO8XONLHum0Q5PBLno2pKtFsGHx_IclSbYYpuk5TE",
+    location: "CMC, Addis Ababa",
+    lat: 9.0152,
+    lng: 38.8234,
+  }
+];
+
+export const users = [
+  {
+    id: "u1",
+    name: "Abebe Bekele",
+    role: "renter",
+    phone: "+251 911 223 344",
+    email: "abebe@example.com",
+    avatar: null,
+    joinedDate: "January 2024",
+  },
+  {
+    id: "o1",
+    name: "Dawit Gebre",
+    role: "owner",
+    phone: "+251 922 556 677",
+    email: "dawit@example.com",
+    avatar: null,
+    joinedDate: "September 2023",
+    listedProperties: ["modern-villa-old-airport", "spacious-bungalow-bole"],
+  },
+  {
+    id: "o2",
+    name: "Selamawit Tadesse",
+    role: "agent",
+    phone: "+251 933 889 900",
+    email: "selam@rentals.et",
+    avatar: null,
+    joinedDate: "November 2023",
+    listedProperties: ["garden-retreat-sarbet", "luxury-apt-kazanchis"],
+  }
+];
+
+export const reviews = [
+  { id: "r1", targetId: "u1", author: "Dawit", rating: 5, comment: "Excellent renter, very punctual with payments.", date: "2024-03-15" },
+  { id: "r2", targetId: "o1", author: "Alem", rating: 4, comment: "Great landlord, very responsive to maintenance requests.", date: "2024-02-10" },
+  { id: "r3", targetId: "o1", author: "Samuel", rating: 5, comment: "Fair pricing and beautiful properties. Highly recommended!", date: "2024-04-01" },
+  { id: "r4", targetId: "o2", author: "Hana", rating: 5, comment: "Very professional agent. Helped me find the perfect home in a week!", date: "2024-01-20" }
+];

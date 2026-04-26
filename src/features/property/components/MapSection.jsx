@@ -1,51 +1,57 @@
-import { Button } from "@/components/ui/button";
+import PropertyMap from "@/components/map/PropertyMap";
+import { MapPin, Info } from "lucide-react";
 
-const poiList = [
-  { icon: "school", label: "ICS Addis", distance: "1.2km" },
-  { icon: "local_mall", label: "Edna Mall", distance: "800m" },
-];
+export default function MapSection({ property }) {
+  if (!property) return null;
 
-export default function MapSection() {
+  const poiList = [
+    { label: "Public School", distance: "1.2km" },
+    { label: "Shopping Mall", distance: "800m" },
+    { label: "Hospital", distance: "2.5km" },
+  ];
+
   return (
     <section className="mb-12">
-      <h3 className="text-xl font-bold text-charcoal mb-4">Neighborhood</h3>
-      <p className="text-soft-brown text-sm mb-6">
-        Bole Atlas is one of Addis Ababa&apos;s most sought-after residential areas,
-        known for its safety and proximity to amenities.
-      </p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="text-2xl font-bold mb-1">Location & Neighborhood</h3>
+          <p className="text-muted-foreground text-sm flex items-center gap-1">
+            <MapPin className="w-3 h-3" />
+            {property.location}
+          </p>
+        </div>
+        
+        <div className="hidden sm:flex items-center gap-2 text-xs font-semibold bg-primary/5 text-primary px-3 py-1.5 rounded-full border border-primary/10">
+          <Info className="w-3 h-3" />
+          Verified Coordinates
+        </div>
+      </div>
 
-      <div className="h-80 rounded-2xl overflow-hidden relative border border-soft-brown/10 shadow-sm">
-        {/* Map Background */}
-        <img
-          className="w-full h-full object-cover opacity-80 grayscale-[0.3]"
-          data-alt="Styled map view of Bole neighborhood"
-          data-location="Addis Ababa, Ethiopia"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_bXjvZKiQElDksus0Yup_am4UKB-n3zO0epc5LvZaxqO_dPZi7-OMQbVcMEIrzuzJdc2_kFfAQd4_JGsbn7q00VZoE8ytal_OMOz_nH_Jl_rszR6doXXHVyBTiNtCCqYhGHTdaR4YvwKLUIAEkxXUXAzck-dlBkkSIeD3_D4D8xnxZeIvHU2PG6c724y-D12LhcCfuR4ug2mRQ4XtdYRMleRPtk-xSK0zQeAi-j4aVzV31-yUNGifUrbWAxL1yd9xsL2T6Db16W4"
-          alt="Bole neighborhood map"
+      <div className="h-96 rounded-3xl overflow-hidden relative border border-border shadow-xl ring-8 ring-muted/30">
+        <PropertyMap 
+          properties={[property]} 
+          center={[property.lat, property.lng]} 
+          zoom={15}
+          mode="detail" 
         />
 
-        {/* Center Home Marker */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="bg-primary text-white p-3 rounded-full shadow-xl ring-8 ring-primary/20">
-            <span className="material-symbols-outlined">home</span>
-          </div>
-        </div>
-
         {/* POI Overlay */}
-        <div className="absolute bottom-4 left-4 right-4 flex gap-2">
+        <div className="absolute bottom-6 left-6 right-6 flex flex-wrap gap-2 pointer-events-none z-[10]">
           {poiList.map((poi) => (
             <div
               key={poi.label}
-              className="bg-white/90 backdrop-blur p-2 rounded-lg text-[10px] font-bold shadow flex items-center gap-2"
+              className="bg-white/95 backdrop-blur-md px-4 py-2 rounded-xl text-[11px] font-bold shadow-lg flex items-center gap-2 border border-black/5 pointer-events-auto hover:bg-white transition-colors"
             >
-              <span className="material-symbols-outlined text-sm text-soft-brown">
-                {poi.icon}
-              </span>
-              {poi.label} ({poi.distance})
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              {poi.label} <span className="text-muted-foreground font-normal">({poi.distance})</span>
             </div>
           ))}
         </div>
       </div>
+      
+      <p className="mt-6 text-sm text-muted-foreground leading-relaxed italic">
+        "This neighborhood is known for its safety, quiet streets, and proximity to major international schools and shopping centers in {property.location.split(',')[0]}."
+      </p>
     </section>
   );
 }

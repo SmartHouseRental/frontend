@@ -1,17 +1,43 @@
-import { Heart, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Star } from "lucide-react";
+import HeartButton from "@/features/favorites/components/HeartButton";
 
 export function PropertyCard(props) {
+  const navigate = useNavigate();
+  // Build a property object with an id for the favorites system
+  const property = {
+    id: props.id || props.title.toLowerCase().replace(/\s+/g, "-"),
+    title: props.title,
+    location: props.location,
+    price: props.price,
+    priceUnit: "/ month",
+    beds: props.beds,
+    baths: props.baths,
+    size: props.size,
+    image: props.image,
+    rating: props.rating,
+    status: props.status,
+    badge: props.badge,
+  };
+
   return (
-    <div className="group rounded-xl overflow-hidden border shadow-sm hover:shadow-lg transition">
+    <div 
+      className="group rounded-xl overflow-hidden border shadow-sm hover:shadow-lg transition cursor-pointer"
+      onClick={() => navigate(`/property/${property.id}`)}
+    >
       <div className="relative h-64">
         {props.badge && (
           <span className="absolute top-4 left-4 bg-white/90 text-primary text-xs px-3 py-1 rounded-full">
             {props.badge}
           </span>
         )}
-        <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-          <Heart className="text-white group-hover:text-red-500" />
-        </button>
+
+        {/* Favorites heart button */}
+        <HeartButton
+          property={property}
+          className="absolute top-4 right-4 z-10"
+        />
+
         <img
           src={props.image}
           alt={props.title}

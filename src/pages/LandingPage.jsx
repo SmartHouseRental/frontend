@@ -14,7 +14,7 @@ export default function LandingPage() {
       <HowItWorks />
       <Benefits />
       <MapSection />
-      <Footer />
+      {/* <Footer /> */}
     </div>
   )
 }
