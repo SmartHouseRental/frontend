@@ -58,39 +58,49 @@
   --popover-foreground: oklch(0.2 0.02 260);
 
   /* Primary – Soft Brown (main buttons, nav) */
-  --primary: oklch(0.62 0.11 55); /* #A47551 */
-  --primary-foreground: oklch(0.98 0.015 70); /* light warm beige for contrast */
+  --primary: oklch(0.62 0.11 55);
+  /* #A47551 */
+  --primary-foreground: oklch(0.98 0.015 70);
+  /* light warm beige for contrast */
 
   /* Secondary / Muted surfaces */
-  --secondary: oklch(0.88 0.03 60); /* softer warm gray-brown */
+  --secondary: oklch(0.88 0.03 60);
+  /* softer warm gray-brown */
   --secondary-foreground: oklch(0.62 0.11 55);
 
   --muted: oklch(96.8% 0.007 247.896);
   --muted-foreground: oklch(0.5 0.04 60);
 
   /* Accent – Terracotta/Clay (highlights, links, icons) */
-  --accent: oklch(0.7 0.14 40); /* #D97745 */
+  --accent: oklch(0.7 0.14 40);
+  /* #D97745 */
   --accent-foreground: oklch(0.98 0.015 70);
 
   /* Destructive – Keep warm red-brown for warnings/errors */
-  --destructive: oklch(0.6 0.18 25); /* adjusted warm red-brown */
+  --destructive: oklch(0.6 0.18 25);
+  /* adjusted warm red-brown */
 
   /* Borders & inputs */
   --border: oklch(0.9 0.025 65);
   --input: oklch(0.9 0.025 65);
-  --ring: oklch(0.7 0.14 40); /* accent ring */
+  --ring: oklch(0.7 0.14 40);
+  /* accent ring */
 
   /* Charts – Earthy palette variations */
-  --chart-1: oklch(0.62 0.11 55); /* primary brown */
-  --chart-2: oklch(0.7 0.14 40); /* terracotta accent */
+  --chart-1: oklch(0.62 0.11 55);
+  /* primary brown */
+  --chart-2: oklch(0.7 0.14 40);
+  /* terracotta accent */
   --chart-3: oklch(0.55 0.09 50);
   --chart-4: oklch(0.78 0.08 75);
   --chart-5: oklch(0.65 0.12 45);
 
   /* Sidebar – Warm earthy sidebar */
-  --sidebar: oklch(100% 0.00011 271.152); /* soft brown */
+  --sidebar: oklch(100% 0.00011 271.152);
+  /* soft brown */
   --sidebar-foreground: oklch(0.98 0.015 70);
-  --sidebar-primary: oklch(0.7 0.14 40); /* terracotta */
+  --sidebar-primary: oklch(0.7 0.14 40);
+  /* terracotta */
   --sidebar-primary-foreground: oklch(0.98 0.015 70);
   --sidebar-accent: oklch(0.88 0.03 60);
   --sidebar-accent-foreground: oklch(0.2 0.02 260);
@@ -99,8 +109,10 @@
 }
 
 .dark {
-  --background: oklch(0.28 0.04 60); /* deep warm brown-gray */
-  --foreground: oklch(0.94 0.02 65); /* light warm beige text */
+  --background: oklch(0.28 0.04 60);
+  /* deep warm brown-gray */
+  --foreground: oklch(0.94 0.02 65);
+  /* light warm beige text */
 
   --card: oklch(0.32 0.05 58);
   --card-foreground: oklch(0.94 0.02 65);
@@ -109,7 +121,8 @@
   --popover-foreground: oklch(0.94 0.02 65);
 
   /* Primary – Terracotta becomes more prominent in dark mode */
-  --primary: oklch(0.7 0.14 40); /* #D97745 */
+  --primary: oklch(0.7 0.14 40);
+  /* #D97745 */
   --primary-foreground: oklch(0.28 0.04 60);
 
   /* Secondary / Muted */
@@ -153,6 +166,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -162,15 +176,18 @@
   from {
     left: 120%;
   }
+
   to {
     left: 0%;
   }
 }
+
 @keyframes slideInFromLeft {
   from {
     left: -120%;
     opacity: 0;
   }
+
   to {
     left: 0%;
     opacity: 100%;
@@ -180,6 +197,7 @@
 .slide-in-from-right {
   animation: slideInFromRight 0.5s ease-out forwards;
 }
+
 .slide-in-from-left {
   animation: slideInFromLeft 0.5s ease-out forwards;
 }

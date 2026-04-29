@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button"
-import { Home, Globe, Heart, MessageCircle, User, LogOut, ChevronDown } from "lucide-react"
-import { Link } from "react-router-dom" 
-import { useFavorites } from "@/features/favorites/FavoritesContext"
-import { useChat } from "@/features/chat/ChatContext"
-import { useAuth } from "@/features/users/AuthContext"
+import { Button } from '@/components/ui/button';
+import { Home, Globe, Heart, MessageCircle, User, LogOut, ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useFavorites } from '@/features/favorites/FavoritesContext';
+import { useChat } from '@/features/chat/ChatContext';
+import { useAuth } from '@/features/users/AuthContext';
 
 export default function Header() {
   const { favorites, hasNewFavorites } = useFavorites();
@@ -11,51 +11,64 @@ export default function Header() {
   const { isAuthenticated, user, logout, openLoginModal } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b px-6 lg:px-20 py-4 shadow-sm">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-
-        <Link to="/" className="flex items-center gap-2 group transition-all">
-          <div className="size-10 bg-primary rounded-lg flex items-center justify-center text-primary-foreground group-hover:rotate-6 transition-transform">
+    <header className="bg-background/80 sticky top-0 z-50 w-full border-b px-6 py-4 shadow-sm backdrop-blur-md lg:px-20">
+      <div className="mx-auto flex max-w-7xl items-center justify-between">
+        <Link to="/" className="group flex items-center gap-2 transition-all">
+          <div className="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-lg transition-transform group-hover:rotate-6">
             <Home className="h-5 w-5" />
           </div>
-          <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <h1 className="from-primary to-primary/70 bg-gradient-to-r bg-clip-text text-2xl font-extrabold tracking-tight text-transparent">
             Bet-Connect
           </h1>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
-          <Link to="/" className="text-sm font-semibold hover:text-primary transition-colors">
+        <nav className="hidden items-center gap-8 md:flex">
+          <Link to="/" className="hover:text-primary text-sm font-semibold transition-colors">
             Home
           </Link>
-          <Link to="/explore" className="text-sm font-semibold hover:text-primary transition-colors">
+          <Link
+            to="/explore"
+            className="hover:text-primary text-sm font-semibold transition-colors"
+          >
             Explore
           </Link>
-          
-          <Link to="/about" className="text-sm font-semibold hover:text-primary transition-colors">
+
+          <Link to="/about" className="hover:text-primary text-sm font-semibold transition-colors">
             About
           </Link>
 
-          <Link to="/contact" className="text-sm font-semibold hover:text-primary transition-colors">
+          <Link
+            to="/contact"
+            className="hover:text-primary text-sm font-semibold transition-colors"
+          >
             Contact
           </Link>
 
           {isAuthenticated && (
             <>
-              <Link to="/saved" className="relative text-sm font-semibold hover:text-[#D97745] flex items-center gap-1.5 transition-colors">
-                <Heart className={`h-4 w-4 ${favorites.length > 0 ? "fill-[#D97745] text-[#D97745]" : ""}`} />
+              <Link
+                to="/saved"
+                className="relative flex items-center gap-1.5 text-sm font-semibold transition-colors hover:text-[#D97745]"
+              >
+                <Heart
+                  className={`h-4 w-4 ${favorites.length > 0 ? 'fill-[#D97745] text-[#D97745]' : ''}`}
+                />
                 Saved
                 {hasNewFavorites && (
-                  <span className="absolute -top-2 -right-4 min-w-[18px] h-[18px] bg-[#D97745] text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 shadow-sm animate-pulse">
+                  <span className="absolute -top-2 -right-4 flex h-[18px] min-w-[18px] animate-pulse items-center justify-center rounded-full bg-[#D97745] px-1 text-[10px] font-bold text-white shadow-sm">
                     {favorites.length}
                   </span>
                 )}
               </Link>
 
-              <Link to="/chat" className="relative text-sm font-semibold hover:text-primary flex items-center gap-1.5 transition-colors">
+              <Link
+                to="/chat"
+                className="hover:text-primary relative flex items-center gap-1.5 text-sm font-semibold transition-colors"
+              >
                 <MessageCircle className="h-4 w-4" />
                 Messages
                 {unreadCount > 0 && (
-                  <span className="absolute -top-2 -right-4 min-w-[18px] h-[18px] bg-[#D97745] text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 shadow-sm">
+                  <span className="absolute -top-2 -right-4 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#D97745] px-1 text-[10px] font-bold text-white shadow-sm">
                     {unreadCount}
                   </span>
                 )}
@@ -65,34 +78,47 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" className="rounded-full hidden lg:flex items-center gap-2 text-muted-foreground hover:text-primary">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-primary hidden items-center gap-2 rounded-full lg:flex"
+          >
             <Globe className="h-4 w-4" />
             EN / አማ
           </Button>
 
           {isAuthenticated ? (
-            <div className="flex items-center gap-3 pl-4 border-l border-border">
-              <div className="flex flex-col items-end hidden lg:flex">
-                <span className="text-sm font-bold leading-none">{user.name}</span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-widest leading-none mt-1">{user.role}</span>
+            <div className="border-border flex items-center gap-3 border-l pl-4">
+              <div className="flex hidden flex-col items-end lg:flex">
+                <span className="text-sm leading-none font-bold">{user.name}</span>
+                <span className="text-muted-foreground mt-1 text-[10px] leading-none tracking-widest uppercase">
+                  {user.role}
+                </span>
               </div>
-              <div className="relative group">
-                <Button variant="outline" size="icon" className="rounded-full border-primary/20 hover:border-primary transition-colors">
+              <div className="group relative">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="border-primary/20 hover:border-primary rounded-full transition-colors"
+                >
                   <User className="h-4 w-4" />
                 </Button>
-                
+
                 {/* Simple dropdown simulation */}
-                <div className="absolute right-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  <div className="bg-card border border-border rounded-xl shadow-xl p-2 min-w-[160px]">
-                    <Link to="/profile" className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-muted transition-colors">
-                      <User className="w-4 h-4" />
+                <div className="invisible absolute top-full right-0 pt-2 opacity-0 transition-all group-hover:visible group-hover:opacity-100">
+                  <div className="bg-card border-border min-w-[160px] rounded-xl border p-2 shadow-xl">
+                    <Link
+                      to="/profile"
+                      className="hover:bg-muted flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors"
+                    >
+                      <User className="h-4 w-4" />
                       View Profile
                     </Link>
-                    <button 
+                    <button
                       onClick={logout}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
+                      className="text-destructive hover:bg-destructive/10 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors"
                     >
-                      <LogOut className="w-4 h-4" />
+                      <LogOut className="h-4 w-4" />
                       Logout
                     </button>
                   </div>
@@ -100,16 +126,15 @@ export default function Header() {
               </div>
             </div>
           ) : (
-            <Button 
+            <Button
               onClick={openLoginModal}
-              className="rounded-full px-6 font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-transform"
+              className="shadow-primary/20 rounded-full px-6 font-bold shadow-lg transition-transform hover:scale-105"
             >
               Login
             </Button>
           )}
         </div>
-
       </div>
     </header>
-  )
-}
+  );
+}

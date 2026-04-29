@@ -1,28 +1,33 @@
-import { Users } from 'lucide-react';
-import { Handshake } from 'lucide-react';
-import { LogOut } from 'lucide-react';
-import { TriangleAlert } from 'lucide-react';
-import { Settings } from 'lucide-react';
-import { ShieldUser } from 'lucide-react';
-import { TableProperties } from 'lucide-react';
-import { LayoutDashboard } from 'lucide-react';
-import { Building2 } from 'lucide-react';
+import {
+  Users,
+  Handshake,
+  LogOut,
+  TriangleAlert,
+  Settings,
+  TableProperties,
+  LayoutDashboard,
+  Building2,
+  ClipboardCheck,
+  Bell,
+  ScrollText,
+  BarChart3,
+  Star,
+} from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router';
 
 function AdminSidebar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Add your logout logic here (clear tokens, auth state, etc.)
     navigate('/login');
   };
 
-  const navItems = [
+  const mainNavItems = [
     {
       to: 'overview',
       label: 'Dashboard',
       Icon: LayoutDashboard,
-      end: true, // Only active on exact index route
+      end: true,
     },
     {
       to: 'users',
@@ -45,11 +50,33 @@ function AdminSidebar() {
       Icon: TriangleAlert,
     },
     {
-      to: 'admins',
-      label: 'Admins',
-      Icon: ShieldUser,
+      to: 'reviews',
+      label: 'Reviews',
+      Icon: Star,
     },
+  ];
 
+  const adminNavItems = [
+    {
+      to: 'pending-verifications',
+      label: 'Pending Verifications',
+      Icon: ClipboardCheck,
+    },
+    {
+      to: 'notifications',
+      label: 'Notifications',
+      Icon: Bell,
+    },
+    {
+      to: 'analytics',
+      label: 'Analytics',
+      Icon: BarChart3,
+    },
+    {
+      to: 'audit-logs',
+      label: 'Audit Logs',
+      Icon: ScrollText,
+    },
     {
       to: 'settings',
       label: 'Settings',
@@ -58,10 +85,9 @@ function AdminSidebar() {
   ];
 
   const getNavLinkClass = ({ isActive }) =>
-    `flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors ${
-      isActive
-        ? 'bg-sidebar-primary/15  text-sidebar-primary border-r-sidebar-primary border-r-4'
-        : ' hover:bg-sidebar-primary/10 hover:text-sidebar-primary'
+    `flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors ${isActive
+      ? 'bg-sidebar-primary/15  text-sidebar-primary border-r-sidebar-primary border-r-4'
+      : ' hover:bg-sidebar-primary/10 hover:text-sidebar-primary'
     }`;
 
   return (
@@ -71,16 +97,31 @@ function AdminSidebar() {
           <Building2 size={24} />
         </div>
         <div>
-          <h1 className="text-2xl leading-tight font-extrabold">Bet Connect</h1>
+          <h1 className="text-2xl leading-tight font-extrabold">Smart House</h1>
           <p className="text-sidebar-primary text-[10px] tracking-widest uppercase">
             Admin Control
           </p>
         </div>
       </div>
 
-      <nav className="flex-1 space-y-1 px-4 py-4">
-        {navItems.map(({ to, label, Icon, end }) => (
+      <nav className="scrollbar-thin flex-1 space-y-1 overflow-y-auto px-4 py-4">
+        <p className="text-muted-foreground mb-2 px-3 text-[10px] font-bold tracking-widest uppercase">
+          Main
+        </p>
+        {mainNavItems.map(({ to, label, Icon, end }) => (
           <NavLink key={to} to={to} end={end} className={getNavLinkClass}>
+            <Icon size={20} />
+            <span>{label}</span>
+          </NavLink>
+        ))}
+
+        <div className="my-4 border-t border-white/10" />
+
+        <p className="text-muted-foreground mb-2 px-3 text-[10px] font-bold tracking-widest uppercase">
+          Admin
+        </p>
+        {adminNavItems.map(({ to, label, Icon }) => (
+          <NavLink key={to} to={to} className={getNavLinkClass}>
             <Icon size={20} />
             <span>{label}</span>
           </NavLink>
