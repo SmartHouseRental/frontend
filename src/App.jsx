@@ -39,6 +39,16 @@ import SignUpPage from './pages/auth/SignUpPage';
 import OTPVerificationPage from './pages/auth/OTPVerificationPage';
 import RenterPreferencesWizard from './pages/auth/RenterPreferencesWizard';
 import WelcomePage from './pages/auth/WelcomePage';
+import MainLayout from './components/MainLayout';
+import ProtectedRoute from './features/users/components/ProtectedRoute';
+import SavedPropertiesPage from './pages/SavedPropertiesPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import RenterChatPage from './pages/RenterChatPage';
+import PropertyDetails from './pages/PropertyDetails';
+import EditProfilePage from './pages/EditProfilePage';
+import LandingPage from './pages/LandingPage';
+import ExplorePage from './pages/ExplorePage';
 
 function App() {
   return (
@@ -56,6 +66,107 @@ function App() {
           <Route path="/verify-otp" element={<OTPVerificationPage />} />
           <Route path="/preferences" element={<RenterPreferencesWizard />} />
           <Route path="/welcome" element={<WelcomePage />} />
+
+          <Route
+            path="/"
+            element={
+              <MainLayout>
+                <LandingPage />
+              </MainLayout>
+            }
+          />
+
+          <Route
+            path="/explore"
+            element={
+              <MainLayout>
+                <ExplorePage />
+              </MainLayout>
+            }
+          />
+
+          <Route
+            path="/saved"
+            element={
+              <MainLayout>
+                <SavedPropertiesPage />
+                <ProtectedRoute></ProtectedRoute>
+              </MainLayout>
+            }
+          />
+
+          <Route
+            path="/about"
+            element={
+              <MainLayout>
+                <AboutPage />
+              </MainLayout>
+            }
+          />
+
+          <Route
+            path="/contact"
+            element={
+              <MainLayout>
+                <ContactPage />
+              </MainLayout>
+            }
+          />
+
+          <Route
+            path="/chat"
+            element={
+              <MainLayout>
+                <RenterChatPage />
+                <ProtectedRoute></ProtectedRoute>
+              </MainLayout>
+            }
+          />
+
+          <Route
+            path="/property/:id"
+            element={
+              <MainLayout>
+                <PropertyDetails />
+              </MainLayout>
+            }
+          />
+
+          <Route
+            path="/verify"
+            element={
+              <MainLayout>
+                <ProtectedRoute>{/* <VerificationPage /> */}</ProtectedRoute>
+              </MainLayout>
+            }
+          />
+
+          <Route
+            path="/profile/edit"
+            element={
+              <MainLayout>
+                <ProtectedRoute>
+                  <EditProfilePage />
+                </ProtectedRoute>
+              </MainLayout>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <MainLayout>
+                <ProfilePage />
+              </MainLayout>
+            }
+          />
+          <Route
+            path="/profile/:id"
+            element={
+              <MainLayout>
+                <ProfilePage />
+              </MainLayout>
+            }
+          />
 
           {/* Admin Routing */}
           <Route path="/admin" element={<AdminLayout />}>
