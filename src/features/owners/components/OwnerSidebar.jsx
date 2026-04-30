@@ -1,17 +1,17 @@
-import { Home, LayoutDashboard, Calendar, MessageSquare, DollarSign } from "lucide-react";
-import { NavLink } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Home, LayoutDashboard, Calendar, MessageSquare, DollarSign } from 'lucide-react';
+import { NavLink } from 'react-router';
+import { Button } from '@/components/ui/button';
 
 export default function OwnerSidebar() {
   const linkClass =
-    "flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-sidebar-accent";
+    'flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-sidebar-accent';
 
   return (
-    <aside className="w-64 bg-sidebar border-r border-sidebar-border p-5 flex flex-col justify-between">
+    <aside className="bg-sidebar border-sidebar-border flex w-64 flex-col justify-between border-r p-5">
       <div>
-        <div className="flex items-center gap-2 mb-8">
+        <div className="mb-8 flex items-center gap-2">
           <Home className="text-primary" />
-          <span className="font-semibold text-lg">HabeshaHome</span>
+          <span className="text-lg font-semibold">HabeshaHome</span>
         </div>
 
         <nav className="space-y-2">
@@ -37,9 +37,7 @@ export default function OwnerSidebar() {
         </nav>
       </div>
 
-      <Button className="w-full bg-primary text-primary-foreground">
-        + Add New Listing
-      </Button>
+      <Button className="bg-primary text-primary-foreground w-full">+ Add New Listing</Button>
     </aside>
   );
 }

@@ -1,17 +1,18 @@
-import Header from "@/features/landing/components/Header";
-import Footer from "@/features/landing/components/Footer";
-import { useLocation } from "react-router-dom";
+import Header from '@/features/landing/components/Header';
+import Footer from '@/features/landing/components/Footer';
+import { useLocation } from 'react-router';
 
 export default function MainLayout({ children }) {
   const location = useLocation();
-  const isChat = location.pathname === "/chat";
+  const isChat = location.pathname === '/chat';
 
   return (
-    <div className={`min-h-screen flex flex-col ${isChat ? "h-screen overflow-hidden" : ""}`}>
+    <div className={`flex min-h-screen flex-col ${isChat ? 'h-screen overflow-hidden' : ''}`}>
       <Header />
-      <main className={`flex-1 ${isChat ? "h-[calc(100vh-73px)] overflow-hidden" : ""}`}>{children}</main>
+      <main className={`flex-1 ${isChat ? 'h-[calc(100vh-73px)] overflow-hidden' : ''}`}>
+        {children}
+      </main>
       {!isChat && <Footer />}
     </div>
-    
   );
 }

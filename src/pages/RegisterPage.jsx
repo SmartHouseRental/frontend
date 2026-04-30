@@ -1,19 +1,18 @@
-import { useState } from "react";
-import { useAuth } from "@/features/users/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useAuth } from '@/features/users/AuthContext';
+import { useNavigate } from 'react-router';
 
 export default function RegisterPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [role, setRole] = useState("seeker");
+  const [role, setRole] = useState('seeker');
   const [showPassword, setShowPassword] = useState(false);
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
 
   return (
-    <main className="flex flex-col lg:flex-row min-h-screen w-full">
-      
+    <main className="flex min-h-screen w-full flex-col lg:flex-row">
       {/* LEFT SIDE (Hero) */}
-      <div className="relative hidden lg:flex lg:w-1/2 bg-primary overflow-hidden">
+      <div className="bg-primary relative hidden overflow-hidden lg:flex lg:w-1/2">
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
           style={{
@@ -23,18 +22,14 @@ export default function RegisterPage() {
         />
         <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" />
 
-        <div className="relative z-10 flex flex-col justify-between p-16 text-white w-full">
+        <div className="relative z-10 flex w-full flex-col justify-between p-16 text-white">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-4xl">
-              home_pin
-            </span>
+            <span className="material-symbols-outlined text-4xl">home_pin</span>
             <span className="text-2xl font-bold">Join the Family</span>
           </div>
 
           <div className="max-w-md">
-            <h1 className="text-5xl font-black leading-tight mb-6">
-              Find your forever home
-            </h1>
+            <h1 className="mb-6 text-5xl leading-tight font-black">Find your forever home</h1>
             <p className="text-lg opacity-90">
               Experience a long-stay rental that feels like home in Ethiopia.
             </p>
@@ -42,16 +37,12 @@ export default function RegisterPage() {
 
           <div className="flex items-center gap-4 text-sm opacity-80">
             <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-lg">
-                verified_user
-              </span>
+              <span className="material-symbols-outlined text-lg">verified_user</span>
               Verified Listings
             </span>
-            <span className="w-1 h-1 bg-white rounded-full"></span>
+            <span className="h-1 w-1 rounded-full bg-white"></span>
             <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-lg">
-                favorite
-              </span>
+              <span className="material-symbols-outlined text-lg">favorite</span>
               Family Focused
             </span>
           </div>
@@ -59,21 +50,18 @@ export default function RegisterPage() {
       </div>
 
       {/* RIGHT SIDE */}
-      <div className="flex-1 flex flex-col bg-background p-6 lg:p-12 overflow-y-auto">
-        
+      <div className="bg-background flex flex-1 flex-col overflow-y-auto p-6 lg:p-12">
         {/* Header */}
-        <div className="flex justify-end items-center mb-12">
+        <div className="mb-12 flex items-center justify-end">
           <div className="flex items-center gap-6">
-            <button className="text-muted-foreground text-sm flex items-center gap-1 hover:text-primary">
-              <span className="material-symbols-outlined text-base">
-                language
-              </span>
+            <button className="text-muted-foreground hover:text-primary flex items-center gap-1 text-sm">
+              <span className="material-symbols-outlined text-base">language</span>
               አማርኛ / English
             </button>
 
-            <button 
-              className="bg-card border border-border px-4 py-2 rounded-lg text-sm font-bold hover:bg-muted transition-all"
-              onClick={() => navigate("/login")}
+            <button
+              className="bg-card border-border hover:bg-muted rounded-lg border px-4 py-2 text-sm font-bold transition-all"
+              onClick={() => navigate('/login')}
             >
               Log in
             </button>
@@ -81,56 +69,51 @@ export default function RegisterPage() {
         </div>
 
         {/* FORM */}
-        <div className="max-w-xl mx-auto w-full">
+        <div className="mx-auto w-full max-w-xl">
           <div className="mb-10">
-            <h2 className="text-3xl font-bold mb-2">
-              Create your account
-            </h2>
+            <h2 className="mb-2 text-3xl font-bold">Create your account</h2>
             <p className="text-muted-foreground">
               Join thousands of families finding their place in Ethiopia.
             </p>
           </div>
 
           <form className="space-y-8">
-
             {/* ROLE */}
             <div className="space-y-4">
-              <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+              <label className="text-muted-foreground text-sm font-bold tracking-wider uppercase">
                 I am joining as...
               </label>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {[
                   {
-                    key: "seeker",
-                    title: "Home Seeker",
-                    desc: "Looking for a long-term stay",
-                    icon: "house_with_shield",
+                    key: 'seeker',
+                    title: 'Home Seeker',
+                    desc: 'Looking for a long-term stay',
+                    icon: 'house_with_shield',
                   },
                   {
-                    key: "owner",
-                    title: "Owner / Agent",
-                    desc: "Listing a property",
-                    icon: "handshake",
+                    key: 'owner',
+                    title: 'Owner / Agent',
+                    desc: 'Listing a property',
+                    icon: 'handshake',
                   },
                 ].map((item) => (
                   <button
                     key={item.key}
                     type="button"
                     onClick={() => setRole(item.key)}
-                    className={`p-6 rounded-xl border-2 text-left transition-all ${
+                    className={`rounded-xl border-2 p-6 text-left transition-all ${
                       role === item.key
-                        ? "border-primary ring-4 ring-primary/10 bg-card"
-                        : "border-border bg-card hover:border-primary/30"
+                        ? 'border-primary ring-primary/10 bg-card ring-4'
+                        : 'border-border bg-card hover:border-primary/30'
                     }`}
                   >
-                    <span className="material-symbols-outlined text-primary text-3xl mb-3 block">
+                    <span className="material-symbols-outlined text-primary mb-3 block text-3xl">
                       {item.icon}
                     </span>
-                    <h3 className="font-bold text-lg">{item.title}</h3>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {item.desc}
-                    </p>
+                    <h3 className="text-lg font-bold">{item.title}</h3>
+                    <p className="text-muted-foreground mt-1 text-xs">{item.desc}</p>
                   </button>
                 ))}
               </div>
@@ -138,14 +121,11 @@ export default function RegisterPage() {
 
             {/* INPUTS */}
             <div className="space-y-6">
-              
               {/* Name */}
               <div>
-                <label className="text-sm font-semibold ml-1">
-                  Full Name
-                </label>
+                <label className="ml-1 text-sm font-semibold">Full Name</label>
                 <div className="relative mt-1">
-                  <span className="material-symbols-outlined absolute left-4 top-3 text-muted-foreground">
+                  <span className="material-symbols-outlined text-muted-foreground absolute top-3 left-4">
                     person
                   </span>
                   <input
@@ -153,41 +133,37 @@ export default function RegisterPage() {
                     placeholder="Abebe Bikila"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 rounded-lg border border-input bg-card focus:ring-2 focus:ring-primary"
+                    className="border-input bg-card focus:ring-primary w-full rounded-lg border py-3 pr-4 pl-12 focus:ring-2"
                   />
                 </div>
               </div>
 
               {/* Phone + Email */}
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <label className="text-sm font-semibold ml-1">
-                    Phone Number
-                  </label>
+                  <label className="ml-1 text-sm font-semibold">Phone Number</label>
                   <div className="relative mt-1">
-                    <span className="absolute left-4 top-3 text-sm font-bold text-muted-foreground">
+                    <span className="text-muted-foreground absolute top-3 left-4 text-sm font-bold">
                       +251
                     </span>
                     <input
                       type="tel"
                       placeholder="911 234 567"
-                      className="w-full pl-16 pr-4 py-3 rounded-lg border border-input bg-card focus:ring-2 focus:ring-primary"
+                      className="border-input bg-card focus:ring-primary w-full rounded-lg border py-3 pr-4 pl-16 focus:ring-2"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold ml-1">
-                    Email
-                  </label>
+                  <label className="ml-1 text-sm font-semibold">Email</label>
                   <div className="relative mt-1">
-                    <span className="material-symbols-outlined absolute left-4 top-3 text-muted-foreground">
+                    <span className="material-symbols-outlined text-muted-foreground absolute top-3 left-4">
                       mail
                     </span>
                     <input
                       type="email"
                       placeholder="abebe@example.com"
-                      className="w-full pl-12 pr-4 py-3 rounded-lg border border-input bg-card focus:ring-2 focus:ring-primary"
+                      className="border-input bg-card focus:ring-primary w-full rounded-lg border py-3 pr-4 pl-12 focus:ring-2"
                     />
                   </div>
                 </div>
@@ -195,48 +171,42 @@ export default function RegisterPage() {
 
               {/* Password */}
               <div>
-                <label className="text-sm font-semibold ml-1">
-                  Create Password
-                </label>
+                <label className="ml-1 text-sm font-semibold">Create Password</label>
 
                 <div className="relative mt-1">
-                  <span className="material-symbols-outlined absolute left-4 top-3 text-muted-foreground">
+                  <span className="material-symbols-outlined text-muted-foreground absolute top-3 left-4">
                     lock
                   </span>
 
                   <input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
-                    className="w-full pl-12 pr-12 py-3 rounded-lg border border-input bg-card focus:ring-2 focus:ring-primary"
+                    className="border-input bg-card focus:ring-primary w-full rounded-lg border py-3 pr-12 pl-12 focus:ring-2"
                   />
 
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-3 text-muted-foreground hover:text-primary"
+                    className="text-muted-foreground hover:text-primary absolute top-3 right-4"
                   >
                     <span className="material-symbols-outlined">
-                      {showPassword ? "visibility_off" : "visibility"}
+                      {showPassword ? 'visibility_off' : 'visibility'}
                     </span>
                   </button>
                 </div>
 
-                <p className="text-[10px] text-muted-foreground mt-1">
+                <p className="text-muted-foreground mt-1 text-[10px]">
                   Must be at least 8 characters with one special character.
                 </p>
               </div>
             </div>
 
             {/* INFO BOX */}
-            <div className="flex items-start gap-3 p-4 bg-primary/5 rounded-lg border border-primary/10">
-              <span className="material-symbols-outlined text-primary">
-                verified
-              </span>
+            <div className="bg-primary/5 border-primary/10 flex items-start gap-3 rounded-lg border p-4">
+              <span className="material-symbols-outlined text-primary">verified</span>
               <div>
-                <p className="text-sm font-bold text-primary">
-                  Secure & Verified Profiles
-                </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-primary text-sm font-bold">Secure & Verified Profiles</p>
+                <p className="text-muted-foreground text-xs">
                   Every profile is manually reviewed to ensure a safe environment.
                 </p>
               </div>
@@ -244,32 +214,33 @@ export default function RegisterPage() {
 
             {/* CTA */}
             <div>
-              <button 
+              <button
                 type="button"
                 onClick={() => {
-                  login({ id: "1", name: name || "New User", email: "user@example.com", role: role });
-                  navigate("/");
+                  login({
+                    id: '1',
+                    name: name || 'New User',
+                    email: 'user@example.com',
+                    role: role,
+                  });
+                  navigate('/');
                 }}
-                className="w-full bg-primary text-primary-foreground font-bold py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                className="bg-primary text-primary-foreground flex w-full items-center justify-center gap-2 rounded-xl py-4 font-bold shadow-lg transition-all active:scale-[0.98]"
               >
                 Join the Community
-                <span className="material-symbols-outlined">
-                  arrow_forward
-                </span>
+                <span className="material-symbols-outlined">arrow_forward</span>
               </button>
 
-              <p className="text-center text-xs text-muted-foreground mt-6">
+              <p className="text-muted-foreground mt-6 text-center text-xs">
                 By joining, you agree to our Terms and Privacy Policy.
               </p>
             </div>
           </form>
 
           {/* FOOTER */}
-          <div className="mt-12 pt-8 border-t border-border text-center">
-            <p className="text-muted-foreground">
-              Already a member?
-            </p>
-            <button className="text-primary font-bold hover:underline mt-1">
+          <div className="border-border mt-12 border-t pt-8 text-center">
+            <p className="text-muted-foreground">Already a member?</p>
+            <button className="text-primary mt-1 font-bold hover:underline">
               Log in to your account
             </button>
           </div>

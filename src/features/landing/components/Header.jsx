@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Home, Globe, Heart, MessageCircle, User, LogOut, ChevronDown } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { useFavorites } from '@/features/favorites/FavoritesContext';
 import { useChat } from '@/features/chat/ChatContext';
 import { useAuth } from '@/features/users/AuthContext';
