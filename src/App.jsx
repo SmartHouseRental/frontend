@@ -40,7 +40,6 @@ import OTPVerificationPage from './pages/auth/OTPVerificationPage';
 import RenterPreferencesWizard from './pages/auth/RenterPreferencesWizard';
 import WelcomePage from './pages/auth/WelcomePage';
 import MainLayout from './components/MainLayout';
-import ProtectedRoute from './features/users/components/ProtectedRoute';
 import SavedPropertiesPage from './pages/SavedPropertiesPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
@@ -49,6 +48,7 @@ import PropertyDetails from './pages/PropertyDetails';
 import EditProfilePage from './pages/EditProfilePage';
 import LandingPage from './pages/LandingPage';
 import ExplorePage from './pages/ExplorePage';
+import LoginPage from './pages/auth/LoginPage';
 
 function App() {
   return (
@@ -63,6 +63,7 @@ function App() {
         */}
 
           <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/verify-otp" element={<OTPVerificationPage />} />
           <Route path="/preferences" element={<RenterPreferencesWizard />} />
           <Route path="/welcome" element={<WelcomePage />} />
@@ -90,7 +91,6 @@ function App() {
             element={
               <MainLayout>
                 <SavedPropertiesPage />
-                <ProtectedRoute></ProtectedRoute>
               </MainLayout>
             }
           />
@@ -118,7 +118,6 @@ function App() {
             element={
               <MainLayout>
                 <RenterChatPage />
-                <ProtectedRoute></ProtectedRoute>
               </MainLayout>
             }
           />
@@ -132,22 +131,13 @@ function App() {
             }
           />
 
-          <Route
-            path="/verify"
-            element={
-              <MainLayout>
-                <ProtectedRoute>{/* <VerificationPage /> */}</ProtectedRoute>
-              </MainLayout>
-            }
-          />
+          <Route path="/verify" element={<MainLayout></MainLayout>} />
 
           <Route
             path="/profile/edit"
             element={
               <MainLayout>
-                <ProtectedRoute>
-                  <EditProfilePage />
-                </ProtectedRoute>
+                <EditProfilePage />
               </MainLayout>
             }
           />
