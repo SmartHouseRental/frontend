@@ -21,7 +21,7 @@ function OverviewTab() {
             </span>
             <span className="text-primary/40 text-[10px] font-bold uppercase">Engagement</span>
           </div>
-          <h3 className="text-primary text-3xl font-black">45</h3>
+          <h3 className="text-primary text-3xl font-black">45000</h3>
           <p className="text-primary/60 text-sm font-medium">Total Appointments</p>
         </Card>
         <Card className="border-primary/10 gap-0 rounded-xl p-6">

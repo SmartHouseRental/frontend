@@ -3,7 +3,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, MessageCircle, CalendarDays, Edit3 } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import RequireAuthWrapper from '@/features/users/components/RequireAuthWrapper';
 import ReviewModal from './ReviewModal';
 
 export default function BookingCard({ property }) {
@@ -48,15 +47,13 @@ export default function BookingCard({ property }) {
           </div>
 
           <div className="space-y-4">
-            <RequireAuthWrapper>
-              <Button
-                onClick={handleSchedule}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#D97745] py-6 font-bold text-white hover:bg-[#C96635]"
-              >
-                <CalendarDays className="h-5 w-5" />
-                Schedule a Visit
-              </Button>
-            </RequireAuthWrapper>
+            <Button
+              onClick={handleSchedule}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#D97745] py-6 font-bold text-white hover:bg-[#C96635]"
+            >
+              <CalendarDays className="h-5 w-5" />
+              Schedule a Visit
+            </Button>
 
             <Button
               variant="outline"
@@ -67,16 +64,14 @@ export default function BookingCard({ property }) {
               Chat with Owner
             </Button>
 
-            <RequireAuthWrapper>
-              <Button
-                variant="ghost"
-                className="text-muted-foreground hover:text-primary hover:bg-primary/5 w-full gap-2 rounded-xl py-5 text-xs font-bold transition-all"
-                onClick={() => setIsReviewModalOpen(true)}
-              >
-                <Edit3 size={16} />
-                Leave a Review
-              </Button>
-            </RequireAuthWrapper>
+            <Button
+              variant="ghost"
+              className="text-muted-foreground hover:text-primary hover:bg-primary/5 w-full gap-2 rounded-xl py-5 text-xs font-bold transition-all"
+              onClick={() => setIsReviewModalOpen(true)}
+            >
+              <Edit3 size={16} />
+              Leave a Review
+            </Button>
           </div>
 
           <p className="text-muted-foreground mt-4 text-center text-[10px]">

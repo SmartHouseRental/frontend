@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import UserDetailTabs from '@/features/users/components/UserDetailTab';
+import UserDetailTabs from '@/features/user-managment/components/UserDetailTab';
 
 import { useNavigate } from 'react-router';
 
