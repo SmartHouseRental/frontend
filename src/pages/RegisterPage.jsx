@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { useAuth } from '@/features/users/AuthContext';
 import { useNavigate } from 'react-router';
 
 export default function RegisterPage() {
-  const { login } = useAuth();
   const navigate = useNavigate();
   const [role, setRole] = useState('seeker');
   const [showPassword, setShowPassword] = useState(false);
@@ -103,11 +101,10 @@ export default function RegisterPage() {
                     key={item.key}
                     type="button"
                     onClick={() => setRole(item.key)}
-                    className={`rounded-xl border-2 p-6 text-left transition-all ${
-                      role === item.key
-                        ? 'border-primary ring-primary/10 bg-card ring-4'
-                        : 'border-border bg-card hover:border-primary/30'
-                    }`}
+                    className={`rounded-xl border-2 p-6 text-left transition-all ${role === item.key
+                      ? 'border-primary ring-primary/10 bg-card ring-4'
+                      : 'border-border bg-card hover:border-primary/30'
+                      }`}
                   >
                     <span className="material-symbols-outlined text-primary mb-3 block text-3xl">
                       {item.icon}
@@ -217,12 +214,6 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => {
-                  login({
-                    id: '1',
-                    name: name || 'New User',
-                    email: 'user@example.com',
-                    role: role,
-                  });
                   navigate('/');
                 }}
                 className="bg-primary text-primary-foreground flex w-full items-center justify-center gap-2 rounded-xl py-4 font-bold shadow-lg transition-all active:scale-[0.98]"

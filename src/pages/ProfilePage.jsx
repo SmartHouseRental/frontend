@@ -1,7 +1,5 @@
 import { useParams, useNavigate } from 'react-router';
 import { users, reviews, properties } from '@/lib/dummyData';
-import { useChat } from '@/features/chat/ChatContext';
-import { useAuth } from '@/features/users/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -20,13 +18,9 @@ import {
 export default function ProfilePage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { openConversation } = useChat();
-  const { user: currentUser, isAuthenticated, openLoginModal } = useAuth();
 
-  // Find user by ID or use the current user
-  const userProfile = users.find((u) => u.id === id) || (id ? null : currentUser) || users[0];
-
-  const isOwnProfile = currentUser && userProfile && currentUser.id === userProfile.id;
+  // Find user by ID or use the first user as fallback
+  const userProfile = users.find((u) => u.id === id) || users[0];
 
   const userReviews = reviews.filter((r) => r.targetId === userProfile.id);
 
@@ -34,16 +28,6 @@ export default function ProfilePage() {
   const userProperties = properties.filter((p) => userProfile.listedProperties?.includes(p.id));
 
   const handleChat = () => {
-    if (!isAuthenticated) {
-      openLoginModal();
-      return;
-    }
-    openConversation({
-      propertyId: 'profile-chat',
-      propertyTitle: 'Direct Message',
-      ownerName: userProfile.name,
-      ownerAvatar: userProfile.avatar,
-    });
     navigate('/chat');
   };
 
@@ -79,34 +63,14 @@ export default function ProfilePage() {
           </div>
 
           <div className="flex min-w-[200px] flex-col gap-3">
-            {isOwnProfile ? (
-              <Button
-                variant="secondary"
-                className="text-primary w-full rounded-xl border-2 border-white/20 bg-white py-6 font-bold shadow-lg hover:bg-white/90"
-                onClick={() => navigate('/profile/edit')}
-              >
-                <Edit3 size={18} className="mr-2" />
-                Edit Profile
-              </Button>
-            ) : (
-              <>
-                <Button
-                  variant="secondary"
-                  className="text-primary w-full rounded-xl bg-white py-6 font-bold shadow-lg hover:bg-white/90"
-                  onClick={() => (window.location.href = `tel:${userProfile.phone}`)}
-                >
-                  <Phone size={18} className="mr-2" />
-                  {userProfile.phone}
-                </Button>
-                <Button
-                  className="w-full rounded-xl bg-[#D97745] py-6 font-bold text-white shadow-lg hover:bg-[#C96635]"
-                  onClick={handleChat}
-                >
-                  <MessageCircle size={18} className="mr-2" />
-                  Chat Now
-                </Button>
-              </>
-            )}
+            <Button
+              variant="secondary"
+              className="text-primary w-full rounded-xl border-2 border-white/20 bg-white py-6 font-bold shadow-lg hover:bg-white/90"
+              onClick={() => navigate('/profile/edit')}
+            >
+              <Edit3 size={18} className="mr-2" />
+              Edit Profile
+            </Button>
           </div>
         </div>
       </div>
@@ -143,8 +107,8 @@ export default function ProfilePage() {
                 <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-white/20 text-2xl font-bold">
                   {userReviews.length > 0
                     ? (
-                        userReviews.reduce((acc, r) => acc + r.rating, 0) / userReviews.length
-                      ).toFixed(1)
+                      userReviews.reduce((acc, r) => acc + r.rating, 0) / userReviews.length
+                    ).toFixed(1)
                     : '0'}
                 </div>
                 <h3 className="mb-1 font-bold">Average Rating</h3>

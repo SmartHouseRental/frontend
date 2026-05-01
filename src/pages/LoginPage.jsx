@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { useAuth } from '@/features/users/AuthContext';
 import { useNavigate } from 'react-router';
 
 export default function LoginPage() {
-  const { login } = useAuth();
   const navigate = useNavigate();
   const [role, setRole] = useState('renter');
   const [showPassword, setShowPassword] = useState(false);
@@ -39,11 +37,10 @@ export default function LoginPage() {
             <button
               key={item.key}
               onClick={() => setRole(item.key)}
-              className={`flex-1 rounded-lg py-2 text-sm font-semibold transition-all ${
-                role === item.key
+              className={`flex-1 rounded-lg py-2 text-sm font-semibold transition-all ${role === item.key
                   ? 'bg-card text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
-              }`}
+                }`}
             >
               {item.label}
             </button>
@@ -106,7 +103,6 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => {
-                login({ id: '1', name: 'User', email: email || 'user@example.com', role: role });
                 navigate('/');
               }}
               className="bg-primary text-primary-foreground w-full rounded-xl py-4 font-bold shadow-lg transition-all active:scale-[0.98]"

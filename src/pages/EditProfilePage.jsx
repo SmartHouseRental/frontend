@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useAuth } from '@/features/users/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,9 +22,17 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+// Stub user data until auth integration
+const dummyUser = {
+  name: 'Abebe Bikila',
+  email: 'abebe@example.com',
+  phone: '+251 911 123 456',
+  bio: "I'm looking for a premium place to rent in Addis Ababa.",
+};
+
 export default function EditProfilePage() {
   const navigate = useNavigate();
-  const { user, login } = useAuth();
+  const user = dummyUser;
   const [activeTab, setActiveTab] = useState('personal');
   const [showPassword, setShowPassword] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -58,9 +65,8 @@ export default function EditProfilePage() {
     setIsSaving(true);
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 800));
-    login({ ...user, ...formData });
+    // Will save via API during integration
     setIsSaving(false);
-    // In a real app, I'd show a toast here
   };
 
   const handlePasswordSubmit = async (e) => {

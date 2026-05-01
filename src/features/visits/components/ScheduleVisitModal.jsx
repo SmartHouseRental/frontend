@@ -1,5 +1,4 @@
 import { useState, useCallback } from "react";
-import { useVisit } from "../VisitContext";
 import {
   X,
   CalendarDays,
@@ -22,8 +21,8 @@ const TIME_SLOTS = [
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = [
-  "January","February","March","April","May","June",
-  "July","August","September","October","November","December",
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
 ];
 
 /* ─── Mini Calendar Component ─── */
@@ -153,10 +152,7 @@ function Steps({ current }) {
 }
 
 /* ─── Main Modal ─── */
-export default function ScheduleVisitModal() {
-  const { modalState, closeScheduleModal, submitVisit } = useVisit();
-  const { open, property } = modalState;
-
+export default function ScheduleVisitModal({ open, property, onClose }) {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedSlot, setSelectedSlot] = useState("");
@@ -164,7 +160,6 @@ export default function ScheduleVisitModal() {
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [submittedId, setSubmittedId] = useState(null);
 
   const reset = useCallback(() => {
     setStep(1);
@@ -174,11 +169,10 @@ export default function ScheduleVisitModal() {
     setNote("");
     setSubmitting(false);
     setSubmitted(false);
-    setSubmittedId(null);
   }, []);
 
   const handleClose = () => {
-    closeScheduleModal();
+    onClose?.();
     setTimeout(reset, 300);
   };
 
@@ -186,17 +180,7 @@ export default function ScheduleVisitModal() {
     if (!property) return;
     setSubmitting(true);
     setTimeout(() => {
-      const id = submitVisit({
-        propertyId: property.id,
-        propertyTitle: property.title,
-        propertyImage: property.image,
-        ownerName: property.ownerName,
-        date: selectedDate,
-        timeSlot: selectedSlot,
-        type: visitType,
-        note,
-      });
-      setSubmittedId(id);
+      // Will submit via API during integration
       setSubmitting(false);
       setSubmitted(true);
     }, 900);

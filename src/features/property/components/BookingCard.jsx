@@ -3,18 +3,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, MessageCircle, CalendarDays, Edit3 } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import { useChat } from '@/features/chat/ChatContext';
-import { useVisit } from '@/features/visits/VisitContext';
-import { useAuth } from '@/features/users/AuthContext';
-import { VisitCard } from '@/features/visits/components/VisitStatusCard';
 import RequireAuthWrapper from '@/features/users/components/RequireAuthWrapper';
 import ReviewModal from './ReviewModal';
 
 export default function BookingCard({ property }) {
   const navigate = useNavigate();
-  const { openConversation } = useChat();
-  const { getVisitForProperty, openScheduleModal, cancelVisit } = useVisit();
-  const { isAuthenticated, openLoginModal } = useAuth();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   const propertyData = property || {
@@ -28,35 +21,17 @@ export default function BookingCard({ property }) {
 
   const displayPrice = property?.price || '45,000 ETB';
 
-  const currentVisit = getVisitForProperty(propertyData.id);
-
   const handleChat = () => {
-    if (!isAuthenticated) {
-      openLoginModal();
-      return;
-    }
-    openConversation({
-      propertyId: propertyData.id,
-      propertyTitle: propertyData.title,
-      propertyImage: propertyData.image,
-      ownerName: propertyData.ownerName,
-      ownerAvatar: null,
-    });
     navigate('/chat');
   };
 
   const handleSchedule = () => {
-    openScheduleModal(propertyData);
+    // Will be wired up during visit integration
   };
 
   return (
     <div className="sticky top-28">
       <Card className="relative overflow-hidden p-6 shadow-xl">
-        {/* Subtle background highlight if visit scheduled */}
-        {currentVisit && currentVisit.status === 'approved' && (
-          <div className="absolute top-0 right-0 -mt-16 -mr-16 h-32 w-32 rounded-full bg-green-500/5 blur-2xl" />
-        )}
-
         <CardContent className="p-0">
           <div className="mb-6 flex justify-between">
             <div>
@@ -73,28 +48,15 @@ export default function BookingCard({ property }) {
           </div>
 
           <div className="space-y-4">
-            {currentVisit ? (
-              <div className="space-y-3">
-                <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-                  Your Scheduled Visit
-                </p>
-                <VisitCard
-                  visit={currentVisit}
-                  onReschedule={handleSchedule}
-                  onCancel={() => cancelVisit(currentVisit.id)}
-                />
-              </div>
-            ) : (
-              <RequireAuthWrapper>
-                <Button
-                  onClick={handleSchedule}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#D97745] py-6 font-bold text-white hover:bg-[#C96635]"
-                >
-                  <CalendarDays className="h-5 w-5" />
-                  Schedule a Visit
-                </Button>
-              </RequireAuthWrapper>
-            )}
+            <RequireAuthWrapper>
+              <Button
+                onClick={handleSchedule}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#D97745] py-6 font-bold text-white hover:bg-[#C96635]"
+              >
+                <CalendarDays className="h-5 w-5" />
+                Schedule a Visit
+              </Button>
+            </RequireAuthWrapper>
 
             <Button
               variant="outline"
