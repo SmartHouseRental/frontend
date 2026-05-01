@@ -44,11 +44,13 @@ import SavedPropertiesPage from './pages/SavedPropertiesPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import RenterChatPage from './pages/RenterChatPage';
-import PropertyDetails from './pages/PropertyDetails';
 import EditProfilePage from './pages/EditProfilePage';
-import LandingPage from './pages/LandingPage';
-import ExplorePage from './pages/ExplorePage';
+import LandingPage from './pages/home/LandingPage';
+import ExplorePage from './pages/home/ExplorePage';
+import PropertyDetailRenterPage from './pages/home/PropertyDetailPage';
+import SearchResultsPage from './pages/home/SearchResultsPage';
 import LoginPage from './pages/auth/LoginPage';
+import UserProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
@@ -82,6 +84,15 @@ function App() {
             element={
               <MainLayout>
                 <ExplorePage />
+              </MainLayout>
+            }
+          />
+
+          <Route
+            path="/search"
+            element={
+              <MainLayout>
+                <SearchResultsPage />
               </MainLayout>
             }
           />
@@ -126,7 +137,7 @@ function App() {
             path="/property/:id"
             element={
               <MainLayout>
-                <PropertyDetails />
+                <PropertyDetailRenterPage />
               </MainLayout>
             }
           />
@@ -145,15 +156,16 @@ function App() {
             path="/profile"
             element={
               <MainLayout>
-                <ProfilePage />
+                <UserProfilePage />
               </MainLayout>
             }
           />
+
           <Route
             path="/profile/:id"
             element={
               <MainLayout>
-                <ProfilePage />
+                <UserProfilePage />
               </MainLayout>
             }
           />
