@@ -30,8 +30,16 @@ export function LoginForm() {
 
     const onSubmit = (data) => {
         loginMutation.mutate(data, {
-            onSuccess: () => {
-                navigate('/welcome'); // Redirect user after successful login
+            onSuccess: (response) => {
+                const userRole = response?.data?.user?.role || 'renter';
+
+                if (userRole === 'admin') {
+                    navigate('/admin');
+                } else if (userRole === 'owner') {
+                    navigate('/owner');
+                } else {
+                    navigate('/welcome'); // or wherever renter goes initially
+                }
             },
         });
     };

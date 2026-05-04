@@ -1,10 +1,10 @@
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Mail, CheckCircle2 } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useNavigate } from 'react-router';
 import { useForgotPassword } from '../hooks/useForgotPassword';
 
 const forgotPasswordSchema = z.object({
@@ -12,13 +12,12 @@ const forgotPasswordSchema = z.object({
 });
 
 export function ForgotPasswordForm() {
-    const [isSubmitted, setIsSubmitted] = useState(false);
     const forgotPasswordMutation = useForgotPassword();
+    const navigate = useNavigate();
 
     const {
         register,
         handleSubmit,
-        getValues,
         formState: { errors },
     } = useForm({
         resolver: zodResolver(forgotPasswordSchema),
@@ -30,28 +29,10 @@ export function ForgotPasswordForm() {
     const onSubmit = (data) => {
         forgotPasswordMutation.mutate(data, {
             onSuccess: () => {
-                setIsSubmitted(true);
+                navigate(`/reset-password?email=${encodeURIComponent(data.email)}`);
             },
         });
     };
-
-    if (isSubmitted) {
-        return (
-            <div className="flex flex-col items-center justify-center space-y-4 py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
-                    <CheckCircle2 size={32} />
-                </div>
-                <div className="text-center">
-                    <h3 className="text-xl font-bold text-foreground">Check your inbox</h3>
-                    <p className="text-muted-foreground mt-2 font-medium">
-                        We've sent password reset instructions to <br />
-                        <span className="font-bold text-foreground">{getValues('email')}</span>
-                    </p>
-                </div>
-                {/* Placeholder if they want to enter the reset code manually, but usually it's a link */}
-            </div>
-        );
-    }
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

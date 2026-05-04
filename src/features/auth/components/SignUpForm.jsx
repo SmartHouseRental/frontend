@@ -10,7 +10,8 @@ import { Input } from '@/components/ui/input';
 import { useRegister } from '../hooks/useRegister';
 
 const registerSchema = z.object({
-    fullName: z.string().min(2, 'Full name is required'),
+    first_name: z.string().min(2, 'First name is required'),
+    last_name: z.string().min(2, 'Last name is required'),
     email: z.string().email('Please enter a valid email address'),
     phone: z.string().min(6, 'Please enter a valid phone number'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -28,7 +29,8 @@ export function SignUpForm() {
     } = useForm({
         resolver: zodResolver(registerSchema),
         defaultValues: {
-            fullName: '',
+            first_name: '',
+            last_name: '',
             email: '',
             phone: '',
             password: '',
@@ -81,20 +83,36 @@ export function SignUpForm() {
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2">
-                <div className="space-y-2 col-span-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="fullName">
-                        Full Name
+                <div className="space-y-2 col-span-2 sm:col-span-1">
+                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="first_name">
+                        First Name
                     </label>
                     <div className="relative group">
                         <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
                         <Input
-                            id="fullName"
-                            placeholder="John Doe"
-                            className={`pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm ${errors.fullName ? 'border-destructive' : ''}`}
-                            {...register('fullName')}
+                            id="first_name"
+                            placeholder="John"
+                            className={`pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm ${errors.first_name ? 'border-destructive' : ''}`}
+                            {...register('first_name')}
                         />
                     </div>
-                    {errors.fullName && <p className="text-destructive text-xs ml-1">{errors.fullName.message}</p>}
+                    {errors.first_name && <p className="text-destructive text-xs ml-1">{errors.first_name.message}</p>}
+                </div>
+
+                <div className="space-y-2 col-span-2 sm:col-span-1">
+                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="last_name">
+                        Last Name
+                    </label>
+                    <div className="relative group">
+                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
+                        <Input
+                            id="last_name"
+                            placeholder="Doe"
+                            className={`pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm ${errors.last_name ? 'border-destructive' : ''}`}
+                            {...register('last_name')}
+                        />
+                    </div>
+                    {errors.last_name && <p className="text-destructive text-xs ml-1">{errors.last_name.message}</p>}
                 </div>
 
                 <div className="space-y-2 col-span-2 sm:col-span-1">
