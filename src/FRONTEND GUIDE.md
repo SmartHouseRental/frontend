@@ -1,116 +1,179 @@
-## 🧩 Frontend Architecture & State Management Rules
+## 🧩 Frontend Architecture & State Management Rules (Best Practices)
 
 ### 1. Page Layer (Separation of Concerns)
-
-* Components inside the `pages/` directory **must remain stateless**.
-* They should:
-
-  * Only handle layout and composition
-  * Delegate logic to feature-level hooks
-* ❌ No state management, API calls, or business logic inside `pages/`
+- Components inside `pages/` **must remain stateless and UI-only**.
+- Only handle layout and composition.
+- Delegate all logic to feature hooks and components.
+- ❌ No state, forms, API calls, or business logic in `pages/`.
 
 ---
 
-### 2. Centralized State Management
+### 2. Component Organization
+- **`features/{feature}/components/`** → Stateful, logic-heavy, or feature-specific components (forms, tables, cards with logic, etc.)
+- **`components/`** (root) → Stateless, reusable, presentational UI components only.
 
-* Use **TanStack Query** as the **only state management solution**
-* Responsibilities of TanStack Query:
-
-  * Server state fetching
-  * Caching
-  * Synchronization
-  * Background updates
+**Rule**: Any component using hooks, state, or forms **must** live in `features/{feature}/components/`.
 
 ---
 
-### 3. Custom Hooks Structure
-
-* All TanStack Query logic must be wrapped inside **custom hooks**
-* Hooks must live inside the corresponding feature directory:
-
-```
-features/
-  users/
-    hooks/
-      useUser.js
-      useUsers.js
-```
-
-* Naming convention:
-
-  * `useUser` → fetch single user
-  * `useUsers` → fetch multiple users
-
-* These hooks:
-
-  * Call API functions
-  * Handle query keys
-  * Manage caching behavior
-  * Return clean, reusable data + states (`isLoading`, `error`, etc.)
+### 3. Form Handling
+- Use **React Hook Form** + **Zod** for **all** forms.
+- Always use `zodResolver`.
+- Prefer Shadcn/ui form components.
 
 ---
 
-### 4. API Layer Structure
+### 4. UI Library
+- Use **Shadcn/ui** + **Tailwind CSS** for all interfaces.
+- Extend Shadcn components when needed inside feature folders.
 
-* All API calls must be isolated in a dedicated file:
+---
 
-```
-features/
-  users/
-    api.js
-```
+### 5. State Management
+- **TanStack Query** → Only tool for **server state** (fetching, caching, mutations).
+- **React Hook Form** → Only for **form state**.
+- Avoid `useState` + `useEffect` for server data.
 
-* Rules:
+---
 
-  * Only pure API request functions
-  * No React, no hooks, no UI logic
-  * Keep functions reusable and clean
+### 6. Custom Hooks & API Layer
+- All TanStack Query logic → `features/{feature}/hooks/`
+- All API calls → `features/{feature}/api.js`
 
-Example:
+---
 
+### 7. Mutations Best Practices
 ```js
-export const getUsers = async () => {
-  const res = await fetch('/api/users');
-  return res.json();
+// features/users/hooks/useCreateUser.js
+export const useCreateUser = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: userApi.createUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast.success("User created successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to create user");
+    }
+  });
 };
 ```
 
----
-
-### 5. Flow Architecture (Strict Pattern)
-
-```
-pages/  →  features/hooks/  →  features/api.js
-(UI)        (state logic)       (API calls)
-```
-
-* Pages call hooks
-* Hooks call API functions
-* API functions call backend
+**Rules**:
+- Always invalidate relevant queries after mutations
+- Show success/error toasts
+- Use optimistic updates when it makes sense
 
 ---
 
-### 6. Scalability Rules
+### 8. Query Key Best Practices
+Use a **query key factory** in each feature:
 
-* Each feature must be self-contained:
-
+```js
+// features/users/constants.js
+export const userKeys = {
+  all: ['users'],
+  lists: () => [...userKeys.all, 'list'],
+  list: (filters) => [...userKeys.lists(), filters],
+  details: (id) => [...userKeys.all, 'detail', id],
+};
 ```
+
+Then use it in hooks:
+```js
+useQuery({
+  queryKey: userKeys.list(filters),
+  queryFn: () => userApi.getUsers(filters),
+});
+```
+
+---
+
+### 9. Error Handling & Notifications
+- Use **react-hot-toast** or **Sonner** for notifications.
+- Create a global error handler.
+- Handle errors gracefully in hooks and show user-friendly messages.
+
+---
+
+### 10. Loading & Empty States
+- Always handle `isLoading`, `isError`, and empty data states.
+- Create reusable `Loader`, `EmptyState`, and `ErrorState` components in root `components/`.
+
+---
+
+### 11. Recommended Feature Folder Structure
+
+```bash
 features/
-  feature-name/
+  users/
     api.js
+    constants.js
     hooks/
-    components/   (optional)
-    utils/        (optional)
+      useUsers.js
+      useUser.js
+      useCreateUser.js
+      useUpdateUser.js
+    components/
+      UserList.js
+      UserForm.js
+      UserProfileCard.js
+    utils.js
 ```
-
-* Avoid cross-feature dependencies unless absolutely necessary
 
 ---
 
-### 7. Anti-Patterns (Do NOT do this ❌)
+### 12. Naming Conventions
+- Files: `useCreateUser.js`, `UserForm.js`, `userApi.js`
+- Components: PascalCase (`UserProfileCard`)
+- Hooks: `use` prefix
+- Functions: camelCase
 
-* Fetching data directly inside components in `pages/`
-* Using `useState` or `useEffect` for server data
-* Mixing API logic inside hooks or components
-* Calling APIs outside `api.js`
+---
 
+### 13. Anti-Patterns (Strictly Forbidden ❌)
+- Using `useState` for forms or server data
+- Fetching data directly in components or pages
+- Putting logic/state in root `components/`
+- Inconsistent query keys
+- Direct API calls outside `api.js`
+
+---
+
+### 14. Authentication & Protected Routes
+
+Use a custom `useAuth` hook + TanStack Query for user session.
+Create `ProtectedRoute` or `AuthGuard` component.
+Store auth tokens securely (httpOnly cookies preferred when possible).
+
+### 15. Performance & Optimization Rules
+
+Use `React.memo`, `useMemo`, and `useCallback` only when necessary.
+Implement code splitting with `React.lazy` and `Suspense`.
+Optimize TanStack Query with proper `staleTime` and `gcTime`.
+Avoid unnecessary re-renders.
+
+### 16. Type of State
+
+| Type of State               | Recommended Tool        | Priority | Notes |
+|-----------------------------|-------------------------|----------|-------|
+| Server / Remote Data        | TanStack Query          | #1       | Always |
+| Form State                  | React Hook Form         | #1       | Always |
+| Simple component-local state| useState / useReducer   | #1       | Default choice |
+| Shared UI State             | Zustand                 | Recommended | Best balance |
+| Shared UI State (Simple cases) | React Context | Acceptable | Use sparingly |
+| Very Complex Global Logic   | Zustand (with middleware) | Preferred | — |
+
+### 17. Recommended Tech Stack
+
+| Purpose              | Technology                  |
+|----------------------|-----------------------------|
+| Server State         | TanStack Query              |
+| Forms                | React Hook Form + Zod       |
+| UI                   | Shadcn/ui + Tailwind        |
+| Notifications        | Sonner / react-hot-toast    |
+| HTTP Client          | Axios                       |
+
+---
