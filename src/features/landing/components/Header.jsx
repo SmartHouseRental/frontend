@@ -48,6 +48,16 @@ export default function Header() {
             EN / አማ
           </Button>
 
+          <Link to="/renter">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full border bg-muted/50 transition-all hover:ring-2 hover:ring-primary"
+            >
+              <User className="h-5 w-5" />
+            </Button>
+          </Link>
+
           <Link to="/signup">
             <Button
               className="shadow-primary/20 rounded-full px-6 font-bold shadow-lg transition-transform hover:scale-105"

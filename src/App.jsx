@@ -10,6 +10,14 @@ import UserDetailPage from './pages/admin/UserDetailPage';
 import PropertiesDetailPage from './pages/admin/PropertiesDetailPage';
 import ReportDetailPage from './pages/admin/ReportDetailPage';
 import AgreementDetailPage from './pages/admin/AgreementDetailPage';
+import RenterLayout from './components/RenterLayout';
+import AppointmentsPage from './pages/renter/AppointmentsPage';
+import RenterAgreementsPage from './pages/renter/AgreementsPage';
+import RenterAgreementDetailPage from './pages/renter/AgreementDetailPage';
+import RenterReviewsPage from './pages/renter/ReviewsPage';
+import RenterProfilePage from './pages/renter/ProfilePage';
+import ScheduleVisitPage from './pages/renter/ScheduleVisitPage';
+import { Toaster } from '@/components/ui/sonner';
 
 // Owner Dashboard
 import OwnerLayout from './components/OwnerLayout';
@@ -228,9 +236,21 @@ function App() {
             <Route path="payments" element={<PaymentHistoryPage />} />
             <Route path="help" element={<HelpSupportPage />} />
           </Route>
+          
+          {/* Renter Dashboard Routing */}
+          <Route path="/renter" element={<RenterLayout />}>
+            <Route index element={<Navigate replace to="appointments" />} />
+            <Route path="appointments" element={<AppointmentsPage />} />
+            <Route path="agreements" element={<RenterAgreementsPage />} />
+            <Route path="agreements/:id" element={<RenterAgreementDetailPage />} />
+            <Route path="reviews" element={<RenterReviewsPage />} />
+            <Route path="profile" element={<RenterProfilePage />} />
+            <Route path="schedule-visit/:id" element={<ScheduleVisitPage />} />
+          </Route>
 
           {/* <Route path="*" element={<NotFound />} /> */}
         </Routes>
+        <Toaster />
       </BrowserRouter>
     </ThemeProvider>
   );

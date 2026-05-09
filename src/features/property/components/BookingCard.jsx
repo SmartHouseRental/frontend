@@ -25,7 +25,7 @@ export default function BookingCard({ property }) {
   };
 
   const handleSchedule = () => {
-    // Will be wired up during visit integration
+    navigate(`/renter/schedule-visit/${property.id}`);
   };
 
   return (
