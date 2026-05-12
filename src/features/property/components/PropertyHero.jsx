@@ -25,11 +25,11 @@ export default function PropertyHero({ property }) {
         <div>
 
           <div className="text-sm text-muted-foreground mb-2">
-            Addis Ababa › Bole › {property?.title || "Bole Atlas Villa"}
+            Addis Ababa › Bole › {typeof property?.title === 'object' ? property.title.en : (property?.title || "Bole Atlas Villa")}
           </div>
 
           <h2 className="text-3xl font-extrabold">
-            {property?.title || "The Morning Sun Villa"}
+            {typeof property?.title === 'object' ? property.title.en : (property?.title || "The Morning Sun Villa")}
           </h2>
 
           <div className="flex items-center gap-2 mt-2 text-muted-foreground">

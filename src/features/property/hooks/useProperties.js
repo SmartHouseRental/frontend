@@ -1,0 +1,11 @@
+import { useQuery } from '@tanstack/react-query';
+import { propertyApi } from '../api';
+import { propertyKeys } from './useProperty';
+
+export const useProperties = (filters = {}) => {
+  return useQuery({
+    queryKey: propertyKeys.list(filters),
+    queryFn: () => propertyApi.getProperties(filters),
+    select: (response) => response.data,
+  });
+};

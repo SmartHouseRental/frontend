@@ -1,11 +1,34 @@
-import { FileText, Download, User, MapPin, Calendar, CreditCard, Clock, CheckCircle2, ChevronLeft } from 'lucide-react';
+import { FileText, Download, User, MapPin, Calendar, CreditCard, Clock, CheckCircle2, ChevronLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link, useParams } from 'react-router';
+import { useAgreement } from '../hooks/useAgreements';
 
 export default function AgreementDetailView() {
   const { id } = useParams();
+  const { data: agreement, isLoading, isError, error } = useAgreement(id);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+        <p className="text-destructive font-medium">Failed to load agreement details</p>
+        <p className="text-muted-foreground text-sm">{error?.message || 'Please try again later'}</p>
+      </div>
+    );
+  }
+
+  if (!agreement) return null;
+
+  const property = agreement.property;
 
   return (
     <div className="space-y-8 pb-12">
@@ -17,7 +40,9 @@ export default function AgreementDetailView() {
         </Link>
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Agreement #{id}</h1>
-          <Badge className="bg-emerald-500 mt-1">Active</Badge>
+          <Badge className={`mt-1 ${agreement.status === 'ACTIVE' ? 'bg-emerald-500' : 'bg-slate-500'}`}>
+            {agreement.status}
+          </Badge>
         </div>
       </div>
 
@@ -31,10 +56,12 @@ export default function AgreementDetailView() {
                     <FileText className="h-8 w-8" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl font-bold">Sunset Boulevard Villa</CardTitle>
+                    <CardTitle className="text-xl font-bold">
+                      {typeof property?.title === 'object' ? property.title.en : (property?.title || "Property Details")}
+                    </CardTitle>
                     <div className="flex items-center gap-1.5 text-muted-foreground mt-1 text-sm font-medium">
                       <MapPin className="h-3.5 w-3.5" />
-                      <span>101 Sunset Blvd, Malibu, CA</span>
+                      <span>{property?.address || property?.location || "Address not available"}</span>
                     </div>
                   </div>
                 </div>
@@ -48,9 +75,12 @@ export default function AgreementDetailView() {
               <div className="space-y-6">
                 <h3 className="font-bold text-slate-900">Agreement Terms</h3>
                 <ul className="space-y-4 text-sm text-slate-600">
-                  <li className="flex gap-3"><div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" /> Monthly rent must be paid by the 5th.</li>
-                  <li className="flex gap-3"><div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" /> Security deposit is refundable upon termination.</li>
-                  <li className="flex gap-3"><div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" /> No pets allowed without prior consent.</li>
+                  <li className="flex gap-3"><div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" /> Monthly rent: {agreement.rentAmount} {agreement.currency || 'ETB'}</li>
+                  <li className="flex gap-3"><div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" /> Start Date: {new Date(agreement.startDate).toLocaleDateString()}</li>
+                  <li className="flex gap-3"><div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" /> End Date: {new Date(agreement.endDate).toLocaleDateString()}</li>
+                  {agreement.terms && (
+                    <li className="flex gap-3"><div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" /> {agreement.terms}</li>
+                  )}
                 </ul>
               </div>
             </CardContent>
@@ -61,11 +91,15 @@ export default function AgreementDetailView() {
           <Card className="border-none shadow-sm bg-white p-6">
             <h4 className="font-bold mb-4 text-sm uppercase tracking-wider text-muted-foreground">Property Owner</h4>
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center">
-                <User className="h-6 w-6 text-slate-500" />
+              <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden">
+                {property?.owner?.profileImage ? (
+                  <img src={property.owner.profileImage} alt="Owner" className="w-full h-full object-cover" />
+                ) : (
+                  <User className="h-6 w-6 text-slate-500" />
+                )}
               </div>
               <div>
-                <p className="font-bold text-slate-900">Sarah Jenkins</p>
+                <p className="font-bold text-slate-900">{property?.owner?.fullName || "Property Owner"}</p>
                 <p className="text-xs text-muted-foreground">Owner / Host</p>
               </div>
             </div>
