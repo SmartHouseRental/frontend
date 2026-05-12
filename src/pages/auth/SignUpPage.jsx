@@ -1,30 +1,8 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Link, useNavigate } from 'react-router';
-import { Mail, Lock, User, Phone, Key, Building2, UserRound, ChevronLeft, CheckCircle2 } from 'lucide-react';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Link } from 'react-router';
+import { ChevronLeft, CheckCircle2 } from 'lucide-react';
+import { SignUpForm } from '@/features/auth/components/SignUpForm';
 
 function SignUpPage() {
-    const [role, setRole] = useState('renter'); // Default to renter
-    const [formData, setFormData] = useState({
-        fullName: '',
-        email: '',
-        phone: '',
-        password: '',
-    });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const navigate = useNavigate();
-
-    const handleSignup = (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        // Simulate API call
-        setTimeout(() => {
-            navigate('/verify-otp', { state: { role, email: formData.email } });
-        }, 1000);
-    };
-
     return (
         <div className="flex min-h-screen bg-background text-foreground">
             {/* Left Column: Image Area */}
@@ -82,122 +60,7 @@ function SignUpPage() {
                     </div>
 
                     <div className="mt-8">
-                        <form onSubmit={handleSignup} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-400">
-                            {/* Role Selection inside Form */}
-                            <div className="space-y-3">
-                                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
-                                    I am joining as a...
-                                </label>
-                                <RadioGroup
-                                    value={role}
-                                    onValueChange={setRole}
-                                    className="grid grid-cols-2 gap-3"
-                                >
-                                    <label
-                                        htmlFor="renter"
-                                        className={`flex items-center gap-3 rounded-xl border-2 px-4 py-3 transition-all cursor-pointer ${role === 'renter'
-                                            ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                                            : 'border-border/60 bg-card hover:border-primary/40'
-                                            }`}
-                                    >
-                                        <RadioGroupItem value="renter" id="renter" className="h-4 w-4" />
-                                        <span className={`text-sm font-bold ${role === 'renter' ? 'text-primary' : 'text-foreground'}`}>Renter</span>
-                                    </label>
-
-                                    <label
-                                        htmlFor="owner"
-                                        className={`flex items-center gap-3 rounded-xl border-2 px-4 py-3 transition-all cursor-pointer ${role === 'owner'
-                                            ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                                            : 'border-border/60 bg-card hover:border-primary/40'
-                                            }`}
-                                    >
-                                        <RadioGroupItem value="owner" id="owner" className="h-4 w-4" />
-                                        <span className={`text-sm font-bold ${role === 'owner' ? 'text-primary' : 'text-foreground'}`}>Owner</span>
-                                    </label>
-                                </RadioGroup>
-                            </div>
-
-                            <div className="grid gap-5 sm:grid-cols-2">
-                                <div className="space-y-2 col-span-2">
-                                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="fullName">
-                                        Full Name
-                                    </label>
-                                    <div className="relative group">
-                                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
-                                        <Input
-                                            id="fullName"
-                                            placeholder="John Doe"
-                                            className="pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm"
-                                            value={formData.fullName}
-                                            onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2 col-span-2 sm:col-span-1">
-                                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="email">
-                                        Email Address
-                                    </label>
-                                    <div className="relative group">
-                                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
-                                        <Input
-                                            id="email"
-                                            type="email"
-                                            placeholder="name@example.com"
-                                            className="pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm"
-                                            value={formData.email}
-                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2 col-span-2 sm:col-span-1">
-                                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="phone">
-                                        Phone Number
-                                    </label>
-                                    <div className="relative group">
-                                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
-                                        <Input
-                                            id="phone"
-                                            type="tel"
-                                            placeholder="+251 911 234 567"
-                                            className="pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm"
-                                            value={formData.phone}
-                                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2 col-span-2">
-                                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="password">
-                                        Password
-                                    </label>
-                                    <div className="relative group">
-                                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
-                                        <Input
-                                            id="password"
-                                            type="password"
-                                            placeholder="••••••••"
-                                            className="pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm"
-                                            value={formData.password}
-                                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-                                    <p className="text-[11px] text-muted-foreground ml-1 mt-1 font-medium">At least 8 characters long</p>
-                                </div>
-                            </div>
-
-                            <div className="pt-2">
-                                <Button type="submit" className="w-full h-14 rounded-xl font-bold shadow-lg shadow-primary/20 text-[16px]" disabled={isSubmitting}>
-                                    {isSubmitting ? 'Creating Account...' : 'Create Account'}
-                                    {!isSubmitting && <ChevronLeft className="ml-2 rotate-180" size={18} />}
-                                </Button>
-                            </div>
-                        </form>
+                        <SignUpForm />
                     </div>
 
                     <p className="mt-10 text-center text-[15px] font-medium text-muted-foreground">

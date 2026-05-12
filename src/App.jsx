@@ -47,6 +47,8 @@ import SignUpPage from './pages/auth/SignUpPage';
 import OTPVerificationPage from './pages/auth/OTPVerificationPage';
 import RenterPreferencesWizard from './pages/auth/RenterPreferencesWizard';
 import WelcomePage from './pages/auth/WelcomePage';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import MainLayout from './components/MainLayout';
 import SavedPropertiesPage from './pages/SavedPropertiesPage';
 import AboutPage from './pages/AboutPage';
@@ -75,6 +77,8 @@ function App() {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/verify-otp" element={<OTPVerificationPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/preferences" element={<RenterPreferencesWizard />} />
           <Route path="/welcome" element={<WelcomePage />} />
 

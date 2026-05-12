@@ -1,25 +1,9 @@
-import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Link, useNavigate } from 'react-router';
-import { Mail, Lock, Building2, ChevronLeft } from 'lucide-react';
+import { Link } from 'react-router';
+import { Building2, ChevronLeft } from 'lucide-react';
+import { LoginForm } from '@/features/auth/components/LoginForm';
 
 function LoginPage() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const navigate = useNavigate();
-
-    const handleLogin = (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        // Simulate API call
-        setTimeout(() => {
-            navigate('/welcome');
-        }, 1000);
-    };
-
     return (
         <div className="flex min-h-screen bg-background">
             {/* Left Column: Image Area */}
@@ -68,52 +52,7 @@ function LoginPage() {
                         </p>
                     </div>
 
-                    <form onSubmit={handleLogin} className="space-y-5">
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="email">
-                                Email Address
-                            </label>
-                            <div className="relative group">
-                                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="name@example.com"
-                                    className="pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between ml-1">
-                                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground" htmlFor="password">
-                                    Password
-                                </label>
-                                <Link to="/forgot-password" className="text-xs font-bold text-primary hover:text-primary/80 transition-colors">
-                                    Forgot Password?
-                                </Link>
-                            </div>
-                            <div className="relative group">
-                                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    className="pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <Button type="submit" className="w-full h-12 rounded-xl font-bold shadow-md text-[15px]" disabled={isSubmitting}>
-                            {isSubmitting ? 'Signing In...' : 'Login securely'}
-                        </Button>
-                    </form>
+                    <LoginForm />
 
                     <div className="relative my-8">
                         <div className="absolute inset-0 flex items-center">
