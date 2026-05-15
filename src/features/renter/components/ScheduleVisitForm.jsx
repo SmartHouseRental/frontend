@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useBookAppointment } from '../../visits/hooks/useAppointments';
 
 const formSchema = z.object({
   date: z.string().min(1, 'Please select a date'),
@@ -132,15 +133,34 @@ export default function ScheduleVisitForm({ property }) {
     setCurrentMonth(newMonth);
   };
 
+  const { mutateAsync: bookVisit } = useBookAppointment();
+
   const onSubmit = async (data) => {
-    // Mock API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    toast.success('Visit scheduled successfully!', {
-      description: `Your visit to ${property.title} is confirmed for ${selectedDate} at ${selectedTime}.`,
-    });
-    
-    navigate('/renter/appointments');
+    try {
+      // Parse time (e.g., "09:00 AM" to hours/minutes)
+      const [time, period] = data.time.split(' ');
+      let [hours, minutes] = time.split(':').map(Number);
+      if (period === 'PM' && hours < 12) hours += 12;
+      if (period === 'AM' && hours === 12) hours = 0;
+
+      // Create startsAt date
+      const startsAt = new Date(data.date);
+      startsAt.setHours(hours, minutes, 0, 0);
+
+      // Default endsAt to 1 hour after startsAt
+      const endsAt = new Date(startsAt.getTime() + 60 * 60 * 1000);
+
+      await bookVisit({
+        propertyId: property.id,
+        startsAt: startsAt.toISOString(),
+        endsAt: endsAt.toISOString(),
+        note: data.message || '',
+      });
+      
+      navigate('/renter/appointments');
+    } catch (err) {
+      // Error handled in mutation
+    }
   };
 
   return (

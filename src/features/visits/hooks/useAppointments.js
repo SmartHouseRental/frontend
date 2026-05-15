@@ -4,14 +4,44 @@ import { toast } from 'sonner';
 
 export const visitKeys = {
   all: ['visits'],
-  appointments: () => [...visitKeys.all, 'appointments'],
+  appointments: (filters = {}) => [...visitKeys.all, 'appointments', filters],
 };
 
-export const useAppointments = () => {
+export const useAppointments = (filters = {}) => {
   return useQuery({
-    queryKey: visitKeys.appointments(),
-    queryFn: () => visitsApi.getAppointments(),
+    queryKey: visitKeys.appointments(filters),
+    queryFn: () => visitsApi.getAppointments(filters),
     select: (response) => response.data,
+  });
+};
+
+export const useBookAppointment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data) => visitsApi.bookAppointment(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: visitKeys.appointments() });
+      toast.success('Appointment Scheduled');
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to book appointment');
+    }
+  });
+};
+
+export const useUpdateAppointmentStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, status }) => visitsApi.updateAppointmentStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: visitKeys.appointments() });
+      toast.success('Appointment Status Updated');
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to update status');
+    }
   });
 };
 

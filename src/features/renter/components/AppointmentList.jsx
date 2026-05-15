@@ -48,8 +48,8 @@ export default function AppointmentList() {
     );
   }
 
-  const upcoming = appointments?.filter(apt => new Date(apt.dateTime) > new Date()) || [];
-  const past = appointments?.filter(apt => new Date(apt.dateTime) <= new Date()) || [];
+  const upcoming = appointments?.filter(apt => new Date(apt.startsAt) > new Date()) || [];
+  const past = appointments?.filter(apt => new Date(apt.startsAt) <= new Date()) || [];
 
   const renderAppointmentCard = (apt) => {
     const property = apt.property;
@@ -72,7 +72,7 @@ export default function AppointmentList() {
                     <span className="line-clamp-1">{property?.address || property?.location || "Address not available"}</span>
                   </div>
                 </div>
-                <Badge className={apt.status === 'CONFIRMED' ? 'bg-emerald-500' : 'bg-slate-500'}>
+                <Badge className={apt.status === 'ACCEPTED' ? 'bg-emerald-500' : apt.status === 'REJECTED' ? 'bg-destructive' : 'bg-slate-500'}>
                   {apt.status}
                 </Badge>
               </div>
@@ -80,11 +80,11 @@ export default function AppointmentList() {
               <div className="flex gap-4 mt-2 text-sm font-medium">
                 <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-lg">
                   <CalendarIcon className="h-4 w-4 text-primary" />
-                  <span>{new Date(apt.dateTime).toLocaleDateString()}</span>
+                  <span>{new Date(apt.startsAt).toLocaleDateString()}</span>
                 </div>
                 <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-lg">
                   <Clock className="h-4 w-4 text-primary" />
-                  <span>{new Date(apt.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                  <span>{new Date(apt.startsAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
               </div>
 
