@@ -31,81 +31,10 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { useNavigate } from 'react-router';
+import { useUsers } from '@/features/user-managment/hooks/useUsers';
+import { useUpdateUserStatus } from '@/features/user-managment/hooks/useUpdateUserStatus';
 
-const users = [
-  {
-    id: 'USR-1001',
-    name: 'Abebe Kebede',
-    email: 'abebe.k@email.com',
-    role: 'owner',
-    roleStyle: 'bg-primary/10 text-primary',
-    verificationState: 'verified',
-    status: 'active',
-    joinedDate: 'Jan 15, 2025',
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBTZuFjiXv8pJ9ZW_P3PhEq0jTFLgivzMJvuk9tLjNwAtXcpCfbBzCklALgf9dvExExfQ0kpVwDJSk7M7QURBzmIsk8KAiVUwpuZhvUZ-dOaS71NBKFvqqMMlNaKdclvhKRaI9onx9CN6bvR-dNk3P9DOsAJ-uepazHnRuxkJayU0LLsVECrIdI_cfvXwgnQxWP4XXj3Ys_fYGDtO_bC0FpaYyKaIEKIdcDGe8gwgK3vKrScOaB0JHepPS768X7w1PMIXkGqaQhP3PR',
-  },
-  {
-    id: 'USR-1042',
-    name: 'Tigist Hailu',
-    email: 'tigist.h@email.com',
-    role: 'owner',
-    roleStyle: 'bg-primary/10 text-primary',
-    verificationState: 'pending_documents',
-    status: 'active',
-    joinedDate: 'Mar 16, 2026',
-    avatar: null,
-    avatarFallback: 'TH',
-    avatarColor: 'bg-rose-100 text-rose-600',
-  },
-  {
-    id: 'USR-1105',
-    name: 'Mulugeta K.',
-    email: 'mulugeta.k@email.com',
-    role: 'renter',
-    roleStyle: 'bg-slate-100 text-slate-600',
-    verificationState: 'verified',
-    status: 'active',
-    joinedDate: 'Feb 08, 2025',
-    avatar: null,
-    avatarFallback: 'MK',
-    avatarColor: 'bg-blue-100 text-blue-600',
-  },
-  {
-    id: 'USR-1203',
-    name: 'David Vance',
-    email: 'david.v@email.com',
-    role: 'owner',
-    roleStyle: 'bg-primary/10 text-primary',
-    verificationState: 'rejected',
-    status: 'suspended',
-    joinedDate: 'Sep 22, 2024',
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDLo23h_KguS-ROG8AAz4Hh75lsMt85_WPOlhWMXv4mmd98oGP2I8YcvMb-7qOmvd-l3Sj0e5TAPVHbKHXYo_95miDYERderalz4iloWyTeabX2SeiZ_v385qRFwyqBILvrx7hUGH8X1nQghHaNHJxAMusaCksdS0iE04z5DTpU2ak0lQirtw7DejH3uw5d_F6RloSIaUrptfzZljWB2XaokQQfEMnA2KF9JLcota_3YHMZAxRCsaQqb7lKjqYt26yLqgJcBcaZUWFW',
-  },
-  {
-    id: 'USR-1312',
-    name: 'Sara Kebede',
-    email: 'sara.k@email.com',
-    role: 'renter',
-    roleStyle: 'bg-slate-100 text-slate-600',
-    verificationState: 'pending_otp',
-    status: 'active',
-    joinedDate: 'Mar 22, 2026',
-    avatar: null,
-    avatarFallback: 'SK',
-    avatarColor: 'bg-violet-100 text-violet-600',
-  },
-  {
-    id: 'USR-0042',
-    name: 'Alex Rivera',
-    email: 'alex.r@admin.shr.et',
-    role: 'admin',
-    roleStyle: 'bg-amber-100 text-amber-700',
-    verificationState: 'verified',
-    status: 'active',
-    joinedDate: 'Jun 01, 2023',
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAVENWs75X_DdjbXiQpbaXSUWlyKxPmt8aDZKyCIuwovO2HjYFN-y6uCBE3cH4ZMk5tI7eW-w7uohc-60we5mERDXP_iCeczYrWGoX53cLINdIMHe266Ay2cQI4ILueKSWooXkPTeJ350CkotirysPiF4RTufPQGsCI-2COXQRXM4hGBd6RGivTJPOn7YknQLATu5o3z6BUT2CZ-ZGOmUGf5KqPSfPDXNsSK4aXmBt9BV18DMxDDfMyv9QmZqvb-aXXLUVAXYzoT1EB',
-  },
-];
+// Deleted static users mock
 
 const verificationStateStyles = {
   verified: { label: 'Verified', style: 'bg-green-100 text-green-700' },
@@ -122,6 +51,16 @@ const statusStyles = {
 
 function UserManagementPage() {
   const navigate = useNavigate();
+  const { data, isLoading } = useUsers();
+  const { mutate: updateStatus } = useUpdateUserStatus();
+
+  const users = data?.items || [];
+  const meta = data?.meta;
+
+  const handleStatusChange = (id, newStatus) => {
+    updateStatus({ id, status: newStatus });
+  };
+
   return (
     <div className="relative flex min-w-0 flex-1 flex-col gap-6 overflow-hidden p-8">
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4">
@@ -191,106 +130,143 @@ function UserManagementPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.map((user) => {
-                const vState = verificationStateStyles[user.verificationState];
-                const sState = statusStyles[user.status];
-                return (
-                  <TableRow
-                    key={user.id}
-                    className="cursor-pointer transition-colors hover:bg-muted/20"
-                    onClick={() => navigate(`/admin/users/${user.id}`)}
-                  >
-                    <TableCell className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
-                      <input className="text-primary focus:ring-primary rounded" type="checkbox" />
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
-                      {user.avatar ? (
-                        <div
-                          className="size-10 rounded-lg bg-cover bg-center"
-                          style={{ backgroundImage: `url('${user.avatar}')` }}
-                        />
-                      ) : (
-                        <div
-                          className={`flex size-10 items-center justify-center rounded-lg text-xs font-bold ${user.avatarColor}`}
-                        >
-                          {user.avatarFallback}
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
-                      <p className="text-sm font-bold">{user.name}</p>
-                      <p className="text-muted-foreground text-xs">{user.email}</p>
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
-                      <span className={`rounded-md px-2 py-1 text-xs font-semibold capitalize ${user.roleStyle}`}>
-                        {user.role}
-                      </span>
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
-                      <StatusBadge status={user.verificationState} statusMap={verificationStateStyles} />
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${sState.style}`}>
-                        <span className={`size-1.5 rounded-full ${sState.dotColor}`} />
-                        {sState.label}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground px-6 py-4 text-sm">
-                      {user.joinedDate}
-                    </TableCell>
-                    <TableCell className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            className="cursor-pointer"
-                            onClick={() => navigate(`/admin/users/${user.id}`)}
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-32 text-center">
+                    Loading users...
+                  </TableCell>
+                </TableRow>
+              ) : users.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-32 text-center text-muted-foreground">
+                    No users found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                users.map((user) => {
+                  const vState = verificationStateStyles[user.verificationState] || { label: user.verificationState || 'Unknown', style: 'bg-slate-100 text-slate-700' };
+                  const sState = statusStyles[user.status] || { label: user.status || 'Unknown', dotColor: 'bg-slate-500', style: 'bg-slate-100 text-slate-700' };
+
+                  const joinedDate = new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+                  const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Unknown';
+                  const avatarFallback = fullName.substring(0, 2).toUpperCase() || 'U';
+                  const avatarColor = 'bg-primary/10 text-primary';
+                  const roleStyle = user.role === 'admin' ? 'bg-amber-100 text-amber-700' : user.role === 'owner' ? 'bg-primary/10 text-primary' : 'bg-slate-100 text-slate-600';
+
+                  return (
+                    <TableRow
+                      key={user.id}
+                      className="cursor-pointer transition-colors hover:bg-muted/20"
+                      onClick={() => navigate(`/admin/users/${user.id}`)}
+                    >
+                      <TableCell className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                        <input className="text-primary focus:ring-primary rounded" type="checkbox" />
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {user.avatar ? (
+                          <div
+                            className="size-10 rounded-lg bg-cover bg-center"
+                            style={{ backgroundImage: `url('${user.avatar}')` }}
+                          />
+                        ) : (
+                          <div
+                            className={`flex size-10 items-center justify-center rounded-lg text-xs font-bold ${avatarColor}`}
                           >
-                            <Eye className="mr-2 h-4 w-4" />
-                            <span>View Profile</span>
-                          </DropdownMenuItem>
-                          {user.role === 'owner' && user.verificationState === 'pending_documents' && (
-                            <DropdownMenuItem className="cursor-pointer text-emerald-600 focus:text-emerald-600">
-                              <ShieldCheck className="mr-2 h-4 w-4" />
-                              <span>Verify Documents</span>
+                            {avatarFallback}
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        <p className="text-sm font-bold">{fullName}</p>
+                        <p className="text-muted-foreground text-xs">{user.email}</p>
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        <span className={`rounded-md px-2 py-1 text-xs font-semibold capitalize ${roleStyle}`}>
+                          {user.role}
+                        </span>
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        <StatusBadge status={user.verificationState} statusMap={verificationStateStyles} />
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${sState.style}`}>
+                          <span className={`size-1.5 rounded-full ${sState.dotColor}`} />
+                          {sState.label}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground px-6 py-4 text-sm">
+                        {joinedDate}
+                      </TableCell>
+                      <TableCell className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              className="cursor-pointer"
+                              onClick={() => navigate(`/admin/users/${user.id}`)}
+                            >
+                              <Eye className="mr-2 h-4 w-4" />
+                              <span>View Profile</span>
                             </DropdownMenuItem>
-                          )}
-                          <DropdownMenuSeparator />
-                          {user.status === 'active' ? (
-                            <DropdownMenuItem className="cursor-pointer text-amber-600 focus:text-amber-600">
-                              <ShieldBan className="mr-2 h-4 w-4" />
-                              <span>Suspend User</span>
-                            </DropdownMenuItem>
-                          ) : (
-                            <DropdownMenuItem className="cursor-pointer text-emerald-600 focus:text-emerald-600">
-                              <ShieldCheck className="mr-2 h-4 w-4" />
-                              <span>Reactivate User</span>
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
-                            <UserX className="mr-2 h-4 w-4" />
-                            <span>Ban User</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                            {user.role === 'owner' && (
+                              <DropdownMenuItem
+                                className="cursor-pointer text-emerald-600 focus:text-emerald-600"
+                                onClick={() => navigate(`/admin/users/${user.id}`)}
+                              >
+                                <ShieldCheck className="mr-2 h-4 w-4" />
+                                <span>Verify Documents</span>
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuSeparator />
+                            {user.status === 'active' ? (
+                              <DropdownMenuItem
+                                className="cursor-pointer text-amber-600 focus:text-amber-600"
+                                onClick={() => handleStatusChange(user.id, 'suspended')}
+                              >
+                                <ShieldBan className="mr-2 h-4 w-4" />
+                                <span>Suspend User</span>
+                              </DropdownMenuItem>
+                            ) : (
+                              <DropdownMenuItem
+                                className="cursor-pointer text-emerald-600 focus:text-emerald-600"
+                                onClick={() => handleStatusChange(user.id, 'active')}
+                              >
+                                <ShieldCheck className="mr-2 h-4 w-4" />
+                                <span>Reactivate User</span>
+                              </DropdownMenuItem>
+                            )}
+                            {user.status !== 'banned' && (
+                              <DropdownMenuItem
+                                className="cursor-pointer text-rose-600 focus:text-rose-600"
+                                onClick={() => handleStatusChange(user.id, 'banned')}
+                              >
+                                <UserX className="mr-2 h-4 w-4" />
+                                <span>Ban User</span>
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
             </TableBody>
           </Table>
 
-          <DataTablePagination
-            currentPage={1}
-            totalPages={125}
-            totalItems={12450}
-            itemsPerPage={users.length}
-            itemLabel="users"
-          />
+          {meta && (
+            <DataTablePagination
+              currentPage={meta.page}
+              totalPages={Math.ceil(meta.total / meta.limit) || 1}
+              totalItems={meta.total}
+              itemsPerPage={users.length}
+              itemLabel="users"
+            />
+          )}
         </Card>
       </div>
     </div>

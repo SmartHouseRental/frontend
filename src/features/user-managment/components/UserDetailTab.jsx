@@ -6,8 +6,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import PropertiesTab from './PropertiesTab';
 import ReportsTab from './ReportsTab';
+import { useParams } from 'react-router';
+import { useUser } from '@/features/user-managment/hooks/useUser';
 
-const tabs = {
+const BASE_TABS = {
   overview: {
     barStyle: 'bottom-0 left-2 w-15',
     rank: 1,
@@ -30,10 +32,19 @@ const triggerStyle =
   'text-primary/80 shadow-none border-0 pb-4 hover:text-primary w-fit flex-none border-b-none text-sm font-medium whitespace-nowrap transition-all data-[state=active]:text-primary data-[state=active]:border-none group-data-[variant=default]/tabs-list:data-[state=active]:shadow-none';
 
 function UserDetailTabs() {
+  const { id } = useParams();
+  const { data: user } = useUser(id);
+
   const [activeTab, setActiveTab] = useState({
     current: 'overview',
     previous: 'overview',
   });
+
+  const isOwner = user?.role === 'owner';
+  const tabs = { ...BASE_TABS };
+  if (!isOwner) {
+    delete tabs.verfication;
+  }
 
   // Tabs - Start
   const { Component, rank } = tabs[activeTab.current];
@@ -58,9 +69,11 @@ function UserDetailTabs() {
             Overview
           </TabsTrigger>
 
-          <TabsTrigger value="verfication" className={triggerStyle}>
-            Verfication & Documents
-          </TabsTrigger>
+          {isOwner && (
+            <TabsTrigger value="verfication" className={triggerStyle}>
+              Verfication & Documents
+            </TabsTrigger>
+          )}
 
           <TabsTrigger value="properties" className={triggerStyle}>
             Properties
@@ -83,11 +96,13 @@ function UserDetailTabs() {
           </div>
         </TabsContent>
 
-        <TabsContent value="verfication">
-          <div className={cn('absolute w-full', animationClass)}>
-            <VerficationTab />
-          </div>
-        </TabsContent>
+        {isOwner && (
+          <TabsContent value="verfication">
+            <div className={cn('absolute w-full', animationClass)}>
+              <VerficationTab />
+            </div>
+          </TabsContent>
+        )}
 
         <TabsContent value="properties">
           <div className={cn('absolute w-full', animationClass)}>

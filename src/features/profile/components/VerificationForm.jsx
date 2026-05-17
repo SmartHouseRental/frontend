@@ -1,13 +1,17 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Shield, Upload, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { useUploadDocuments } from '../hooks/useUploadDocuments';
 import { useDocuments } from '../hooks/useDocuments';
+import { getImageUrl } from '@/lib/utils';
 
 export function VerificationForm({ profile }) {
     const { data: documentData, isLoading: docsLoading } = useDocuments();
     const uploadDocumentsMutation = useUploadDocuments();
+
+    const [selectedFiles, setSelectedFiles] = useState({});
+    const [previews, setPreviews] = useState({});
 
     // Create refs for multiple inputs
     const nationalIdFrontRef = useRef(null);
@@ -23,20 +27,40 @@ export function VerificationForm({ profile }) {
             return;
         }
 
-        const formData = new FormData();
-        formData.append(type, file);
-        uploadDocumentsMutation.mutate(formData);
+        setSelectedFiles(prev => ({ ...prev, [type]: file }));
 
-        // Reset input
-        e.target.value = null;
+        const previewUrl = URL.createObjectURL(file);
+        setPreviews(prev => ({ ...prev, [type]: previewUrl }));
+
+        e.target.value = null; // Reset input
     };
+
+    const handleBundleUpload = () => {
+        const formData = new FormData();
+        Object.entries(selectedFiles).forEach(([key, file]) => {
+            formData.append(key, file);
+        });
+        uploadDocumentsMutation.mutate(formData, {
+            onSuccess: () => {
+                setSelectedFiles({});
+                setPreviews({});
+            }
+        });
+    };
+
+    useEffect(() => {
+        return () => {
+            Object.values(previews).forEach(url => URL.revokeObjectURL(url));
+        };
+    }, [previews]);
 
     // Helper to find document status in response
     const getDocInfo = (docType) => {
         const uploadedDocs = documentData?.data?.uploadedFiles || [];
-        const doc = uploadedDocs.find(d => d.documentType === docType);
-        return doc;
+        return uploadedDocs.find(d => d.documentType === docType);
     };
+
+    const isMissingFiles = Object.keys(selectedFiles).length < 3;
 
     const steps = [
         { label: 'Email Verified', status: profile?.emailVerified ? 'complete' : 'pending' },
@@ -61,10 +85,10 @@ export function VerificationForm({ profile }) {
                                 <div className="flex flex-col items-center text-center">
                                     <div
                                         className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all ${step.status === 'complete'
-                                                ? 'bg-emerald-500 text-white'
-                                                : step.status === 'current'
-                                                    ? 'bg-primary text-primary-foreground ring-primary/20 ring-4'
-                                                    : 'bg-muted text-muted-foreground'
+                                            ? 'bg-emerald-500 text-white'
+                                            : step.status === 'current'
+                                                ? 'bg-primary text-primary-foreground ring-primary/20 ring-4'
+                                                : 'bg-muted text-muted-foreground'
                                             }`}
                                     >
                                         {step.status === 'complete' ? <CheckCircle2 size={14} /> : i + 1}
@@ -97,9 +121,19 @@ export function VerificationForm({ profile }) {
                                 <Loader2 className="animate-spin" size={14} /> Uploading...
                             </div>
                         )}
+                        {!uploadDocumentsMutation.isPending && (
+                            <Button
+                                onClick={handleBundleUpload}
+                                disabled={isMissingFiles && documentData?.data?.overallStatus !== 'verified' && documentData?.data?.overallStatus !== 'pending'}
+                                size="sm"
+                                className="font-bold"
+                            >
+                                Submit All Documents
+                            </Button>
+                        )}
                     </div>
                     <p className="text-muted-foreground text-sm">
-                        Upload documents to verify your identity and property ownership.
+                        Upload all three documents simultaneously to verify your identity and property ownership.
                     </p>
 
                     {docsLoading ? (
@@ -140,7 +174,7 @@ export function VerificationForm({ profile }) {
                                         <div className="flex items-center gap-3">
                                             {isVerified ? (
                                                 <CheckCircle2 size={18} className="text-emerald-500" />
-                                            ) : doc ? (
+                                            ) : (doc || selectedFiles[config.type]) ? (
                                                 <CheckCircle2 size={18} className="text-primary" />
                                             ) : (
                                                 <AlertCircle size={18} className="text-amber-500" />
@@ -148,9 +182,9 @@ export function VerificationForm({ profile }) {
                                             <div>
                                                 <p className="text-foreground text-sm font-bold">{config.label}</p>
                                                 <p className="text-muted-foreground mt-0.5 text-xs">{config.description}</p>
-                                                {doc && (
+                                                {(doc || selectedFiles[config.type]) && (
                                                     <p className="text-muted-foreground/70 mt-0.5 text-[10px]">
-                                                        📎 {doc.file}
+                                                        📎 {selectedFiles[config.type]?.name || doc?.file}
                                                     </p>
                                                 )}
                                             </div>
@@ -158,11 +192,11 @@ export function VerificationForm({ profile }) {
                                         <div className="flex items-center gap-3">
                                             <span
                                                 className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${isVerified ? 'bg-emerald-100 text-emerald-700'
-                                                        : doc ? 'bg-primary/20 text-primary'
-                                                            : 'bg-amber-100 text-amber-700'
+                                                    : (doc || selectedFiles[config.type]) ? 'bg-primary/20 text-primary'
+                                                        : 'bg-amber-100 text-amber-700'
                                                     }`}
                                             >
-                                                {isVerified ? 'Verified' : doc ? 'Uploaded' : 'Pending'}
+                                                {isVerified ? 'Verified' : (doc || selectedFiles[config.type]) ? 'Selected' : 'Pending'}
                                             </span>
                                             <label className="cursor-pointer">
                                                 <Button
@@ -171,7 +205,7 @@ export function VerificationForm({ profile }) {
                                                     className="pointer-events-none h-7 gap-1 text-xs"
                                                     disabled={isVerified}
                                                 >
-                                                    <Upload size={12} /> {doc ? 'Replace' : 'Upload'}
+                                                    <Upload size={12} /> {(doc || selectedFiles[config.type]) ? 'Replace' : 'Upload'}
                                                 </Button>
                                                 <input
                                                     type="file"
@@ -184,7 +218,19 @@ export function VerificationForm({ profile }) {
                                             </label>
                                         </div>
                                     </div>
-                                    {!doc && (
+
+                                    {/* Preview Section */}
+                                    {(previews[config.type] || doc?.url) && (
+                                        <div className="mt-4 h-32 w-full rounded-lg overflow-hidden border border-primary/10">
+                                            <img
+                                                src={previews[config.type] || getImageUrl(doc?.url)}
+                                                alt={`${config.label} Preview`}
+                                                className="h-full w-full object-cover"
+                                            />
+                                        </div>
+                                    )}
+
+                                    {!(doc || selectedFiles[config.type]) && (
                                         <div
                                             className="text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5 mt-3 flex h-20 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-amber-300 transition-all"
                                             onClick={() => config.ref.current?.click()}

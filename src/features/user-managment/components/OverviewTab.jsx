@@ -1,6 +1,16 @@
-import { House, Info, Calendar, Star, Check, EyeOff, X } from 'lucide-react';
+import { House, Info, Calendar, Star } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { useParams } from 'react-router';
+import { useUser } from '@/features/user-managment/hooks/useUser';
+
 function OverviewTab() {
+  const { id } = useParams();
+  const { data: user } = useUser(id);
+
+  const joinedDate = user?.createdAt
+    ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    : 'Unknown';
+
   return (
     <div className="grid grid-cols-1 gap-8">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -48,19 +58,19 @@ function OverviewTab() {
             <label className="text-primary/40 text-[10px] font-bold tracking-widest uppercase">
               Email Address
             </label>
-            <p className="text-primary font-bold">dawit.gebre@example.et</p>
+            <p className="text-primary font-bold">{user?.email || 'N/A'}</p>
           </div>
           <div className="space-y-1">
             <label className="text-primary/40 text-[10px] font-bold tracking-widest uppercase">
               Phone Number
             </label>
-            <p className="text-primary font-bold">+251 911 234 567</p>
+            <p className="text-primary font-bold">{user?.phone || 'N/A'}</p>
           </div>
           <div className="space-y-1">
             <label className="text-primary/40 text-[10px] font-bold tracking-widest uppercase">
               Registration Date
             </label>
-            <p className="text-primary font-bold">October 14, 2023</p>
+            <p className="text-primary font-bold">{joinedDate}</p>
           </div>
           <div className="space-y-1">
             <label className="text-primary/40 text-[10px] font-bold tracking-widest uppercase">

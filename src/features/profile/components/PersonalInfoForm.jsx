@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Camera, Shield, Save, Loader2 } from 'lucide-react';
 import { useUpdateProfile } from '../hooks/useUpdateProfile';
+import { getImageUrl } from '@/lib/utils';
 
 const personalInfoSchema = z.object({
     fullName: z.string().min(2, 'Name must be at least 2 characters').max(100),
@@ -34,7 +35,7 @@ export function PersonalInfoForm({ profile }) {
     const fileInputRef = useRef(null);
     const [previewImage, setPreviewImage] = useState(
         profile?.image
-            ? `https://smarthouserental.onrender.com${profile.image}`
+            ? getImageUrl(profile.image)
             : "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&auto=format&fit=crop"
     );
     const [selectedFile, setSelectedFile] = useState(null);
