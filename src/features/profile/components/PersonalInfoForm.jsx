@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Camera, Shield, Save, Loader2 } from 'lucide-react';
+import { Camera, Shield, Save, Loader2, Clock, EyeOff, XCircle, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { useUpdateProfile } from '../hooks/useUpdateProfile';
 import { getImageUrl } from '@/lib/utils';
 
@@ -94,9 +94,26 @@ export function PersonalInfoForm({ profile }) {
                         <div>
                             <h3 className="text-foreground text-lg font-bold">{currentFullName || 'Your Name'}</h3>
                             <p className="text-muted-foreground text-sm">{profile?.email}</p>
-                            {profile?.isVerified && (
+                            {profile?.isVerified ? (
                                 <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-emerald-500">
-                                    <Shield size={12} /> Verified Owner
+                                    <CheckCircle2 size={12} /> Verified Owner
+                                </p>
+                            ) : profile?.verificationState ? (
+                                <p className={`mt-1 flex items-center gap-1 text-xs font-semibold ${
+                                    profile.verificationState === 'pending' ? 'text-amber-500' :
+                                    profile.verificationState === 'rejected' ? 'text-red-500' :
+                                    profile.verificationState === 'resubmit' ? 'text-orange-500' :
+                                    'text-muted-foreground'
+                                }`}>
+                                    {profile.verificationState === 'pending' && <Clock size={12} />}
+                                    {profile.verificationState === 'rejected' && <XCircle size={12} />}
+                                    {profile.verificationState === 'resubmit' && <RefreshCw size={12} />}
+                                    {profile.verificationState === 'under_review' && <EyeOff size={12} />}
+                                    {profile.verificationState.charAt(0).toUpperCase() + profile.verificationState.slice(1)}
+                                </p>
+                            ) : (
+                                <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-muted-foreground">
+                                    <Clock size={12} /> Not Verified
                                 </p>
                             )}
                         </div>

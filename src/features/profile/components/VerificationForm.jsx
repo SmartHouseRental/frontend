@@ -1,7 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Shield, Upload, CheckCircle2, AlertCircle, Loader2, X, ExternalLink, ZoomIn } from 'lucide-react';
+import { Shield, Upload, CheckCircle2, AlertCircle, Loader2, X, ExternalLink, ZoomIn, Clock, EyeOff, RefreshCw, XCircle } from 'lucide-react';
+import { useUploadDocuments } from '../hooks/useUploadDocuments';
+import { useDocuments } from '../hooks/useDocuments';
+import { getImageUrl } from '@/lib/utils';
 
 function DocModal({ url, title, onClose }) {
     if (!url) return null;
@@ -41,9 +44,7 @@ function DocModal({ url, title, onClose }) {
         </div>
     );
 }
-import { useUploadDocuments } from '../hooks/useUploadDocuments';
-import { useDocuments } from '../hooks/useDocuments';
-import { getImageUrl } from '@/lib/utils';
+
 
 export function VerificationForm({ profile }) {
     const { data: documentData, isLoading: docsLoading } = useDocuments();
@@ -103,14 +104,37 @@ export function VerificationForm({ profile }) {
     const isMissingFiles = Object.keys(selectedFiles).length < 3;
 
     const docStatus = documentData?.data?.status || documentData?.data?.overallStatus;
+    const hasDocuments = documentData?.data && (documentData?.data?.uploadedFiles?.length > 0 || docStatus);
+    
+    // Status badge configuration
+    const statusConfig = {
+        pending: { label: 'Pending Review', icon: <Clock size={16} />, color: 'bg-amber-100 text-amber-700 border-amber-200' },
+        under_review: { label: 'Under Review', icon: <EyeOff size={16} />, color: 'bg-blue-100 text-blue-700 border-blue-200' },
+        approved: { label: 'Approved', icon: <CheckCircle2 size={16} />, color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
+        rejected: { label: 'Rejected', icon: <XCircle size={16} />, color: 'bg-red-100 text-red-700 border-red-200' },
+        resubmit: { label: 'Resubmit Required', icon: <RefreshCw size={16} />, color: 'bg-orange-100 text-orange-700 border-orange-200' },
+    };
+    
+    const currentStatus = statusConfig[docStatus] || statusConfig.pending;
+    
     const steps = [
         { label: 'Email Verified', status: profile?.emailVerified ? 'complete' : 'pending' },
         {
             label: 'Documents Uploaded',
-            status: documentData?.data ? (docStatus === 'approved' || docStatus === 'verified' ? 'complete' : 'current') : 'pending'
+            status: hasDocuments ? 'complete' : 'pending'
         },
-        { label: 'Admin Review', status: docStatus === 'under_review' || docStatus === 'approved' || docStatus === 'verified' ? 'current' : (docStatus === 'rejected' || docStatus === 'resubmit' ? 'complete' : 'pending') },
-        { label: 'Verified Owner', status: profile?.isVerified || docStatus === 'approved' || docStatus === 'verified' ? 'complete' : 'pending' },
+        { 
+            label: 'Admin Review', 
+            status: !hasDocuments ? 'pending' : 
+                   docStatus === 'pending' ? 'current' :
+                   docStatus === 'under_review' ? 'current' :
+                   docStatus === 'approved' || docStatus === 'rejected' || docStatus === 'resubmit' ? 'complete' : 'pending'
+        },
+        { 
+            label: 'Verified Owner', 
+            status: docStatus === 'approved' || profile?.isVerified ? 'complete' : 
+                   docStatus === 'rejected' || docStatus === 'resubmit' ? 'error' : 'pending'
+        },
     ];
 
     return (
@@ -127,6 +151,26 @@ export function VerificationForm({ profile }) {
                     <h3 className="text-foreground flex items-center gap-2 font-bold">
                         <Shield size={16} /> Verification Status
                     </h3>
+                    
+                    {/* Current Status Badge */}
+                    {hasDocuments && (
+                        <div className={`flex items-center gap-3 rounded-lg border p-4 ${currentStatus.color}`}>
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/50">
+                                {currentStatus.icon}
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-sm font-bold">{currentStatus.label}</p>
+                                <p className="text-muted-foreground text-xs">
+                                    {docStatus === 'pending' && 'Your documents are waiting for admin review'}
+                                    {docStatus === 'under_review' && 'An admin is currently reviewing your documents'}
+                                    {docStatus === 'approved' && 'Your documents have been approved'}
+                                    {docStatus === 'rejected' && 'Your documents were rejected'}
+                                    {docStatus === 'resubmit' && 'Please resubmit your documents with corrections'}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                    
                     <div className="flex items-center gap-0">
                         {steps.map((step, i, arr) => (
                             <div key={i} className="flex flex-1 items-center last:flex-none">
@@ -136,20 +180,22 @@ export function VerificationForm({ profile }) {
                                             ? 'bg-emerald-500 text-white'
                                             : step.status === 'current'
                                                 ? 'bg-primary text-primary-foreground ring-primary/20 ring-4'
-                                                : 'bg-muted text-muted-foreground'
+                                                : step.status === 'error'
+                                                    ? 'bg-red-500 text-white'
+                                                    : 'bg-muted text-muted-foreground'
                                             }`}
                                     >
-                                        {step.status === 'complete' ? <CheckCircle2 size={14} /> : i + 1}
+                                        {step.status === 'complete' ? <CheckCircle2 size={14} /> : step.status === 'error' ? <XCircle size={14} /> : i + 1}
                                     </div>
                                     <p
-                                        className={`mt-1.5 max-w-16 text-[10px] font-semibold ${step.status === 'current' ? 'text-primary' : step.status === 'complete' ? 'text-emerald-600' : 'text-muted-foreground'}`}
+                                        className={`mt-1.5 max-w-16 text-[10px] font-semibold ${step.status === 'current' ? 'text-primary' : step.status === 'complete' ? 'text-emerald-600' : step.status === 'error' ? 'text-red-600' : 'text-muted-foreground'}`}
                                     >
                                         {step.label}
                                     </p>
                                 </div>
                                 {i < arr.length - 1 && (
                                     <div
-                                        className={`mx-1 h-0.5 flex-1 rounded-full ${step.status === 'complete' ? 'bg-emerald-400' : 'bg-muted'}`}
+                                        className={`mx-1 h-0.5 flex-1 rounded-full ${step.status === 'complete' ? 'bg-emerald-400' : step.status === 'error' ? 'bg-red-400' : 'bg-muted'}`}
                                     />
                                 )}
                             </div>
@@ -184,13 +230,13 @@ export function VerificationForm({ profile }) {
                         Upload all three documents simultaneously to verify your identity and property ownership.
                     </p>
 
-                    {/* Admin Note Display */}
-                    {documentData?.data?.note && (
-                        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                    {/* Admin Note Display - Only show for rejected or resubmit */}
+                    {(docStatus === 'rejected' || docStatus === 'resubmit') && documentData?.data?.note && (
+                        <div className="rounded-lg border border-red-200 bg-red-50/50 p-4">
                             <div className="flex items-start gap-3">
-                                <AlertCircle size={16} className="text-primary mt-0.5" />
+                                <AlertCircle size={16} className="text-red-600 mt-0.5" />
                                 <div className="flex-1">
-                                    <p className="text-primary text-xs font-bold uppercase tracking-wider">
+                                    <p className="text-red-700 text-xs font-bold uppercase tracking-wider">
                                         Admin Note
                                     </p>
                                     <p className="text-foreground mt-1 text-sm">
