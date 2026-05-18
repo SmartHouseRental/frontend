@@ -51,12 +51,12 @@ export default function ExplorePageContent() {
         const coords = parseLocation(p.location);
         
         // Handle new nested object structure from API
-        const title = typeof p.title === 'object' ? (p.title.en || p.title.am) : p.title;
-        const address = typeof p.address === 'object' ? (p.address.en || p.address.am) : p.address;
-        const price = typeof p.price === 'object' ? p.price.value : p.price;
-        const currency = typeof p.price === 'object' ? (p.price.currency || 'ETB') : 'ETB';
-        const area = typeof p.area === 'object' ? p.area.value : p.area;
-        const type = typeof p.type === 'object' ? (p.type.en || p.type.am) : p.type;
+        const title = (p.title && typeof p.title === 'object') ? (p.title.en || p.title.am) : p.title;
+        const address = (p.address && typeof p.address === 'object') ? (p.address.en || p.address.am) : p.address;
+        const price = (p.price && typeof p.price === 'object') ? p.price.value : p.price;
+        const currency = (p.price && typeof p.price === 'object') ? (p.price.currency || 'ETB') : 'ETB';
+        const area = (p.area && typeof p.area === 'object') ? p.area.value : p.area;
+        const type = (p.type && typeof p.type === 'object') ? (p.type.en || p.type.am) : p.type;
 
         return {
             ...p,

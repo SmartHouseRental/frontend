@@ -26,7 +26,7 @@ export default function ReviewModal({ isOpen, onClose, property }) {
           <div>
             <h2 className="text-2xl font-bold mb-1">Leave a Review</h2>
             <p className="text-muted-foreground text-sm">
-              Share your experience at {property.title}
+              Share your experience at {property.titleStr || (typeof property.title === 'object' ? (property.title?.en || property.title?.am) : property.title) || 'this property'}
             </p>
           </div>
           <button 

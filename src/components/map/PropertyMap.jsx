@@ -68,22 +68,28 @@ export default function PropertyMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {properties.map((property) => (
-          <Marker key={property.id} position={[property.lat, property.lng]} icon={customIcon}>
-            <Popup closeButton={false} className="custom-popup">
-              <div className="map-popup-card" onClick={() => navigate(`/property/${property.id}`)}>
-                <img src={property.image} alt={property.title} className="map-popup-image" />
-                <div className="map-popup-info">
-                  <h3 className="map-popup-title">{property.title}</h3>
-                  <p className="map-popup-price">{property.price}</p>
-                  <p className="text-muted-foreground mt-1 text-[10px] font-bold tracking-widest uppercase">
-                    Click to view details
-                  </p>
+        {properties.map((property) => {
+          const title = (property.title && typeof property.title === 'object') ? (property.title.en || property.title.am) : (property.titleStr || property.title || "Property Details");
+          const price = (property.price && typeof property.price === 'object') ? `${property.price.value} ${property.price.currency || 'ETB'}` : (property.priceStr || property.price || "0 ETB");
+          const image = property.image || property.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
+
+          return (
+            <Marker key={property.id} position={[property.lat, property.lng]} icon={customIcon}>
+              <Popup closeButton={false} className="custom-popup">
+                <div className="map-popup-card" onClick={() => navigate(`/property/${property.id}`)}>
+                  <img src={image} alt={title} className="map-popup-image" />
+                  <div className="map-popup-info">
+                    <h3 className="map-popup-title">{title}</h3>
+                    <p className="map-popup-price">{price}</p>
+                    <p className="text-muted-foreground mt-1 text-[10px] font-bold tracking-widest uppercase">
+                      Click to view details
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
     </div>
   );

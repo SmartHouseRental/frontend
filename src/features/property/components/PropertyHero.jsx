@@ -25,17 +25,17 @@ export default function PropertyHero({ property }) {
         <div>
 
           <div className="text-sm text-muted-foreground mb-2">
-            Addis Ababa › Bole › {typeof property?.title === 'object' ? property.title.en : (property?.title || "Bole Atlas Villa")}
+            Addis Ababa › Bole › {property?.titleStr || "Bole Atlas Villa"}
           </div>
 
           <h2 className="text-3xl font-extrabold">
-            {typeof property?.title === 'object' ? property.title.en : (property?.title || "The Morning Sun Villa")}
+            {property?.titleStr || "The Morning Sun Villa"}
           </h2>
 
           <div className="flex items-center gap-2 mt-2 text-muted-foreground">
             <MapPin className="w-4 h-4" />
             <span className="text-sm">
-              {property?.location || "Bole Atlas, Close to Edna Mall, Addis Ababa"}
+              {property?.location || property?.addressStr || "Bole Atlas, Close to Edna Mall, Addis Ababa"}
             </span>
           </div>
 

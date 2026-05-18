@@ -20,4 +20,12 @@ export const propertyApi = {
     return axiosInstance.get('/api/v1/properties', { params: cleanedParams });
   },
   getProperty: (id) => axiosInstance.get(`/api/v1/properties/${id}`),
+  createProperty: (data) => axiosInstance.post('/api/v1/properties', data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  updateProperty: (id, data) => axiosInstance.patch(`/api/v1/properties/${id}`, data),
+  deleteProperty: (id) => axiosInstance.delete(`/api/v1/properties/${id}`),
+  updatePropertyStatus: (id, status) => axiosInstance.patch(`/api/v1/properties/${id}/status`, { status }),
+  getMyProperties: () => axiosInstance.get('/api/v1/properties/my'),
+  getPropertyAnalytics: () => axiosInstance.get('/api/v1/properties/analytics'),
 };

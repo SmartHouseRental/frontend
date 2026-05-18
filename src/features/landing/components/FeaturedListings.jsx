@@ -57,12 +57,12 @@ export default function FeaturedListings() {
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {listings.map((home) => {
-            const title = typeof home.title === 'object' ? (home.title.en || home.title.am) : home.title;
-            const address = typeof home.address === 'object' ? (home.address.en || home.address.am) : home.address;
-            const price = typeof home.price === 'object' ? home.price.value : home.price;
-            const currency = typeof home.price === 'object' ? (home.price.currency || 'ETB') : 'ETB';
-            const area = typeof home.area === 'object' ? home.area.value : home.area;
-            const type = typeof home.type === 'object' ? (home.type.en || home.type.am) : home.type;
+            const title = (home.title && typeof home.title === 'object') ? (home.title.en || home.title.am) : home.title;
+            const address = (home.address && typeof home.address === 'object') ? (home.address.en || home.address.am) : home.address;
+            const price = (home.price && typeof home.price === 'object') ? home.price.value : home.price;
+            const currency = (home.price && typeof home.price === 'object') ? (home.price.currency || 'ETB') : 'ETB';
+            const area = (home.area && typeof home.area === 'object') ? home.area.value : home.area;
+            const type = (home.type && typeof home.type === 'object') ? (home.type.en || home.type.am) : home.type;
             const image = home.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
 
             return (

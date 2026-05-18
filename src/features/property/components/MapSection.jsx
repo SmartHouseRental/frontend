@@ -17,7 +17,7 @@ export default function MapSection({ property }) {
           <h3 className="text-2xl font-bold mb-1">Location & Neighborhood</h3>
           <p className="text-muted-foreground text-sm flex items-center gap-1">
             <MapPin className="w-3 h-3" />
-            {property.location}
+            {property.location || property.addressStr || "Addis Ababa, Ethiopia"}
           </p>
         </div>
         
@@ -50,7 +50,7 @@ export default function MapSection({ property }) {
       </div>
       
       <p className="mt-6 text-sm text-muted-foreground leading-relaxed italic">
-        "This neighborhood is known for its safety, quiet streets, and proximity to major international schools and shopping centers in {property.location.split(',')[0]}."
+        "This neighborhood is known for its safety, quiet streets, and proximity to major international schools and shopping centers in {(property.location || property.addressStr || "Addis Ababa").split(',')[0]}."
       </p>
     </section>
   );

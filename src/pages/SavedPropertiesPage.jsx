@@ -61,7 +61,12 @@ export default function SavedPropertiesPage() {
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {favorites.map((p) => {
-              const title = typeof p.title === 'object' ? p.title.en : p.title;
+              const title = (p.title && typeof p.title === 'object') ? (p.title.en || p.title.am) : p.title;
+              const address = (p.address && typeof p.address === 'object') ? (p.address.en || p.address.am) : (p.address || p.location || "Addis Ababa, Ethiopia");
+              const priceValue = (p.price && typeof p.price === 'object') ? p.price.value : p.price;
+              const priceCurrency = (p.price && typeof p.price === 'object') ? (p.price.currency || 'ETB') : 'ETB';
+              const areaValue = (p.area && typeof p.area === 'object') ? p.area.value : p.area;
+              const type = (p.type && typeof p.type === 'object') ? (p.type.en || p.type.am) : p.type;
               const image = p.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
 
               return (
@@ -69,15 +74,15 @@ export default function SavedPropertiesPage() {
                   key={p.id}
                   id={p.id}
                   title={title}
-                  location={p.address || p.location}
-                  price={`${p.price} ETB`}
+                  location={address}
+                  price={`${priceValue} ${priceCurrency}`}
                   beds={p.bedrooms}
                   baths={p.bathrooms}
-                  size={`${p.area} m²`}
+                  size={`${areaValue} m²`}
                   image={image}
                   rating={p.rating || 0}
-                  status={p.status === 'available' ? 'Available' : p.status}
-                  badge={p.type}
+                  status={p.status === 'AVAILABLE' || p.status === 'available' ? 'Available' : p.status}
+                  badge={type}
                 />
               );
             })}

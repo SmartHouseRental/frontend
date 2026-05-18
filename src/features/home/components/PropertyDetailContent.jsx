@@ -64,16 +64,25 @@ export default function PropertyDetailContent() {
     const coords = parseLocation(property.location);
     
     // Extract values from new nested objects
-    const title = typeof property.title === 'object' ? (property.title.en || property.title.am) : property.title;
-    const address = typeof property.address === 'object' ? (property.address.en || property.address.am) : property.address;
-    const description = typeof property.description === 'object' ? (property.description.en || property.description.am) : property.description;
-    const type = typeof property.type === 'object' ? (property.type.en || property.type.am) : property.type;
-    const priceValue = typeof property.price === 'object' ? property.price.value : property.price;
-    const priceCurrency = typeof property.price === 'object' ? (property.price.currency || 'ETB') : 'ETB';
-    const areaValue = typeof property.area === 'object' ? property.area.value : property.area;
+    const title = (property.title && typeof property.title === 'object') ? (property.title.en || property.title.am) : property.title;
+    const address = (property.address && typeof property.address === 'object') ? (property.address.en || property.address.am) : property.address;
+    const description = (property.description && typeof property.description === 'object') ? (property.description.en || property.description.am) : property.description;
+    const type = (property.type && typeof property.type === 'object') ? (property.type.en || property.type.am) : property.type;
+    const priceValue = (property.price && typeof property.price === 'object') ? property.price.value : property.price;
+    const priceCurrency = (property.price && typeof property.price === 'object') ? (property.price.currency || 'ETB') : 'ETB';
+    const areaValue = (property.area && typeof property.area === 'object') ? property.area.value : property.area;
 
     const enrichedProperty = {
         ...property,
+        // Override localized JSON fields with extracted strings so child components
+        // always receive plain strings/numbers — never {en, am} objects.
+        title: title || "Property Details",
+        description: description || '',
+        address: address || property.location || "Addis Ababa, Ethiopia",
+        type: type || 'Villa',
+        price: priceValue || 0,
+        area: areaValue || 0,
+        // Convenience string aliases used by some child components
         lat: coords?.lat || 9.0128,
         lng: coords?.lng || 38.7508,
         titleStr: title || "Property Details",
@@ -84,7 +93,6 @@ export default function PropertyDetailContent() {
         beds: property.bedrooms,
         baths: property.bathrooms,
         size: `${areaValue} sqm`,
-        // Default values for fields that might be missing in API but expected by UI
         furnishing: property.furnishingType,
     };
 

@@ -11,7 +11,7 @@ export const useAppointments = (filters = {}) => {
   return useQuery({
     queryKey: visitKeys.appointments(filters),
     queryFn: () => visitsApi.getAppointments(filters),
-    select: (response) => response.data,
+    select: (response) => response.data.appointments,
   });
 };
 

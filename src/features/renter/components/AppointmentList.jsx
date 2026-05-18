@@ -13,14 +13,12 @@ export default function AppointmentList() {
   const cancelMutation = useCancelAppointment();
   
   const [cancellingApt, setCancellingApt] = useState(null);
-  const [cancelNote, setCancelNote] = useState('');
   const navigate = useNavigate();
 
   const handleCancelSubmit = async () => {
     try {
       await cancelMutation.mutateAsync(cancellingApt.id);
       setCancellingApt(null);
-      setCancelNote('');
     } catch (err) {
       // Error handled in mutation
     }
@@ -176,30 +174,13 @@ export default function AppointmentList() {
                 Are you sure you want to cancel your visit to <span className="font-semibold text-foreground">
                   {typeof cancellingApt.property?.title === 'object' ? cancellingApt.property.title.en : (cancellingApt.property?.title || "this property")}
                 </span>? 
-                Please provide a reason for the owner.
               </p>
-              
-              <div className="space-y-2 mb-6">
-                <label className="text-sm font-semibold flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4 text-primary" />
-                  Cancellation Note
-                </label>
-                <Textarea 
-                  placeholder="Reason for cancellation (e.g., Change of plans, found another property...)"
-                  className="min-h-[100px] resize-none"
-                  value={cancelNote}
-                  onChange={(e) => setCancelNote(e.target.value)}
-                />
-              </div>
 
               <div className="flex gap-3">
                 <Button 
                   variant="ghost" 
                   className="flex-1 rounded-xl"
-                  onClick={() => {
-                    setCancellingApt(null);
-                    setCancelNote('');
-                  }}
+                  onClick={() => setCancellingApt(null)}
                   disabled={cancelMutation.isPending}
                 >
                   Go Back

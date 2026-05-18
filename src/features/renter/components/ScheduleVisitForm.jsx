@@ -13,15 +13,37 @@ import { useBookAppointment } from '../../visits/hooks/useAppointments';
 
 const formSchema = z.object({
   date: z.string().min(1, 'Please select a date'),
-  time: z.string().min(1, 'Please select a time'),
+  time: z.string().min(1, 'Please select a start time'),
+  endTime: z.string().min(1, 'Please select an end time'),
   message: z.string().optional(),
 });
+
+// Convert "09:00 AM" style string to total minutes from midnight for comparison
+const slotToMinutes = (slot) => {
+  const [time, period] = slot.split(' ');
+  let [h, m] = time.split(':').map(Number);
+  if (period === 'PM' && h < 12) h += 12;
+  if (period === 'AM' && h === 12) h = 0;
+  return h * 60 + m;
+};
+
+const getLocalizedStr = (field) => {
+  if (!field) return '';
+  if (typeof field === 'object') return field.en || field.am || '';
+  return String(field);
+};
 
 export default function ScheduleVisitForm({ property }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  const [selectedEndTime, setSelectedEndTime] = useState('');
+
+  const propertyTitle = property.titleStr || getLocalizedStr(property.title) || 'Property Details';
+  const propertyAddress = property.addressStr || getLocalizedStr(property.address) || property.location || '';
+  const propertyType = property.typeStr || getLocalizedStr(property.type) || 'Villa';
+  const propertyPrice = property.priceStr || (typeof property.price === 'object' ? (property.price?.value ?? '') : (property.price ?? ''));
 
   const {
     register,
@@ -33,6 +55,7 @@ export default function ScheduleVisitForm({ property }) {
     defaultValues: {
       date: '',
       time: '',
+      endTime: '',
       message: '',
     },
   });
@@ -126,7 +149,20 @@ export default function ScheduleVisitForm({ property }) {
     if (unavailableTimesPerDate[selectedDate]?.includes(time)) return;
     setSelectedTime(time);
     setValue('time', time, { shouldValidate: true });
+    // Reset end time whenever start time changes
+    setSelectedEndTime('');
+    setValue('endTime', '', { shouldValidate: false });
   };
+
+  const handleEndTimeSelect = (time) => {
+    setSelectedEndTime(time);
+    setValue('endTime', time, { shouldValidate: true });
+  };
+
+  // End time slots: only slots strictly after the selected start time
+  const availableEndSlots = selectedTime
+    ? timeSlots.filter((t) => slotToMinutes(t) > slotToMinutes(selectedTime))
+    : [];
 
   const changeMonth = (offset) => {
     const newMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + offset, 1);
@@ -135,20 +171,24 @@ export default function ScheduleVisitForm({ property }) {
 
   const { mutateAsync: bookVisit } = useBookAppointment();
 
+  const parseTimeStr = (timeStr) => {
+    const [time, period] = timeStr.split(' ');
+    let [hours, minutes] = time.split(':').map(Number);
+    if (period === 'PM' && hours < 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+    return { hours, minutes };
+  };
+
   const onSubmit = async (data) => {
     try {
-      // Parse time (e.g., "09:00 AM" to hours/minutes)
-      const [time, period] = data.time.split(' ');
-      let [hours, minutes] = time.split(':').map(Number);
-      if (period === 'PM' && hours < 12) hours += 12;
-      if (period === 'AM' && hours === 12) hours = 0;
+      const { hours: startH, minutes: startM } = parseTimeStr(data.time);
+      const { hours: endH, minutes: endM } = parseTimeStr(data.endTime);
 
-      // Create startsAt date
       const startsAt = new Date(data.date);
-      startsAt.setHours(hours, minutes, 0, 0);
+      startsAt.setHours(startH, startM, 0, 0);
 
-      // Default endsAt to 1 hour after startsAt
-      const endsAt = new Date(startsAt.getTime() + 60 * 60 * 1000);
+      const endsAt = new Date(data.date);
+      endsAt.setHours(endH, endM, 0, 0);
 
       await bookVisit({
         propertyId: property.id,
@@ -156,7 +196,7 @@ export default function ScheduleVisitForm({ property }) {
         endsAt: endsAt.toISOString(),
         note: data.message || '',
       });
-      
+
       navigate('/renter/appointments');
     } catch (err) {
       // Error handled in mutation
@@ -242,37 +282,81 @@ export default function ScheduleVisitForm({ property }) {
           {errors.date && <p className="text-destructive text-sm font-medium">{errors.date.message}</p>}
         </section>
 
-        {/* Time Selection */}
-        <section className="space-y-4">
+        {/* Time Selection — Start & End */}
+        <section className="space-y-6">
           <div className="flex items-center gap-2">
             <Clock className="text-primary h-5 w-5" />
-            <h3 className="text-lg font-semibold">Select a Time</h3>
+            <h3 className="text-lg font-semibold">Select Visit Time</h3>
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {timeSlots.map((time) => {
-              const isUnavailable = unavailableTimesPerDate[selectedDate]?.includes(time);
-              return (
-                <button
-                  key={time}
-                  type="button"
-                  disabled={isUnavailable || !selectedDate}
-                  onClick={() => handleTimeSelect(time)}
-                  className={cn(
-                    "rounded-lg border py-2.5 text-sm font-medium transition-all",
-                    selectedTime === time
-                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                      : isUnavailable
-                      ? "bg-muted/30 border-dashed border-muted-foreground/20 text-muted-foreground/50 cursor-not-allowed line-through"
-                      : "bg-card hover:border-primary/50 hover:bg-primary/5 border-border text-foreground",
-                    !selectedDate && "opacity-50 cursor-not-allowed"
-                  )}
-                >
-                  {time}
-                </button>
-              );
-            })}
+
+          {/* Start Time */}
+          <div className="space-y-3">
+            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Start Time</p>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {timeSlots.map((time) => {
+                const isUnavailable = unavailableTimesPerDate[selectedDate]?.includes(time);
+                return (
+                  <button
+                    key={time}
+                    type="button"
+                    disabled={isUnavailable || !selectedDate}
+                    onClick={() => handleTimeSelect(time)}
+                    className={cn(
+                      "rounded-lg border py-2.5 text-sm font-medium transition-all",
+                      selectedTime === time
+                        ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                        : isUnavailable
+                        ? "bg-muted/30 border-dashed border-muted-foreground/20 text-muted-foreground/50 cursor-not-allowed line-through"
+                        : "bg-card hover:border-primary/50 hover:bg-primary/5 border-border text-foreground",
+                      !selectedDate && "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    {time}
+                  </button>
+                );
+              })}
+            </div>
+            {errors.time && <p className="text-destructive text-sm font-medium">{errors.time.message}</p>}
           </div>
-          {errors.time && <p className="text-destructive text-sm font-medium">{errors.time.message}</p>}
+
+          {/* End Time — only shown after start time is selected */}
+          <div className="space-y-3">
+            <p className={cn("text-sm font-semibold uppercase tracking-wide", selectedTime ? "text-muted-foreground" : "text-muted-foreground/40")}>
+              End Time
+            </p>
+            {!selectedTime ? (
+              <p className="text-sm text-muted-foreground/60 italic">Please select a start time first.</p>
+            ) : availableEndSlots.length === 0 ? (
+              <p className="text-sm text-destructive/80 italic">No end times available after the selected start time.</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {availableEndSlots.map((time) => (
+                  <button
+                    key={time}
+                    type="button"
+                    onClick={() => handleEndTimeSelect(time)}
+                    className={cn(
+                      "rounded-lg border py-2.5 text-sm font-medium transition-all",
+                      selectedEndTime === time
+                        ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                        : "bg-card hover:border-primary/50 hover:bg-primary/5 border-border text-foreground"
+                    )}
+                  >
+                    {time}
+                  </button>
+                ))}
+              </div>
+            )}
+            {errors.endTime && <p className="text-destructive text-sm font-medium">{errors.endTime.message}</p>}
+          </div>
+
+          {/* Duration summary badge */}
+          {selectedTime && selectedEndTime && (
+            <div className="flex items-center gap-2 rounded-xl bg-primary/5 border border-primary/20 px-4 py-2.5 text-sm font-semibold text-primary w-fit">
+              <Clock className="h-4 w-4" />
+              Visit: {selectedTime} → {selectedEndTime}
+            </div>
+          )}
         </section>
 
         {/* Optional Message */}
@@ -315,30 +399,30 @@ export default function ScheduleVisitForm({ property }) {
             <div className="aspect-[4/3] w-full overflow-hidden">
               <img 
                 src={property.image || property.images?.[0]} 
-                alt={property.title} 
+                alt={propertyTitle} 
                 className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
               />
             </div>
             <CardContent className="p-6">
               <div className="mb-2 flex items-center justify-between">
-                <span className="text-primary text-xl font-bold">{property.price}</span>
+                <span className="text-primary text-xl font-bold">{propertyPrice}</span>
                 <div className="flex items-center gap-1 text-sm font-bold">
                   <Star className="text-primary h-4 w-4 fill-primary" />
                   {property.rating || '4.8'}
                 </div>
               </div>
               
-              <h2 className="line-clamp-1 text-lg font-bold">{property.title}</h2>
+              <h2 className="line-clamp-1 text-lg font-bold">{propertyTitle}</h2>
               
               <div className="text-muted-foreground mt-2 flex items-start gap-1.5 text-sm">
                 <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                <span className="line-clamp-2">{property.location || property.address}</span>
+                <span className="line-clamp-2">{propertyAddress}</span>
               </div>
 
               <div className="mt-4 flex flex-wrap gap-2">
                  <div className="bg-muted/50 flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold">
                     <Home className="h-3 w-3" />
-                    {property.type || 'Villa'}
+                    {propertyType}
                  </div>
                  {property.beds && (
                    <div className="bg-muted/50 flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold">

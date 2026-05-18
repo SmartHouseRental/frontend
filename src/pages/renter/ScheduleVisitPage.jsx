@@ -26,7 +26,7 @@ export default function ScheduleVisitPage() {
     );
   }
 
-  const propertyTitle = typeof property.title === 'object' ? property.title.en : property.title;
+  const propertyTitle = (property.title && typeof property.title === 'object') ? (property.title.en || property.title.am) : (property.title || "Property Details");
 
   return (
     <div className="container mx-auto max-w-4xl py-8 px-4">

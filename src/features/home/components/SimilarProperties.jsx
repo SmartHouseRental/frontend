@@ -38,7 +38,12 @@ export default function SimilarProperties({ currentId }) {
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {similar.map((p) => {
-                    const title = typeof p.title === 'object' ? p.title.en : p.title;
+                    const title = (p.title && typeof p.title === 'object') ? (p.title.en || p.title.am) : (p.title || "Property Details");
+                    const address = (p.address && typeof p.address === 'object') ? (p.address.en || p.address.am) : (p.address || p.location || "Addis Ababa, Ethiopia");
+                    const priceValue = (p.price && typeof p.price === 'object') ? p.price.value : p.price;
+                    const priceCurrency = (p.price && typeof p.price === 'object') ? (p.price.currency || 'ETB') : 'ETB';
+                    const areaValue = (p.area && typeof p.area === 'object') ? p.area.value : p.area;
+                    const type = (p.type && typeof p.type === 'object') ? (p.type.en || p.type.am) : p.type;
                     const image = p.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
                     
                     return (
@@ -53,14 +58,14 @@ export default function SimilarProperties({ currentId }) {
                                     alt={title}
                                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
-                                {p.type && (
+                                {type && (
                                     <Badge className="bg-primary text-primary-foreground absolute top-3 left-3 text-xs">
-                                        {p.type}
+                                        {type}
                                     </Badge>
                                 )}
                                 <HeartButton property={p} className="absolute top-3 right-3 z-10" />
                                 <div className="absolute bottom-3 left-3 rounded-md bg-white/90 px-2.5 py-1 text-xs font-bold">
-                                    {p.price} ETB
+                                    {priceValue} {priceCurrency} /mo
                                 </div>
                             </div>
 
@@ -68,7 +73,7 @@ export default function SimilarProperties({ currentId }) {
                                 <h4 className="group-hover:text-primary mb-1 font-bold transition-colors line-clamp-1">
                                     {title}
                                 </h4>
-                                <p className="text-muted-foreground mb-3 text-xs line-clamp-1">{p.address || p.location}</p>
+                                <p className="text-muted-foreground mb-3 text-xs line-clamp-1">{address}</p>
 
                                 <div className="text-muted-foreground flex gap-3 border-t pt-2.5 text-xs">
                                     <span className="flex items-center gap-1">
@@ -77,7 +82,7 @@ export default function SimilarProperties({ currentId }) {
                                     <span className="flex items-center gap-1">
                                         <Bath className="h-3 w-3" /> {p.bathrooms}
                                     </span>
-                                    <span>{p.area} sqm</span>
+                                    <span>{areaValue} sqm</span>
                                 </div>
                             </CardContent>
                         </Card>
