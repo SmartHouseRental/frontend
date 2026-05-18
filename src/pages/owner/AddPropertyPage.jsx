@@ -79,7 +79,9 @@ function AddPropertyPage() {
     bedrooms: '',
     bathrooms: '',
     area: '',
+    areaUnit: 'm²',
     address: '',
+    addressAm: '',
     location: '',
     amenities: [],
     furnishingType: '',
@@ -87,7 +89,10 @@ function AddPropertyPage() {
     videos: [],
     leaseDuration: '',
     depositAmount: '',
+    depositCurrency: 'ETB',
+    currency: 'ETB',
     specialTerms: '',
+    specialTermsAm: '',
     availableFrom: '',
   });
 
@@ -158,7 +163,9 @@ function AddPropertyPage() {
                   bedrooms: '',
                   bathrooms: '',
                   area: '',
+                  areaUnit: 'm²',
                   address: '',
+                  addressAm: '',
                   location: '',
                   amenities: [],
                   furnishingType: '',
@@ -166,7 +173,10 @@ function AddPropertyPage() {
                   videos: [],
                   leaseDuration: '',
                   depositAmount: '',
+                  depositCurrency: 'ETB',
+                  currency: 'ETB',
                   specialTerms: '',
+                  specialTermsAm: '',
                   availableFrom: '',
                 });
               }}
@@ -200,13 +210,12 @@ function AddPropertyPage() {
             <div key={i} className="flex items-center gap-2">
               <button
                 onClick={() => i < currentStep && setCurrentStep(i)}
-                className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold transition-all duration-300 ${
-                  isActive
-                    ? 'bg-primary text-primary-foreground shadow-md'
-                    : isCompleted
-                      ? 'cursor-pointer bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
-                      : 'bg-muted text-muted-foreground'
-                }`}
+                className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold transition-all duration-300 ${isActive
+                  ? 'bg-primary text-primary-foreground shadow-md'
+                  : isCompleted
+                    ? 'cursor-pointer bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                    : 'bg-muted text-muted-foreground'
+                  }`}
               >
                 {isCompleted ? <CheckCircle2 size={14} /> : <Icon size={14} />}
                 <span className="hidden sm:inline">{step.label}</span>
@@ -302,16 +311,28 @@ function AddPropertyPage() {
               </div>
               <div>
                 <label className="text-muted-foreground flex items-center gap-1 text-xs font-medium tracking-wider uppercase">
-                  <DollarSign size={12} /> Monthly Rent (ETB){' '}
-                  <span className="text-rose-500">*</span>
+                  <DollarSign size={12} /> Monthly Rent <span className="text-rose-500">*</span>
                 </label>
-                <Input
-                  className="mt-1.5"
-                  type="number"
-                  placeholder="e.g. 45000"
-                  value={form.price}
-                  onChange={(e) => updateForm('price', e.target.value)}
-                />
+                <div className="flex gap-2">
+                  <Select value={form.currency} onValueChange={(v) => updateForm('currency', v)}>
+                    <SelectTrigger className="mt-1.5 w-[100px]">
+                      <SelectValue placeholder="Currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="ETB">ETB</SelectItem>
+                        <SelectItem value="USD">USD</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    className="mt-1.5 flex-1"
+                    type="number"
+                    placeholder="e.g. 45000"
+                    value={form.price}
+                    onChange={(e) => updateForm('price', e.target.value)}
+                  />
+                </div>
               </div>
               <div>
                 <label className="text-muted-foreground flex items-center gap-1 text-xs font-medium tracking-wider uppercase">
@@ -339,29 +360,32 @@ function AddPropertyPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
                 <label className="text-muted-foreground flex items-center gap-1 text-xs font-medium tracking-wider uppercase">
-                  <Maximize size={12} /> Area (m²)
+                  <Maximize size={12} /> Area
                 </label>
-                <Input
-                  className="mt-1.5"
-                  type="number"
-                  placeholder="e.g. 250"
-                  value={form.area}
-                  onChange={(e) => updateForm('area', e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="text-muted-foreground flex items-center gap-1 text-xs font-medium tracking-wider uppercase">
-                  <MapPin size={12} /> Address <span className="text-rose-500">*</span>
-                </label>
-                <Input
-                  className="mt-1.5"
-                  placeholder="e.g. Bole, Addis Ababa"
-                  value={form.address}
-                  onChange={(e) => updateForm('address', e.target.value)}
-                />
+                <div className="flex gap-2">
+                  <Input
+                    className="mt-1.5 flex-1"
+                    type="number"
+                    placeholder="e.g. 250"
+                    value={form.area}
+                    onChange={(e) => updateForm('area', e.target.value)}
+                  />
+                  <Select value={form.areaUnit} onValueChange={(v) => updateForm('areaUnit', v)}>
+                    <SelectTrigger className="mt-1.5 w-[100px]">
+                      <SelectValue placeholder="Unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="m²">m²</SelectItem>
+                        <SelectItem value="sq ft">sq ft</SelectItem>
+                        <SelectItem value="km²">km²</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <div>
                 <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
@@ -387,6 +411,31 @@ function AddPropertyPage() {
               </div>
             </div>
 
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <div>
+                <label className="text-muted-foreground flex items-center gap-1 text-xs font-medium tracking-wider uppercase">
+                  <MapPin size={12} /> Address (English) <span className="text-rose-500">*</span>
+                </label>
+                <Input
+                  className="mt-1.5"
+                  placeholder="e.g. Bole, Addis Ababa"
+                  value={form.address}
+                  onChange={(e) => updateForm('address', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="text-muted-foreground flex items-center gap-1 text-xs font-medium tracking-wider uppercase">
+                  <MapPin size={12} /> Address (Amharic)
+                </label>
+                <Input
+                  className="mt-1.5"
+                  placeholder="e.g. ቦሌ, አዲስ አበባ"
+                  value={form.addressAm}
+                  onChange={(e) => updateForm('addressAm', e.target.value)}
+                />
+              </div>
+            </div>
+
             <div className="bg-border h-px" />
 
             <div>
@@ -399,11 +448,10 @@ function AddPropertyPage() {
                     key={a}
                     type="button"
                     onClick={() => toggleAmenity(a)}
-                    className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200 ${
-                      form.amenities.includes(a)
-                        ? 'bg-primary text-primary-foreground ring-primary/20 shadow-sm ring-2'
-                        : 'bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary'
-                    }`}
+                    className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200 ${form.amenities.includes(a)
+                      ? 'bg-primary text-primary-foreground ring-primary/20 shadow-sm ring-2'
+                      : 'bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                      }`}
                   >
                     {a}
                   </button>
@@ -518,15 +566,31 @@ function AddPropertyPage() {
               </div>
               <div>
                 <label className="text-muted-foreground flex items-center gap-1 text-xs font-medium tracking-wider uppercase">
-                  <DollarSign size={12} /> Security Deposit (ETB)
+                  <DollarSign size={12} /> Security Deposit <span className="text-rose-500">*</span>
                 </label>
-                <Input
-                  className="mt-1.5"
-                  type="number"
-                  placeholder="e.g. 90000"
-                  value={form.depositAmount}
-                  onChange={(e) => updateForm('depositAmount', e.target.value)}
-                />
+                <div className="flex gap-2">
+                  <Select
+                    value={form.depositCurrency}
+                    onValueChange={(v) => updateForm('depositCurrency', v)}
+                  >
+                    <SelectTrigger className="mt-1.5 w-[100px]">
+                      <SelectValue placeholder="Currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="ETB">ETB</SelectItem>
+                        <SelectItem value="USD">USD</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    className="mt-1.5 flex-1"
+                    type="number"
+                    placeholder="e.g. 90000"
+                    value={form.depositAmount}
+                    onChange={(e) => updateForm('depositAmount', e.target.value)}
+                  />
+                </div>
               </div>
               <div>
                 <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
@@ -541,16 +605,29 @@ function AddPropertyPage() {
               </div>
             </div>
 
-            <div>
-              <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-                Special Terms & Conditions
-              </label>
-              <textarea
-                className="border-border bg-background focus:ring-primary/20 mt-1.5 h-32 w-full resize-none rounded-lg border p-3 text-sm outline-none focus:ring-2"
-                placeholder="Any special conditions, rules, or requirements for potential renters..."
-                value={form.specialTerms}
-                onChange={(e) => updateForm('specialTerms', e.target.value)}
-              />
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+              <div>
+                <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+                  Special Terms & Conditions (English)
+                </label>
+                <textarea
+                  className="border-border bg-background focus:ring-primary/20 mt-1.5 h-32 w-full resize-none rounded-lg border p-3 text-sm outline-none focus:ring-2"
+                  placeholder="Any special conditions, rules, or requirements for potential renters..."
+                  value={form.specialTerms}
+                  onChange={(e) => updateForm('specialTerms', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+                  Special Terms & Conditions (Amharic)
+                </label>
+                <textarea
+                  className="border-border bg-background focus:ring-primary/20 mt-1.5 h-32 w-full resize-none rounded-lg border p-3 text-sm outline-none focus:ring-2"
+                  placeholder="ለተከራዮች ሊያሳውቁ የሚፈልጉት ልዩ ሁኔታዎች፣ ሕጎች ወይም መስፈርቶች..."
+                  value={form.specialTermsAm}
+                  onChange={(e) => updateForm('specialTermsAm', e.target.value)}
+                />
+              </div>
             </div>
 
             <div className="bg-border h-px" />
@@ -566,15 +643,15 @@ function AddPropertyPage() {
                   },
                   {
                     label: 'Monthly Rent',
-                    value: form.price ? `${Number(form.price).toLocaleString()} ETB` : '—',
+                    value: form.price ? `${Number(form.price).toLocaleString()} ${form.currency}` : '—',
                   },
                   { label: 'Bedrooms', value: form.bedrooms || '—' },
                   { label: 'Bathrooms', value: form.bathrooms || '—' },
-                  { label: 'Area', value: form.area ? `${form.area} m²` : '—' },
+                  { label: 'Area', value: form.area ? `${form.area} ${form.areaUnit}` : '—' },
                   {
                     label: 'Deposit',
                     value: form.depositAmount
-                      ? `${Number(form.depositAmount).toLocaleString()} ETB`
+                      ? `${Number(form.depositAmount).toLocaleString()} ${form.depositCurrency}`
                       : '—',
                   },
                   { label: 'Photos', value: form.images.length },
