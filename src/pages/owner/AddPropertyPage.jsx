@@ -28,6 +28,8 @@ import {
   Loader2,
   Plus,
 } from 'lucide-react';
+import { propertyApi } from '@/features/properties/api';
+import { toast } from 'sonner';
 
 const propertyTypes = [
   { value: 'VILLA', label: 'Villa' },
@@ -117,12 +119,65 @@ function AddPropertyPage() {
     setForm((prev) => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      const formData = new FormData();
+      
+      // Add basic form fields
+      formData.append('title', JSON.stringify({
+        en: form.titleEn,
+        am: form.titleAm
+      }));
+      formData.append('description', JSON.stringify({
+        en: form.descriptionEn,
+        am: form.descriptionAm
+      }));
+      formData.append('type', form.type);
+      formData.append('price', form.price);
+      formData.append('currency', form.currency);
+      formData.append('bedrooms', form.bedrooms);
+      formData.append('bathrooms', form.bathrooms);
+      formData.append('area', form.area);
+      formData.append('address', JSON.stringify({
+        en: form.address,
+        am: form.addressAm
+      }));
+      formData.append('location', form.location || '');
+      formData.append('amenities', JSON.stringify(form.amenities));
+      formData.append('furnishingType', form.furnishingType);
+      formData.append('leaseDuration', form.leaseDuration);
+      formData.append('depositAmount', form.depositAmount);
+      formData.append('depositCurrency', form.depositCurrency);
+      formData.append('specialTerms', JSON.stringify({
+        en: form.specialTerms,
+        am: form.specialTermsAm
+      }));
+      formData.append('availableFrom', form.availableFrom);
+
+      // Add image files
+      form.images.forEach((img) => {
+        if (img.file) {
+          formData.append('images', img.file);
+        }
+      });
+
+      // Add video files
+      form.videos.forEach((vid) => {
+        if (vid.file) {
+          formData.append('videos', vid.file);
+        }
+      });
+
+      await propertyApi.createProperty(formData);
+      
       setIsSubmitting(false);
       setIsSubmitted(true);
-    }, 1500);
+      toast.success('Property published successfully!');
+    } catch (error) {
+      setIsSubmitting(false);
+      toast.error(error.response?.data?.message || 'Failed to publish property');
+    }
   };
 
   const canProceed = () => {

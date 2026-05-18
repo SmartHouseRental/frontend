@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 import {
     Building2, Eye, CalendarDays, FileText, TrendingUp, DollarSign,
     Plus, ArrowRight, Clock, CheckCircle2, XCircle, Star, MapPin,
-    MessageCircle, ArrowUpRight, Handshake, Bell, MoreVertical, BarChart3,
+    MessageCircle, ArrowUpRight, Handshake, Bell, MoreVertical, BarChart3, Loader2,
 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -13,31 +13,10 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-const kpiData = [
-    { label: 'Active Listings', value: '12', change: '+2', changeType: 'up', icon: Building2, color: 'primary', borderColor: 'border-primary' },
-    { label: 'Total Views', value: '3,847', change: '+18%', changeType: 'up', icon: Eye, color: 'blue-500', borderColor: 'border-blue-400' },
-    { label: 'Appointments', value: '8', sub: 'This month', icon: CalendarDays, color: 'amber-500', borderColor: 'border-amber-400' },
-    { label: 'Pending Agreements', value: '3', change: 'Action Needed', changeType: 'alert', icon: FileText, color: 'rose-500', borderColor: 'border-rose-400' },
-    { label: 'Revenue', value: '285K ETB', change: '+12%', changeType: 'up', sub: 'This month', icon: DollarSign, color: 'emerald-500', borderColor: 'border-emerald-400' },
-];
-
-const initialActivities = [
-    { id: 1, type: 'agreement', title: 'Agreement signed', desc: 'Bole Skyline Apt — Mulugeta K.', time: '2 hours ago', icon: CheckCircle2, iconColor: 'text-emerald-500', bgColor: 'bg-emerald-500/10' },
-    { id: 2, type: 'appointment', title: 'New appointment request', desc: 'Horizon Peak Villa — Sara T.', time: '5 hours ago', icon: Clock, iconColor: 'text-amber-500', bgColor: 'bg-amber-500/10' },
-    { id: 3, type: 'view', title: 'Property viewed 45 times', desc: 'Luxury Villa in Bole Atlas', time: 'Today', icon: Eye, iconColor: 'text-blue-500', bgColor: 'bg-blue-500/10' },
-    { id: 4, type: 'cancel', title: 'Appointment cancelled', desc: 'Urban Loft 42 — Abebe M.', time: 'Yesterday', icon: XCircle, iconColor: 'text-rose-500', bgColor: 'bg-rose-500/10' },
-    { id: 5, type: 'payment', title: 'Payment received', desc: '45,000 ETB — Cottage by the Lake', time: '2 days ago', icon: DollarSign, iconColor: 'text-primary', bgColor: 'bg-primary/10' },
-    { id: 6, type: 'review', title: 'New 5-star review', desc: 'Penthouse Suite CMC — Yonas D.', time: '3 days ago', icon: Star, iconColor: 'text-amber-400', bgColor: 'bg-amber-400/10' },
-    { id: 7, type: 'message', title: 'New message', desc: 'Helen G. — Cottage by the Lake', time: '3 days ago', icon: MessageCircle, iconColor: 'text-blue-500', bgColor: 'bg-blue-500/10' },
-];
-
-const topProperties = [
-    { name: 'Luxury Villa in Bole Atlas', location: 'Bole, Addis Ababa', views: '1,245', inquiries: 34, status: 'Available', statusColor: 'bg-emerald-100 text-emerald-700', revenue: '85,000 ETB', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBnuoTFnm7eiUv3aKP_BJ5piF4y8mlzYH5ClM5cBXvCWiUBoKTyYq1fVvBa1ON_b343Lnm8gmkoCZu--XjCNHqF0C_MeQTDaVpBbPejgSOMxhesm8QdPtka1Sf7nq8DJL7UhC_eZs_rTsy4xIu6xuYQGKmdGUEc1F9lQPDNQ6jWkuyV_vzyE-JvOZVwndSvv4-arIqjshonMQ_Cvrc8GSp1iaQcWcbzTUNuOqCFGwTWZutx9kXsgtmfjULDan6j82KWu2NOo2-Z_dXl' },
-    { name: 'Bole Skyline Apartment', location: 'Bole, Addis Ababa', views: '892', inquiries: 22, status: 'Rented', statusColor: 'bg-blue-100 text-blue-700', revenue: '45,000 ETB', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDJmCVHHK5IgTYuMnEBX8RO1nOinrW0cnVikNmuGhYgY_CkHYI8gfpCp3SEvgug4SdZc7v6SX_o6N0eaXn-2EA9Z4xMqc9UosSSlqEGjec-0k91lXxF97pnVZ-EP6Vmf8WW4roVyCo5Am06bkxTHfotXf9mc3BScw9j6P4xBfjmzaQ5Z9Z9aX84jQ5oWmTUzI8Ifu0io--9zkixMk-fH4LdGKr80ZMqIQUK8K38xJmywgMq0LVHHEmKYxLMYGS6lfgFMprudQ4gCRcO' },
-    { name: 'Cottage by the Lake', location: 'Hawassa', views: '678', inquiries: 18, status: 'Available', statusColor: 'bg-emerald-100 text-emerald-700', revenue: '32,000 ETB', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBHK4MBf-7UqrhDns85XvQ8rILU5gDaYMqKUfF9Wf5uB7jOthE-628mLKysKbIm1k6jW99udN3BX2TELrn_bQhFYQE4qiEKrxf9Uvwi94473iylGn2WS5r61GBMgRbO7vN-8WO902Pk_3LWwYfkGACDKym_P-aSaMjnt5XB3lL6_i562wLzPu0wKH5lnacfnK0J1c_n9mz4fslMIn6wohA3b1ddHEiYTpShBnbHAmhp5ifGDttU_5ZxLoR-BUPiZwEpwYOYUg1kB9Q2' },
-    { name: 'Penthouse Suite CMC', location: 'CMC, Addis Ababa', views: '1,560', inquiries: 41, status: 'Available', statusColor: 'bg-emerald-100 text-emerald-700', revenue: '120,000 ETB', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCAenV_3qVcY9Qwk4wakHFXyVXSOEDbP8zpfnM2v9TbZZ2Dx6DLWg5WzQMyNUilW90Vq6f0sOyGmDlljmxE7SRGuPZ-mGD-mS_QOap5qzI1l0B9w5oqkoaVuzgP0alYz1POLq1Z7wdkOyl9G_RiBmtBc7JBDBBkBfJWkaugjSN-COItg-1H_5I30pLWoet3qEwRfjR7o65lqEoboTysrWFX5ACBJPW9fma8PplImAgccKF74CzCl70Hn_SR2cYk6Y1xVSWEP6nDHyYs' },
-];
+import { useMyProperties } from '@/features/properties/hooks/useMyProperties';
+import { useOwnerAgreements } from '@/features/agreements/hooks/useAgreements';
+import { useAppointments } from '@/features/appointments/hooks/useAppointments';
+import { useProfile } from '@/features/profile/hooks/useProfile';
 
 const quickActions = [
     { label: 'Add New Property', desc: 'List a new rental property', icon: Plus, color: 'primary', to: 'properties' },
@@ -64,17 +43,54 @@ const kpiColorMap = {
 
 function OverviewPage() {
     const [chartPeriod, setChartPeriod] = useState('monthly');
-    const [activities] = useState(initialActivities);
-    const [showAllActivities, setShowAllActivities] = useState(false);
+    const { data: propertiesData, isLoading: propsLoading } = useMyProperties();
+    const { data: agreementsData, isLoading: agreementsLoading } = useOwnerAgreements({ status: 'pending' });
+    const { data: appointmentsData, isLoading: appointmentsLoading } = useAppointments({ status: 'PENDING' });
+    const { data: profileData } = useProfile();
 
-    const visibleActivities = showAllActivities ? activities : activities.slice(0, 5);
+    const properties = propertiesData?.data || [];
+    const pendingAgreements = agreementsData?.items || [];
+    const pendingAppointments = appointmentsData || [];
+    const user = profileData?.data;
+
+    const kpiData = [
+        { label: 'Active Listings', value: String(properties.filter(p => p.status === 'AVAILABLE').length), change: '+2', changeType: 'up', icon: Building2, color: 'primary', borderColor: 'border-primary' },
+        { label: 'Total Views', value: properties.reduce((sum, p) => sum + (p.viewsCount || 0), 0).toLocaleString(), change: '+18%', changeType: 'up', icon: Eye, color: 'blue-500', borderColor: 'border-blue-400' },
+        { label: 'Appointments', value: String(pendingAppointments.length), sub: 'This month', icon: CalendarDays, color: 'amber-500', borderColor: 'border-amber-400' },
+        { label: 'Pending Agreements', value: String(pendingAgreements.length), change: pendingAgreements.length > 0 ? 'Action Needed' : undefined, changeType: 'alert', icon: FileText, color: 'rose-500', borderColor: 'border-rose-400' },
+        { label: 'Revenue', value: '285K ETB', change: '+12%', changeType: 'up', sub: 'This month', icon: DollarSign, color: 'emerald-500', borderColor: 'border-emerald-400' },
+    ];
+
+    const topProperties = properties
+        .sort((a, b) => (b.viewsCount || 0) - (a.viewsCount || 0))
+        .slice(0, 4)
+        .map(p => ({
+            name: typeof p.title === 'string' ? p.title : p.title?.en || 'Property',
+            location: p.address || 'Unknown',
+            views: String(p.viewsCount || 0),
+            inquiries: 0,
+            status: p.status,
+            statusColor: p.status === 'AVAILABLE' ? 'bg-emerald-100 text-emerald-700' : p.status === 'RENTED' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700',
+            revenue: `${p.price?.value || 0} ${p.price?.currency || 'ETB'}`,
+            img: p.images?.[0] || '',
+        }));
+
+    const visibleActivities = [];
+
+    if (propsLoading || agreementsLoading || appointmentsLoading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <Loader2 className="animate-spin text-primary" size={32} />
+            </div>
+        );
+    }
 
     return (
         <div className="scrollbar-hide h-screen overflow-y-auto space-y-8 p-8">
             {/* Page Header */}
             <div className="flex items-end justify-between">
                 <div>
-                    <h2 className="text-3xl font-black tracking-tight text-foreground">Welcome back, Dawit 👋</h2>
+                    <h2 className="text-3xl font-black tracking-tight text-foreground">Welcome back, {user?.firstName || 'Owner'} 👋</h2>
                     <p className="text-muted-foreground mt-1 font-medium">Here's what's happening with your properties today.</p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -214,7 +230,9 @@ function OverviewPage() {
                         <Link to="/owner/notifications" className="text-xs text-primary font-bold hover:underline">View All</Link>
                     </div>
                     <div className="space-y-4 flex-1 overflow-y-auto">
-                        {visibleActivities.map((a) => {
+                        {visibleActivities.length === 0 ? (
+                            <p className="text-muted-foreground text-sm text-center py-4">No recent activity</p>
+                        ) : visibleActivities.map((a) => {
                             const Icon = a.icon;
                             return (
                                 <div key={a.id} className="flex items-start gap-3 group cursor-pointer rounded-lg p-1.5 -m-1.5 hover:bg-muted/30 transition-colors">
@@ -230,14 +248,6 @@ function OverviewPage() {
                             );
                         })}
                     </div>
-                    {activities.length > 5 && (
-                        <button
-                            onClick={() => setShowAllActivities(!showAllActivities)}
-                            className="mt-4 pt-3 border-t border-border text-xs text-primary font-bold hover:underline text-center"
-                        >
-                            {showAllActivities ? 'Show Less' : `Show ${activities.length - 5} More`}
-                        </button>
-                    )}
                 </div>
             </div>
 

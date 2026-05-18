@@ -1,7 +1,46 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Shield, Upload, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Shield, Upload, CheckCircle2, AlertCircle, Loader2, X, ExternalLink, ZoomIn } from 'lucide-react';
+
+function DocModal({ url, title, onClose }) {
+    if (!url) return null;
+    return (
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+            onClick={onClose}
+        >
+            <div
+                className="bg-card relative max-h-[90vh] max-w-3xl w-full overflow-hidden rounded-2xl shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="flex items-center justify-between border-b p-4">
+                    <h4 className="text-primary font-bold">{title}</h4>
+                    <div className="flex gap-2">
+                        <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:bg-muted rounded-lg p-2 transition-colors"
+                        >
+                            <ExternalLink size={16} />
+                        </a>
+                        <button onClick={onClose} className="hover:bg-muted rounded-lg p-2 transition-colors">
+                            <X size={16} />
+                        </button>
+                    </div>
+                </div>
+                <div className="flex items-center justify-center overflow-auto bg-zinc-950 p-4">
+                    <img
+                        src={url}
+                        alt={title}
+                        className="max-h-[70vh] w-auto rounded-lg object-contain shadow-lg"
+                    />
+                </div>
+            </div>
+        </div>
+    );
+}
 import { useUploadDocuments } from '../hooks/useUploadDocuments';
 import { useDocuments } from '../hooks/useDocuments';
 import { getImageUrl } from '@/lib/utils';
@@ -12,6 +51,7 @@ export function VerificationForm({ profile }) {
 
     const [selectedFiles, setSelectedFiles] = useState({});
     const [previews, setPreviews] = useState({});
+    const [modalConfig, setModalConfig] = useState(null);
 
     // Create refs for multiple inputs
     const nationalIdFrontRef = useRef(null);
@@ -62,18 +102,26 @@ export function VerificationForm({ profile }) {
 
     const isMissingFiles = Object.keys(selectedFiles).length < 3;
 
+    const docStatus = documentData?.data?.status || documentData?.data?.overallStatus;
     const steps = [
         { label: 'Email Verified', status: profile?.emailVerified ? 'complete' : 'pending' },
         {
             label: 'Documents Uploaded',
-            status: documentData?.data?.uploadedFiles?.length > 0 ? (documentData?.data?.overallStatus === 'verified' ? 'complete' : 'current') : 'pending'
+            status: documentData?.data ? (docStatus === 'approved' || docStatus === 'verified' ? 'complete' : 'current') : 'pending'
         },
-        { label: 'Admin Review', status: documentData?.data?.overallStatus === 'pending' ? 'current' : (documentData?.data?.overallStatus === 'verified' ? 'complete' : 'pending') },
-        { label: 'Verified Owner', status: profile?.isVerified ? 'complete' : 'pending' },
+        { label: 'Admin Review', status: docStatus === 'under_review' || docStatus === 'approved' || docStatus === 'verified' ? 'current' : (docStatus === 'rejected' || docStatus === 'resubmit' ? 'complete' : 'pending') },
+        { label: 'Verified Owner', status: profile?.isVerified || docStatus === 'approved' || docStatus === 'verified' ? 'complete' : 'pending' },
     ];
 
     return (
         <div className="space-y-6">
+            {modalConfig && (
+                <DocModal
+                    url={modalConfig.url}
+                    title={modalConfig.title}
+                    onClose={() => setModalConfig(null)}
+                />
+            )}
             <Card>
                 <CardContent className="space-y-4 pt-6">
                     <h3 className="text-foreground flex items-center gap-2 font-bold">
@@ -124,7 +172,7 @@ export function VerificationForm({ profile }) {
                         {!uploadDocumentsMutation.isPending && (
                             <Button
                                 onClick={handleBundleUpload}
-                                disabled={isMissingFiles && documentData?.data?.overallStatus !== 'verified' && documentData?.data?.overallStatus !== 'pending'}
+                                disabled={isMissingFiles || (documentData?.data && !canUpload)}
                                 size="sm"
                                 className="font-bold"
                             >
@@ -135,6 +183,32 @@ export function VerificationForm({ profile }) {
                     <p className="text-muted-foreground text-sm">
                         Upload all three documents simultaneously to verify your identity and property ownership.
                     </p>
+
+                    {/* Admin Note Display */}
+                    {documentData?.data?.note && (
+                        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                            <div className="flex items-start gap-3">
+                                <AlertCircle size={16} className="text-primary mt-0.5" />
+                                <div className="flex-1">
+                                    <p className="text-primary text-xs font-bold uppercase tracking-wider">
+                                        Admin Note
+                                    </p>
+                                    <p className="text-foreground mt-1 text-sm">
+                                        {documentData.data.note}
+                                    </p>
+                                    {documentData.data.reviewedAt && (
+                                        <p className="text-muted-foreground mt-2 text-[10px]">
+                                            Reviewed on {new Date(documentData.data.reviewedAt).toLocaleDateString('en-US', { 
+                                                month: 'long', 
+                                                day: 'numeric', 
+                                                year: 'numeric' 
+                                            })}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {docsLoading ? (
                         <div className="py-8 flex justify-center"><Loader2 className="animate-spin text-primary" /></div>
@@ -163,7 +237,9 @@ export function VerificationForm({ profile }) {
                             },
                         ].map((config, i) => {
                             const doc = getDocInfo(config.docType);
-                            const isVerified = documentData?.data?.overallStatus === 'verified' || documentData?.data?.overallStatus === 'approved';
+                            const docStatus = documentData?.data?.status || documentData?.data?.overallStatus;
+                            const isVerified = docStatus === 'approved' || docStatus === 'verified';
+                            const canUpload = !isVerified && (docStatus === 'pending' || docStatus === 'resubmit' || docStatus === 'rejected' || !docStatus);
 
                             return (
                                 <div
@@ -203,7 +279,7 @@ export function VerificationForm({ profile }) {
                                                     variant="outline"
                                                     size="sm"
                                                     className="pointer-events-none h-7 gap-1 text-xs"
-                                                    disabled={isVerified}
+                                                    disabled={!canUpload}
                                                 >
                                                     <Upload size={12} /> {(doc || selectedFiles[config.type]) ? 'Replace' : 'Upload'}
                                                 </Button>
@@ -213,7 +289,7 @@ export function VerificationForm({ profile }) {
                                                     accept=".pdf,.jpg,.jpeg,.png"
                                                     ref={config.ref}
                                                     onChange={(e) => handleFileUpload(config.type, e)}
-                                                    disabled={isVerified || uploadDocumentsMutation.isPending}
+                                                    disabled={!canUpload || uploadDocumentsMutation.isPending}
                                                 />
                                             </label>
                                         </div>
@@ -221,16 +297,24 @@ export function VerificationForm({ profile }) {
 
                                     {/* Preview Section */}
                                     {(previews[config.type] || doc?.url) && (
-                                        <div className="mt-4 h-32 w-full rounded-lg overflow-hidden border border-primary/10">
+                                        <div
+                                            className="mt-4 h-32 w-full rounded-lg overflow-hidden border border-primary/10 relative group cursor-pointer"
+                                            onClick={() => setModalConfig({ url: previews[config.type] || getImageUrl(doc?.url), title: config.label })}
+                                        >
                                             <img
                                                 src={previews[config.type] || getImageUrl(doc?.url)}
                                                 alt={`${config.label} Preview`}
-                                                className="h-full w-full object-cover"
+                                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                             />
+                                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                                                <div className="flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-xs font-bold text-zinc-800">
+                                                    <ZoomIn size={14} /> View Full Size
+                                                </div>
+                                            </div>
                                         </div>
                                     )}
 
-                                    {!(doc || selectedFiles[config.type]) && (
+                                    {!(doc || selectedFiles[config.type]) && canUpload && (
                                         <div
                                             className="text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5 mt-3 flex h-20 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-amber-300 transition-all"
                                             onClick={() => config.ref.current?.click()}

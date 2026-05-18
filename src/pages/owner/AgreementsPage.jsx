@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Link } from 'react-router';
-import { Search, Filter, Download, Handshake, CheckCircle2, Clock, EllipsisVertical, ChevronLeft, ChevronRight, FileText, Eye, XCircle, DollarSign } from 'lucide-react';
+import { Search, Filter, Download, Handshake, CheckCircle2, Clock, EllipsisVertical, ChevronLeft, ChevronRight, FileText, Eye, XCircle, DollarSign, Loader2 } from 'lucide-react';
 import StatusBadge from '@/components/StatusBadge';
 import {
     DropdownMenu,
@@ -13,37 +13,31 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-const initialAgreements = [
-    { id: '#AG-2001', property: 'Bole Skyline Apartment', renter: 'Mulugeta Kebede', rent: '45,000 ETB', deposit: '90,000 ETB', duration: '12 Months', status: 'Active', startDate: 'Jan 15, 2026', paymentDay: '5th' },
-    { id: '#AG-2002', property: 'Luxury Villa in Bole Atlas', renter: 'Sara Tesfaye', rent: '85,000 ETB', deposit: '170,000 ETB', duration: '24 Months', status: 'Pending Renter', startDate: 'Mar 01, 2026', paymentDay: '1st' },
-    { id: '#AG-2003', property: 'Cottage by the Lake', renter: 'Helen Girma', rent: '32,000 ETB', deposit: '64,000 ETB', duration: '6 Months', status: 'Active', startDate: 'Feb 10, 2026', paymentDay: '10th' },
-    { id: '#AG-2004', property: 'Modern Studio in Kazanchis', renter: 'Abebe Wolde', rent: '28,000 ETB', deposit: '56,000 ETB', duration: '12 Months', status: 'Expired', startDate: 'Mar 20, 2025', paymentDay: '20th' },
-    { id: '#AG-2005', property: 'Penthouse Suite CMC', renter: 'Yonas Desta', rent: '120,000 ETB', deposit: '240,000 ETB', duration: '12 Months', status: 'Pending Payment', startDate: 'Dec 01, 2025', paymentDay: '1st' },
-    { id: '#AG-2006', property: 'Riverside Garden Home', renter: 'Tigist Haile', rent: '55,000 ETB', deposit: '110,000 ETB', duration: '12 Months', status: 'Terminated', startDate: 'Oct 15, 2025', paymentDay: '15th' },
-    { id: '#AG-2007', property: 'Studio near Mexico', renter: 'Daniel Fikru', rent: '22,000 ETB', deposit: '44,000 ETB', duration: '6 Months', status: 'Draft', startDate: '—', paymentDay: '—' },
-];
+import { useOwnerAgreements } from '@/features/agreements/hooks/useAgreements';
 
 const statusColors = {
-    Active: 'bg-emerald-100 text-emerald-700',
-    'Pending Renter': 'bg-amber-100 text-amber-700',
-    'Pending Payment': 'bg-blue-100 text-blue-700',
-    Expired: 'bg-slate-100 text-slate-600',
-    Terminated: 'bg-rose-100 text-rose-700',
-    Draft: 'bg-slate-100 text-slate-600',
+    ACTIVE: 'bg-emerald-100 text-emerald-700',
+    PENDING: 'bg-amber-100 text-amber-700',
+    EXPIRED: 'bg-slate-100 text-slate-600',
+    TERMINATED: 'bg-rose-100 text-rose-700',
+    DRAFT: 'bg-slate-100 text-slate-600',
 };
 
 function AgreementsPage() {
-    const [agreements] = useState(initialAgreements);
+    const { data: agreementsData, isLoading, refetch } = useOwnerAgreements();
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
+    const agreements = agreementsData?.items || [];
+
     const filtered = useMemo(() => {
         return agreements.filter(a => {
-            const matchesSearch = a.property.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                a.renter.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            const propertyName = typeof a.property?.title === 'string' ? a.property.title : a.property?.title?.en || '';
+            const renterName = `${a.renter?.first_name || ''} ${a.renter?.last_name || ''}`.trim();
+            const matchesSearch = propertyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                renterName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 a.id.toLowerCase().includes(searchQuery.toLowerCase());
             const matchesStatus = statusFilter === 'all' || a.status.toLowerCase() === statusFilter;
             return matchesSearch && matchesStatus;
@@ -55,18 +49,28 @@ function AgreementsPage() {
 
     const stats = useMemo(() => ({
         total: agreements.length,
-        active: agreements.filter(a => a.status === 'Active').length,
-        pending: agreements.filter(a => a.status === 'Pending Renter' || a.status === 'Pending Payment' || a.status === 'Draft').length,
+        active: agreements.filter(a => a.status === 'ACTIVE').length,
+        pending: agreements.filter(a => a.status === 'PENDING' || a.status === 'DRAFT').length,
     }), [agreements]);
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <Loader2 className="animate-spin text-primary" size={32} />
+            </div>
+        );
+    }
 
     return (
         <div className="scrollbar-hide h-screen overflow-y-auto p-8 space-y-6">
-            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+            <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Rental Agreements</h1>
-                    <p className="text-muted-foreground mt-1">Track and manage your rental contracts.</p>
+                    <h2 className="text-3xl font-extrabold tracking-tight text-foreground">Agreements</h2>
+                    <p className="text-muted-foreground mt-1">Manage rental agreements and contracts.</p>
                 </div>
-                <Button variant="outline" className="gap-2"><Download size={14} /> Export CSV</Button>
+                <div className="flex items-center gap-3">
+                    <Button variant="outline" className="gap-2"><Download size={16} /> Export CSV</Button>
+                </div>
             </div>
 
             {/* KPI Cards */}
@@ -127,8 +131,7 @@ function AgreementsPage() {
                                 <SelectItem value="all">All Statuses</SelectItem>
                                 <SelectItem value="active">Active</SelectItem>
                                 <SelectItem value="draft">Draft</SelectItem>
-                                <SelectItem value="pending renter">Pending Renter</SelectItem>
-                                <SelectItem value="pending payment">Pending Payment</SelectItem>
+                                <SelectItem value="pending">Pending</SelectItem>
                                 <SelectItem value="expired">Expired</SelectItem>
                                 <SelectItem value="terminated">Terminated</SelectItem>
                             </SelectGroup>
@@ -166,15 +169,15 @@ function AgreementsPage() {
                                         <span className="text-primary font-bold text-sm">{a.id}</span>
                                     </TableCell>
                                     <TableCell className="px-6 py-4">
-                                        <p className="text-sm font-bold text-foreground">{a.property}</p>
-                                        <p className="text-xs text-muted-foreground">From: {a.startDate}</p>
+                                        <p className="text-sm font-bold text-foreground">{typeof a.property?.title === 'string' ? a.property.title : a.property?.title?.en || 'Property'}</p>
+                                        <p className="text-xs text-muted-foreground">From: {a.startDate ? new Date(a.startDate).toLocaleDateString() : 'N/A'}</p>
                                     </TableCell>
-                                    <TableCell className="px-6 py-4 text-sm font-medium">{a.renter}</TableCell>
+                                    <TableCell className="px-6 py-4 text-sm font-medium">{`${a.renter?.first_name || ''} ${a.renter?.last_name || ''}`.trim() || 'Renter'}</TableCell>
                                     <TableCell className="px-6 py-4">
-                                        <p className="text-sm font-bold">{a.rent}</p>
-                                        <p className="text-[10px] text-muted-foreground">Due: {a.paymentDay}</p>
+                                        <p className="text-sm font-bold">{a.monthlyRent ? `${a.monthlyRent} ETB` : 'N/A'}</p>
+                                        <p className="text-[10px] text-muted-foreground">Monthly</p>
                                     </TableCell>
-                                    <TableCell className="px-6 py-4 text-sm">{a.duration}</TableCell>
+                                    <TableCell className="px-6 py-4 text-sm">{a.duration || 'N/A'}</TableCell>
                                     <TableCell className="px-6 py-4">
                                         <StatusBadge status={a.status} statusMap={statusColors} />
                                     </TableCell>

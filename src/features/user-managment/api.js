@@ -28,8 +28,10 @@ export const userApi = {
         return data.data;
     },
 
-    resolveVerification: async ({ id, status }) => {
-        const { data } = await apiClient.patch(`/admin/verifications/${id}/resolve`, { status });
+    resolveVerification: async ({ id, status, note }) => {
+        const payload = { status };
+        if (note) payload.note = note;
+        const { data } = await apiClient.patch(`/admin/verifications/${id}/resolve`, payload);
         return data.data;
     },
 };

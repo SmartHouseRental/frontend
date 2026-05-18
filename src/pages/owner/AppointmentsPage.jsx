@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
     CalendarDays, Clock, CheckCircle2, XCircle, User, MapPin,
     MessageSquare, ChevronRight, Phone, Mail, AlertCircle, MoreVertical,
-    Building2, Handshake,
+    Building2, Handshake, Loader2,
 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -15,55 +15,58 @@ import {
     DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Link } from 'react-router';
-
-const initialAppointments = [
-    { id: 'APT-301', renter: 'Sara Tesfaye', phone: '+251 91 111 2222', email: 'sara.t@email.com', property: 'Luxury Villa in Bole Atlas', date: 'Mar 22, 2026', time: '10:00 AM', status: 'Pending', avatar: 'S', notes: '' },
-    { id: 'APT-302', renter: 'Mulugeta Kebede', phone: '+251 91 234 5678', email: 'mulugeta.k@email.com', property: 'Bole Skyline Apartment', date: 'Mar 23, 2026', time: '2:00 PM', status: 'Confirmed', avatar: 'M', notes: 'Renter will bring a friend to help evaluate.' },
-    { id: 'APT-303', renter: 'Helen Girma', phone: '+251 91 333 4444', email: 'helen.g@email.com', property: 'Cottage by the Lake', date: 'Mar 25, 2026', time: '11:30 AM', status: 'Pending', avatar: 'H', notes: '' },
-    { id: 'APT-304', renter: 'Abebe Wolde', phone: '+251 91 555 6666', email: 'abebe.w@email.com', property: 'Modern Studio in Kazanchis', date: 'Mar 18, 2026', time: '3:00 PM', status: 'Completed', avatar: 'A', notes: 'Very interested. Follow up on agreement.' },
-    { id: 'APT-305', renter: 'Tigist Haile', phone: '+251 91 777 8888', email: 'tigist.h@email.com', property: 'Penthouse Suite CMC', date: 'Mar 15, 2026', time: '9:00 AM', status: 'Cancelled', avatar: 'T', notes: 'Renter found another property.' },
-    { id: 'APT-306', renter: 'Yonas Desta', phone: '+251 91 999 0000', email: 'yonas.d@email.com', property: 'Luxury Villa in Bole Atlas', date: 'Mar 12, 2026', time: '4:30 PM', status: 'Completed', avatar: 'Y', notes: 'Positive feedback, might sign agreement.' },
-];
+import { useAppointments, useUpdateAppointmentStatus } from '@/features/appointments/hooks/useAppointments';
 
 const statusConfig = {
-    Pending: { color: 'bg-amber-100 text-amber-700', icon: Clock },
-    Confirmed: { color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
-    Completed: { color: 'bg-blue-100 text-blue-700', icon: CheckCircle2 },
-    Cancelled: { color: 'bg-rose-100 text-rose-700', icon: XCircle },
+    PENDING: { color: 'bg-amber-100 text-amber-700', icon: Clock },
+    ACCEPTED: { color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
+    COMPLETED: { color: 'bg-blue-100 text-blue-700', icon: CheckCircle2 },
+    REJECTED: { color: 'bg-rose-100 text-rose-700', icon: XCircle },
 };
 
 function AppointmentsPage() {
-    const [appointments, setAppointments] = useState(initialAppointments);
+    const { data: appointmentsData, isLoading, refetch } = useAppointments();
+    const updateStatusMutation = useUpdateAppointmentStatus();
+    
     const [expandedId, setExpandedId] = useState(null);
     const [noteInputs, setNoteInputs] = useState({});
-    const [confirmAction, setConfirmAction] = useState(null); // { id, action }
+    const [confirmAction, setConfirmAction] = useState(null);
+
+    const appointments = appointmentsData || [];
 
     const handleAccept = (id) => {
-        setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: 'Confirmed' } : a));
-        setConfirmAction(null);
+        updateStatusMutation.mutate({ appointmentId: id, status: 'ACCEPTED' }, {
+            onSuccess: () => {
+                setConfirmAction(null);
+                refetch();
+            }
+        });
     };
 
     const handleReject = (id) => {
-        setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: 'Cancelled' } : a));
-        setConfirmAction(null);
+        updateStatusMutation.mutate({ appointmentId: id, status: 'REJECTED' }, {
+            onSuccess: () => {
+                setConfirmAction(null);
+                refetch();
+            }
+        });
     };
 
     const handleSaveNote = (id) => {
         const note = noteInputs[id];
         if (!note?.trim()) return;
-        setAppointments(prev => prev.map(a => a.id === id ? { ...a, notes: note } : a));
         setNoteInputs(prev => ({ ...prev, [id]: '' }));
     };
 
     const stats = useMemo(() => ({
         total: appointments.length,
-        pending: appointments.filter(a => a.status === 'Pending').length,
-        confirmed: appointments.filter(a => a.status === 'Confirmed').length,
-        completed: appointments.filter(a => a.status === 'Completed').length,
+        pending: appointments.filter(a => a.status === 'PENDING').length,
+        confirmed: appointments.filter(a => a.status === 'ACCEPTED').length,
+        completed: appointments.filter(a => a.status === 'COMPLETED').length,
     }), [appointments]);
 
-    const upcoming = appointments.filter(a => a.status === 'Pending' || a.status === 'Confirmed');
-    const past = appointments.filter(a => a.status === 'Completed' || a.status === 'Cancelled');
+    const upcoming = appointments.filter(a => a.status === 'PENDING' || a.status === 'ACCEPTED');
+    const past = appointments.filter(a => a.status === 'COMPLETED' || a.status === 'REJECTED');
 
     const AppointmentCard = ({ apt }) => {
         const config = statusConfig[apt.status];
@@ -86,16 +89,19 @@ function AppointmentsPage() {
                                     {apt.status}
                                 </span>
                             </div>
-                            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                                <MapPin size={10} /> {apt.property}
-                            </p>
                             <div className="flex items-center gap-4 mt-1.5">
-                                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                     <CalendarDays size={12} /> {apt.date}
-                                </span>
-                                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                                </div>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                     <Clock size={12} /> {apt.time}
-                                </span>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                    <Phone size={12} /> {apt.renter?.phone || 'N/A'}
+                                </div>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                    <Mail size={12} /> {apt.renter?.email || 'N/A'}
+                                </div>
                                 <span className="text-[10px] text-muted-foreground/60">{apt.id}</span>
                             </div>
                         </div>
@@ -220,12 +226,23 @@ function AppointmentsPage() {
         );
     };
 
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <Loader2 className="animate-spin text-primary" size={32} />
+            </div>
+        );
+    }
+
     return (
         <div className="scrollbar-hide h-screen overflow-y-auto p-8 space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Appointments</h1>
-                    <p className="text-muted-foreground mt-1">Manage property viewing appointments with potential renters.</p>
+                    <h2 className="text-3xl font-extrabold tracking-tight text-foreground">Appointments</h2>
+                    <p className="text-muted-foreground mt-1">Manage property visit requests and schedule.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Button variant="outline" className="gap-2"><CalendarDays size={16} /> Calendar View</Button>
                 </div>
             </div>
 
