@@ -11,7 +11,8 @@ export default function FeaturedListings() {
   const { data: propertiesData, isLoading, isError } = useProperties({
     status: 'available',
     limit: 3,
-    sort: 'createdAt:desc' // Assuming newest are featured
+    sortBy: 'createdAt',
+    order: 'desc'
   });
 
   const listings = propertiesData?.data || [];
@@ -24,7 +25,18 @@ export default function FeaturedListings() {
     );
   }
 
-  if (isError || listings.length === 0) return null;
+  if (isError) {
+    return (
+      <div className="flex min-h-[300px] flex-col items-center justify-center gap-4 px-6 py-16 text-center">
+        <p className="text-muted-foreground">Could not load featured listings at this time.</p>
+        <Button variant="link" onClick={() => window.location.reload()} className="text-primary font-bold">
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+
+  if (listings.length === 0) return null;
 
   return (
     <section className="px-6 py-16 lg:px-20">
@@ -45,7 +57,12 @@ export default function FeaturedListings() {
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {listings.map((home) => {
-            const title = typeof home.title === 'object' ? home.title.en : home.title;
+            const title = typeof home.title === 'object' ? (home.title.en || home.title.am) : home.title;
+            const address = typeof home.address === 'object' ? (home.address.en || home.address.am) : home.address;
+            const price = typeof home.price === 'object' ? home.price.value : home.price;
+            const currency = typeof home.price === 'object' ? (home.price.currency || 'ETB') : 'ETB';
+            const area = typeof home.area === 'object' ? home.area.value : home.area;
+            const type = typeof home.type === 'object' ? (home.type.en || home.type.am) : home.type;
             const image = home.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
 
             return (
@@ -60,9 +77,9 @@ export default function FeaturedListings() {
                     alt={title}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  {home.type && (
+                  {type && (
                     <Badge className="bg-primary text-primary-foreground absolute top-4 left-4">
-                      {home.type}
+                      {type}
                     </Badge>
                   )}
 
@@ -70,7 +87,7 @@ export default function FeaturedListings() {
                   <HeartButton property={home} className="absolute top-4 right-4 z-10" />
 
                   <div className="absolute bottom-4 left-4 rounded-md bg-white/90 px-3 py-1 text-sm font-bold">
-                    {home.price} ETB /mo
+                    {price} {currency} /mo
                   </div>
                 </div>
 
@@ -78,12 +95,12 @@ export default function FeaturedListings() {
                   <h3 className="group-hover:text-primary mb-1 text-lg font-bold transition-colors line-clamp-1">
                     {title}
                   </h3>
-                  <p className="text-muted-foreground mb-4 text-sm line-clamp-1">{home.address || home.location || 'Addis Ababa, Ethiopia'}</p>
+                  <p className="text-muted-foreground mb-4 text-sm line-clamp-1">{address || home.location || 'Addis Ababa, Ethiopia'}</p>
 
                   <div className="text-muted-foreground flex gap-4 border-t pt-3 text-sm">
                     <span>{home.bedrooms} Beds</span>
                     <span>{home.bathrooms} Baths</span>
-                    <span>{home.area} m²</span>
+                    <span>{area} m²</span>
                   </div>
                 </CardContent>
               </Card>

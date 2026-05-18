@@ -6,6 +6,5 @@ export const useProperties = (filters = {}) => {
   return useQuery({
     queryKey: propertyKeys.list(filters),
     queryFn: () => propertyApi.getProperties(filters),
-    select: (response) => response.data,
   });
 };

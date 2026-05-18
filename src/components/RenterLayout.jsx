@@ -7,13 +7,6 @@ import { Menu } from 'lucide-react';
 
 export default function RenterLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
-  // Simple auth check mock (In real app, use AuthContext)
-  const isAuthenticated = true; 
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
 
   return (
     <div className="min-h-screen bg-slate-50/30">

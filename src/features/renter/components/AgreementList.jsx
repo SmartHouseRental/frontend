@@ -27,16 +27,16 @@ export default function AgreementList() {
 
       <div className="grid gap-6">
         {mockAgreements.map((agreement) => (
-          <Card key={agreement.id} className="overflow-hidden border-slate-200">
-            <div className="flex flex-col lg:flex-row">
-              <div className="lg:w-1/3 relative overflow-hidden">
+          <Card key={agreement.id} className="border-slate-200 hover:shadow-lg transition-all">
+            <div className="flex flex-col lg:flex-row p-4 lg:p-5 gap-5">
+              <div className="w-full lg:w-1/3 h-48 lg:h-auto relative overflow-hidden rounded-xl shrink-0">
                 <img src={agreement.image} alt={agreement.propertyTitle} className="h-full w-full object-cover" />
                 <div className="absolute top-4 left-4">
                   <Badge className="bg-emerald-500">{agreement.status}</Badge>
                 </div>
               </div>
               
-              <div className="flex-1 p-6 flex flex-col justify-between">
+              <div className="flex-1 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
                     <div>

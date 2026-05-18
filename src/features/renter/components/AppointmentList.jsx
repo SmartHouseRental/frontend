@@ -57,64 +57,62 @@ export default function AppointmentList() {
     const propertyImage = property?.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
 
     return (
-      <Card key={apt.id} className="overflow-hidden border-slate-200 hover:shadow-lg transition-all">
-        <div className="flex flex-col sm:flex-row">
-          <div className="w-full sm:w-48 h-40 sm:h-auto overflow-hidden">
+      <Card key={apt.id} className="border-slate-200 hover:shadow-lg transition-all">
+        <div className="flex flex-col sm:flex-row p-4 sm:p-5 gap-5">
+          <div className="w-full sm:w-48 h-48 sm:h-auto overflow-hidden rounded-xl shrink-0">
             <img src={propertyImage} alt={propertyTitle} className="w-full h-full object-cover" />
           </div>
-          <CardContent className="flex-1 p-5">
-            <div className="flex flex-col h-full">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <CardTitle className="text-lg font-bold">{propertyTitle}</CardTitle>
-                  <div className="flex items-center gap-1.5 text-muted-foreground mt-1 text-sm">
-                    <MapPin className="h-3.5 w-3.5" />
-                    <span className="line-clamp-1">{property?.address || property?.location || "Address not available"}</span>
-                  </div>
-                </div>
-                <Badge className={apt.status === 'ACCEPTED' ? 'bg-emerald-500' : apt.status === 'REJECTED' ? 'bg-destructive' : 'bg-slate-500'}>
-                  {apt.status}
-                </Badge>
-              </div>
-
-              <div className="flex gap-4 mt-2 text-sm font-medium">
-                <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-lg">
-                  <CalendarIcon className="h-4 w-4 text-primary" />
-                  <span>{new Date(apt.startsAt).toLocaleDateString()}</span>
-                </div>
-                <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-lg">
-                  <Clock className="h-4 w-4 text-primary" />
-                  <span>{new Date(apt.startsAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          <div className="flex-1 flex flex-col justify-between">
+            <div className="flex justify-between items-start mb-2">
+              <div>
+                <CardTitle className="text-lg font-bold">{propertyTitle}</CardTitle>
+                <div className="flex items-center gap-1.5 text-muted-foreground mt-1 text-sm">
+                  <MapPin className="h-3.5 w-3.5" />
+                  <span className="line-clamp-1">{property?.address || property?.location || "Address not available"}</span>
                 </div>
               </div>
+              <Badge className={apt.status === 'ACCEPTED' ? 'bg-emerald-500' : apt.status === 'REJECTED' ? 'bg-destructive' : 'bg-slate-500'}>
+                {apt.status}
+              </Badge>
+            </div>
 
-              <div className="mt-auto pt-6 flex flex-wrap gap-3">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex-1 sm:flex-none gap-2 rounded-lg border-primary/20 text-primary hover:bg-primary/5"
-                  onClick={() => handleReschedule(apt.propertyId)}
-                >
-                  <RotateCcw className="h-4 w-4" />
-                  Reschedule
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex-1 sm:flex-none gap-2 rounded-lg border-destructive/20 text-destructive hover:bg-destructive/5"
-                  onClick={() => setCancellingApt(apt)}
-                  disabled={cancelMutation.isPending}
-                >
-                  {cancelMutation.isPending && cancellingApt?.id === apt.id ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <XCircle className="h-4 w-4" />
-                  )}
-                  Cancel Visit
-                </Button>
+            <div className="flex gap-4 mt-2 text-sm font-medium">
+              <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-lg">
+                <CalendarIcon className="h-4 w-4 text-primary" />
+                <span>{new Date(apt.startsAt).toLocaleDateString()}</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-lg">
+                <Clock className="h-4 w-4 text-primary" />
+                <span>{new Date(apt.startsAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
               </div>
             </div>
-          </CardContent>
+
+            <div className="mt-6 sm:mt-auto pt-4 flex flex-wrap gap-3">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex-1 sm:flex-none gap-2 rounded-lg border-primary/20 text-primary hover:bg-primary/5"
+                onClick={() => handleReschedule(apt.propertyId)}
+              >
+                <RotateCcw className="h-4 w-4" />
+                Reschedule
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex-1 sm:flex-none gap-2 rounded-lg border-destructive/20 text-destructive hover:bg-destructive/5"
+                onClick={() => setCancellingApt(apt)}
+                disabled={cancelMutation.isPending}
+              >
+                {cancelMutation.isPending && cancellingApt?.id === apt.id ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <XCircle className="h-4 w-4" />
+                )}
+                Cancel Visit
+              </Button>
+            </div>
+          </div>
         </div>
       </Card>
     );

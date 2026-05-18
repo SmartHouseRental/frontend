@@ -10,6 +10,7 @@ import Reviews from '@/features/property/components/Reviews';
 import RatingBreakdown from './RatingBreakdown';
 import SimilarProperties from './SimilarProperties';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Video,
     BedDouble,
@@ -19,6 +20,7 @@ import {
     Home,
     Star,
     Loader2,
+    AlertCircle,
 } from 'lucide-react';
 
 export default function PropertyDetailContent() {
@@ -35,9 +37,23 @@ export default function PropertyDetailContent() {
 
     if (isError) {
         return (
-            <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-                <p className="text-destructive font-medium">Failed to load property details</p>
-                <p className="text-muted-foreground text-sm">{error?.message || 'Please try again later'}</p>
+            <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 text-center">
+                <div className="bg-destructive/10 rounded-full p-4">
+                    <AlertCircle className="h-10 w-10 text-destructive" />
+                </div>
+                <div className="max-w-md space-y-2">
+                    <h3 className="text-xl font-bold">Failed to load property details</h3>
+                    <p className="text-muted-foreground">
+                        {error?.response?.data?.message || error?.message || 'We encountered an error while fetching the property details. Please try again.'}
+                    </p>
+                </div>
+                <Button 
+                    variant="outline" 
+                    onClick={() => window.location.reload()}
+                    className="rounded-xl px-8"
+                >
+                    Retry Loading
+                </Button>
             </div>
         );
     }
@@ -46,14 +62,28 @@ export default function PropertyDetailContent() {
 
     // Parse location for the map
     const coords = parseLocation(property.location);
+    
+    // Extract values from new nested objects
+    const title = typeof property.title === 'object' ? (property.title.en || property.title.am) : property.title;
+    const address = typeof property.address === 'object' ? (property.address.en || property.address.am) : property.address;
+    const description = typeof property.description === 'object' ? (property.description.en || property.description.am) : property.description;
+    const type = typeof property.type === 'object' ? (property.type.en || property.type.am) : property.type;
+    const priceValue = typeof property.price === 'object' ? property.price.value : property.price;
+    const priceCurrency = typeof property.price === 'object' ? (property.price.currency || 'ETB') : 'ETB';
+    const areaValue = typeof property.area === 'object' ? property.area.value : property.area;
+
     const enrichedProperty = {
         ...property,
         lat: coords?.lat || 9.0128,
         lng: coords?.lng || 38.7508,
-        // Map common dummy fields to backend fields if they differ
+        titleStr: title || "Property Details",
+        addressStr: address || property.location || "Addis Ababa, Ethiopia",
+        descriptionStr: description,
+        typeStr: type || 'Villa',
+        priceStr: `${priceValue} ${priceCurrency}`,
         beds: property.bedrooms,
         baths: property.bathrooms,
-        size: `${property.area} sqm`,
+        size: `${areaValue} sqm`,
         // Default values for fields that might be missing in API but expected by UI
         furnishing: property.furnishingType,
     };
@@ -98,9 +128,7 @@ export default function PropertyDetailContent() {
                             <section className="mb-12">
                                 <h3 className="mb-4 text-2xl font-bold">About This Property</h3>
                                 <div className="text-muted-foreground leading-relaxed">
-                                    {typeof enrichedProperty.description === 'object' 
-                                        ? enrichedProperty.description.en 
-                                        : enrichedProperty.description}
+                                    {enrichedProperty.descriptionStr}
                                 </div>
                             </section>
                         )}

@@ -6,7 +6,8 @@ import { FilterSidebar } from '@/features/explore/components/FilterSidebar';
 import { PropertyCard } from '@/features/explore/components/PropertyCard';
 import { SortBar } from '@/features/explore/components/SortBar';
 import PropertyMap from '@/components/map/PropertyMap';
-import { SearchX, Loader2 } from 'lucide-react';
+import { SearchX, Loader2, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useProperties } from '@/features/property/hooks/useProperties';
 import { parseLocation } from '@/lib/utils';
 
@@ -52,17 +53,28 @@ export default function SearchResultsContent() {
 
     const enrichedProperties = properties.map(p => {
         const coords = parseLocation(p.location);
+        
+        // Handle new nested object structure from API
+        const title = typeof p.title === 'object' ? (p.title.en || p.title.am) : p.title;
+        const address = typeof p.address === 'object' ? (p.address.en || p.address.am) : p.address;
+        const price = typeof p.price === 'object' ? p.price.value : p.price;
+        const currency = typeof p.price === 'object' ? (p.price.currency || 'ETB') : 'ETB';
+        const area = typeof p.area === 'object' ? p.area.value : p.area;
+        const type = typeof p.type === 'object' ? (p.type.en || p.type.am) : p.type;
+
         return {
             ...p,
             lat: coords?.lat || 9.0128,
             lng: coords?.lng || 38.7508,
-            titleStr: typeof p.title === 'object' ? p.title.en : p.title,
+            titleStr: title || "Property Details",
+            addressStr: address || p.location || "Addis Ababa, Ethiopia",
             image: p.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image',
-            priceStr: `${p.price} ETB`,
+            priceStr: `${price} ${currency}`,
             beds: p.bedrooms,
             baths: p.bathrooms,
-            size: `${p.area} sqm`,
-            statusStr: p.status === 'available' ? 'Available' : p.status,
+            size: `${area} sqm`,
+            statusStr: p.status === 'AVAILABLE' || p.status === 'available' ? 'Available' : p.status,
+            typeStr: type,
         };
     });
 
@@ -105,10 +117,23 @@ export default function SearchResultsContent() {
                     <SortBar viewMode={viewMode} setViewMode={setViewMode} />
 
                     {isError ? (
-                        <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
-                            <p className="text-destructive font-medium">Failed to load properties</p>
-                            <p className="text-muted-foreground text-sm">{error?.message || 'Please try again later'}</p>
-                            <Button variant="outline" onClick={() => window.location.reload()}>Retry</Button>
+                        <div className="flex flex-col items-center justify-center gap-6 py-20 text-center">
+                            <div className="bg-destructive/10 rounded-full p-4">
+                                <AlertCircle className="h-10 w-10 text-destructive" />
+                            </div>
+                            <div className="max-w-md space-y-2">
+                                <h3 className="text-xl font-bold">Failed to load results</h3>
+                                <p className="text-muted-foreground">
+                                    {error?.response?.data?.message || error?.message || 'We encountered an error while fetching the search results. Please try again.'}
+                                </p>
+                            </div>
+                            <Button 
+                                variant="outline" 
+                                onClick={() => window.location.reload()}
+                                className="rounded-xl px-8"
+                            >
+                                Retry
+                            </Button>
                         </div>
                     ) : viewMode === 'grid' ? (
                         <>
@@ -119,7 +144,7 @@ export default function SearchResultsContent() {
                                             key={p.id}
                                             id={p.id}
                                             title={p.titleStr}
-                                            location={p.address || p.location}
+                                            location={p.addressStr}
                                             price={p.priceStr}
                                             beds={p.beds}
                                             baths={p.baths}
@@ -127,7 +152,7 @@ export default function SearchResultsContent() {
                                             image={p.image}
                                             rating={p.rating || 0}
                                             status={p.statusStr}
-                                            badge={p.type}
+                                            badge={p.typeStr}
                                         />
                                     ))}
                                 </div>

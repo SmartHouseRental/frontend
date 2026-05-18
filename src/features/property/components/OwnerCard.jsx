@@ -14,7 +14,7 @@ export default function OwnerCard({ property }) {
       >
         <div className="border-primary/10 group-hover:border-primary h-20 w-20 overflow-hidden rounded-full border-4 transition-colors">
           <img
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKUNmYZa3cAR7cPzEVNfndCK3IeIUhYwur4TxVkgtxBdXiI_KQfY0cpVGsNOR3yTwuEht6DGWuvb4oK1xo3d44cEIy3DaSWGLi0Lbwg0GYeopxXvDwGgj5StQQcdfUYqL-ZhwQZgKTWx6z5rgr07URND9CIEsrVtj1a-HzLQbQMf-rfkKvlxXkQxfCYFYItW7p-X_uhvrn0lznQBbrTwWr8FHcG79TWdQ"
+            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
         </div>
@@ -28,9 +28,9 @@ export default function OwnerCard({ property }) {
         <div className="mb-2 flex items-center justify-between">
           <h3
             className="hover:text-primary cursor-pointer text-xl font-bold transition-colors"
-            onClick={() => navigate(`/profile/${ownerId}`)}
+            onClick={() => navigate(`/profile/${property?.owner?.id}`)}
           >
-            Meet your host, {property?.ownerName || 'Dawit'}
+            Meet your host, {property?.owner?.first_name ? `${property.owner.first_name} ${property.owner.last_name}` : 'Dawit'}
           </h3>
           <Badge variant="secondary">Verified Owner</Badge>
         </div>

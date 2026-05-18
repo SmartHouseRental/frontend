@@ -15,12 +15,14 @@ import {
   Home,
 } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router';
+import { useLogout } from '@/features/auth/hooks/useLogout';
 
 function OwnerSidebar() {
   const navigate = useNavigate();
+  const logoutMutation = useLogout();
 
   const handleLogout = () => {
-    navigate('/login');
+    logoutMutation.mutate();
   };
 
   const navItems = [

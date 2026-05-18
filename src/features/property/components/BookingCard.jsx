@@ -9,16 +9,8 @@ export default function BookingCard({ property }) {
   const navigate = useNavigate();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
-  const propertyData = property || {
-    id: 'modern-villa-old-airport',
-    title: 'Modern Villa, Old Airport',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCVgURC1lpKm2NhTjoN7OKXfArljV4h3wLH6LpjWuPeGCTDtBV4kJ6qriA-GgEEHF6goYhJeqb-X1HUf1VAFWd3UGza05kHoGe5oin8TRXd4XbpTFnTYCD_yhWbtJvRw3xGH18_ymJt-97r6da6q_0I4Fi7xHoi5Yj8CB4Z_W5cmZx0S9tnPh2ZcqMF6zmzAB503SOjajS9edta0m4A1QiiqKhVLEpN3y9o1OzCZILWZefKYilnrTnmZvmQmpcWFj8hUaP_rQKBv34',
-    ownerName: 'Dawit',
-    price: '45,000 ETB',
-  };
-
-  const displayPrice = property?.price || '45,000 ETB';
+  const propertyData = property || {};
+  const displayPrice = property?.priceStr || '0 ETB / month';
 
   const handleChat = () => {
     navigate('/chat');
@@ -35,7 +27,7 @@ export default function BookingCard({ property }) {
           <div className="mb-6 flex justify-between">
             <div>
               <span className="text-primary text-3xl font-extrabold">
-                {displayPrice.split(' ')[0]} {displayPrice.split(' ')[1]}
+                {displayPrice.includes('month') ? displayPrice.replace('/ month', '').replace('/month', '').trim() : displayPrice}
               </span>
               <span className="text-muted-foreground text-sm"> / month</span>
             </div>

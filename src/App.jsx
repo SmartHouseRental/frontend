@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import { ThemeProvider } from './components/ThemeProvider';
+import ProtectedRoute from './components/ProtectedRoute';
 import AdminLayout from './components/AdminLayout';
 import OverviewPage from './pages/admin/OverviewPage';
 import UserManagementPage from './pages/admin/UserManagementPage';
@@ -112,9 +113,11 @@ function App() {
           <Route
             path="/saved"
             element={
-              <MainLayout>
-                <SavedPropertiesPage />
-              </MainLayout>
+              <ProtectedRoute allowedRoles={['renter']}>
+                <MainLayout>
+                  <SavedPropertiesPage />
+                </MainLayout>
+              </ProtectedRoute>
             }
           />
 
@@ -139,9 +142,11 @@ function App() {
           <Route
             path="/chat"
             element={
-              <MainLayout>
-                <RenterChatPage />
-              </MainLayout>
+              <ProtectedRoute allowedRoles={['renter']}>
+                <MainLayout>
+                  <RenterChatPage />
+                </MainLayout>
+              </ProtectedRoute>
             }
           />
 
@@ -183,7 +188,11 @@ function App() {
           />
 
           {/* Admin Routing */}
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }>
             <Route index element={<Navigate replace to="overview" />} />
             <Route path="overview" element={<OverviewPage />} />
             <Route path="users" element={<UserManagementPage />} />
@@ -221,7 +230,11 @@ function App() {
           />
 
           {/* Owner Routing */}
-          <Route path="/owner" element={<OwnerLayout />}>
+          <Route path="/owner" element={
+            <ProtectedRoute allowedRoles={['owner']}>
+              <OwnerLayout />
+            </ProtectedRoute>
+          }>
             <Route index element={<Navigate replace to="overview" />} />
             <Route path="overview" element={<OwnerOverviewPage />} />
             <Route path="properties" element={<MyPropertiesPage />} />
@@ -242,7 +255,11 @@ function App() {
           </Route>
           
           {/* Renter Dashboard Routing */}
-          <Route path="/renter" element={<RenterLayout />}>
+          <Route path="/renter" element={
+            <ProtectedRoute allowedRoles={['renter']}>
+              <RenterLayout />
+            </ProtectedRoute>
+          }>
             <Route index element={<Navigate replace to="appointments" />} />
             <Route path="appointments" element={<AppointmentsPage />} />
             <Route path="agreements" element={<RenterAgreementsPage />} />

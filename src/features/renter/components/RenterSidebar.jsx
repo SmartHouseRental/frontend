@@ -11,6 +11,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLogout } from '@/features/auth/hooks/useLogout';
 
 const menuItems = [
   {
@@ -18,18 +19,6 @@ const menuItems = [
     icon: Calendar,
     path: '/renter/appointments',
     description: 'Manage property visits'
-  },
-  {
-    title: 'Saved Properties',
-    icon: Heart,
-    path: '/saved',
-    description: 'View your favorites'
-  },
-  {
-    title: 'Messages',
-    icon: MessageSquare,
-    path: '/chat',
-    description: 'Chat with owners'
   },
   {
     title: 'My Agreements',
@@ -52,6 +41,12 @@ const menuItems = [
 ];
 
 export default function RenterSidebar({ isOpen, onClose }) {
+  const logoutMutation = useLogout();
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
+
   return (
     <>
       {/* Mobile Overlay */}
@@ -106,10 +101,11 @@ export default function RenterSidebar({ isOpen, onClose }) {
         <div className="mt-auto p-6 border-t bg-slate-50/50">
           <button 
             className="flex items-center gap-3 w-full p-3 text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-xl transition-all font-medium"
-            onClick={() => console.log('Logout')}
+            onClick={handleLogout}
+            disabled={logoutMutation.isPending}
           >
             <LogOut className="h-5 w-5" />
-            <span className="text-sm">Logout</span>
+            <span className="text-sm">{logoutMutation.isPending ? 'Logging out...' : 'Logout'}</span>
           </button>
         </div>
       </aside>
