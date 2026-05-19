@@ -180,7 +180,7 @@ function VerficationTab() {
         <div className="relative flex justify-between">
           <div className="bg-primary/10 absolute top-5 left-0 z-0 h-0.5 w-full" />
           <div
-            className={`absolute top-5 left-0 z-0 h-0.5 transition-all ${isApproved ? 'w-full bg-green-500' : isRejected || isResubmit ? 'w-2/3 bg-red-400' : isUnderReview ? 'w-2/3 bg-blue-400' : 'w-1/3 bg-primary'
+            className={`absolute top-5 left-0 z-0 h-0.5 transition-all ${isApproved ? 'w-full bg-green-500' : isRejected || isResubmit ? 'w-full bg-red-400' : isUnderReview ? 'w-2/3 bg-blue-400' : 'w-1/3 bg-primary'
               }`}
           />
           {[

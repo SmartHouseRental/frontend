@@ -185,7 +185,7 @@ function AnalyticsPage() {
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="w-40">
                                                     <DropdownMenuItem asChild>
-                                                        <Link to="/owner/property-detail" className="flex items-center gap-2 cursor-pointer text-sm">
+                                                        <Link to="/owner/properties" className="flex items-center gap-2 cursor-pointer text-sm">
                                                             <Eye size={14} /> View Details
                                                         </Link>
                                                     </DropdownMenuItem>

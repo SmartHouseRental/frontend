@@ -6,6 +6,7 @@ import {
     Building2, Eye, CalendarDays, FileText, TrendingUp, DollarSign,
     Plus, ArrowRight, Clock, CheckCircle2, XCircle, Star, MapPin,
     MessageCircle, ArrowUpRight, Handshake, Bell, MoreVertical, BarChart3, Loader2,
+    ShieldAlert,
 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -17,6 +18,8 @@ import { useMyProperties } from '@/features/properties/hooks/useMyProperties';
 import { useOwnerAgreements } from '@/features/agreements/hooks/useAgreements';
 import { useAppointments } from '@/features/appointments/hooks/useAppointments';
 import { useProfile } from '@/features/profile/hooks/useProfile';
+import { useDocuments } from '@/features/profile/hooks/useDocuments';
+import { useNavigate } from 'react-router';
 
 const quickActions = [
     { label: 'Add New Property', desc: 'List a new rental property', icon: Plus, color: 'primary', to: 'properties' },
@@ -47,6 +50,22 @@ function OverviewPage() {
     const { data: agreementsData, isLoading: agreementsLoading } = useOwnerAgreements({ status: 'pending' });
     const { data: appointmentsData, isLoading: appointmentsLoading } = useAppointments({ status: 'PENDING' });
     const { data: profileData } = useProfile();
+    const { data: documentData } = useDocuments();
+    const navigate = useNavigate();
+    const [showVerificationModal, setShowVerificationModal] = useState(false);
+    
+    const profile = profileData?.data;
+    const docStatus = documentData?.data?.status || documentData?.data?.overallStatus;
+    const hasDocuments = documentData?.data && (documentData?.data?.uploadedFiles?.length > 0 || docStatus);
+    const isVerified = profile?.isVerified || docStatus === 'approved' || docStatus === 'verified';
+    
+    const handleAddProperty = () => {
+        if (!isVerified) {
+            setShowVerificationModal(true);
+        } else {
+            navigate('/owner/add-property');
+        }
+    };
 
     const properties = propertiesData?.data || [];
     const pendingAgreements = agreementsData?.items || [];
@@ -98,9 +117,7 @@ function OverviewPage() {
                         <Clock size={14} />
                         <span>{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
                     </div>
-                    <Link to="/owner/properties">
-                        <Button className="gap-2 shadow-sm"><Plus size={16} /> Add Property</Button>
-                    </Link>
+                    <Button onClick={handleAddProperty} className="gap-2 shadow-sm"><Plus size={16} /> Add Property</Button>
                 </div>
             </div>
 
@@ -137,9 +154,15 @@ function OverviewPage() {
                 {quickActions.map((action) => {
                     const Icon = action.icon;
                     const colors = colorMap[action.color];
+                    const isAddProperty = action.label === 'Add New Property';
+                    
                     return (
-                        <Link key={action.label} to={`/owner/${action.to}`}>
-                            <button className="w-full group flex items-center gap-4 rounded-xl border border-border bg-card p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:-translate-y-0.5">
+                        isAddProperty ? (
+                            <button
+                                key={action.label}
+                                onClick={handleAddProperty}
+                                className="w-full group flex items-center gap-4 rounded-xl border border-border bg-card p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:-translate-y-0.5"
+                            >
                                 <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${colors.bg} ${colors.text} ${colors.hoverBg} ${colors.hoverText} transition-all duration-300`}>
                                     <Icon size={22} />
                                 </div>
@@ -149,7 +172,20 @@ function OverviewPage() {
                                 </div>
                                 <ArrowRight size={16} className={`text-muted-foreground ${colors.arrow} transition-all duration-300 group-hover:translate-x-1`} />
                             </button>
-                        </Link>
+                        ) : (
+                            <Link key={action.label} to={`/owner/${action.to}`}>
+                                <button className="w-full group flex items-center gap-4 rounded-xl border border-border bg-card p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:-translate-y-0.5">
+                                    <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${colors.bg} ${colors.text} ${colors.hoverBg} ${colors.hoverText} transition-all duration-300`}>
+                                        <Icon size={22} />
+                                    </div>
+                                    <div className="text-left flex-1">
+                                        <p className="font-bold text-foreground">{action.label}</p>
+                                        <p className="text-xs text-muted-foreground">{action.desc}</p>
+                                    </div>
+                                    <ArrowRight size={16} className={`text-muted-foreground ${colors.arrow} transition-all duration-300 group-hover:translate-x-1`} />
+                                </button>
+                            </Link>
+                        )
                     );
                 })}
             </div>
@@ -278,7 +314,7 @@ function OverviewPage() {
                             {topProperties.map((p, i) => (
                                 <tr key={i} className="transition-colors hover:bg-muted/20">
                                     <td className="px-6 py-4">
-                                        <Link to="/owner/property-detail" className="flex items-center gap-3">
+                                        <Link to="/owner/properties" className="flex items-center gap-3">
                                             <img src={p.img} alt={p.name} className="size-11 rounded-lg object-cover" />
                                             <div>
                                                 <p className="text-sm font-bold text-foreground hover:text-primary transition-colors">{p.name}</p>
@@ -305,7 +341,7 @@ function OverviewPage() {
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="w-40">
                                                 <DropdownMenuItem asChild>
-                                                    <Link to="/owner/property-detail" className="flex items-center gap-2 cursor-pointer">
+                                                    <Link to="/owner/properties" className="flex items-center gap-2 cursor-pointer">
                                                         <Eye size={14} /> View Details
                                                     </Link>
                                                 </DropdownMenuItem>
@@ -323,6 +359,52 @@ function OverviewPage() {
                     </table>
                 </div>
             </div>
+            
+            {/* Verification Required Modal */}
+            {showVerificationModal && !isVerified && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <Card className="w-full max-w-md shadow-2xl">
+                        <CardContent className="space-y-6 pt-6">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 mx-auto">
+                                <ShieldAlert size={32} className="text-amber-500" />
+                            </div>
+                            <div className="text-center space-y-2">
+                                <h3 className="text-foreground text-xl font-extrabold">Verification Required</h3>
+                                <p className="text-muted-foreground text-sm">
+                                    {hasDocuments ? (
+                                        <>
+                                            Your documents are currently {docStatus === 'under_review' ? 'under review' : docStatus === 'rejected' ? 'rejected' : 'being processed'}. 
+                                            You will be able to list properties once your verification is approved.
+                                        </>
+                                    ) : (
+                                        <>
+                                            You need to upload verification documents before you can list properties on the platform.
+                                        </>
+                                    )}
+                                </p>
+                            </div>
+                            <div className="flex flex-col gap-3">
+                                <Button
+                                    onClick={() => {
+                                        setShowVerificationModal(false);
+                                        navigate('/owner/profile?tab=verification');
+                                    }}
+                                    className="w-full"
+                                >
+                                    {hasDocuments ? 'View Verification Status' : 'Upload Documents'} <ArrowRight size={16} className="ml-2" />
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setShowVerificationModal(false)}
+                                    className="w-full"
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
         </div>
     );
 }

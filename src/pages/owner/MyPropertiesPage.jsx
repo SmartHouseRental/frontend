@@ -9,7 +9,7 @@ import {
     Search, Plus, Eye, Edit, Trash2, Building2, MapPin,
     ChevronLeft, ChevronRight, LayoutGrid, List,
     TrendingUp, BedDouble, Home, DollarSign, Filter,
-    MoreVertical, Loader2,
+    MoreVertical, Loader2, ShieldAlert, ArrowRight,
 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -19,6 +19,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useMyProperties } from '@/features/properties/hooks/useMyProperties';
 import { useDeleteProperty } from '@/features/properties/hooks/useDeleteProperty';
+import { useProfile } from '@/features/profile/hooks/useProfile';
+import { useDocuments } from '@/features/profile/hooks/useDocuments';
+import { useNavigate } from 'react-router';
 
 const statusColors = {
     AVAILABLE: 'bg-emerald-100 text-emerald-700',
@@ -30,6 +33,9 @@ const statusColors = {
 function MyPropertiesPage() {
     const { data: propertiesData, isLoading, error, refetch } = useMyProperties();
     const deletePropertyMutation = useDeleteProperty();
+    const { data: profileData } = useProfile();
+    const { data: documentData } = useDocuments();
+    const navigate = useNavigate();
     
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
@@ -37,7 +43,21 @@ function MyPropertiesPage() {
     const [viewMode, setViewMode] = useState('list');
     const [currentPage, setCurrentPage] = useState(1);
     const [deleteConfirm, setDeleteConfirm] = useState(null);
+    const [showVerificationModal, setShowVerificationModal] = useState(false);
     const itemsPerPage = 5;
+    
+    const profile = profileData?.data;
+    const docStatus = documentData?.data?.status || documentData?.data?.overallStatus;
+    const hasDocuments = documentData?.data && (documentData?.data?.uploadedFiles?.length > 0 || docStatus);
+    const isVerified = profile?.isVerified || docStatus === 'approved' || docStatus === 'verified';
+    
+    const handleAddProperty = () => {
+        if (!isVerified) {
+            setShowVerificationModal(true);
+        } else {
+            navigate('/owner/add-property');
+        }
+    };
 
     const properties = propertiesData?.data || [];
 
@@ -52,8 +72,10 @@ function MyPropertiesPage() {
 
     const filtered = useMemo(() => {
         return properties.filter(p => {
-            const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                p.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            const name = p.name || p.titleEn || '';
+            const location = p.location || p.address || '';
+            const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                location.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 p.id.toLowerCase().includes(searchQuery.toLowerCase());
             const matchesStatus = statusFilter === 'all' || p.status.toLowerCase() === statusFilter;
             const matchesType = typeFilter === 'all' || p.type.toLowerCase() === typeFilter;
@@ -86,9 +108,7 @@ function MyPropertiesPage() {
                     <h1 className="text-3xl font-extrabold tracking-tight text-foreground">My Properties</h1>
                     <p className="text-muted-foreground mt-1">Manage and track all your rental listings.</p>
                 </div>
-                <Link to="/owner/add-property">
-                    <Button className="gap-2 shadow-sm"><Plus size={16} /> Add Property</Button>
-                </Link>
+                <Button onClick={handleAddProperty} className="gap-2 shadow-sm"><Plus size={16} /> Add Property</Button>
             </div>
 
             {/* Stats */}
@@ -200,22 +220,22 @@ function MyPropertiesPage() {
                                 paginated.map((p) => (
                                     <TableRow key={p.id} className="hover:bg-muted/10 transition-colors">
                                         <TableCell className="px-6 py-4">
-                                            <Link to="/owner/property-detail" className="flex items-center gap-3">
-                                                <img src={p.img} alt={p.name} className="size-12 rounded-lg object-cover" />
+                                            <Link to={`/owner/properties/${p.id}`} className="flex items-center gap-3">
+                                                <img src={p.img || p.images?.[0]?.url} alt={p.name} className="size-12 rounded-lg object-cover" />
                                                 <div>
-                                                    <p className="text-sm font-bold text-foreground hover:text-primary transition-colors">{p.name}</p>
-                                                    <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin size={10} /> {p.location}</p>
-                                                    <p className="text-[10px] text-muted-foreground">{p.bedrooms} bed • {p.bathrooms} bath • {p.size}</p>
+                                                    <p className="text-sm font-bold text-foreground hover:text-primary transition-colors">{p.name || p.titleEn}</p>
+                                                    <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin size={10} /> {p.location || p.address}</p>
+                                                    <p className="text-[10px] text-muted-foreground">{p.bedrooms} bed • {p.bathrooms} bath • {p.size || p.area}</p>
                                                 </div>
                                             </Link>
                                         </TableCell>
                                         <TableCell className="px-6 py-4 text-sm font-medium">{p.type}</TableCell>
-                                        <TableCell className="px-6 py-4 text-sm font-bold text-primary">{p.rent}</TableCell>
+                                        <TableCell className="px-6 py-4 text-sm font-bold text-primary">{p.rent || p.price}</TableCell>
                                         <TableCell className="px-6 py-4">
                                             <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${statusColors[p.status]}`}>{p.status}</span>
                                         </TableCell>
                                         <TableCell className="px-6 py-4">
-                                            <span className="text-sm font-medium flex items-center gap-1"><Eye size={14} className="text-muted-foreground" /> {p.views.toLocaleString()}</span>
+                                            <span className="text-sm font-medium flex items-center gap-1"><Eye size={14} className="text-muted-foreground" /> {(p.views || p.viewsCount || 0).toLocaleString()}</span>
                                         </TableCell>
                                         <TableCell className="px-6 py-4 text-right">
                                             <DropdownMenu>
@@ -226,12 +246,12 @@ function MyPropertiesPage() {
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="w-36">
                                                     <DropdownMenuItem asChild>
-                                                        <Link to="/owner/property-detail" className="flex items-center gap-2 cursor-pointer">
+                                                        <Link to={`/owner/properties/${p.id}`} className="flex items-center gap-2 cursor-pointer">
                                                             <Eye size={14} /> View Details
                                                         </Link>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem asChild>
-                                                        <Link to="/owner/edit-property" className="flex items-center gap-2 cursor-pointer">
+                                                        <Link to={`/owner/properties/edit/${p.id}`} className="flex items-center gap-2 cursor-pointer">
                                                             <Edit size={14} /> Edit Property
                                                         </Link>
                                                     </DropdownMenuItem>
@@ -316,10 +336,10 @@ function MyPropertiesPage() {
                                         <span>{p.size}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <Link to="/owner/property-detail" className="flex-1">
+                                        <Link to={`/owner/properties/${p.id}`} className="flex-1">
                                             <Button variant="outline" className="w-full gap-1 text-xs h-8"><Eye size={12} /> View</Button>
                                         </Link>
-                                        <Link to="/owner/edit-property">
+                                        <Link to={`/owner/properties/edit/${p.id}`}>
                                             <Button variant="outline" size="icon" className="h-8 w-8"><Edit size={12} /></Button>
                                         </Link>
                                         <Button variant="outline" size="icon" className="h-8 w-8 text-destructive border-destructive/30 hover:bg-destructive/5" onClick={() => handleDelete(p.id)}><Trash2 size={12} /></Button>
@@ -328,6 +348,52 @@ function MyPropertiesPage() {
                             </Card>
                         ))
                     )}
+                </div>
+            )}
+            
+            {/* Verification Required Modal */}
+            {showVerificationModal && !isVerified && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <Card className="w-full max-w-md shadow-2xl">
+                        <CardContent className="space-y-6 pt-6">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 mx-auto">
+                                <ShieldAlert size={32} className="text-amber-500" />
+                            </div>
+                            <div className="text-center space-y-2">
+                                <h3 className="text-foreground text-xl font-extrabold">Verification Required</h3>
+                                <p className="text-muted-foreground text-sm">
+                                    {hasDocuments ? (
+                                        <>
+                                            Your documents are currently {docStatus === 'under_review' ? 'under review' : docStatus === 'rejected' ? 'rejected' : 'being processed'}. 
+                                            You will be able to list properties once your verification is approved.
+                                        </>
+                                    ) : (
+                                        <>
+                                            You need to upload verification documents before you can list properties on the platform.
+                                        </>
+                                    )}
+                                </p>
+                            </div>
+                            <div className="flex flex-col gap-3">
+                                <Button
+                                    onClick={() => {
+                                        setShowVerificationModal(false);
+                                        navigate('/owner/profile?tab=verification');
+                                    }}
+                                    className="w-full"
+                                >
+                                    {hasDocuments ? 'View Verification Status' : 'Upload Documents'} <ArrowRight size={16} className="ml-2" />
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setShowVerificationModal(false)}
+                                    className="w-full"
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
             )}
         </div>

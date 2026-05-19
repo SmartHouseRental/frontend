@@ -217,9 +217,9 @@ function App() {
             <Route index element={<Navigate replace to="overview" />} />
             <Route path="overview" element={<OwnerOverviewPage />} />
             <Route path="properties" element={<MyPropertiesPage />} />
-            <Route path="property-detail" element={<PropertyDetailPage />} />
+            <Route path="properties/:id" element={<PropertyDetailPage />} />
             <Route path="add-property" element={<AddPropertyPage />} />
-            <Route path="edit-property" element={<EditPropertyPage />} />
+            <Route path="properties/edit/:id" element={<EditPropertyPage />} />
             <Route path="appointments" element={<OwnerAppointmentsPage />} />
             <Route path="agreements" element={<OwnerAgreementsPage />} />
             <Route path="agreement-detail" element={<OwnerAgreementDetailPage />} />

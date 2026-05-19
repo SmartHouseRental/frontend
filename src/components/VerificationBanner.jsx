@@ -13,6 +13,15 @@ const stateConfig = {
     linkLabel: 'Upload Documents',
     tab: 'verification',
   },
+  under_review: {
+    message: 'Your documents are under review. You will be able to list properties once approved.',
+    bg: 'bg-amber-50 border-amber-200 text-amber-800',
+    icon: AlertTriangle,
+    iconColor: 'text-amber-500',
+    link: '/owner/profile',
+    linkLabel: 'View Status',
+    tab: 'verification',
+  },
   rejected: {
     message:
       'Your verification documents were rejected. Please re-upload with corrected information.',
@@ -21,6 +30,15 @@ const stateConfig = {
     iconColor: 'text-rose-500',
     link: '/owner/profile',
     linkLabel: 'Re-Upload',
+    tab: 'verification',
+  },
+  resubmit: {
+    message: 'Your verification documents need to be resubmitted. Please update with the required corrections.',
+    bg: 'bg-orange-50 border-orange-200 text-orange-800',
+    icon: AlertTriangle,
+    iconColor: 'text-orange-500',
+    link: '/owner/profile',
+    linkLabel: 'Resubmit',
     tab: 'verification',
   },
 };

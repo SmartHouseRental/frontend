@@ -141,7 +141,7 @@ function AppointmentsPage() {
                                         <ChevronRight size={14} className={isExpanded ? 'rotate-90' : ''} /> {isExpanded ? 'Collapse' : 'View Details'}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem asChild>
-                                        <Link to="/owner/property-detail" className="flex items-center gap-2 cursor-pointer">
+                                        <Link to="/owner/properties" className="flex items-center gap-2 cursor-pointer">
                                             <Building2 size={14} /> View Property
                                         </Link>
                                     </DropdownMenuItem>
