@@ -24,6 +24,12 @@ export default function ReviewList() {
     );
   }
 
+  const reviewsArray = Array.isArray(reviews) 
+    ? reviews 
+    : (Array.isArray(reviews?.reviews) 
+        ? reviews.reviews 
+        : []);
+
   return (
     <div className="space-y-8">
       <div>
@@ -32,12 +38,12 @@ export default function ReviewList() {
       </div>
 
       <div className="grid gap-6">
-        {reviews?.length === 0 ? (
+        {reviewsArray.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             <p>You haven't written any reviews yet.</p>
           </div>
         ) : (
-          reviews.map((review) => {
+          reviewsArray.map((review) => {
             const property = review.property;
             const propertyTitle = typeof property?.title === 'object' ? property.title.en : (property?.title || "Property Details");
             

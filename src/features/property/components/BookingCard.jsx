@@ -4,13 +4,19 @@ import { Button } from '@/components/ui/button';
 import { Star, MessageCircle, CalendarDays, Edit3 } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import ReviewModal from './ReviewModal';
+import { usePropertyReviewStats } from '../hooks/useReviews';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export default function BookingCard({ property }) {
   const navigate = useNavigate();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const propertyData = property || {};
   const displayPrice = property?.priceStr || '0 ETB / month';
+  
+  const { data: statsResponse } = usePropertyReviewStats(property?.id);
+  const stats = statsResponse?.data || statsResponse || { averageRating: 0 };
 
   const handleChat = () => {
     navigate('/chat');
@@ -33,8 +39,8 @@ export default function BookingCard({ property }) {
             </div>
 
             <div className="flex items-center gap-1">
-              <Star className="text-primary h-4 w-4" />
-              4.9
+              <Star className="text-primary h-4 w-4 fill-primary" />
+              <span className="font-bold">{stats.averageRating ? Number(stats.averageRating).toFixed(1) : "New"}</span>
             </div>
           </div>
 
@@ -59,7 +65,13 @@ export default function BookingCard({ property }) {
             <Button
               variant="ghost"
               className="text-muted-foreground hover:text-primary hover:bg-primary/5 w-full gap-2 rounded-xl py-5 text-xs font-bold transition-all"
-              onClick={() => setIsReviewModalOpen(true)}
+              onClick={() => {
+                if (!isAuthenticated) {
+                  navigate('/login');
+                } else {
+                  setIsReviewModalOpen(true);
+                }
+              }}
             >
               <Edit3 size={16} />
               Leave a Review

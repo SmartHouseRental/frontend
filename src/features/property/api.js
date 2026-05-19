@@ -28,4 +28,6 @@ export const propertyApi = {
   updatePropertyStatus: (id, status) => axiosInstance.patch(`/api/v1/properties/${id}/status`, { status }),
   getMyProperties: () => axiosInstance.get('/api/v1/properties/my'),
   getPropertyAnalytics: () => axiosInstance.get('/api/v1/properties/analytics'),
+  getPropertyReviews: (id) => axiosInstance.get(`/api/v1/reviews/property/${id}`),
+  getPropertyReviewStats: (id) => axiosInstance.get(`/api/v1/reviews/property/${id}/stats`),
 };
