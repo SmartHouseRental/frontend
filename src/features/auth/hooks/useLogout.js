@@ -13,13 +13,13 @@ export const useLogout = () => {
         mutationFn: authApi.logout,
         onSuccess: () => {
             removeToken();
-            queryClient.removeQueries({ queryKey: authKeys.all });
+            queryClient.clear();
             toast.success('Logged out successfully');
             navigate('/', { replace: true });
         },
         onError: () => {
             removeToken();
-            queryClient.removeQueries({ queryKey: authKeys.all });
+            queryClient.clear();
             navigate('/', { replace: true });
         },
     });

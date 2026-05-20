@@ -52,23 +52,41 @@ export default function PropertyMap({
 }) {
   const navigate = useNavigate();
 
+  // Filter out any properties with invalid/missing coordinates
+  const validProperties = properties.filter((property) => {
+    const lat = parseFloat(property?.lat);
+    const lng = parseFloat(property?.lng);
+    return !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
+  });
+
+  // Dynamically center the map on the first valid property if the default Addis Ababa center is used
+  let mapCenter = center;
+  if (
+    center &&
+    center[0] === 9.0128 &&
+    center[1] === 38.7508 &&
+    validProperties.length > 0
+  ) {
+    mapCenter = [validProperties[0].lat, validProperties[0].lng];
+  }
+
   return (
     <div
       className={`border-border relative h-full w-full overflow-hidden rounded-2xl border shadow-inner ${mode === 'preview' ? 'grayscale-[0.5] transition-all duration-700 hover:grayscale-0' : ''}`}
     >
       <MapContainer
-        center={center}
+        center={mapCenter}
         zoom={zoom}
         scrollWheelZoom={mode !== 'preview'}
         className="h-full w-full"
       >
-        <ChangeView center={center} zoom={zoom} />
+        <ChangeView center={mapCenter} zoom={zoom} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {properties.map((property) => {
+        {validProperties.map((property) => {
           const title = (property.title && typeof property.title === 'object') ? (property.title.en || property.title.am) : (property.titleStr || property.title || "Property Details");
           const price = (property.price && typeof property.price === 'object') ? `${property.price.value} ${property.price.currency || 'ETB'}` : (property.priceStr || property.price || "0 ETB");
           const image = property.image || property.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';

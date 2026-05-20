@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Home, Loader2 } from 'lucide-react';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useLocation } from 'react-router';
 import {
   useConversations,
   useConversationMessages,
@@ -20,6 +21,7 @@ import MessageInput from './MessageInput';
 export default function SharedMessagesView({ role }) {
   const { user } = useAuth();
   const currentUserId = user?.id;
+  const location = useLocation();
 
   const [activeConversation, setActiveConversation] = useState(null);
   const [newMessage, setNewMessage] = useState('');
@@ -27,6 +29,18 @@ export default function SharedMessagesView({ role }) {
   const [showPanel, setShowPanel] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    if (location.state?.conversationId) {
+      setActiveConversation(location.state.conversationId);
+      setShowPanel(true);
+      
+      // Remove it from state so it doesn't keep triggering on page refresh
+      const state = { ...location.state };
+      delete state.conversationId;
+      window.history.replaceState({ ...window.history.state, usr: state }, '');
+    }
+  }, [location.state?.conversationId]);
 
   // Phase 1: Fetch conversations (HTTP polling as background fallback)
   const { data: conversations = [], isLoading: isLoadingConversations } = useConversations({

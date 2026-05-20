@@ -6,12 +6,15 @@ import { useNavigate, useLocation } from 'react-router';
 import ReviewModal from './ReviewModal';
 import { usePropertyReviewStats } from '../hooks/useReviews';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useCreateConversation, useConversations } from '@/features/chat/hooks/useMessaging';
 
 export default function BookingCard({ property }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const createConversation = useCreateConversation();
+  const { data: conversations = [] } = useConversations();
 
   const propertyData = property || {};
   const displayPrice = property?.priceStr || '0 ETB / month';
@@ -19,8 +22,37 @@ export default function BookingCard({ property }) {
   const { data: statsResponse } = usePropertyReviewStats(property?.id);
   const stats = statsResponse?.data || statsResponse || { averageRating: 0 };
 
-  const handleChat = () => {
-    navigate('/chat');
+  const handleChat = async () => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
+
+    const targetOwnerId = property.owner?.id || property.ownerId;
+
+    // Check locally for an existing conversation first
+    const existingChat = conversations.find(c => 
+      c.propertyId === property.id && 
+      (c.ownerId === targetOwnerId || c.owner?.id === targetOwnerId) &&
+      (c.renterId === user.id || c.renter?.id === user.id)
+    );
+
+    if (existingChat) {
+      navigate('/chat', { state: { conversationId: existingChat.id } });
+      return;
+    }
+
+    try {
+      const response = await createConversation.mutateAsync({
+        ownerId: targetOwnerId,
+        renterId: user.id,
+        propertyId: property.id,
+      });
+      navigate('/chat', { state: { conversationId: response.id } });
+    } catch (error) {
+      console.error('Failed to create conversation:', error);
+      navigate('/chat');
+    }
   };
 
   const handleSchedule = () => {
