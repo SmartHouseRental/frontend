@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { profileKeys } from '@/features/profile/constants';
@@ -31,6 +31,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import VerificationBanner from '@/components/VerificationBanner';
 import { useOwnerOverview } from '../hooks/useOwnerOverview';
+
+const OwnerRevenueChart = lazy(() =>
+  import('./OwnerRevenueChart').then((m) => ({ default: m.OwnerRevenueChart }))
+);
 import { verificationStateFromOverview } from '../utils/verification';
 
 const colorMap = {
@@ -359,26 +363,19 @@ export function OwnerOverviewContent() {
               ))}
             </div>
           </div>
-          <div className="relative h-56">
-            <svg className="h-full w-full" preserveAspectRatio="none" viewBox="0 0 1000 250">
-              <defs>
-                <linearGradient id="ownerRevenueGradient" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stopColor="oklch(0.62 0.11 55)" stopOpacity="0.2" />
-                  <stop offset="100%" stopColor="oklch(0.62 0.11 55)" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              <path
-                d="M0,180 C100,170 200,190 300,140 C400,90 500,120 600,70 C700,30 800,50 900,20 L1000,10 L1000,250 L0,250 Z"
-                fill="url(#ownerRevenueGradient)"
+          <div className="h-56 w-full">
+            <Suspense
+              fallback={
+                <div className="flex h-full items-center justify-center">
+                  <Loader2 className="text-primary animate-spin" size={24} />
+                </div>
+              }
+            >
+              <OwnerRevenueChart
+                data={revenue?.chart ?? []}
+                currency={revenue?.currency ?? 'ETB'}
               />
-              <path
-                d="M0,180 C100,170 200,190 300,140 C400,90 500,120 600,70 C700,30 800,50 900,20 L1000,10"
-                fill="none"
-                stroke="oklch(0.62 0.11 55)"
-                strokeLinecap="round"
-                strokeWidth="3"
-              />
-            </svg>
+            </Suspense>
           </div>
           <div className="border-border mt-6 grid grid-cols-3 gap-4 border-t pt-4">
             <div>
