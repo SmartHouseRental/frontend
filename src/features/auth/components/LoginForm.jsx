@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,7 @@ const loginSchema = z.object({
 
 export function LoginForm() {
     const navigate = useNavigate();
+    const location = useLocation();
     const loginMutation = useLogin();
     const [showPassword, setShowPassword] = useState(false);
 
@@ -42,7 +43,8 @@ export function LoginForm() {
                 } else if (userRole === 'owner') {
                     navigate('/owner');
                 } else {
-                    navigate('/welcome'); // or wherever renter goes initially
+                    const from = location.state?.from || '/welcome';
+                    navigate(from);
                 }
             },
         });

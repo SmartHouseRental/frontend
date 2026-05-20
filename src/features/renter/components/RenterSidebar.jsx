@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLogout } from '@/features/auth/hooks/useLogout';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 const menuItems = [
   {
@@ -41,11 +42,16 @@ const menuItems = [
 ];
 
 export default function RenterSidebar({ isOpen, onClose }) {
+  const { user } = useAuth();
   const logoutMutation = useLogout();
 
   const handleLogout = () => {
     logoutMutation.mutate();
   };
+
+  const userName = user?.first_name || user?.last_name
+    ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+    : (user?.fullName || user?.name || 'Renter');
 
   return (
     <>
@@ -68,7 +74,7 @@ export default function RenterSidebar({ isOpen, onClose }) {
             </div>
             <div>
               <h3 className="font-semibold text-foreground">Renter Dashboard</h3>
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-tighter">Verified Member</p>
+              <p className="text-xs text-muted-foreground font-medium tracking-tighter">{userName}</p>
             </div>
           </div>
 

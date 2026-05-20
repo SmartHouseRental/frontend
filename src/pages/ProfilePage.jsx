@@ -12,7 +12,6 @@ import {
   MapPin,
   Mail,
   ChevronRight,
-  Edit3,
 } from 'lucide-react';
 
 export default function ProfilePage() {
@@ -63,14 +62,6 @@ export default function ProfilePage() {
           </div>
 
           <div className="flex min-w-[200px] flex-col gap-3">
-            <Button
-              variant="secondary"
-              className="text-primary w-full rounded-xl border-2 border-white/20 bg-white py-6 font-bold shadow-lg hover:bg-white/90"
-              onClick={() => navigate('/profile/edit')}
-            >
-              <Edit3 size={18} className="mr-2" />
-              Edit Profile
-            </Button>
           </div>
         </div>
       </div>

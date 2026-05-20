@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, MessageCircle, CalendarDays, Edit3 } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import ReviewModal from './ReviewModal';
 import { usePropertyReviewStats } from '../hooks/useReviews';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export default function BookingCard({ property }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const { isAuthenticated } = useAuth();
 
@@ -67,7 +68,7 @@ export default function BookingCard({ property }) {
               className="text-muted-foreground hover:text-primary hover:bg-primary/5 w-full gap-2 rounded-xl py-5 text-xs font-bold transition-all"
               onClick={() => {
                 if (!isAuthenticated) {
-                  navigate('/login');
+                  navigate('/login', { state: { from: location } });
                 } else {
                   setIsReviewModalOpen(true);
                 }

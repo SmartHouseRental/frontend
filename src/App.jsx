@@ -62,11 +62,13 @@ import PropertyDetailRenterPage from './pages/home/PropertyDetailPage';
 import SearchResultsPage from './pages/home/SearchResultsPage';
 import LoginPage from './pages/auth/LoginPage';
 import UserProfilePage from './pages/ProfilePage';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           {/*  Public rounting
 

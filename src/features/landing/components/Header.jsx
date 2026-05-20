@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Home, Globe, Heart, MessageCircle, User, LogOut, ChevronDown } from 'lucide-react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useLogout } from '@/features/auth/hooks/useLogout';
 
@@ -8,6 +8,7 @@ export default function Header() {
   const { isAuthenticated, user } = useAuth();
   const isRenter = user?.role?.toLowerCase() === 'renter';
   const logoutMutation = useLogout();
+  const location = useLocation();
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -90,7 +91,7 @@ export default function Header() {
               {logoutMutation.isPending ? 'Logging out...' : 'Logout'}
             </Button>
           ) : (
-            <Link to="/login">
+            <Link to="/login" state={{ from: location }}>
               <Button
                 className="shadow-primary/20 rounded-full px-6 font-bold shadow-lg transition-transform hover:scale-105"
               >
