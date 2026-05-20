@@ -5,7 +5,11 @@ import {
   useConversations,
   useConversationMessages,
   useSendMessage,
+  useSendAttachment,
   useMarkAsRead,
+  useMessageReactions,
+  useDeleteMessage,
+  useChatSocket,
 } from '../hooks/useMessaging';
 import ConversationSidebar from './ConversationSidebar';
 import MessageHeader from './MessageHeader';
@@ -21,21 +25,58 @@ export default function SharedMessagesView({ role }) {
   const [newMessage, setNewMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [showPanel, setShowPanel] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Step 1 & 5: Fetch conversations with 4-second polling
+  // Phase 1: Fetch conversations (HTTP polling as background fallback)
   const { data: conversations = [], isLoading: isLoadingConversations } = useConversations({
-    refetchInterval: 4000,
+    refetchInterval: 10000, // slower polling now that sockets handle real-time sync
   });
 
-  // Step 2 & 5: Fetch messages for the active conversation with 4-second polling
-  const { data: messages = [], isLoading: isLoadingMessages } = useConversationMessages(activeConversation, {
-    refetchInterval: 4000,
-  });
+  // Phase 1: Fetch messages
+  const { data: messages = [], isLoading: isLoadingMessages } = useConversationMessages(activeConversation);
 
-  // Step 3 & 4: Mutations
+  // Phase 2 REST Mutations
   const sendMessageMutation = useSendMessage();
+  const sendAttachmentMutation = useSendAttachment();
   const markAsReadMutation = useMarkAsRead();
+  const { addReaction, removeReaction } = useMessageReactions();
+  const deleteMessageMutation = useDeleteMessage();
+
+  // Phase 2 WebSocket Sync Hook
+  const {
+    isConnected,
+    emitSendMessage,
+    emitTyping,
+    emitReactionAdd,
+    emitReactionRemove,
+    emitDelete,
+  } = useChatSocket(activeConversation, {
+    onTypingStatusChange: (data) => {
+      if (data.userId !== currentUserId) {
+        setIsTyping(data.isTyping);
+      }
+    },
+  });
+
+  // Reset typing indicator when switching chats
+  useEffect(() => {
+    setIsTyping(false);
+  }, [activeConversation]);
+
+  // Typing Emitter Debounce
+  useEffect(() => {
+    if (!activeConversation || !isConnected) return;
+    if (newMessage.trim()) {
+      emitTyping(true);
+      const timeout = setTimeout(() => {
+        emitTyping(false);
+      }, 3000);
+      return () => clearTimeout(timeout);
+    } else {
+      emitTyping(false);
+    }
+  }, [newMessage, activeConversation, isConnected]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -55,19 +96,61 @@ export default function SharedMessagesView({ role }) {
     }
   }, [activeConversation, conversations, messages.length]);
 
-  const handleSendMessage = async () => {
-    if (!newMessage.trim() || !activeConversation) return;
-    
-    const content = newMessage;
-    setNewMessage(''); // optimistic clearing of input
+  const handleSendMessage = async (text, file) => {
+    if (!activeConversation) return;
 
-    try {
-      await sendMessageMutation.mutateAsync({
-        conversationId: activeConversation,
-        content,
-      });
-    } catch (error) {
-      console.error('Failed to send message:', error);
+    if (file) {
+      try {
+        await sendAttachmentMutation.mutateAsync({
+          conversationId: activeConversation,
+          file,
+          caption: text,
+        });
+      } catch (error) {
+        console.error('Failed to send attachment:', error);
+      }
+      return;
+    }
+
+    if (!text.trim()) return;
+
+    if (isConnected) {
+      emitSendMessage(text);
+      setNewMessage('');
+    } else {
+      try {
+        await sendMessageMutation.mutateAsync({
+          conversationId: activeConversation,
+          content: text,
+        });
+        setNewMessage('');
+      } catch (error) {
+        console.error('Failed to send message:', error);
+      }
+    }
+  };
+
+  const handleReact = (messageId, emoji, hasReacted) => {
+    if (isConnected) {
+      if (hasReacted) {
+        emitReactionRemove(messageId, emoji);
+      } else {
+        emitReactionAdd(messageId, emoji);
+      }
+    } else {
+      if (hasReacted) {
+        removeReaction.mutate({ messageId, emoji });
+      } else {
+        addReaction.mutate({ messageId, emoji });
+      }
+    }
+  };
+
+  const handleDeleteMessage = (messageId) => {
+    if (isConnected) {
+      emitDelete(messageId);
+    } else {
+      deleteMessageMutation.mutate(messageId);
     }
   };
 
@@ -139,7 +222,7 @@ export default function SharedMessagesView({ role }) {
         >
           {activeConv ? (
             <>
-              <MessageHeader activeConv={activeConv} onBack={handleBack} />
+              <MessageHeader activeConv={activeConv} onBack={handleBack} isTyping={isTyping} />
               {isLoadingMessages && messages.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center bg-muted/10">
                   <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -147,8 +230,9 @@ export default function SharedMessagesView({ role }) {
               ) : (
                 <ChatWindow
                   messages={messages}
-                  role={role}
                   messagesEndRef={messagesEndRef}
+                  onReact={handleReact}
+                  onDelete={handleDeleteMessage}
                 />
               )}
               <MessageInput

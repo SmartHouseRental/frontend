@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Phone, Video, MoreVertical, ArrowLeft } from 'lucide-react';
 
-export default function MessageHeader({ activeConv, onBack, className = '' }) {
+export default function MessageHeader({ activeConv, onBack, isTyping, className = '' }) {
   if (!activeConv) return null;
 
   return (
@@ -31,15 +31,17 @@ export default function MessageHeader({ activeConv, onBack, className = '' }) {
               {activeConv.avatar}
             </div>
           )}
-          {activeConv.online && (
-            <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full bg-emerald-500 ring-2 ring-card"></span>
+          {(activeConv.online || isTyping) && (
+            <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full bg-emerald-500 ring-2 ring-card animate-in zoom-in-0 duration-200"></span>
           )}
         </div>
         
         <div>
           <p className="font-bold text-foreground text-sm md:text-base">{activeConv.name}</p>
           <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-            {activeConv.online ? (
+            {isTyping ? (
+              <span className="text-emerald-500 font-semibold animate-pulse">typing...</span>
+            ) : activeConv.online ? (
               <>
                 <span className="size-1.5 rounded-full bg-emerald-500"></span> Online
               </>

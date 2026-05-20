@@ -33,8 +33,48 @@ export const chatApi = {
     return data.data.message;
   },
 
+  sendAttachment: async (conversationId, file, caption) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (caption) {
+      formData.append('caption', caption);
+    }
+    const { data } = await apiClient.post(`/messaging/conversations/${conversationId}/attachments`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return data.data.message;
+  },
+
   markAsRead: async (conversationId) => {
     const { data } = await apiClient.patch(`/messaging/conversations/${conversationId}/read`);
     return data.data; // contains success status
+  },
+
+  addReaction: async (messageId, emoji) => {
+    const { data } = await apiClient.post(`/messaging/messages/${messageId}/reactions`, {
+      emoji,
+    });
+    return data.data.message;
+  },
+
+  removeReaction: async (messageId, emoji) => {
+    const { data } = await apiClient.delete(`/messaging/messages/${messageId}/reactions`, {
+      data: { emoji },
+    });
+    return data.data.message;
+  },
+
+  deleteMessage: async (messageId) => {
+    const { data } = await apiClient.delete(`/messaging/messages/${messageId}`);
+    return data.data;
+  },
+
+  updateMessageStatus: async (messageId, status) => {
+    const { data } = await apiClient.patch(`/messaging/messages/${messageId}/status`, {
+      status,
+    });
+    return data.data.message;
   },
 };
