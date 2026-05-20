@@ -10,7 +10,7 @@ export default function ChatWindow({ messages, role, messagesEndRef }) {
       </div>
       
       {messages.map((m) => (
-        <MessageBubble key={m.id} m={m} role={role} />
+        <MessageBubble key={m.id} m={m} />
       ))}
       
       <div ref={messagesEndRef} />

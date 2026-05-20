@@ -1,19 +1,41 @@
 import { useState, useRef, useEffect } from 'react';
-import { Home } from 'lucide-react';
-import { allConversations, allMessages } from '../mock/messages';
+import { Home, Loader2 } from 'lucide-react';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import {
+  useConversations,
+  useConversationMessages,
+  useSendMessage,
+  useMarkAsRead,
+} from '../hooks/useMessaging';
 import ConversationSidebar from './ConversationSidebar';
 import MessageHeader from './MessageHeader';
 import ChatWindow from './ChatWindow';
 import MessageInput from './MessageInput';
 
+
 export default function SharedMessagesView({ role }) {
-  const [activeConversation, setActiveConversation] = useState(1);
-  const [conversations, setConversations] = useState(allConversations);
-  const [messages, setMessages] = useState(allMessages);
+  const { user } = useAuth();
+  const currentUserId = user?.id;
+
+  const [activeConversation, setActiveConversation] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [showPanel, setShowPanel] = useState(false);
   const messagesEndRef = useRef(null);
+
+  // Step 1 & 5: Fetch conversations with 4-second polling
+  const { data: conversations = [], isLoading: isLoadingConversations } = useConversations({
+    refetchInterval: 4000,
+  });
+
+  // Step 2 & 5: Fetch messages for the active conversation with 4-second polling
+  const { data: messages = [], isLoading: isLoadingMessages } = useConversationMessages(activeConversation, {
+    refetchInterval: 4000,
+  });
+
+  // Step 3 & 4: Mutations
+  const sendMessageMutation = useSendMessage();
+  const markAsReadMutation = useMarkAsRead();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -21,47 +43,38 @@ export default function SharedMessagesView({ role }) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, activeConversation]);
+  }, [messages.length, activeConversation]);
 
-  const handleSendMessage = () => {
-    if (!newMessage.trim()) return;
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    });
+  // Mark messages as read when user selects a conversation or receives new messages
+  useEffect(() => {
+    if (activeConversation) {
+      const activeConv = conversations.find((c) => c.id === activeConversation);
+      if (activeConv && activeConv.unread > 0) {
+        markAsReadMutation.mutate(activeConversation);
+      }
+    }
+  }, [activeConversation, conversations, messages.length]);
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !activeConversation) return;
     
-    const newMsg = {
-      id: Date.now(),
-      text: newMessage,
-      time: timeStr,
-      isOwner: role === 'owner',
-      status: 'sent',
-    };
+    const content = newMessage;
+    setNewMessage(''); // optimistic clearing of input
 
-    setMessages((prev) => ({
-      ...prev,
-      [activeConversation]: [...(prev[activeConversation] || []), newMsg],
-    }));
-
-    setConversations((prev) =>
-      prev.map((c) =>
-        c.id === activeConversation
-          ? { ...c, lastMsg: newMessage, time: 'Just now' }
-          : c
-      )
-    );
-
-    setNewMessage('');
+    try {
+      await sendMessageMutation.mutateAsync({
+        conversationId: activeConversation,
+        content,
+      });
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
   };
 
   const handleSelectConversation = (id) => {
     setActiveConversation(id);
     setShowPanel(true);
-    setConversations((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, unread: 0 } : c))
-    );
+    markAsReadMutation.mutate(id);
   };
 
   const handleBack = () => {
@@ -75,8 +88,18 @@ export default function SharedMessagesView({ role }) {
   );
 
   const activeConv = conversations.find((c) => c.id === activeConversation);
-  const activeMessages = activeConversation ? messages[activeConversation] || [] : [];
   const totalUnread = conversations.reduce((sum, c) => sum + c.unread, 0);
+
+  if (isLoadingConversations) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Loading chats...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full w-full overflow-hidden bg-background">
@@ -117,11 +140,17 @@ export default function SharedMessagesView({ role }) {
           {activeConv ? (
             <>
               <MessageHeader activeConv={activeConv} onBack={handleBack} />
-              <ChatWindow
-                messages={activeMessages}
-                role={role}
-                messagesEndRef={messagesEndRef}
-              />
+              {isLoadingMessages && messages.length === 0 ? (
+                <div className="flex-1 flex items-center justify-center bg-muted/10">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : (
+                <ChatWindow
+                  messages={messages}
+                  role={role}
+                  messagesEndRef={messagesEndRef}
+                />
+              )}
               <MessageInput
                 newMessage={newMessage}
                 onNewMessageChange={setNewMessage}
@@ -144,3 +173,4 @@ export default function SharedMessagesView({ role }) {
     </div>
   );
 }
+

@@ -1,7 +1,9 @@
 import { Check, CheckCheck } from 'lucide-react';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
-export default function MessageBubble({ m, role }) {
-  const isMe = (role === 'owner' && m.isOwner) || (role === 'renter' && !m.isOwner);
+export default function MessageBubble({ m }) {
+  const { user } = useAuth();
+  const isMe = m.senderId === user?.id;
 
   return (
     <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} animate-in fade-in-0 duration-200`}>

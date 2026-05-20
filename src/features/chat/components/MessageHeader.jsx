@@ -20,9 +20,17 @@ export default function MessageHeader({ activeConv, onBack, className = '' }) {
         )}
 
         <div className="relative">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
-            {activeConv.avatar}
-          </div>
+          {activeConv.isAvatarImage ? (
+            <img
+              src={activeConv.avatar}
+              alt={activeConv.name}
+              className="h-10 w-10 rounded-full object-cover border border-border/50"
+            />
+          ) : (
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-sm">
+              {activeConv.avatar}
+            </div>
+          )}
           {activeConv.online && (
             <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full bg-emerald-500 ring-2 ring-card"></span>
           )}

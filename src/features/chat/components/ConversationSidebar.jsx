@@ -42,15 +42,23 @@ export default function ConversationSidebar({
               }`}
             >
               <div className="relative shrink-0">
-                <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-full font-bold text-sm ${
-                    c.id === activeConversation
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-primary/10 text-primary'
-                  }`}
-                >
-                  {c.avatar}
-                </div>
+                {c.isAvatarImage ? (
+                  <img
+                    src={c.avatar}
+                    alt={c.name}
+                    className="h-10 w-10 rounded-full object-cover border border-border/50"
+                  />
+                ) : (
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-full font-bold text-sm ${
+                      c.id === activeConversation
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-primary/10 text-primary'
+                    }`}
+                  >
+                    {c.avatar}
+                  </div>
+                )}
                 {c.online && (
                   <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full bg-emerald-500 ring-2 ring-card"></span>
                 )}
