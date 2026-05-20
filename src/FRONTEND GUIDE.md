@@ -177,3 +177,70 @@ Avoid unnecessary re-renders.
 | HTTP Client          | Axios                       |
 
 ---
+{
+    "message": "Property fetched successfully",
+    "data": {
+        "id": "cmpdujjh3000ee701ibmqieb1",
+        "type": {
+            "en": "Apartment",
+            "am": "አፓርታማ"
+        },
+        "location": {
+          "lat": 9.0366,
+          "lan": 38.7323
+        },
+        "bedrooms": 2,
+        "type": "VILLA",
+        "furnishingStatus": "FURNISHED",
+        "bathrooms": 2,
+        "amenities": ["BALCONY", "GYM", "POOL"],
+        "title": {
+            "am": "New Luxury",
+            "en": "New Luxury"
+        },
+        "description": {
+            "am": "nothing to write ",
+            "en": "nothing to write "
+        },
+        "address": {
+            "en": "Ummar Semetar Street, Biss Meberat, Giorgis, Addis Ababa, Arada, Addis Ababa, 3658, Ethiopia",
+            "am": "Ummar Semetar Street, Biss Meberat, Giorgis, Addis Ababa, Arada, Addis Ababa, 3658, Ethiopia"
+        },
+        "price": {
+            "value": 4000,
+            "currency": "USD"
+        },
+        "area": {
+            "value": null,
+            "unit": "sqm"
+        },
+
+        "viewCount": 12,
+        "leaseTerms": {
+            "secureDeposit": {
+           
+                    "value": 600,
+                    "currency": "ETB"
+                
+            },
+            "conditions": {
+                "en": "nothing to write ",
+                "am": "nothing to write "
+            }
+        },
+        "images": [
+            "https://res.cloudinary.com/dbwxpsplw/image/upload/v1779268528/properties/images/ecofu94mcat9x2xjo2j4.png"
+        ],
+        "video": "",
+        "availableFrom": "2026-05-20",
+        "status": "AVAILABLE",
+        "isVerified": true,
+        "owner": {
+            "id": "cmp9kporz0004gl012r9itecz",
+            "first_name": "Olman",
+            "last_name": "Gemechu",
+            "email": "olman4jesus@gmail.com"
+        },
+        "createdAt": "2026-05-20T09:15:28.983Z"
+    }
+}

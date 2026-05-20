@@ -10,6 +10,7 @@ import { PropertyForm } from '@/features/properties/components/PropertyForm';
 
 function AddPropertyPage() {
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   
   const { data: profileData } = useProfile();
   const { data: documentData } = useDocuments();

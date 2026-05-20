@@ -37,9 +37,10 @@ import MapModal from '@/components/auth/MapModal';
 const propertyTypes = [
   { value: 'VILLA', label: 'Villa' },
   { value: 'APARTMENT', label: 'Apartment' },
-  { value: 'CONDOMINIUM', label: 'Condominium' },
-  { value: 'SERVICES', label: 'Service Apartment' },
-  { value: 'PRIVATE_COMPOUND', label: 'Private Compound' },
+  { value: 'CONDO', label: 'Condo' },
+  { value: 'STUDIO', label: 'Studio' },
+  { value: 'HOUSE', label: 'House' },
+  { value: 'PENTHOUSE', label: 'Penthouse' },
 ];
 
 const furnishingOptions = ['Fully Furnished', 'Semi-Furnished', 'Unfurnished'];
@@ -109,26 +110,28 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
       const leaseTerms = property.leaseTerms || {};
       const secureDeposit = leaseTerms.secureDeposit || {};
       const conditions = leaseTerms.conditions || {};
-      
+
       reset({
         titleEn: titleMap.en || '',
         titleAm: titleMap.am || '',
         descriptionEn: descriptionMap.en || '',
         descriptionAm: descriptionMap.am || '',
-        type: property.type?.en || property.type || 'VILLA',
-        price: priceObj.value || property.price || '',
+        type: property.category?.en || property.category || 'VILLA',
+        price: (priceObj.value || property.price || '').toString(),
         currency: priceObj.currency || 'ETB',
-        bedrooms: property.bedrooms || '',
-        bathrooms: property.bathrooms || '',
-        area: areaObj.value || property.area || '',
+        bedrooms: property.bedrooms ? property.bedrooms.toString() : '',
+        bathrooms: property.bathrooms ? property.bathrooms.toString() : '',
+        area: (areaObj.value || property.area || '').toString(),
         areaUnit: areaObj.unit || 'm²',
         address: addressMap.en || property.address || '',
         addressAm: addressMap.am || '',
-        location: property.location || '',
+        location: typeof property.location === 'object' && property.location 
+          ? `${property.location.lat},${property.location.lng}` 
+          : property.location || '',
         amenities: Array.isArray(property.amenities) ? property.amenities : [],
-        furnishingType: property.furnishingType || '',
-        leaseDuration: leaseTerms.minDuration || '',
-        depositAmount: secureDeposit.value || '',
+        furnishingType: property.furnishingStatus || property.furnishingType || undefined,
+        leaseDuration: leaseTerms.minDuration ? leaseTerms.minDuration.toString() : '',
+        depositAmount: (secureDeposit.value || '').toString(),
         depositCurrency: secureDeposit.currency || 'ETB',
         specialTerms: conditions.en || '',
         specialTermsAm: conditions.am || '',
@@ -211,100 +214,116 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
   };
 
   const onSubmit = async (data) => {
-    if (isEditMode) {
-      // Edit mode: send JSON data
-      const jsonData = {
-        title: {
-          en: data.titleEn,
-          am: data.titleAm
-        },
-        description: {
-          en: data.descriptionEn,
-          am: data.descriptionAm
-        },
-        type: data.type,
-        price: parseFloat(data.price),
-        bedrooms: data.bedrooms ? parseInt(data.bedrooms) : null,
-        bathrooms: data.bathrooms ? parseInt(data.bathrooms) : null,
-        area: data.area ? parseFloat(data.area) : null,
-        address: data.address,
-        location: data.location || '',
-        amenities: data.amenities,
-        furnishingType: data.furnishingType,
-        images: imagePreviews.map(img => img.isExisting ? img.url : img.url),
-        videos: videoPreviews.map(vid => vid.isExisting ? vid.url : vid.url),
-        rentTerms: {
-          minDuration: data.leaseDuration,
-          secureDeposit: {
-            value: parseFloat(data.depositAmount),
-            currency: data.depositCurrency
-          },
-          conditions: {
-            en: data.specialTerms || '',
-            am: data.specialTermsAm || ''
-          }
-        },
-        availableFrom: data.availableFrom || null
-      };
+    // Both Create and Edit now use FormData to support file uploads
+    const formData = new FormData();
 
-      try {
-        await updatePropertyMutation.mutate({ propertyId: property.id, formData: jsonData });
-        if (onSuccess) onSuccess();
-      } catch (error) {
-        console.error('Error updating property:', error);
+    formData.append('title', JSON.stringify({
+      en: data.titleEn,
+      am: data.titleAm
+    }));
+    formData.append('description', JSON.stringify({
+      en: data.descriptionEn,
+      am: data.descriptionAm
+    }));
+    formData.append('category', JSON.stringify({
+      en: data.type,
+      am: data.type // We don't have amharic category selector in this form yet
+    }));
+    formData.append('price', JSON.stringify({
+      value: parseFloat(data.price),
+      currency: data.currency
+    }));
+    
+    if (data.bedrooms) formData.append('bedrooms', data.bedrooms);
+    if (data.bathrooms) formData.append('bathrooms', data.bathrooms);
+    
+    if (data.area) {
+      formData.append('area', JSON.stringify({
+        value: parseFloat(data.area),
+        unit: data.areaUnit
+      }));
+    }
+
+    formData.append('address', JSON.stringify({
+      en: data.address,
+      am: data.addressAm
+    }));
+
+    if (data.location) {
+      if (data.location.includes(',')) {
+        const [lat, lng] = data.location.split(',');
+        formData.append('location', JSON.stringify({
+          lat: parseFloat(lat),
+          lng: parseFloat(lng)
+        }));
+      } else {
+        const match = data.location.match(/POINT\(([^ ]+)\s+([^)]+)\)/);
+        if (match) {
+          formData.append('location', JSON.stringify({
+            lat: parseFloat(match[1]),
+            lng: parseFloat(match[2])
+          }));
+        } else {
+          formData.append('location', JSON.stringify({ lat: 0, lng: 0 }));
+        }
       }
     } else {
-      // Create mode: send FormData
-      const formData = new FormData();
+      formData.append('location', JSON.stringify({ lat: 0, lng: 0 }));
+    }
 
-      formData.append('title', JSON.stringify({
-        en: data.titleEn,
-        am: data.titleAm
-      }));
-      formData.append('description', JSON.stringify({
-        en: data.descriptionEn,
-        am: data.descriptionAm
-      }));
-      formData.append('type', data.type);
-      formData.append('price', data.price);
-      formData.append('currency', data.currency);
-      formData.append('bedrooms', data.bedrooms || '');
-      formData.append('bathrooms', data.bathrooms || '');
-      formData.append('area', data.area || '');
-      formData.append('address', JSON.stringify({
-        en: data.address,
-        am: data.addressAm
-      }));
-      formData.append('location', data.location || '');
-      formData.append('amenities', JSON.stringify(data.amenities));
-      formData.append('furnishingType', data.furnishingType || '');
-      formData.append('leaseDuration', data.leaseDuration || '');
-      formData.append('depositAmount', data.depositAmount);
-      formData.append('depositCurrency', data.depositCurrency);
-      formData.append('specialTerms', JSON.stringify({
+    formData.append('amenities', JSON.stringify(data.amenities || []));
+    if (data.furnishingType) formData.append('furnishingStatus', data.furnishingType);
+    
+    const leaseTerms = {};
+    if (data.depositAmount) {
+      leaseTerms.secureDeposit = {
+        value: parseFloat(data.depositAmount),
+        currency: data.depositCurrency
+      };
+    }
+    if (data.specialTerms || data.specialTermsAm) {
+      leaseTerms.conditions = {
         en: data.specialTerms || '',
         am: data.specialTermsAm || ''
-      }));
-      formData.append('availableFrom', data.availableFrom || '');
+      };
+    }
+    if (Object.keys(leaseTerms).length > 0) {
+      formData.append('leaseTerms', JSON.stringify(leaseTerms));
+    }
 
-      data.images.forEach((img) => {
-        if (img && !img.isExisting) {
-          formData.append('images', img);
-        }
-      });
+    if (data.availableFrom) formData.append('availableFrom', data.availableFrom);
 
-      data.videos.forEach((vid) => {
-        if (vid && !vid.isExisting) {
-          formData.append('videos', vid);
-        }
-      });
+    const existingImages = imagePreviews.filter(img => img.isExisting).map(img => img.url);
+    if (existingImages.length > 0) {
+      formData.append('images', JSON.stringify(existingImages));
+    }
 
-      try {
-        await createPropertyMutation.mutateAsync(formData);
-        if (onSuccess) onSuccess();
-      } catch (error) {
-        console.error('Error creating property:', error);
+    const existingVideos = videoPreviews.filter(vid => vid.isExisting).map(vid => vid.url);
+    if (existingVideos.length > 0) {
+      formData.append('videos', JSON.stringify(existingVideos));
+    }
+
+    data.images?.forEach((img) => {
+      if (img && !img.isExisting) {
+        formData.append('images', img);
       }
+    });
+
+    data.videos?.forEach((vid) => {
+      if (vid && !vid.isExisting) {
+        formData.append('videos', vid);
+      }
+    });
+
+    try {
+      if (isEditMode) {
+        await updatePropertyMutation.mutateAsync({ propertyId: property.id, formData: formData });
+      } else {
+        await createPropertyMutation.mutateAsync(formData);
+      }
+      if (onSuccess) onSuccess();
+    } catch (error) {
+      console.error('Error submitting property:', error);
     }
   };
 
@@ -360,7 +379,19 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
         })}
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit, (errors) => {
+        console.error("Form validation errors:", errors);
+        // Find which step contains the first validation error and navigate there
+        if (errors.titleEn || errors.titleAm || errors.descriptionEn || errors.descriptionAm || errors.type || errors.address || errors.addressAm || errors.location) {
+          setCurrentStep(0);
+        } else if (errors.images || errors.videos) {
+          setCurrentStep(1);
+        } else if (errors.bedrooms || errors.bathrooms || errors.area || errors.areaUnit || errors.furnishingType || errors.amenities) {
+          setCurrentStep(2);
+        } else if (errors.price || errors.currency || errors.leaseDuration || errors.depositAmount || errors.depositCurrency || errors.specialTerms || errors.specialTermsAm || errors.availableFrom) {
+          setCurrentStep(3);
+        }
+      })}>
         {/* Step 1: Basic Info */}
         {currentStep === 0 && (
           <Card className="animate-in fade-in-0 slide-in-from-right-4 duration-300">
@@ -812,20 +843,27 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
 
         {/* Navigation Buttons */}
         <div className="flex items-center justify-between">
-          <Button
-            type="button"
-            variant="outline"
-            className="gap-2"
-            onClick={() => setCurrentStep((prev) => prev - 1)}
-            disabled={currentStep === 0}
-          >
-            <ChevronLeft size={16} /> Previous
-          </Button>
+          <div className="flex items-center gap-2">
+            {currentStep === 0 && (
+              <Button type="button" variant="ghost" onClick={onCancel}>
+                Cancel
+              </Button>
+            )}
+            <Button
+              type="button"
+              variant="outline"
+              className="gap-2"
+              onClick={() => setCurrentStep((prev) => prev - 1)}
+              disabled={currentStep === 0}
+            >
+              <ChevronLeft size={16} /> Previous
+            </Button>
+          </div>
           {currentStep < steps.length - 1 ? (
             <Button
               type="button"
               className="gap-2"
-              onClick={() => setCurrentStep((prev) => prev + 1)}
+              onClick={(e) => { e.preventDefault(); setCurrentStep((prev) => prev + 1) }}
               disabled={!canProceed()}
             >
               Next <ChevronRight size={16} />

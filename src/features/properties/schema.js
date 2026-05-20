@@ -5,7 +5,7 @@ export const propertyFormSchema = z.object({
   titleAm: z.string().optional(),
   descriptionEn: z.string().min(1, 'Description (English) is required'),
   descriptionAm: z.string().optional(),
-  type: z.enum(['VILLA', 'APARTMENT', 'CONDOMINIUM', 'SERVICES', 'PRIVATE_COMPOUND'], {
+  type: z.enum(['VILLA', 'APARTMENT', 'CONDO', 'STUDIO', 'HOUSE', 'PENTHOUSE'], {
     required_error: 'Property type is required',
   }),
   price: z.string().min(1, 'Price is required'),
@@ -20,8 +20,8 @@ export const propertyFormSchema = z.object({
   amenities: z.array(z.string()).default([]),
   furnishingType: z.enum(['Fully Furnished', 'Semi-Furnished', 'Unfurnished']).optional(),
   leaseDuration: z.string().optional(),
-  depositAmount: z.string().min(1, 'Security deposit is required'),
-  depositCurrency: z.enum(['ETB', 'USD'], { required_error: 'Deposit currency is required' }),
+  depositAmount: z.string().optional(),
+  depositCurrency: z.enum(['ETB', 'USD']).optional(),
   specialTerms: z.string().optional(),
   specialTermsAm: z.string().optional(),
   availableFrom: z.string().optional(),

@@ -22,6 +22,7 @@ import { useDeleteProperty } from '@/features/properties/hooks/useDeleteProperty
 import { useProfile } from '@/features/profile/hooks/useProfile';
 import { useDocuments } from '@/features/profile/hooks/useDocuments';
 import { useNavigate } from 'react-router';
+import { getLocalizedText } from '@/lib/utils/i18n';
 
 const statusColors = {
     AVAILABLE: 'bg-emerald-100 text-emerald-700',
@@ -36,7 +37,7 @@ function MyPropertiesPage() {
     const { data: profileData } = useProfile();
     const { data: documentData } = useDocuments();
     const navigate = useNavigate();
-    
+
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
@@ -45,12 +46,13 @@ function MyPropertiesPage() {
     const [deleteConfirm, setDeleteConfirm] = useState(null);
     const [showVerificationModal, setShowVerificationModal] = useState(false);
     const itemsPerPage = 5;
-    
+
     const profile = profileData?.data;
+    const preferredLanguage = profile?.language || 'en';
     const docStatus = documentData?.data?.status || documentData?.data?.overallStatus;
     const hasDocuments = documentData?.data && (documentData?.data?.uploadedFiles?.length > 0 || docStatus);
     const isVerified = profile?.isVerified || docStatus === 'approved' || docStatus === 'verified';
-    
+
     const handleAddProperty = () => {
         if (!isVerified) {
             setShowVerificationModal(true);
@@ -72,16 +74,16 @@ function MyPropertiesPage() {
 
     const filtered = useMemo(() => {
         return properties.filter(p => {
-            const name = p.name || p.titleEn || '';
-            const location = p.location || p.address || '';
+            const name = getLocalizedText(p.title, preferredLanguage) || '';
+            const location = getLocalizedText(p.address, preferredLanguage) || '';
             const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 location.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 p.id.toLowerCase().includes(searchQuery.toLowerCase());
             const matchesStatus = statusFilter === 'all' || p.status.toLowerCase() === statusFilter;
-            const matchesType = typeFilter === 'all' || p.type.toLowerCase() === typeFilter;
+            const matchesType = typeFilter === 'all' || (p.category?.en || '').toLowerCase() === typeFilter;
             return matchesSearch && matchesStatus && matchesType;
         });
-    }, [properties, searchQuery, statusFilter, typeFilter]);
+    }, [properties, searchQuery, statusFilter, typeFilter, preferredLanguage]);
 
     const totalPages = Math.ceil(filtered.length / itemsPerPage);
     const paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -221,21 +223,21 @@ function MyPropertiesPage() {
                                     <TableRow key={p.id} className="hover:bg-muted/10 transition-colors">
                                         <TableCell className="px-6 py-4">
                                             <Link to={`/owner/properties/${p.id}`} className="flex items-center gap-3">
-                                                <img src={p.img || p.images?.[0]?.url} alt={p.name} className="size-12 rounded-lg object-cover" />
+                                                <img src={p.images?.[0]?.url || p.images?.[0]} alt={getLocalizedText(p.title, preferredLanguage)} className="size-12 rounded-lg object-cover" />
                                                 <div>
-                                                    <p className="text-sm font-bold text-foreground hover:text-primary transition-colors">{p.name || p.titleEn}</p>
-                                                    <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin size={10} /> {p.location || p.address}</p>
-                                                    <p className="text-[10px] text-muted-foreground">{p.bedrooms} bed • {p.bathrooms} bath • {p.size || p.area}</p>
+                                                    <p className="text-sm font-bold text-foreground hover:text-primary transition-colors">{getLocalizedText(p.title, preferredLanguage)}</p>
+                                                    <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin size={10} /> {getLocalizedText(p.address, preferredLanguage)}</p>
+                                                    <p className="text-[10px] text-muted-foreground">{p.bedrooms} bed • {p.bathrooms} bath • {p.area?.value} {p.area?.unit || 'm²'}</p>
                                                 </div>
                                             </Link>
                                         </TableCell>
-                                        <TableCell className="px-6 py-4 text-sm font-medium">{p.type}</TableCell>
-                                        <TableCell className="px-6 py-4 text-sm font-bold text-primary">{p.rent || p.price}</TableCell>
+                                        <TableCell className="px-6 py-4 text-sm font-medium">{getLocalizedText(p.category, preferredLanguage)}</TableCell>
+                                        <TableCell className="px-6 py-4 text-sm font-bold text-primary">{p.price?.value} {p.price?.currency || 'ETB'}</TableCell>
                                         <TableCell className="px-6 py-4">
                                             <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${statusColors[p.status]}`}>{p.status}</span>
                                         </TableCell>
                                         <TableCell className="px-6 py-4">
-                                            <span className="text-sm font-medium flex items-center gap-1"><Eye size={14} className="text-muted-foreground" /> {(p.views || p.viewsCount || 0).toLocaleString()}</span>
+                                            <span className="text-sm font-medium flex items-center gap-1"><Eye size={14} className="text-muted-foreground" /> {(p.viewCount || 0).toLocaleString()}</span>
                                         </TableCell>
                                         <TableCell className="px-6 py-4 text-right">
                                             <DropdownMenu>
@@ -269,7 +271,7 @@ function MyPropertiesPage() {
                                                     <Card className="w-80 shadow-xl border-destructive/20">
                                                         <CardHeader className="pb-2">
                                                             <h4 className="text-sm font-bold text-foreground">Confirm Delete</h4>
-                                                            <p className="text-xs text-muted-foreground mt-1">Are you sure you want to delete "{p.name}"? This action cannot be undone.</p>
+                                                            <p className="text-xs text-muted-foreground mt-1">Are you sure you want to delete "{getLocalizedText(p.title, preferredLanguage)}"? This action cannot be undone.</p>
                                                         </CardHeader>
                                                         <CardContent className="flex justify-end gap-2 pt-2">
                                                             <Button variant="ghost" size="sm" className="h-8 text-xs font-bold" onClick={() => setDeleteConfirm(null)}>Cancel</Button>
@@ -316,24 +318,24 @@ function MyPropertiesPage() {
                         paginated.map((p) => (
                             <Card key={p.id} className="overflow-hidden group hover:shadow-lg transition-all duration-300 p-0">
                                 <div className="relative h-48 overflow-hidden">
-                                    <img src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    <img src={p.images?.[0]?.url || p.images?.[0]} alt={getLocalizedText(p.title, preferredLanguage)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                     <span className={`absolute top-3 right-3 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase shadow-sm ${statusColors[p.status]}`}>{p.status}</span>
                                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                                        <p className="text-white font-bold text-sm">{p.name}</p>
-                                        <p className="text-white/70 text-xs flex items-center gap-1"><MapPin size={10} /> {p.location}</p>
+                                        <p className="text-white font-bold text-sm">{getLocalizedText(p.title, preferredLanguage)}</p>
+                                        <p className="text-white/70 text-xs flex items-center gap-1"><MapPin size={10} /> {getLocalizedText(p.address, preferredLanguage)}</p>
                                     </div>
                                 </div>
                                 <CardContent className="p-4">
                                     <div className="flex items-center justify-between mb-3">
-                                        <p className="text-lg font-extrabold text-primary">{p.rent}</p>
-                                        <span className="text-xs text-muted-foreground flex items-center gap-1"><Eye size={12} /> {p.views.toLocaleString()}</span>
+                                        <p className="text-lg font-extrabold text-primary">{p.price?.value} {p.price?.currency || 'ETB'}</p>
+                                        <span className="text-xs text-muted-foreground flex items-center gap-1"><Eye size={12} /> {(p.viewCount || 0).toLocaleString()}</span>
                                     </div>
                                     <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
                                         <span>{p.bedrooms} Beds</span>
                                         <span className="text-border">•</span>
                                         <span>{p.bathrooms} Baths</span>
                                         <span className="text-border">•</span>
-                                        <span>{p.size}</span>
+                                        <span>{p.area?.value} {p.area?.unit || 'm²'}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <Link to={`/owner/properties/${p.id}`} className="flex-1">
@@ -350,7 +352,7 @@ function MyPropertiesPage() {
                     )}
                 </div>
             )}
-            
+
             {/* Verification Required Modal */}
             {showVerificationModal && !isVerified && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
@@ -364,7 +366,7 @@ function MyPropertiesPage() {
                                 <p className="text-muted-foreground text-sm">
                                     {hasDocuments ? (
                                         <>
-                                            Your documents are currently {docStatus === 'under_review' ? 'under review' : docStatus === 'rejected' ? 'rejected' : 'being processed'}. 
+                                            Your documents are currently {docStatus === 'under_review' ? 'under review' : docStatus === 'rejected' ? 'rejected' : 'being processed'}.
                                             You will be able to list properties once your verification is approved.
                                         </>
                                     ) : (

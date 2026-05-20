@@ -60,9 +60,9 @@ function PropertyDetailPage() {
                         <Button variant="outline" size="icon" className="h-9 w-9"><ArrowLeft size={16} /></Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-extrabold tracking-tight text-foreground">{getLocalizedText(property.titleEn || property.name, preferredLanguage)}</h1>
+                        <h1 className="text-2xl font-extrabold tracking-tight text-foreground">{getLocalizedText(property.title, preferredLanguage) || 'Untitled'}</h1>
                         <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
-                            <MapPin size={12} /> {getLocalizedText(property.location || property.address, preferredLanguage)} • ID: #{property.id}
+                            <MapPin size={12} /> {getLocalizedText(property.address, preferredLanguage)} • ID: #{property.id}
                         </p>
                     </div>
                 </div>
@@ -129,14 +129,14 @@ function PropertyDetailPage() {
                                 <CardContent className="space-y-4">
                                     <div>
                                         <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Monthly Rent</p>
-                                        <p className="text-2xl font-black text-primary mt-1">{typeof property.price === 'object' ? property.price.value : property.price || (typeof property.rent === 'object' ? property.rent.value : property.rent)} {getLocalizedText(property.currency, preferredLanguage) || 'ETB'}</p>
+                                        <p className="text-2xl font-black text-primary mt-1">{property.price?.value || '-'} {property.price?.currency || 'ETB'}</p>
                                     </div>
                                     <div className="h-px bg-border"></div>
                                     <div className="grid grid-cols-3 gap-4">
                                         {[
                                             { icon: Bed, value: property.bedrooms || '-', label: 'Bedrooms' },
                                             { icon: Bath, value: property.bathrooms || '-', label: 'Bathrooms' },
-                                            { icon: Maximize, value: `${property.area || property.size || '-'}${property.areaUnit || 'm²'}`, label: 'Area' },
+                                            { icon: Maximize, value: `${property.area?.value || '-'}${property.area?.unit || 'm²'}`, label: 'Area' },
                                         ].map(({ icon: Icon, value, label }) => (
                                             <div key={label} className="text-center">
                                                 <Icon size={18} className="mx-auto text-muted-foreground" />
@@ -158,7 +158,7 @@ function PropertyDetailPage() {
                                 <CardContent className="space-y-3">
                                     <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Quick Stats</p>
                                     {[
-                                        { icon: Eye, label: 'Total Views', value: (property.viewsCount || property.views || 0).toLocaleString(), color: '' },
+                                        { icon: Eye, label: 'Total Views', value: (property.viewCount || 0).toLocaleString(), color: '' },
                                         { icon: Calendar, label: 'Appointments', value: property.appointmentsCount || '0', color: '' },
                                         { icon: DollarSign, label: 'Revenue', value: property.revenue || '0 ETB', color: 'text-primary' },
                                     ].map(({ icon: Icon, label, value, color }) => (
@@ -177,7 +177,7 @@ function PropertyDetailPage() {
                         <CardContent>
                             <h3 className="font-bold text-foreground mb-2">Description</h3>
                             <p className="text-sm text-muted-foreground leading-relaxed">
-                                {getLocalizedText(property.descriptionEn || property.description, preferredLanguage) || 'No description available.'}
+                                {getLocalizedText(property.description, preferredLanguage) || 'No description available.'}
                             </p>
                             <div className="flex flex-wrap gap-2 mt-4">
                                 {(property.amenities || []).map((tag, index) => (
@@ -219,7 +219,7 @@ function PropertyDetailPage() {
                 <TabsContent value="stats" className="space-y-6 mt-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {[
-                            { label: 'Views This Month', value: (property.viewsThisMonth || property.viewsCount || 0).toLocaleString(), change: '+23%', up: true },
+                            { label: 'Views This Month', value: (property.viewCount || 0).toLocaleString(), change: '+23%', up: true },
                             { label: 'Inquiry Rate', value: property.inquiryRate || '12.4%', change: '+5%', up: true },
                             { label: 'Avg. Time on Page', value: property.avgTimeOnPage || '3m 42s', change: '', up: false },
                         ].map((s) => (
