@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Link } from 'react-router';
 import { ArrowLeft, Edit, Eye, Star, MapPin, Bed, Bath, Maximize, Calendar, DollarSign, TrendingUp, Camera, Upload, Trash2, Heart, Share2, Copy, CheckCircle2, Lock, Loader2 } from 'lucide-react';
 import { usePropertyDetail } from '@/features/properties/hooks/usePropertyDetail';
-import { useProfile } from '@/features/profile/hooks/useProfile';
 import { getLocalizedText } from '@/lib/utils/i18n';
 
 const statusColors = {
@@ -20,13 +19,12 @@ const statusColors = {
 function PropertyDetailPage() {
     const { id } = useParams();
     const { data: propertyData, isLoading, error } = usePropertyDetail(id);
-    const { data: profileData } = useProfile();
     const [selectedImage, setSelectedImage] = useState(0);
     const [isFavorited, setIsFavorited] = useState(false);
     const [copied, setCopied] = useState(false);
 
     const property = propertyData?.data;
-    const preferredLanguage = profileData?.data?.language || 'en';
+    const preferredLanguage = 'en';
 
     const handleCopyLink = () => {
         setCopied(true);

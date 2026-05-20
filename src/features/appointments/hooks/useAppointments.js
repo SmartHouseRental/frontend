@@ -2,10 +2,20 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { appointmentsApi } from '../api';
 import { toast } from 'sonner';
 
-export const useAppointments = (params = {}) => {
+const appointmentsQueryDefaults = {
+  staleTime: 5 * 60 * 1000,
+  gcTime: 10 * 60 * 1000,
+};
+
+/** Only use on Appointments page. */
+export const useAppointments = (params = {}, options = {}) => {
   return useQuery({
     queryKey: ['appointments', params],
     queryFn: () => appointmentsApi.getAppointments(params),
+    staleTime: appointmentsQueryDefaults.staleTime,
+    gcTime: appointmentsQueryDefaults.gcTime,
+    refetchOnMount: false,
+    ...options,
   });
 };
 

@@ -19,8 +19,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useMyProperties } from '@/features/properties/hooks/useMyProperties';
 import { useDeleteProperty } from '@/features/properties/hooks/useDeleteProperty';
-import { useProfile } from '@/features/profile/hooks/useProfile';
-import { useDocuments } from '@/features/profile/hooks/useDocuments';
+import VerificationBanner from '@/components/VerificationBanner';
+import { useOwnerVerificationState } from '@/features/owner/hooks/useOwnerVerificationState';
 import { useNavigate } from 'react-router';
 import { getLocalizedText } from '@/lib/utils/i18n';
 
@@ -34,8 +34,8 @@ const statusColors = {
 function MyPropertiesPage() {
     const { data: propertiesData, isLoading, error, refetch } = useMyProperties();
     const deletePropertyMutation = useDeleteProperty();
-    const { data: profileData } = useProfile();
-    const { data: documentData } = useDocuments();
+    const { verificationState, isVerified, hasDocuments, docStatus, preferredLanguage } =
+        useOwnerVerificationState();
     const navigate = useNavigate();
 
     const [searchQuery, setSearchQuery] = useState('');
@@ -46,12 +46,6 @@ function MyPropertiesPage() {
     const [deleteConfirm, setDeleteConfirm] = useState(null);
     const [showVerificationModal, setShowVerificationModal] = useState(false);
     const itemsPerPage = 5;
-
-    const profile = profileData?.data;
-    const preferredLanguage = profile?.language || 'en';
-    const docStatus = documentData?.data?.status || documentData?.data?.overallStatus;
-    const hasDocuments = documentData?.data && (documentData?.data?.uploadedFiles?.length > 0 || docStatus);
-    const isVerified = profile?.isVerified || docStatus === 'approved' || docStatus === 'verified';
 
     const handleAddProperty = () => {
         if (!isVerified) {
@@ -105,6 +99,8 @@ function MyPropertiesPage() {
 
     return (
         <div className="scrollbar-hide h-screen overflow-y-auto p-8 space-y-6">
+            <VerificationBanner verificationState={verificationState} />
+
             <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                 <div>
                     <h1 className="text-3xl font-extrabold tracking-tight text-foreground">My Properties</h1>

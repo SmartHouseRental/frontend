@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, ShieldAlert, ArrowRight } from 'lucide-react';
-import { useProfile } from '@/features/profile/hooks/useProfile';
-import { useDocuments } from '@/features/profile/hooks/useDocuments';
+import VerificationBanner from '@/components/VerificationBanner';
+import { useOwnerVerificationState } from '@/features/owner/hooks/useOwnerVerificationState';
 import { useNavigate } from 'react-router';
 import PageHeader from '@/components/PageHeader';
 import { PropertyForm } from '@/features/properties/components/PropertyForm';
@@ -12,23 +12,14 @@ function AddPropertyPage() {
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   
-  const { data: profileData } = useProfile();
-  const { data: documentData } = useDocuments();
+  const { verificationState, isVerified, hasDocuments, docStatus } = useOwnerVerificationState();
   const navigate = useNavigate();
-  
-  const profile = profileData?.data;
-  const docStatus = documentData?.data?.status || documentData?.data?.overallStatus;
-  const hasDocuments = documentData?.data && (documentData?.data?.uploadedFiles?.length > 0 || docStatus);
-  
-  // Check if user is verified
-  const isVerified = profile?.isVerified || docStatus === 'approved' || docStatus === 'verified';
-  
-  // Show verification modal if not verified
+
   useEffect(() => {
-    if (!isVerified && !showVerificationModal) {
+    if (!isVerified) {
       setShowVerificationModal(true);
     }
-  }, [isVerified, showVerificationModal]);
+  }, [isVerified]);
 
   const handleSuccess = () => {
     // Automatically redirect to my properties page after successful creation
@@ -120,6 +111,7 @@ function AddPropertyPage() {
 
   return (
     <div className="scrollbar-hide h-screen space-y-6 overflow-y-auto p-8">
+      <VerificationBanner verificationState={verificationState} />
       <PageHeader
         title="Add New Property"
         description="List a new rental property on the platform."
