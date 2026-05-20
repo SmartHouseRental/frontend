@@ -44,9 +44,8 @@ export const propertyApi = {
       method: 'PATCH',
       headers: {
         ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
-        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(formData)
+      body: formData,
     });
 
     const data = await response.json();

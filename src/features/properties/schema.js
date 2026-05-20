@@ -5,9 +5,10 @@ export const propertyFormSchema = z.object({
   titleAm: z.string().optional(),
   descriptionEn: z.string().min(1, 'Description (English) is required'),
   descriptionAm: z.string().optional(),
-  type: z.enum(['VILLA', 'APARTMENT', 'CONDO', 'STUDIO', 'HOUSE', 'PENTHOUSE'], {
-    required_error: 'Property type is required',
+  category: z.enum(['VILLA', 'APARTMENT', 'CONDO', 'STUDIO', 'HOUSE', 'PENTHOUSE'], {
+    required_error: 'Property category is required',
   }),
+  categoryAm: z.string().optional(),
   price: z.string().min(1, 'Price is required'),
   currency: z.enum(['ETB', 'USD'], { required_error: 'Currency is required' }),
   bedrooms: z.string().optional(),

@@ -116,7 +116,8 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
         titleAm: titleMap.am || '',
         descriptionEn: descriptionMap.en || '',
         descriptionAm: descriptionMap.am || '',
-        type: property.category?.en || property.category || 'VILLA',
+        category: property.category?.en || (typeof property.category === 'string' ? property.category : 'VILLA'),
+        categoryAm: property.category?.am || '',
         price: (priceObj.value || property.price || '').toString(),
         currency: priceObj.currency || 'ETB',
         bedrooms: property.bedrooms ? property.bedrooms.toString() : '',
@@ -226,8 +227,8 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
       am: data.descriptionAm
     }));
     formData.append('category', JSON.stringify({
-      en: data.type,
-      am: data.type // We don't have amharic category selector in this form yet
+      en: data.category,
+      am: data.categoryAm?.trim() || data.category,
     }));
     formData.append('price', JSON.stringify({
       value: parseFloat(data.price),
@@ -329,7 +330,7 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
 
   const canProceed = () => {
     if (currentStep === 0) {
-      return watch('titleEn') && watch('type') && watch('price') && watch('address');
+      return watch('titleEn') && watch('category') && watch('price') && watch('address');
     }
     if (currentStep === 1) {
       return (watch('images') || []).length > 0;
@@ -382,7 +383,7 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
       <form onSubmit={handleSubmit(onSubmit, (errors) => {
         console.error("Form validation errors:", errors);
         // Find which step contains the first validation error and navigate there
-        if (errors.titleEn || errors.titleAm || errors.descriptionEn || errors.descriptionAm || errors.type || errors.address || errors.addressAm || errors.location) {
+        if (errors.titleEn || errors.titleAm || errors.descriptionEn || errors.descriptionAm || errors.category || errors.address || errors.addressAm || errors.location) {
           setCurrentStep(0);
         } else if (errors.images || errors.videos) {
           setCurrentStep(1);
@@ -453,7 +454,7 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
                   <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                     Property Type <span className="text-rose-500">*</span>
                   </label>
-                  <Select onValueChange={(value) => setValue('type', value)} defaultValue={watch('type')}>
+                  <Select onValueChange={(value) => setValue('category', value)} value={watch('category')}>
                     <SelectTrigger className="mt-1.5">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
@@ -467,7 +468,7 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                  {errors.type && <p className="text-rose-500 text-xs mt-1">{errors.type.message}</p>}
+                  {errors.category && <p className="text-rose-500 text-xs mt-1">{errors.category.message}</p>}
                 </div>
                 <div>
                   <label className="text-muted-foreground flex items-center gap-1 text-xs font-medium tracking-wider uppercase">
