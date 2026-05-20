@@ -70,6 +70,13 @@ const steps = [
   { label: 'Rent Terms', icon: FileText },
 ];
 
+const formatDateForInput = (value) => {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toISOString().split('T')[0];
+};
+
 export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
@@ -98,6 +105,28 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
       videos: [],
     },
   });
+
+  const syncImagesFormValue = (previews) => {
+    setValue(
+      'images',
+      [
+        ...previews.filter((p) => p.isExisting).map(() => 'existing'),
+        ...previews.filter((p) => p.file instanceof File).map((p) => p.file),
+      ],
+      { shouldValidate: true }
+    );
+  };
+
+  const syncVideosFormValue = (previews) => {
+    setValue(
+      'videos',
+      [
+        ...previews.filter((p) => p.isExisting).map(() => 'existing'),
+        ...previews.filter((p) => p.file instanceof File).map((p) => p.file),
+      ],
+      { shouldValidate: true }
+    );
+  };
 
   // Populate form with property data when in edit mode
   useEffect(() => {
@@ -131,29 +160,53 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
           : property.location || '',
         amenities: Array.isArray(property.amenities) ? property.amenities : [],
         furnishingType: property.furnishingStatus || property.furnishingType || undefined,
-        leaseDuration: leaseTerms.minDuration ? leaseTerms.minDuration.toString() : '',
+        leaseDuration: leaseTerms.minDuration ? String(leaseTerms.minDuration) : '',
         depositAmount: (secureDeposit.value || '').toString(),
         depositCurrency: secureDeposit.currency || 'ETB',
         specialTerms: conditions.en || '',
         specialTermsAm: conditions.am || '',
-        availableFrom: property.availableFrom || '',
-        images: property.images || [],
-        videos: property.video ? [property.video] : (property.videos || []),
+        availableFrom: formatDateForInput(leaseTerms.availableFrom || property.availableFrom),
+        // Keep URLs for form validation only; uploads use imagePreviews + File instances
+        images: property.images?.length ? property.images.map(() => 'existing') : [],
+        videos: [],
       });
 
       // Set image previews for existing images
-      if (property.images && property.images.length > 0) {
-        setImagePreviews(property.images.map((url, i) => ({ name: `Image ${i + 1}`, url, isExisting: true })));
+      if (property.images?.length > 0) {
+        const previews = property.images.map((url, i) => ({
+          id: `existing-${i}-${url}`,
+          name: `Image ${i + 1}`,
+          url,
+          isExisting: true,
+        }));
+        setImagePreviews(previews);
+        syncImagesFormValue(previews);
+      } else {
+        setImagePreviews([]);
+        syncImagesFormValue([]);
       }
 
       // Set video previews for existing videos
-      if (property.video) {
-        setVideoPreviews([{ name: 'Video', url: property.video, isExisting: true }]);
-      } else if (property.videos && property.videos.length > 0) {
-        setVideoPreviews(property.videos.map((url, i) => ({ name: `Video ${i + 1}`, url, isExisting: true })));
+      const existingVideoUrls = property.video
+        ? [property.video]
+        : property.videos?.length
+          ? property.videos
+          : [];
+      if (existingVideoUrls.length > 0) {
+        const previews = existingVideoUrls.map((url, i) => ({
+          id: `existing-video-${i}-${url}`,
+          name: `Video ${i + 1}`,
+          url,
+          isExisting: true,
+        }));
+        setVideoPreviews(previews);
+        syncVideosFormValue(previews);
+      } else {
+        setVideoPreviews([]);
+        syncVideosFormValue([]);
       }
     }
-  }, [isEditMode, property, reset]);
+  }, [isEditMode, property, reset, setValue]);
 
   const amenities = watch('amenities') || [];
   const customAmenity = watch('customAmenity') || '';
@@ -186,32 +239,64 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
 
   const addImages = (e) => {
     const files = Array.from(e.target.files || []);
-    const previews = files.map((f) => ({ name: f.name, url: URL.createObjectURL(f), file: f, isExisting: false }));
-    setImagePreviews((prev) => [...prev, ...previews]);
-    setValue('images', [...(watch('images') || []), ...files]);
+    e.target.value = '';
+    if (files.length === 0) return;
+
+    const newPreviews = files.map((f) => ({
+      id: `new-${f.name}-${f.lastModified}-${Date.now()}`,
+      name: f.name,
+      url: URL.createObjectURL(f),
+      file: f,
+      isExisting: false,
+    }));
+
+    setImagePreviews((prev) => {
+      const next = [...prev, ...newPreviews];
+      syncImagesFormValue(next);
+      return next;
+    });
   };
 
   const removeImage = (index) => {
+    const removed = imagePreviews[index];
+    if (removed?.url?.startsWith('blob:')) {
+      URL.revokeObjectURL(removed.url);
+    }
+
     const newPreviews = imagePreviews.filter((_, i) => i !== index);
     setImagePreviews(newPreviews);
-    const currentImages = watch('images') || [];
-    const newImages = currentImages.filter((_, i) => i !== index);
-    setValue('images', newImages);
+    syncImagesFormValue(newPreviews);
   };
 
   const addVideos = (e) => {
     const files = Array.from(e.target.files || []);
-    const previews = files.map((f) => ({ name: f.name, url: URL.createObjectURL(f), file: f, isExisting: false }));
-    setVideoPreviews((prev) => [...prev, ...previews]);
-    setValue('videos', [...(watch('videos') || []), ...files]);
+    e.target.value = '';
+    if (files.length === 0) return;
+
+    const newPreviews = files.map((f) => ({
+      id: `new-video-${f.name}-${f.lastModified}-${Date.now()}`,
+      name: f.name,
+      url: URL.createObjectURL(f),
+      file: f,
+      isExisting: false,
+    }));
+
+    setVideoPreviews((prev) => {
+      const next = [...prev, ...newPreviews];
+      syncVideosFormValue(next);
+      return next;
+    });
   };
 
   const removeVideo = (index) => {
+    const removed = videoPreviews[index];
+    if (removed?.url?.startsWith('blob:')) {
+      URL.revokeObjectURL(removed.url);
+    }
+
     const newPreviews = videoPreviews.filter((_, i) => i !== index);
     setVideoPreviews(newPreviews);
-    const currentVideos = watch('videos') || [];
-    const newVideos = currentVideos.filter((_, i) => i !== index);
-    setValue('videos', newVideos);
+    syncVideosFormValue(newPreviews);
   };
 
   const onSubmit = async (data) => {
@@ -276,45 +361,54 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
     if (data.furnishingType) formData.append('furnishingStatus', data.furnishingType);
     
     const leaseTerms = {};
+    if (data.leaseDuration) {
+      leaseTerms.minDuration = parseInt(data.leaseDuration, 10);
+    }
     if (data.depositAmount) {
       leaseTerms.secureDeposit = {
         value: parseFloat(data.depositAmount),
-        currency: data.depositCurrency
+        currency: data.depositCurrency,
       };
     }
     if (data.specialTerms || data.specialTermsAm) {
       leaseTerms.conditions = {
         en: data.specialTerms || '',
-        am: data.specialTermsAm || ''
+        am: data.specialTermsAm || '',
       };
+    }
+    if (data.availableFrom) {
+      leaseTerms.availableFrom = data.availableFrom;
     }
     if (Object.keys(leaseTerms).length > 0) {
       formData.append('leaseTerms', JSON.stringify(leaseTerms));
     }
 
-    if (data.availableFrom) formData.append('availableFrom', data.availableFrom);
-
-    const existingImages = imagePreviews.filter(img => img.isExisting).map(img => img.url);
-    if (existingImages.length > 0) {
-      formData.append('images', JSON.stringify(existingImages));
+    if (data.availableFrom) {
+      formData.append('availableFrom', data.availableFrom);
     }
 
-    const existingVideos = videoPreviews.filter(vid => vid.isExisting).map(vid => vid.url);
-    if (existingVideos.length > 0) {
-      formData.append('videos', JSON.stringify(existingVideos));
+    const keptImageUrls = imagePreviews.filter((img) => img.isExisting).map((img) => img.url);
+    const newImageFiles = imagePreviews.filter((img) => img.file instanceof File).map((img) => img.file);
+
+    if (isEditMode) {
+      // Tell API which existing URLs to keep (empty array = all previous removed)
+      formData.append('images', JSON.stringify(keptImageUrls));
+    } else if (keptImageUrls.length > 0) {
+      formData.append('images', JSON.stringify(keptImageUrls));
     }
 
-    data.images?.forEach((img) => {
-      if (img && !img.isExisting) {
-        formData.append('images', img);
-      }
-    });
+    newImageFiles.forEach((file) => formData.append('images', file));
 
-    data.videos?.forEach((vid) => {
-      if (vid && !vid.isExisting) {
-        formData.append('videos', vid);
-      }
-    });
+    const keptVideoUrls = videoPreviews.filter((vid) => vid.isExisting).map((vid) => vid.url);
+    const newVideoFiles = videoPreviews.filter((vid) => vid.file instanceof File).map((vid) => vid.file);
+
+    if (isEditMode) {
+      formData.append('videos', JSON.stringify(keptVideoUrls));
+    } else if (keptVideoUrls.length > 0) {
+      formData.append('videos', JSON.stringify(keptVideoUrls));
+    }
+
+    newVideoFiles.forEach((file) => formData.append('videos', file));
 
     try {
       if (isEditMode) {
@@ -333,7 +427,7 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
       return watch('titleEn') && watch('category') && watch('price') && watch('address');
     }
     if (currentStep === 1) {
-      return (watch('images') || []).length > 0;
+      return imagePreviews.length > 0;
     }
     return true;
   };
@@ -664,7 +758,9 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
             <CardContent className="space-y-6 pt-6">
               <h3 className="text-foreground text-lg font-bold">Property Photos & Videos</h3>
               <p className="text-muted-foreground -mt-4 text-sm">
-                Upload at least 1 photo. High-quality images attract more renters.
+                {isEditMode
+                  ? 'Remove existing photos with the × button or add new ones. At least one photo is required.'
+                  : 'Upload at least 1 photo. High-quality images attract more renters.'}
               </p>
 
               {/* Image Upload */}
@@ -678,15 +774,16 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
                   {imagePreviews.map((img, i) => (
                     <div
-                      key={i}
+                      key={img.id}
                       className="group border-border relative h-40 overflow-hidden rounded-xl border"
                     >
                       <img src={img.url} alt={img.name} className="h-full w-full object-cover" />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/40">
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors group-hover:bg-black/40">
                         <button
                           type="button"
                           onClick={() => removeImage(i)}
-                          className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-rose-500 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-rose-100"
+                          aria-label={`Remove ${img.name}`}
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-rose-600 shadow-md transition-opacity hover:bg-rose-50"
                         >
                           <X size={14} />
                         </button>
@@ -694,6 +791,11 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
                       {i === 0 && (
                         <span className="bg-primary text-primary-foreground absolute top-2 left-2 rounded-full px-2 py-0.5 text-[10px] font-bold">
                           Cover
+                        </span>
+                      )}
+                      {!img.isExisting && (
+                        <span className="absolute top-2 right-2 rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white">
+                          New
                         </span>
                       )}
                     </div>
@@ -720,7 +822,38 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
               <div>
                 <label className="text-muted-foreground mb-3 block text-xs font-medium tracking-wider uppercase">
                   Video Tour <span className="text-muted-foreground/60 normal-case">(optional)</span>
+                  {videoPreviews.length > 0 && (
+                    <span className="text-muted-foreground/60 normal-case">
+                      {' '}
+                      ({videoPreviews.length} uploaded)
+                    </span>
+                  )}
                 </label>
+                {videoPreviews.length > 0 && (
+                  <div className="mb-4 flex flex-wrap gap-3">
+                    {videoPreviews.map((vid, i) => (
+                      <div
+                        key={vid.id}
+                        className="border-border flex items-center gap-2 rounded-lg border bg-muted/40 px-3 py-2"
+                      >
+                        <span className="max-w-[200px] truncate text-xs font-medium">{vid.name}</span>
+                        {!vid.isExisting && (
+                          <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white">
+                            New
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => removeVideo(i)}
+                          aria-label={`Remove ${vid.name}`}
+                          className="flex h-6 w-6 items-center justify-center rounded-full text-rose-600 hover:bg-rose-50"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <label className="border-border text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/3 flex h-32 cursor-pointer items-center justify-center gap-3 rounded-xl border-2 border-dashed transition-all">
                   <Upload size={20} />
                   <div>
@@ -747,7 +880,7 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
                   </label>
                   <Select
                     onValueChange={(value) => setValue('leaseDuration', value)}
-                    defaultValue={watch('leaseDuration')}
+                    value={watch('leaseDuration') || undefined}
                   >
                     <SelectTrigger className="mt-1.5">
                       <SelectValue placeholder="Select" />
@@ -769,7 +902,7 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
                   <div className="flex gap-2">
                     <Select
                       onValueChange={(value) => setValue('depositCurrency', value)}
-                      defaultValue={watch('depositCurrency')}
+                      value={watch('depositCurrency') || 'ETB'}
                     >
                       <SelectTrigger className="mt-1.5 w-[100px]">
                         <SelectValue placeholder="Currency" />
