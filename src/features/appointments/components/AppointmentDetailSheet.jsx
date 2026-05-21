@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   XCircle,
   Loader2,
+  Handshake,
 } from 'lucide-react';
 import { Link } from 'react-router';
 import { STATUS_STYLES } from '../utils';
@@ -126,6 +127,16 @@ export function AppointmentDetailSheet({
         </CardContent>
 
         <div className="border-t p-4 space-y-2">
+          {appointment.status === 'ACCEPTED' && (
+            <Button className="w-full gap-2" asChild>
+              <Link
+                to={`/owner/agreements/create?propertyId=${appointment.propertyId}&renterId=${appointment.renterId}&appointmentId=${appointment.id}`}
+              >
+                <Handshake size={16} />
+                Create lease agreement
+              </Link>
+            </Button>
+          )}
           {canApprove && (
             <div className="flex gap-2">
               <Button

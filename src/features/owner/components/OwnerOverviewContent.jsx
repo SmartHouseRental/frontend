@@ -30,6 +30,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import VerificationBanner from '@/components/VerificationBanner';
+import ErrorState from '@/components/ErrorState';
+import { SchemaWarningBanner } from '@/components/SchemaWarningBanner';
+import { getApiErrorMessage, isSchemaSyncError } from '@/lib/apiErrors';
 import { useOwnerOverview } from '../hooks/useOwnerOverview';
 
 const OwnerRevenueChart = lazy(() =>
@@ -95,8 +98,9 @@ export function OwnerOverviewContent() {
   const queryClient = useQueryClient();
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
-  const { data: overviewResponse, isLoading, isError } = useOwnerOverview(chartPeriod);
+  const { data: overviewResponse, isLoading, isError, error, refetch } = useOwnerOverview(chartPeriod);
   const overview = overviewResponse?.data;
+  const overviewPartial = overview?.partial === true;
 
   // Hydrate profile cache so Profile page does not refetch after visiting overview
   useEffect(() => {
@@ -222,9 +226,18 @@ export function OwnerOverviewContent() {
   }
 
   if (isError || !overview) {
+    const errMsg = getApiErrorMessage(error, 'Failed to load dashboard.');
     return (
       <div className="flex h-screen items-center justify-center p-8">
-        <p className="text-muted-foreground text-sm">Failed to load dashboard. Please try again.</p>
+        <ErrorState
+          title={isSchemaSyncError(error) ? 'Dashboard temporarily unavailable' : 'Could not load dashboard'}
+          message={
+            isSchemaSyncError(error)
+              ? 'The server needs the latest backend deployment. Other pages may work with limited data until then.'
+              : errMsg
+          }
+          onRetry={() => refetch()}
+        />
       </div>
     );
   }
@@ -236,6 +249,10 @@ export function OwnerOverviewContent() {
       <div className="px-0">
         <VerificationBanner verificationState={layoutVerificationState} />
       </div>
+
+      {overviewPartial && (
+        <SchemaWarningBanner message="Some dashboard sections could not be loaded (agreements or payments may be updating). Figures shown may be incomplete." />
+      )}
 
       <div className="flex items-end justify-between">
         <div>

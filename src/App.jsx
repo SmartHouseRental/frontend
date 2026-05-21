@@ -43,6 +43,7 @@ import {
   EditPropertyPage,
   OwnerAppointmentsPage,
   OwnerAgreementsPage,
+  OwnerCreateAgreementPage,
   OwnerAgreementDetailPage,
   MessagesPage,
   ReviewsPage,
@@ -423,6 +424,22 @@ function App() {
               }
             />
             <Route
+              path="agreements/create"
+              element={
+                <LazyRoute>
+                  <OwnerCreateAgreementPage />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path="agreements/:id"
+              element={
+                <LazyRoute>
+                  <OwnerAgreementDetailPage />
+                </LazyRoute>
+              }
+            />
+            <Route
               path="agreements"
               element={
                 <LazyRoute>
@@ -432,11 +449,7 @@ function App() {
             />
             <Route
               path="agreement-detail"
-              element={
-                <LazyRoute>
-                  <OwnerAgreementDetailPage />
-                </LazyRoute>
-              }
+              element={<Navigate replace to="/owner/agreements" />}
             />
             <Route
               path="messages"

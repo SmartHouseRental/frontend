@@ -1,19 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { getApiErrorMessage, isSchemaSyncError } from '@/lib/apiErrors';
 import { agreementsApi } from '../api';
+import { agreementKeys, agreementQueryDefaults } from '../constants';
 
-const agreementsQueryDefaults = {
-  staleTime: 5 * 60 * 1000,
-  gcTime: 10 * 60 * 1000,
-};
-
-/** Only use on Agreements page. */
+/** Only use on Owner Agreements list page. */
 export const useOwnerAgreements = (params = {}, options = {}) => {
   return useQuery({
-    queryKey: ['owner-agreements', params],
+    queryKey: agreementKeys.ownerList(params),
     queryFn: () => agreementsApi.getOwnerAgreements(params),
-    staleTime: agreementsQueryDefaults.staleTime,
-    gcTime: agreementsQueryDefaults.gcTime,
-    refetchOnMount: false,
+    staleTime: agreementQueryDefaults.staleTime,
+    gcTime: agreementQueryDefaults.gcTime,
+    refetchOnMount: 'always',
     ...options,
   });
 };
@@ -21,12 +19,11 @@ export const useOwnerAgreements = (params = {}, options = {}) => {
 /** Only use on Agreement detail page. */
 export const useAgreementDetail = (agreementId, options = {}) => {
   return useQuery({
-    queryKey: ['agreement', agreementId],
+    queryKey: agreementKeys.detail(agreementId),
     queryFn: () => agreementsApi.getAgreementDetail(agreementId),
-    enabled: !!agreementId,
-    staleTime: agreementsQueryDefaults.staleTime,
-    gcTime: agreementsQueryDefaults.gcTime,
-    refetchOnMount: false,
+    enabled: Boolean(agreementId),
+    staleTime: agreementQueryDefaults.staleTime,
+    gcTime: agreementQueryDefaults.gcTime,
     ...options,
   });
 };
@@ -34,12 +31,82 @@ export const useAgreementDetail = (agreementId, options = {}) => {
 /** Only use on Agreement detail page. */
 export const useAgreementPayments = (agreementId, options = {}) => {
   return useQuery({
-    queryKey: ['agreement-payments', agreementId],
+    queryKey: agreementKeys.payments(agreementId),
     queryFn: () => agreementsApi.getAgreementPayments(agreementId),
-    enabled: !!agreementId,
-    staleTime: agreementsQueryDefaults.staleTime,
-    gcTime: agreementsQueryDefaults.gcTime,
-    refetchOnMount: false,
+    enabled: Boolean(agreementId),
+    staleTime: agreementQueryDefaults.staleTime,
+    gcTime: agreementQueryDefaults.gcTime,
     ...options,
+  });
+};
+
+export const useCreateAgreement = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload) => agreementsApi.createOwnerAgreement(payload),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: agreementKeys.ownerLists() });
+      const sent = res?.data?.agreement?.status === 'sent';
+      toast.success(sent ? 'Agreement sent to renter' : 'Agreement saved as draft');
+    },
+    onError: (error) => {
+      const msg = getApiErrorMessage(error, 'Failed to create agreement');
+      toast.error(isSchemaSyncError(error) ? `${msg} Try again after the app is redeployed.` : msg);
+    },
+  });
+};
+
+export const useSendAgreement = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ agreementId, offerExpiresAt }) =>
+      agreementsApi.sendAgreement(
+        agreementId,
+        offerExpiresAt ? { offerExpiresAt: new Date(offerExpiresAt).toISOString() } : {}
+      ),
+    onSuccess: (_, { agreementId }) => {
+      queryClient.invalidateQueries({ queryKey: agreementKeys.ownerLists() });
+      queryClient.invalidateQueries({ queryKey: agreementKeys.detail(agreementId) });
+      toast.success('Agreement sent to renter');
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Failed to send agreement'));
+    },
+  });
+};
+
+export const useCancelAgreement = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ agreementId, reason }) =>
+      agreementsApi.cancelAgreement(agreementId, reason ? { reason } : {}),
+    onSuccess: (_, { agreementId }) => {
+      queryClient.invalidateQueries({ queryKey: agreementKeys.ownerLists() });
+      queryClient.invalidateQueries({ queryKey: agreementKeys.detail(agreementId) });
+      toast.success('Agreement cancelled');
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Failed to cancel agreement'));
+    },
+  });
+};
+
+export const useTerminateAgreement = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ agreementId, reason }) =>
+      agreementsApi.terminateAgreement(agreementId, reason ? { reason } : {}),
+    onSuccess: (_, { agreementId }) => {
+      queryClient.invalidateQueries({ queryKey: agreementKeys.ownerLists() });
+      queryClient.invalidateQueries({ queryKey: agreementKeys.detail(agreementId) });
+      toast.success('Agreement terminated');
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Failed to terminate agreement'));
+    },
   });
 };
