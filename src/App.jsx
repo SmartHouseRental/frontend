@@ -18,6 +18,7 @@ import RenterAgreementDetailPage from './pages/renter/AgreementDetailPage';
 import RenterReviewsPage from './pages/renter/ReviewsPage';
 import RenterProfilePage from './pages/renter/ProfilePage';
 import ScheduleVisitPage from './pages/renter/ScheduleVisitPage';
+import RenterNotificationsPage from './pages/renter/NotificationsPage';
 import { Toaster } from '@/components/ui/sonner';
 
 // Owner Dashboard
@@ -268,6 +269,7 @@ function App() {
             <Route path="agreements/:id" element={<RenterAgreementDetailPage />} />
             <Route path="reviews" element={<RenterReviewsPage />} />
             <Route path="profile" element={<RenterProfilePage />} />
+            <Route path="notifications" element={<RenterNotificationsPage />} />
             <Route path="schedule-visit/:id" element={<ScheduleVisitPage />} />
           </Route>
 

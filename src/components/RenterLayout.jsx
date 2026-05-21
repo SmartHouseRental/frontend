@@ -4,9 +4,13 @@ import Header from '../features/landing/components/Header';
 import RenterSidebar from '../features/renter/components/RenterSidebar';
 import { Button } from './ui/button';
 import { Menu } from 'lucide-react';
+import { useNotificationSocket } from '../features/notifications/hooks/useNotificationSocket';
 
 export default function RenterLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  // Initialize real-time socket for notifications
+  useNotificationSocket();
 
   return (
     <div className="min-h-screen bg-slate-50/30">

@@ -46,42 +46,75 @@ export default function AppointmentList() {
     );
   }
 
-  const upcoming = appointments?.filter(apt => new Date(apt.startsAt) > new Date()) || [];
-  const past = appointments?.filter(apt => new Date(apt.startsAt) <= new Date()) || [];
+  const upcoming = appointments?.filter(apt => {
+    if (!apt?.startsAt) return false;
+    const date = new Date(apt.startsAt);
+    return !isNaN(date.getTime()) && date > new Date();
+  }) || [];
+
+  const past = appointments?.filter(apt => {
+    if (!apt?.startsAt) return false;
+    const date = new Date(apt.startsAt);
+    return !isNaN(date.getTime()) && date <= new Date();
+  }) || [];
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'N/A';
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? 'N/A' : d.toLocaleDateString();
+  };
+
+  const formatTime = (dateStr) => {
+    if (!dateStr) return 'N/A';
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? 'N/A' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status?.toUpperCase()) {
+      case 'ACCEPTED':
+      case 'CONFIRMED':
+        return <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold">Confirmed</Badge>;
+      case 'REJECTED':
+      case 'DECLINED':
+        return <Badge className="bg-destructive hover:bg-destructive/95 text-white font-semibold">Declined</Badge>;
+      case 'CANCELLED':
+        return <Badge className="bg-rose-500 hover:bg-rose-600 text-white font-semibold">Cancelled</Badge>;
+      case 'PENDING':
+      default:
+        return <Badge className="bg-amber-500 hover:bg-amber-600 text-white font-semibold">Pending</Badge>;
+    }
+  };
 
   const renderAppointmentCard = (apt) => {
-    const property = apt.property;
-    const propertyTitle = typeof property?.title === 'object' ? property.title.en : (property?.title || "Property Details");
-    const propertyImage = property?.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
+    const propertyImage = apt.property?.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
 
     return (
       <Card key={apt.id} className="border-slate-200 hover:shadow-lg transition-all">
         <div className="flex flex-col sm:flex-row p-4 sm:p-5 gap-5">
           <div className="w-full sm:w-48 h-48 sm:h-auto overflow-hidden rounded-xl shrink-0">
-            <img src={propertyImage} alt={propertyTitle} className="w-full h-full object-cover" />
+            <img src={propertyImage} alt={apt.propertyTitle} className="w-full h-full object-cover" />
           </div>
           <div className="flex-1 flex flex-col justify-between">
             <div className="flex justify-between items-start mb-2">
               <div>
-                <CardTitle className="text-lg font-bold">{propertyTitle}</CardTitle>
+                <CardTitle className="text-lg font-bold">{apt.propertyTitle}</CardTitle>
                 <div className="flex items-center gap-1.5 text-muted-foreground mt-1 text-sm">
                   <MapPin className="h-3.5 w-3.5" />
-                  <span className="line-clamp-1">{property?.address || property?.location || "Address not available"}</span>
+                  <span className="line-clamp-1">{apt.propertyAddress}</span>
                 </div>
               </div>
-              <Badge className={apt.status === 'ACCEPTED' ? 'bg-emerald-500' : apt.status === 'REJECTED' ? 'bg-destructive' : 'bg-slate-500'}>
-                {apt.status}
-              </Badge>
+              {getStatusBadge(apt.status)}
             </div>
 
             <div className="flex gap-4 mt-2 text-sm font-medium">
               <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-lg">
                 <CalendarIcon className="h-4 w-4 text-primary" />
-                <span>{new Date(apt.startsAt).toLocaleDateString()}</span>
+                <span>{formatDate(apt.startsAt)}</span>
               </div>
               <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-lg">
                 <Clock className="h-4 w-4 text-primary" />
-                <span>{new Date(apt.startsAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                <span>{formatTime(apt.startsAt)}</span>
               </div>
             </div>
 
@@ -172,7 +205,7 @@ export default function AppointmentList() {
               </div>
               <p className="text-muted-foreground mb-6">
                 Are you sure you want to cancel your visit to <span className="font-semibold text-foreground">
-                  {typeof cancellingApt.property?.title === 'object' ? cancellingApt.property.title.en : (cancellingApt.property?.title || "this property")}
+                  {cancellingApt.propertyTitle || "this property"}
                 </span>? 
               </p>
 
