@@ -4,10 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Star, MessageCircle, CalendarDays, Edit3 } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import ReviewModal from './ReviewModal';
+import ScheduleVisitModal from '@/features/visits/components/ScheduleVisitModal';
+import { getLocalizedText } from '@/lib/utils/i18n';
 
 export default function BookingCard({ property }) {
   const navigate = useNavigate();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
 
   const propertyData = property || {
     id: 'modern-villa-old-airport',
@@ -18,15 +21,26 @@ export default function BookingCard({ property }) {
     price: '45,000 ETB',
   };
 
-  const displayPrice = property?.price || '45,000 ETB';
+  const displayPrice =
+    property?.price?.value != null
+      ? `${property.price.value.toLocaleString()} ${property.price.currency || 'ETB'}`
+      : property?.price || '45,000 ETB';
 
   const handleChat = () => {
     navigate('/chat');
   };
 
   const handleSchedule = () => {
-    // Will be wired up during visit integration
+    if (!property?.id) return;
+    setScheduleOpen(true);
   };
+
+  const scheduleProperty = property?.id
+    ? {
+        id: property.id,
+        title: getLocalizedText(property.title, 'en') || 'Property',
+      }
+    : null;
 
   return (
     <div className="sticky top-28">
@@ -84,6 +98,12 @@ export default function BookingCard({ property }) {
         isOpen={isReviewModalOpen}
         onClose={() => setIsReviewModalOpen(false)}
         property={propertyData}
+      />
+
+      <ScheduleVisitModal
+        open={scheduleOpen}
+        property={scheduleProperty}
+        onClose={() => setScheduleOpen(false)}
       />
     </div>
   );

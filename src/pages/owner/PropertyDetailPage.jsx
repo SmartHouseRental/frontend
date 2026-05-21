@@ -8,6 +8,7 @@ import { Link } from 'react-router';
 import { ArrowLeft, Edit, Eye, Star, MapPin, Bed, Bath, Maximize, Calendar, DollarSign, TrendingUp, Camera, Upload, Trash2, Heart, Share2, Copy, CheckCircle2, Lock, Loader2 } from 'lucide-react';
 import { usePropertyDetail } from '@/features/properties/hooks/usePropertyDetail';
 import { getLocalizedText } from '@/lib/utils/i18n';
+import { PropertyAppointmentsSection } from '@/features/appointments/components/PropertyAppointmentsSection';
 
 const statusColors = {
     AVAILABLE: 'bg-emerald-100 text-emerald-700',
@@ -90,6 +91,7 @@ function PropertyDetailPage() {
                     <TabsTrigger value="details">Details</TabsTrigger>
                     <TabsTrigger value="media">Media ({images.length})</TabsTrigger>
                     <TabsTrigger value="stats">Performance</TabsTrigger>
+                    <TabsTrigger value="appointments">Appointments</TabsTrigger>
                 </TabsList>
 
                 {/* Details Tab */}
@@ -211,6 +213,10 @@ function PropertyDetailPage() {
                             <span className="text-xs font-medium">Add Photo</span>
                         </button>
                     </div>
+                </TabsContent>
+
+                <TabsContent value="appointments" className="mt-6">
+                    <PropertyAppointmentsSection propertyId={property.id} />
                 </TabsContent>
 
                 {/* Performance Tab */}

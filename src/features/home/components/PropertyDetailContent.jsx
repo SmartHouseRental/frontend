@@ -1,6 +1,7 @@
 import { useParams } from 'react-router';
-import { useState } from 'react';
 import { properties } from '@/lib/dummyData';
+import { usePropertyDetail } from '@/features/properties/hooks/usePropertyDetail';
+import { Loader2 } from 'lucide-react';
 import PropertyHero from '@/features/property/components/PropertyHero';
 import PropertyContent from '@/features/property/components/PropertyContent';
 import BookingCard from '@/features/property/components/BookingCard';
@@ -22,7 +23,25 @@ import {
 
 export default function PropertyDetailContent() {
     const { id } = useParams();
-    const property = properties.find((p) => p.id === id) || properties[0];
+    const { data: propertyResponse, isLoading, isError } = usePropertyDetail(id);
+    const fallback = properties.find((p) => p.id === id) || properties[0];
+    const property = propertyResponse?.data ?? fallback;
+
+    if (isLoading && !propertyResponse) {
+        return (
+            <div className="flex min-h-[50vh] items-center justify-center">
+                <Loader2 className="text-primary animate-spin" size={32} />
+            </div>
+        );
+    }
+
+    if (isError && !propertyResponse?.data) {
+        return (
+            <div className="flex min-h-[50vh] items-center justify-center p-8">
+                <p className="text-muted-foreground text-sm">Property not found.</p>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen">
