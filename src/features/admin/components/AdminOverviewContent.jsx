@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
-    CircleDot,
     Home,
     TrendingUp,
     TrendingDown,
@@ -16,7 +15,6 @@ import {
     FileText,
     UserPlus,
     Activity,
-    Loader2,
     AlertCircle,
 } from 'lucide-react';
 import {
@@ -28,6 +26,15 @@ import {
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router';
 import { useAdminOverview } from '../hooks/useAdminOverview';
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+} from 'recharts';
 
 /* ───── activity icon mapping by audit event type ───── */
 const ACTIVITY_ICON_MAP = {
@@ -103,37 +110,49 @@ function OverviewSkeleton() {
     );
 }
 
-/* ───── User Growth SVG chart ───── */
+/* ───── custom tooltip component for Recharts ───── */
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-card border border-border rounded-xl p-3 shadow-lg text-xs">
+                <p className="font-bold mb-1 text-foreground">{label}</p>
+                <div className="space-y-1">
+                    <p className="flex items-center gap-2 text-primary font-semibold">
+                        <span className="size-2 rounded-full bg-primary" />
+                        Current: <span className="text-foreground">{payload[0].value}</span>
+                    </p>
+                    {payload[1] && (
+                        <p className="flex items-center gap-2 text-muted-foreground font-semibold">
+                            <span className="size-2 rounded-full border border-dashed border-muted-foreground" />
+                            Previous: <span className="text-foreground">{payload[1].value}</span>
+                        </p>
+                    )}
+                </div>
+            </div>
+        );
+    }
+    return null;
+};
+
+/* ───── User Growth Recharts chart ───── */
 function UserGrowthChart({ data, range, onRangeChange }) {
     if (!data) return null;
     const { labels = [], currentPeriod = [], previousPeriod = [] } = data;
-    const allValues = [...currentPeriod, ...previousPeriod];
-    const maxVal = Math.max(...allValues, 1);
 
-    function pointsToPath(values, height = 300, width = 1000) {
-        if (values.length === 0) return '';
-        const step = width / Math.max(values.length - 1, 1);
-        return values
-            .map((v, i) => {
-                const x = i * step;
-                const y = height - (v / maxVal) * (height - 20);
-                return `${i === 0 ? 'M' : 'L'}${x},${y}`;
-            })
-            .join(' ');
-    }
-
-    const currentPath = pointsToPath(currentPeriod);
-    const previousPath = pointsToPath(previousPeriod);
-    const areaPath = currentPath ? `${currentPath} L1000,300 L0,300 Z` : '';
+    const chartData = labels.map((label, index) => ({
+        name: label,
+        current: currentPeriod[index] || 0,
+        previous: previousPeriod[index] || 0,
+    }));
 
     return (
-        <div className="shadow-soft rounded-2xl border border-border bg-card p-6 lg:col-span-2">
-            <div className="mb-8 flex items-center justify-between">
+        <div className="shadow-soft rounded-2xl border border-border bg-card p-6 lg:col-span-2 flex flex-col justify-between">
+            <div className="mb-6 flex items-center justify-between">
                 <div>
-                    <h4 className="text-lg font-bold">User Growth</h4>
+                    <h4 className="text-lg font-bold text-foreground">User Growth</h4>
                     <div className="mt-1 flex items-center gap-4">
                         <div className="flex items-center gap-1.5">
-                            <span className="bg-accent size-2 rounded-full" />
+                            <span className="bg-primary size-2 rounded-full" />
                             <span className="text-muted-foreground text-xs font-medium">Current Period</span>
                         </div>
                         <div className="flex items-center gap-1.5">
@@ -157,27 +176,57 @@ function UserGrowthChart({ data, range, onRangeChange }) {
                     </button>
                 </div>
             </div>
-            <div className="relative h-72">
-                <svg className="h-full w-full" preserveAspectRatio="none" viewBox="0 0 1000 300">
-                    <defs>
-                        <linearGradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.25" />
-                            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
-                        </linearGradient>
-                    </defs>
-                    {previousPath && (
-                        <path d={previousPath} fill="none" opacity="0.4" stroke="hsl(var(--muted-foreground))" strokeDasharray="6,6" strokeWidth="2" />
-                    )}
-                    {areaPath && <path d={areaPath} fill="url(#areaGradient)" />}
-                    {currentPath && (
-                        <path d={currentPath} fill="none" stroke="hsl(var(--primary))" strokeLinecap="round" strokeWidth="3" />
-                    )}
-                </svg>
-                <div className="mt-6 flex justify-between px-2 text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
-                    {labels.map((label, i) => (
-                        <span key={i}>{label}</span>
-                    ))}
-                </div>
+            <div className="h-72 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart
+                        data={chartData}
+                        margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                    >
+                        <defs>
+                            <linearGradient id="colorCurrent" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2}/>
+                                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border) / 0.5)" />
+                        <XAxis
+                            dataKey="name"
+                            tickLine={false}
+                            axisLine={false}
+                            stroke="hsl(var(--muted-foreground))"
+                            fontSize={11}
+                            fontWeight="bold"
+                            dy={10}
+                        />
+                        <YAxis
+                            tickLine={false}
+                            axisLine={false}
+                            stroke="hsl(var(--muted-foreground))"
+                            fontSize={11}
+                            fontWeight="bold"
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Area
+                            type="monotone"
+                            dataKey="previous"
+                            stroke="hsl(var(--muted-foreground))"
+                            strokeWidth={2}
+                            strokeDasharray="5 5"
+                            fill="none"
+                            opacity={0.4}
+                            name="Previous Period"
+                        />
+                        <Area
+                            type="monotone"
+                            dataKey="current"
+                            stroke="hsl(var(--primary))"
+                            strokeWidth={3}
+                            fillOpacity={1}
+                            fill="url(#colorCurrent)"
+                            name="Current Period"
+                        />
+                    </AreaChart>
+                </ResponsiveContainer>
             </div>
         </div>
     );

@@ -7,4 +7,5 @@ export const adminQueryDefaults = {
 export const adminKeys = {
     all: ['admin'],
     overview: (range = 'monthly') => [...adminKeys.all, 'overview', range],
+    properties: (params) => [...adminKeys.all, 'properties', params],
 };
