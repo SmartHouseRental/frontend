@@ -49,12 +49,13 @@ export default function normalizeConversation(c) {
     id: c.id,
     name: fullName,
     property: propertyTitle,
+    propertyId: c.property?.id || c.propertyId || null,
+    ownerId: p.id || null,
     lastMsg,
     time: formatTime(lastActivityTime),
     unread: c.unreadCount || 0,
     avatar: p.image || initials,
     isAvatarImage: !!p.image,
-    online: false, // presence not implemented in backend yet
     raw: c,
   };
 }

@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Home, Loader2 } from 'lucide-react';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+import ReportModal from '@/features/reports/components/ReportModal';
 import {
   useConversations,
   useConversationMessages,
@@ -19,11 +20,12 @@ import MessageInput from './MessageInput';
 
 
 export default function SharedMessagesView({ role }) {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const currentUserId = user?.id;
   const location = useLocation();
-
+  const navigate = useNavigate();
   const [activeConversation, setActiveConversation] = useState(null);
+  const [reportModal, setReportModal] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [showPanel, setShowPanel] = useState(false);
@@ -187,6 +189,25 @@ export default function SharedMessagesView({ role }) {
   const activeConv = conversations.find((c) => c.id === activeConversation);
   const totalUnread = conversations.reduce((sum, c) => sum + c.unread, 0);
 
+  const handleReportOwner = () => {
+    if (!activeConv?.ownerId) return;
+
+    if (!isAuthenticated || user?.role?.toLowerCase() !== 'renter') {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
+
+    if (!activeConv.ownerId) {
+      return;
+    }
+
+    setReportModal({
+      targetType: 'user',
+      targetId: activeConv.ownerId,
+      subjectName: activeConv.name,
+    });
+  };
+
   if (isLoadingConversations) {
     return (
       <div className="flex h-full w-full items-center justify-center bg-background">
@@ -236,7 +257,13 @@ export default function SharedMessagesView({ role }) {
         >
           {activeConv ? (
             <>
-              <MessageHeader activeConv={activeConv} onBack={handleBack} isTyping={isTyping} />
+              <MessageHeader
+                activeConv={activeConv}
+                onBack={handleBack}
+                isTyping={isTyping}
+                showReportMenu={role === 'renter'}
+                onReportOwner={handleReportOwner}
+              />
               {isLoadingMessages && messages.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center bg-muted/10">
                   <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -268,6 +295,16 @@ export default function SharedMessagesView({ role }) {
           )}
         </div>
       </div>
+
+      {reportModal && (
+        <ReportModal
+          isOpen
+          onClose={() => setReportModal(null)}
+          targetType={reportModal.targetType}
+          targetId={reportModal.targetId}
+          subjectName={reportModal.subjectName}
+        />
+      )}
     </div>
   );
 }

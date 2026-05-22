@@ -1,53 +1,80 @@
-import { useParams, useNavigate } from 'react-router';
+import { useState } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router';
 import { users, reviews, properties } from '@/lib/dummyData';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import ReportModal from '@/features/reports/components/ReportModal';
+import ReportOwnerButton from '@/features/reports/components/ReportOwnerButton';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import {
+  canRenterReportOwner,
+  isReportableHostProfile,
+} from '@/features/reports/utils/reportAccess';
 import {
   Star,
-  MessageCircle,
-  Phone,
-  Home,
   Calendar,
   MapPin,
-  Mail,
   ChevronRight,
 } from 'lucide-react';
 
 export default function ProfilePage() {
-  const { id } = useParams();
+  const { id: routeId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user: authUser } = useAuth();
+  const [reportModal, setReportModal] = useState(null);
 
-  // Find user by ID or use the first user as fallback
-  const userProfile = users.find((u) => u.id === id) || users[0];
+  const profileFromState = location.state?.profileUser;
+  const matchedUser = routeId ? users.find((u) => u.id === routeId) : null;
+  const userProfile = matchedUser || users[0];
 
-  const userReviews = reviews.filter((r) => r.targetId === userProfile.id);
+  const profileId = routeId || userProfile.id;
+  const displayName =
+    profileFromState?.name || matchedUser?.name || (routeId ? 'Host' : userProfile.name);
 
-  // If owner/agent, get their properties
-  const userProperties = properties.filter((p) => userProfile.listedProperties?.includes(p.id));
+  const isHostProfile = isReportableHostProfile({
+    routeId,
+    matchedUser,
+    profileFromState,
+  });
 
-  const handleChat = () => {
-    navigate('/chat');
+  const showOwnerReport =
+    isHostProfile && canRenterReportOwner(authUser, profileId);
+
+  const userReviews = reviews.filter((r) => r.targetId === (routeId || userProfile.id));
+  const userProperties = properties.filter((p) =>
+    (matchedUser || userProfile).listedProperties?.includes(p.id),
+  );
+
+  const openReportModal = ({ targetType, targetId, subjectName }) => {
+    setReportModal({ targetType, targetId, subjectName });
   };
 
   return (
     <div className="min-h-screen pb-20">
-      {/* Profile Header */}
       <div className="bg-primary px-6 pt-16 pb-32">
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-8 text-white md:flex-row">
           <Avatar className="size-32 border-4 border-white/20 shadow-2xl">
             <AvatarImage src={userProfile.avatar} />
             <AvatarFallback className="text-primary bg-white text-4xl font-bold">
-              {userProfile.name.charAt(0)}
+              {displayName.charAt(0)}
             </AvatarFallback>
           </Avatar>
 
           <div className="flex-1 text-center md:text-left">
-            <div className="mb-2 flex flex-col items-center gap-3 md:flex-row">
-              <h1 className="text-4xl font-extrabold">{userProfile.name}</h1>
+            <div className="mb-2 flex flex-col items-center gap-3 md:flex-row md:flex-wrap">
+              <h1 className="text-4xl font-extrabold">{displayName}</h1>
               <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-bold tracking-widest uppercase">
-                {userProfile.role}
+                {profileFromState?.role || matchedUser?.role || (routeId ? 'owner' : userProfile.role)}
               </span>
+              {showOwnerReport && (
+                <ReportOwnerButton
+                  ownerId={profileId}
+                  ownerName={displayName}
+                  onOpenReport={openReportModal}
+                  variant="header"
+                />
+              )}
             </div>
             <div className="flex flex-wrap justify-center gap-4 text-sm text-white/80 md:justify-start">
               <div className="flex items-center gap-1.5">
@@ -56,21 +83,36 @@ export default function ProfilePage() {
               </div>
               <div className="flex items-center gap-1.5">
                 <Calendar size={16} />
-                Joined {userProfile.joinedDate}
+                Joined {matchedUser?.joinedDate || userProfile.joinedDate}
               </div>
             </div>
           </div>
 
-          <div className="flex min-w-[200px] flex-col gap-3">
-          </div>
+          <div className="flex min-w-[200px] flex-col gap-3" />
         </div>
       </div>
 
-      {/* Profile Content */}
       <div className="mx-auto -mt-16 max-w-4xl px-6">
         <div className="grid gap-8 md:grid-cols-3">
-          {/* Left Column - Stats & Info */}
           <div className="space-y-6 md:col-span-1">
+            {showOwnerReport && (
+              <Card className="overflow-hidden rounded-3xl border-destructive/20 shadow-lg">
+                <CardContent className="p-5 space-y-3">
+                  <h3 className="text-sm font-bold text-foreground">Safety & support</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    If this host violated platform rules or behaved inappropriately, you can
+                    submit a report for our team to review.
+                  </p>
+                  <ReportOwnerButton
+                    ownerId={profileId}
+                    ownerName={displayName}
+                    onOpenReport={openReportModal}
+                    variant="card"
+                  />
+                </CardContent>
+              </Card>
+            )}
+
             <Card className="overflow-hidden rounded-3xl border-none shadow-xl">
               <CardContent className="p-6">
                 <h3 className="text-muted-foreground mb-4 text-xs font-bold tracking-wider uppercase">
@@ -87,7 +129,9 @@ export default function ProfilePage() {
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Properties Managed</span>
-                    <span className="font-bold">{userProfile.listedProperties?.length || 0}</span>
+                    <span className="font-bold">
+                      {(matchedUser || userProfile).listedProperties?.length || 0}
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -98,8 +142,8 @@ export default function ProfilePage() {
                 <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-white/20 text-2xl font-bold">
                   {userReviews.length > 0
                     ? (
-                      userReviews.reduce((acc, r) => acc + r.rating, 0) / userReviews.length
-                    ).toFixed(1)
+                        userReviews.reduce((acc, r) => acc + r.rating, 0) / userReviews.length
+                      ).toFixed(1)
                     : '0'}
                 </div>
                 <h3 className="mb-1 font-bold">Average Rating</h3>
@@ -108,14 +152,13 @@ export default function ProfilePage() {
             </Card>
           </div>
 
-          {/* Right Column - Listings & Reviews */}
           <div className="space-y-8 md:col-span-2">
-            {/* Properties Listed (for Owners/Agents) */}
-            {userProfile.role !== 'renter' && (
+            {(profileFromState?.role || matchedUser?.role || (routeId ? 'owner' : userProfile.role)) !==
+              'renter' && (
               <section>
                 <div className="mb-4 flex items-end justify-between px-2">
                   <h2 className="text-xl font-bold">
-                    Listings by {userProfile.name.split(' ')[0]}
+                    Listings by {displayName.split(' ')[0]}
                   </h2>
                   <span className="text-primary text-xs font-bold">
                     {userProperties.length} total
@@ -132,6 +175,7 @@ export default function ProfilePage() {
                         <img
                           src={property.image}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          alt=""
                         />
                       </div>
                       <div className="flex-1 py-1">
@@ -155,7 +199,6 @@ export default function ProfilePage() {
               </section>
             )}
 
-            {/* Reviews Section */}
             <section>
               <h2 className="mb-4 px-2 text-xl font-bold">User Reviews</h2>
               <div className="space-y-4">
@@ -190,7 +233,7 @@ export default function ProfilePage() {
                         </div>
                       </div>
                       <p className="text-foreground/80 text-sm leading-relaxed italic">
-                        "{review.comment}"
+                        &ldquo;{review.comment}&rdquo;
                       </p>
                     </CardContent>
                   </Card>
@@ -204,8 +247,17 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Subtle background pattern */}
       <div className="ethiopian-pattern pointer-events-none fixed inset-0 -z-10" />
+
+      {reportModal && (
+        <ReportModal
+          isOpen
+          onClose={() => setReportModal(null)}
+          targetType={reportModal.targetType}
+          targetId={reportModal.targetId}
+          subjectName={reportModal.subjectName}
+        />
+      )}
     </div>
   );
 }

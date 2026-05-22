@@ -41,7 +41,7 @@ export default function ConversationSidebar({
                   : 'hover:bg-muted/30 border-l-2 border-l-transparent'
               }`}
             >
-              <div className="relative shrink-0">
+              <div className="shrink-0">
                 {c.isAvatarImage ? (
                   <img
                     src={c.avatar}
@@ -58,9 +58,6 @@ export default function ConversationSidebar({
                   >
                     {c.avatar}
                   </div>
-                )}
-                {c.online && (
-                  <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full bg-emerald-500 ring-2 ring-card"></span>
                 )}
               </div>
               

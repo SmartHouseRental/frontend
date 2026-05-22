@@ -16,7 +16,11 @@ export default function OwnerCard({ property }) {
     <section className="bg-card mb-12 flex items-start gap-6 rounded-2xl border p-6">
       <div
         className="group relative cursor-pointer"
-        onClick={() => navigate(`/profile/${ownerId}`)}
+        onClick={() =>
+          navigate(`/profile/${ownerId}`, {
+            state: { profileUser: { name: ownerName, role: 'owner' } },
+          })
+        }
       >
         <div className="border-primary/10 group-hover:border-primary h-20 w-20 overflow-hidden rounded-full border-4 transition-colors">
           <img
@@ -35,7 +39,11 @@ export default function OwnerCard({ property }) {
         <div className="mb-2 flex items-center justify-between">
           <h3
             className="hover:text-primary cursor-pointer text-xl font-bold transition-colors"
-            onClick={() => navigate(`/profile/${ownerId}`)}
+            onClick={() =>
+              navigate(`/profile/${ownerId}`, {
+                state: { profileUser: { name: ownerName, role: 'owner' } },
+              })
+            }
           >
             Meet your host, {ownerName}
           </h3>
