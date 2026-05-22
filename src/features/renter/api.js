@@ -6,6 +6,8 @@ export const renterApi = {
   
   getReviews: () => axiosInstance.get('/api/v1/reviews/me'),
   createReview: (data) => axiosInstance.post('/api/v1/reviews', data),
+  updateReview: (id, data) => axiosInstance.patch(`/api/v1/reviews/${id}`, data),
+  deleteReview: (id) => axiosInstance.delete(`/api/v1/reviews/${id}`),
   
   getProfile: () => axiosInstance.get('/api/v1/users/profile'),
   updateProfile: (data) => axiosInstance.patch('/api/v1/users/profile', data),

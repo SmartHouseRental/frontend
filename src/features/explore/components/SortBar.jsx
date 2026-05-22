@@ -1,26 +1,29 @@
 import { View, Map } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SORT_OPTIONS } from "@/features/explore/utils/propertyFilters";
 
-export function SortBar({ viewMode, setViewMode }) {
+export function SortBar({ viewMode, setViewMode, sort, onSortChange }) {
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card p-4 rounded-xl border">
       <div className="flex items-center gap-3">
         <span className="text-sm font-bold text-muted-foreground">Sort by:</span>
-        <Select defaultValue="newest">
+        <Select value={sort} onValueChange={onSortChange}>
           <SelectTrigger className="w-48">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="newest">Newest Listings</SelectItem>
-            <SelectItem value="low">Price: Low to High</SelectItem>
-            <SelectItem value="high">Price: High to Low</SelectItem>
-            <SelectItem value="rating">Top Rated</SelectItem>
+            {SORT_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
 
       <div className="flex items-center bg-muted p-1 rounded-xl">
         <button 
+          type="button"
           onClick={() => setViewMode("grid")}
           className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${
             viewMode === "grid" 
@@ -33,6 +36,7 @@ export function SortBar({ viewMode, setViewMode }) {
         </button>
 
         <button 
+          type="button"
           onClick={() => setViewMode("map")}
           className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${
             viewMode === "map" 

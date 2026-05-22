@@ -43,7 +43,8 @@ export default function SimilarProperties({ currentId }) {
                     const priceValue = (p.price && typeof p.price === 'object') ? p.price.value : p.price;
                     const priceCurrency = (p.price && typeof p.price === 'object') ? (p.price.currency || 'ETB') : 'ETB';
                     const areaValue = (p.area && typeof p.area === 'object') ? p.area.value : p.area;
-                    const type = (p.type && typeof p.type === 'object') ? (p.type.en || p.type.am) : p.type;
+                    const category = (p.category && typeof p.category === 'object') ? (p.category.en || p.category.am) : p.category;
+                    const type = (p.type && typeof p.type === 'object') ? (p.type.en || p.type.am) : (p.type || category);
                     const image = p.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
                     
                     return (

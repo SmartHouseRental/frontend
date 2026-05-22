@@ -5,7 +5,13 @@ import { useNavigate } from 'react-router';
 
 export default function OwnerCard({ property }) {
   const navigate = useNavigate();
-  const ownerId = 'o1';
+  const owner = property?.owner || {};
+  const ownerId = owner.id || 'owner-profile';
+
+  const ownerName = owner.first_name
+    ? `${owner.first_name}${owner.last_name ? ' ' + owner.last_name : ''}`
+    : 'Host';
+
   return (
     <section className="bg-card mb-12 flex items-start gap-6 rounded-2xl border p-6">
       <div
@@ -14,8 +20,9 @@ export default function OwnerCard({ property }) {
       >
         <div className="border-primary/10 group-hover:border-primary h-20 w-20 overflow-hidden rounded-full border-4 transition-colors">
           <img
-            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${ownerName}`}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+            alt={ownerName}
           />
         </div>
 
@@ -28,26 +35,27 @@ export default function OwnerCard({ property }) {
         <div className="mb-2 flex items-center justify-between">
           <h3
             className="hover:text-primary cursor-pointer text-xl font-bold transition-colors"
-            onClick={() => navigate(`/profile/${property?.owner?.id}`)}
+            onClick={() => navigate(`/profile/${ownerId}`)}
           >
-            Meet your host, {property?.owner?.first_name ? `${property.owner.first_name} ${property.owner.last_name}` : 'Dawit'}
+            Meet your host, {ownerName}
           </h3>
           <Badge variant="secondary">Verified Owner</Badge>
         </div>
 
         <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
-          "I've lived in the area for 20 years and love hosting families. I believe in providing a
-          home that offers peace and privacy. I'm always available to help you settle in."
+          "{owner.email ? `Hosted by ${ownerName}` : 'A verified property owner'} on our platform. I believe in providing a
+          home that offers peace and privacy. Always available to help you settle in."
         </p>
 
         <div className="flex items-center gap-6 text-sm font-semibold">
           <div className="flex items-center gap-1">
             <Star className="text-primary h-4 w-4" />
-            4.9 (42 Reviews)
+            {property?.isVerified ? '5.0 (Verified)' : 'New Host'}
           </div>
 
           <div className="flex items-center gap-1">
-            <CheckCircle className="text-primary h-4 w-4" />5 years hosting
+            <CheckCircle className="text-primary h-4 w-4" />
+            Verified Owner
           </div>
         </div>
       </div>

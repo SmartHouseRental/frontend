@@ -62,7 +62,8 @@ export default function FeaturedListings() {
             const price = (home.price && typeof home.price === 'object') ? home.price.value : home.price;
             const currency = (home.price && typeof home.price === 'object') ? (home.price.currency || 'ETB') : 'ETB';
             const area = (home.area && typeof home.area === 'object') ? home.area.value : home.area;
-            const type = (home.type && typeof home.type === 'object') ? (home.type.en || home.type.am) : home.type;
+            const category = (home.category && typeof home.category === 'object') ? (home.category.en || home.category.am) : home.category;
+            const type = (home.type && typeof home.type === 'object') ? (home.type.en || home.type.am) : (home.type || category);
             const image = home.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
 
             return (

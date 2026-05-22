@@ -1,7 +1,6 @@
 import { BedDouble, Bath, Square, Users, Wifi, Car, ShieldCheck, Trees } from "lucide-react"
 
 export default function PropertyContent({ property }) {
-  // Use real amenities if available, otherwise fallback to high-quality defaults
   const defaultAmenities = [
     { icon: Wifi, title: "High-speed WiFi", desc: "Dedicated fiber line" },
     { icon: Car, title: "Private Parking", desc: "Space for 2 cars" },
@@ -9,7 +8,7 @@ export default function PropertyContent({ property }) {
     { icon: Trees, title: "Private Garden", desc: "Lush outdoor area" },
   ]
 
-  const displayAmenities = property?.amenities?.length > 0 
+  const displayAmenities = property?.amenities?.length > 0
     ? property.amenities.map(a => ({ icon: ShieldCheck, title: a, desc: "Included" }))
     : defaultAmenities;
 
@@ -19,22 +18,22 @@ export default function PropertyContent({ property }) {
       <div className="flex flex-wrap gap-6 py-6 border-y mb-8">
         <div className="flex items-center gap-2">
           <BedDouble className="text-primary"/>
-          <span className="font-semibold">{property?.beds || 0} Bedrooms</span>
+          <span className="font-semibold">{property?.bedrooms || 0} Bedrooms</span>
         </div>
 
         <div className="flex items-center gap-2">
           <Bath className="text-primary"/>
-          <span className="font-semibold">{property?.baths || 0} Bathrooms</span>
+          <span className="font-semibold">{property?.bathrooms || 0} Bathrooms</span>
         </div>
 
         <div className="flex items-center gap-2">
           <Square className="text-primary"/>
-          <span className="font-semibold">{property?.size || '0 sqm'}</span>
+          <span className="font-semibold">{property?.area || 0} {property?.areaUnit || 'sqm'}</span>
         </div>
 
         <div className="flex items-center gap-2">
           <Users className="text-primary"/>
-          <span className="font-semibold">{property?.furnishing || 'Family Friendly'}</span>
+          <span className="font-semibold">{property?.furnishingStatus || 'Family Friendly'}</span>
         </div>
       </div>
 
@@ -44,7 +43,7 @@ export default function PropertyContent({ property }) {
           The Home Story
         </h3>
         <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-          {property?.descriptionStr || "This property is located in a prime area, offering comfort and style for its residents. Experience the best of living in this well-maintained residence."}
+          {property?.description || "This property is located in a prime area, offering comfort and style for its residents. Experience the best of living in this well-maintained residence."}
         </p>
       </section>
 
@@ -69,4 +68,4 @@ export default function PropertyContent({ property }) {
       </section>
     </div>
   )
-}
+}

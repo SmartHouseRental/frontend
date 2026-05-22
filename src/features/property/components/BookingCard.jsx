@@ -17,10 +17,14 @@ export default function BookingCard({ property }) {
   const { data: conversations = [] } = useConversations();
 
   const propertyData = property || {};
-  const displayPrice = property?.priceStr || '0 ETB / month';
-  
-  const { data: statsResponse } = usePropertyReviewStats(property?.id);
-  const stats = statsResponse?.data || statsResponse || { averageRating: 0 };
+
+  // Format price from API: { value: 35000, currency: "ETB" }
+  const displayPrice = property?.price
+    ? `${property.currency || 'ETB'} ${property.price.toLocaleString()} /month`
+    : 'Contact for pricing';
+
+  const { data: stats } = usePropertyReviewStats(property?.id);
+  const statsData = stats || { averageRating: 0 };
 
   const handleChat = async () => {
     if (!isAuthenticated) {
@@ -28,11 +32,11 @@ export default function BookingCard({ property }) {
       return;
     }
 
-    const targetOwnerId = property.owner?.id || property.ownerId;
+    const targetOwnerId = property.owner?.id;
 
     // Check locally for an existing conversation first
-    const existingChat = conversations.find(c => 
-      c.propertyId === property.id && 
+    const existingChat = conversations.find(c =>
+      c.propertyId === property.id &&
       (c.ownerId === targetOwnerId || c.owner?.id === targetOwnerId) &&
       (c.renterId === user.id || c.renter?.id === user.id)
     );
@@ -66,14 +70,14 @@ export default function BookingCard({ property }) {
           <div className="mb-6 flex justify-between">
             <div>
               <span className="text-primary text-3xl font-extrabold">
-                {displayPrice.includes('month') ? displayPrice.replace('/ month', '').replace('/month', '').trim() : displayPrice}
+                {displayPrice.split('/')[0].trim()}
               </span>
               <span className="text-muted-foreground text-sm"> / month</span>
             </div>
 
             <div className="flex items-center gap-1">
               <Star className="text-primary h-4 w-4 fill-primary" />
-              <span className="font-bold">{stats.averageRating ? Number(stats.averageRating).toFixed(1) : "New"}</span>
+              <span className="font-bold">{statsData.averageRating ? Number(statsData.averageRating).toFixed(1) : "New"}</span>
             </div>
           </div>
 

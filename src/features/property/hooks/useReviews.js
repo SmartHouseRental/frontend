@@ -7,11 +7,14 @@ export const usePropertyReviews = (propertyId) => {
   return useQuery({
     queryKey: ['propertyReviews', propertyId],
     queryFn: async () => {
-      if (!propertyId) return null;
+      if (!propertyId) return [];
       const response = await propertyApi.getPropertyReviews(propertyId);
-      return response.data; // Return the array of reviews
+      // API returns array directly: [review1, review2, ...]
+      // Not wrapped in {data: ...}
+      return Array.isArray(response) ? response : (response.data || []);
     },
     enabled: !!propertyId,
+    initialData: [],
   });
 };
 
@@ -21,9 +24,11 @@ export const usePropertyReviewStats = (propertyId) => {
     queryFn: async () => {
       if (!propertyId) return null;
       const response = await propertyApi.getPropertyReviewStats(propertyId);
-      return response.data;
+      // API returns {averageRating, totalReviews}
+      return response.data || response;
     },
     enabled: !!propertyId,
+    initialData: { averageRating: 0, totalReviews: 0 },
   });
 };
 
@@ -37,7 +42,6 @@ export const useCreateReview = () => {
     },
     onSuccess: (_, variables) => {
       toast.success('Review submitted successfully!');
-      // Invalidate both property reviews, stats and details using the propertyId
       queryClient.invalidateQueries({ queryKey: ['propertyReviews', variables.propertyId] });
       queryClient.invalidateQueries({ queryKey: ['propertyReviewStats', variables.propertyId] });
       queryClient.invalidateQueries({ queryKey: ['properties', 'detail', variables.propertyId] });

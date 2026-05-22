@@ -2,18 +2,21 @@ import axiosInstance from '@/lib/axios';
 
 export const propertyApi = {
   getProperties: (params) => {
-    // Normalize status to uppercase and remove empty strings
+    const numericKeys = new Set(['page', 'limit', 'minPrice', 'maxPrice', 'bedrooms', 'bathrooms']);
+
     const cleanedParams = Object.entries(params).reduce((acc, [key, value]) => {
       if (value === '' || value === null || value === undefined) return acc;
+      if (key === 'search' || key === 'q') return acc;
       if (key === 'status') {
-        acc[key] = value.toUpperCase();
-      } else if (key === 'search') {
-        // Skip search if not supported by backend listing endpoint
-        // (The backend seems to use different mechanisms for search)
+        acc[key] = String(value).toUpperCase();
         return acc;
-      } else {
-        acc[key] = value;
       }
+      if (numericKeys.has(key)) {
+        const n = Number(value);
+        if (Number.isFinite(n)) acc[key] = n;
+        return acc;
+      }
+      acc[key] = value;
       return acc;
     }, {});
 

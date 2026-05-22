@@ -67,7 +67,8 @@ export default function PropertyDetailContent() {
     const title = (property.title && typeof property.title === 'object') ? (property.title.en || property.title.am) : property.title;
     const address = (property.address && typeof property.address === 'object') ? (property.address.en || property.address.am) : property.address;
     const description = (property.description && typeof property.description === 'object') ? (property.description.en || property.description.am) : property.description;
-    const type = (property.type && typeof property.type === 'object') ? (property.type.en || property.type.am) : property.type;
+    const category = (property.category && typeof property.category === 'object') ? (property.category.en || property.category.am) : property.category;
+    const type = (property.type && typeof property.type === 'object') ? (property.type.en || property.type.am) : (property.type || category);
     const priceValue = (property.price && typeof property.price === 'object') ? property.price.value : property.price;
     const priceCurrency = (property.price && typeof property.price === 'object') ? (property.price.currency || 'ETB') : 'ETB';
     const areaValue = (property.area && typeof property.area === 'object') ? property.area.value : property.area;
@@ -79,8 +80,10 @@ export default function PropertyDetailContent() {
         title: title || "Property Details",
         description: description || '',
         address: address || property.location || "Addis Ababa, Ethiopia",
+        category: category || 'Property',
         type: type || 'Villa',
         price: priceValue || 0,
+        currency: priceCurrency,
         area: areaValue || 0,
         // Convenience string aliases used by some child components
         lat: coords?.lat || 9.0128,
