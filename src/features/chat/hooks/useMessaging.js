@@ -3,9 +3,11 @@ import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import { getToken } from '@/features/auth/utils';
 import { apiClient } from '@/lib/apiClient';
+import { toast } from 'sonner';
 import { chatApi } from '../api';
 import normalizeConversation from '../utils/normalizeConversation';
 import normalizeMessage from '../utils/normalizeMessage';
+import { getChatErrorMessage } from '../utils/chatErrors';
 
 function getBaseUrl() {
   const configUrl = apiClient.defaults.baseURL || '';
@@ -119,6 +121,22 @@ export function useDeleteMessage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages'] });
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
+    },
+  });
+}
+
+export function useDeleteConversation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (conversationId) => chatApi.deleteConversation(conversationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.removeQueries({ queryKey: ['messages'] });
+      toast.success('Chat deleted');
+    },
+    onError: (error) => {
+      toast.error(getChatErrorMessage(error, 'Failed to delete chat'));
     },
   });
 }

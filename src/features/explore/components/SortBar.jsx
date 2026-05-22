@@ -7,8 +7,12 @@ export function SortBar({ viewMode, setViewMode, sort, onSortChange }) {
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card p-4 rounded-xl border">
       <div className="flex items-center gap-3">
         <span className="text-sm font-bold text-muted-foreground">Sort by:</span>
-        <Select value={sort} onValueChange={onSortChange}>
-          <SelectTrigger className="w-48">
+        <Select
+          value={sort === 'views' ? 'newest' : sort}
+          onValueChange={onSortChange}
+          disabled={viewMode === 'map'}
+        >
+          <SelectTrigger className="w-48" disabled={viewMode === 'map'}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

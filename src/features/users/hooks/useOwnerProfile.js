@@ -7,7 +7,10 @@ export const ownerProfileKeys = {
 };
 
 function unwrapOwnerProfile(response) {
-  return response?.data ?? response;
+  if (!response) return null;
+  // GET /api/v1/users/:id — public, no auth required
+  if (response.owner) return response;
+  return response.data ?? response;
 }
 
 export function useOwnerProfile(ownerId) {
@@ -18,8 +21,10 @@ export function useOwnerProfile(ownerId) {
       return unwrapOwnerProfile(response);
     },
     enabled: Boolean(ownerId),
+    staleTime: 60 * 1000,
     retry: (failureCount, error) => {
-      if (error?.response?.status === 404) return false;
+      const status = error?.response?.status;
+      if (status === 404 || status === 400) return false;
       return failureCount < 2;
     },
   });

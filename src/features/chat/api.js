@@ -71,6 +71,11 @@ export const chatApi = {
     return data.data;
   },
 
+  deleteConversation: async (conversationId) => {
+    const { data } = await apiClient.delete(`/messaging/conversations/${conversationId}`);
+    return data.data;
+  },
+
   updateMessageStatus: async (messageId, status) => {
     const { data } = await apiClient.patch(`/messaging/messages/${messageId}/status`, {
       status,

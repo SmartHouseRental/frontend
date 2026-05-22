@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import SearchBar from './SearchBar';
 import ActiveFilters from './ActiveFilters';
 import { FilterSidebar } from '@/features/explore/components/FilterSidebar';
@@ -21,6 +21,14 @@ export default function SearchResultsContent() {
 
     const [viewMode, setViewMode] = useState('grid');
 
+    const listApiParams = useMemo(() => {
+        if (viewMode === 'map') {
+            const { sortBy, order, ...rest } = apiParams;
+            return rest;
+        }
+        return apiParams;
+    }, [apiParams, viewMode]);
+
     const {
         data: propertiesData,
         isLoading,
@@ -28,7 +36,7 @@ export default function SearchResultsContent() {
         isError,
         error,
         refetch,
-    } = useProperties(apiParams);
+    } = useProperties(listApiParams);
 
     const properties = propertiesData?.data || [];
     const meta = propertiesData?.meta;

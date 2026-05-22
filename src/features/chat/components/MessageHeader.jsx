@@ -4,27 +4,30 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ArrowLeft, Flag, MoreVertical } from 'lucide-react';
+import { ArrowLeft, Flag, MoreVertical, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function MessageHeader({
   activeConv,
   onBack,
   isTyping,
-  /** Must be true only for renter chat — owners never see the report menu */
+  /** Renter-only: show Report Owner */
   showReportMenu = false,
   onReportOwner,
+  onDeleteChat,
   className = '',
 }) {
   const navigate = useNavigate();
 
   if (!activeConv) return null;
 
+  /** Other participant id (owner when renter chats; renter when owner chats) */
   const participantId = activeConv.ownerId;
-  const canOpenProfile = Boolean(participantId);
-  const renterReportMenu = showReportMenu === true;
+  const canOpenProfile = Boolean(participantId && participantId !== 'unknown');
+  const showMenu = Boolean(onDeleteChat || (showReportMenu && onReportOwner));
 
   const openProfile = () => {
     if (participantId) {
@@ -101,7 +104,7 @@ export default function MessageHeader({
         </button>
       </div>
 
-      {renterReportMenu && (
+      {showMenu && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -114,13 +117,27 @@ export default function MessageHeader({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem
-              onClick={onReportOwner}
-              className="text-destructive focus:text-destructive cursor-pointer"
-            >
-              <Flag className="mr-2 size-4" />
-              Report Owner
-            </DropdownMenuItem>
+            {showReportMenu && onReportOwner && (
+              <>
+                <DropdownMenuItem
+                  onClick={onReportOwner}
+                  className="text-destructive focus:text-destructive cursor-pointer"
+                >
+                  <Flag className="mr-2 size-4" />
+                  Report Owner
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+              </>
+            )}
+            {onDeleteChat && (
+              <DropdownMenuItem
+                onClick={onDeleteChat}
+                className="text-destructive focus:text-destructive cursor-pointer"
+              >
+                <Trash2 className="mr-2 size-4" />
+                Delete Chat
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       )}

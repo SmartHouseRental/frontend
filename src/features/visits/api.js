@@ -8,4 +8,8 @@ export const visitsApi = {
   updateAppointmentNote: (id, note) => axiosInstance.patch(`/api/v1/appointments/${id}/note`, { note }),
   deleteAppointment: (id) => axiosInstance.delete(`/api/v1/appointments/${id}`),
   cancelAppointment: (id) => axiosInstance.patch(`/api/v1/appointments/${id}/cancel`),
+
+  /** GET /api/v1/appointments/availability — busy slots for property/owner */
+  getAvailability: (params) =>
+    axiosInstance.get('/api/v1/appointments/availability', { params }),
 };

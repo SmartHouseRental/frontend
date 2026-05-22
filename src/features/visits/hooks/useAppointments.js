@@ -1,11 +1,22 @@
+import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { visitsApi } from '../api';
 import { toast } from 'sonner';
+import { buildMonthAvailabilityRange } from '../utils/availability';
+import { getApiErrorMessage } from '@/features/renter/utils/apiErrors';
 
 export const visitKeys = {
   all: ['visits'],
   appointments: (filters = {}) => [...visitKeys.all, 'appointments', filters],
+  availability: (propertyId, from, to) => [...visitKeys.all, 'availability', propertyId, from, to],
 };
+
+function extractBusySlots(response) {
+  if (!response) return [];
+  if (Array.isArray(response?.data?.busy)) return response.data.busy;
+  if (Array.isArray(response?.busy)) return response.busy;
+  return [];
+}
 
 const getLocalizedStr = (field) => {
   if (!field) return '';
@@ -54,6 +65,26 @@ const normalizeAppointments = (response) => {
   });
 };
 
+export const useAvailability = (propertyId, currentMonth, options = {}) => {
+  const range = useMemo(
+    () => (currentMonth ? buildMonthAvailabilityRange(currentMonth) : null),
+    [currentMonth],
+  );
+
+  return useQuery({
+    queryKey: visitKeys.availability(propertyId, range?.from, range?.to),
+    queryFn: () =>
+      visitsApi.getAvailability({
+        propertyId,
+        from: range.from,
+        to: range.to,
+      }),
+    enabled: !!propertyId && !!range && options.enabled !== false,
+    select: extractBusySlots,
+    staleTime: 60 * 1000,
+  });
+};
+
 export const useAppointments = (filters = {}) => {
   return useQuery({
     queryKey: visitKeys.appointments(filters),
@@ -78,11 +109,12 @@ export const useBookAppointment = () => {
     mutationFn: (data) => visitsApi.bookAppointment(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: visitKeys.appointments() });
-      toast.success('Appointment Scheduled');
+      queryClient.invalidateQueries({ queryKey: visitKeys.all });
+      toast.success('Appointment request sent successfully');
     },
     onError: (error) => {
-      toast.error(error.message || 'Failed to book appointment');
-    }
+      toast.error(getApiErrorMessage(error, 'Failed to book appointment'));
+    },
   });
 };
 
@@ -96,8 +128,8 @@ export const useUpdateAppointmentStatus = () => {
       toast.success('Appointment Status Updated');
     },
     onError: (error) => {
-      toast.error(error.message || 'Failed to update status');
-    }
+      toast.error(getApiErrorMessage(error, 'Failed to update status'));
+    },
   });
 };
 
@@ -120,7 +152,7 @@ export const useCancelAppointment = () => {
       toast.success('Appointment Cancelled');
     },
     onError: (error) => {
-      toast.error(error.message || 'Failed to cancel appointment');
-    }
+      toast.error(getApiErrorMessage(error, 'Failed to cancel appointment'));
+    },
   });
 };

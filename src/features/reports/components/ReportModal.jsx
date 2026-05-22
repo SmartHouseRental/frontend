@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
-import { X, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router';
+import { X, Loader2, AlertCircle, CheckCircle2, ImagePlus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -13,11 +13,25 @@ import {
 import { useSubmitReport } from '../hooks/useSubmitReport';
 import {
   REPORT_CATEGORIES,
-  REPORT_DESCRIPTION_MIN,
   REPORT_DESCRIPTION_MAX,
+  REPORT_IMAGE_ACCEPT,
+  REPORT_IMAGE_MAX_BYTES,
+  REPORT_IMAGE_MIME_TYPES,
+  REPORT_IMAGES_MAX,
 } from '../constants';
 import { getReportErrorMessage } from '../utils/reportErrors';
 import { hasReportedTarget } from '../utils/reportStorage';
+
+function validateImageFile(file) {
+  if (!file) return 'Invalid file.';
+  if (!REPORT_IMAGE_MIME_TYPES.includes(file.type)) {
+    return 'Use a JPEG, PNG, WebP, or GIF image.';
+  }
+  if (file.size > REPORT_IMAGE_MAX_BYTES) {
+    return 'Each image must be 10 MB or smaller.';
+  }
+  return '';
+}
 
 export default function ReportModal({
   isOpen,
@@ -27,12 +41,16 @@ export default function ReportModal({
   subjectName = 'this user',
 }) {
   const [category, setCategory] = useState('');
-  const [description, setDescription] = useState('');
+  const [optionalNote, setOptionalNote] = useState('');
+  const [evidenceFiles, setEvidenceFiles] = useState([]);
+  const [evidencePreviews, setEvidencePreviews] = useState([]);
   const [validationError, setValidationError] = useState('');
   const [submitError, setSubmitError] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const fileInputRef = useRef(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const submitReport = useSubmitReport();
   const alreadyReported =
     isOpen && hasReportedTarget(targetType, targetId);
@@ -40,26 +58,63 @@ export default function ReportModal({
   useEffect(() => {
     if (!isOpen) return;
     setCategory('');
-    setDescription('');
+    setOptionalNote('');
+    setEvidenceFiles([]);
+    setEvidencePreviews([]);
     setValidationError('');
     setSubmitError('');
     setSubmitted(false);
   }, [isOpen, targetId, targetType]);
 
+  useEffect(() => {
+    return () => {
+      evidencePreviews.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [evidencePreviews]);
+
   if (!isOpen) return null;
 
   const validate = () => {
     if (!category) {
-      return 'Please select a reason for your report.';
+      return 'Please select an issue type.';
     }
-    const trimmed = description.trim();
-    if (trimmed.length < REPORT_DESCRIPTION_MIN) {
-      return `Please provide at least ${REPORT_DESCRIPTION_MIN} characters describing the issue.`;
-    }
-    if (trimmed.length > REPORT_DESCRIPTION_MAX) {
-      return `Description must not exceed ${REPORT_DESCRIPTION_MAX} characters.`;
+    if (optionalNote.trim().length > REPORT_DESCRIPTION_MAX) {
+      return `Notes must not exceed ${REPORT_DESCRIPTION_MAX} characters.`;
     }
     return '';
+  };
+
+  const handleAddImages = (e) => {
+    setValidationError('');
+    const incoming = Array.from(e.target.files || []);
+    if (!incoming.length) return;
+
+    const nextFiles = [...evidenceFiles];
+    const nextPreviews = [...evidencePreviews];
+
+    for (const file of incoming) {
+      if (nextFiles.length >= REPORT_IMAGES_MAX) {
+        setValidationError(`You can attach up to ${REPORT_IMAGES_MAX} images.`);
+        break;
+      }
+      const fileError = validateImageFile(file);
+      if (fileError) {
+        setValidationError(fileError);
+        continue;
+      }
+      nextFiles.push(file);
+      nextPreviews.push(URL.createObjectURL(file));
+    }
+
+    setEvidenceFiles(nextFiles);
+    setEvidencePreviews(nextPreviews);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const removeImage = (index) => {
+    URL.revokeObjectURL(evidencePreviews[index]);
+    setEvidenceFiles((prev) => prev.filter((_, i) => i !== index));
+    setEvidencePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -82,13 +137,15 @@ export default function ReportModal({
         targetType,
         targetId,
         category: selected?.label || category,
-        description: description.trim(),
+        categoryLabel: selected?.label || category,
+        optionalNote: optionalNote.trim(),
+        imageFiles: evidenceFiles,
       });
       setSubmitted(true);
     } catch (error) {
       if (error?.response?.status === 401) {
         onClose();
-        navigate('/login', { replace: true });
+        navigate('/login', { state: { from: location } });
         return;
       }
       setSubmitError(getReportErrorMessage(error));
@@ -105,14 +162,14 @@ export default function ReportModal({
       aria-modal="true"
       aria-labelledby="report-modal-title"
     >
-      <div className="w-full max-w-lg bg-card rounded-t-[32px] p-8 shadow-2xl animate-in slide-in-from-bottom duration-500 ease-out border-t border-border/40 pb-10">
+      <div className="w-full max-w-lg bg-card rounded-t-[32px] p-8 shadow-2xl animate-in slide-in-from-bottom duration-500 ease-out border-t border-border/40 pb-10 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-start mb-6">
           <div>
             <h2 id="report-modal-title" className="text-2xl font-bold mb-1">
               Report Owner
             </h2>
             <p className="text-muted-foreground text-sm">
-              Report {subjectName}. Reports are reviewed by our team.
+              Report {subjectName}. You may attach photos as evidence. Reports are reviewed by our team.
             </p>
           </div>
           <button
@@ -149,7 +206,7 @@ export default function ReportModal({
 
             <div>
               <label className="block text-sm font-bold mb-2 uppercase tracking-wider text-muted-foreground">
-                Reason
+                Issue type
               </label>
               <Select
                 value={category}
@@ -157,7 +214,7 @@ export default function ReportModal({
                 disabled={isDisabled}
               >
                 <SelectTrigger className="w-full h-11 rounded-xl">
-                  <SelectValue placeholder="Select a reason" />
+                  <SelectValue placeholder="Select issue type" />
                 </SelectTrigger>
                 <SelectContent>
                   {REPORT_CATEGORIES.map((item) => (
@@ -171,21 +228,74 @@ export default function ReportModal({
 
             <div>
               <label className="block text-sm font-bold mb-2 uppercase tracking-wider text-muted-foreground">
-                Details
+                Evidence <span className="font-normal normal-case">(optional)</span>
+              </label>
+              <p className="text-xs text-muted-foreground mb-3">
+                Upload screenshots or photos to support your report (up to {REPORT_IMAGES_MAX} images, 10 MB each).
+              </p>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept={REPORT_IMAGE_ACCEPT}
+                multiple
+                className="hidden"
+                disabled={isDisabled || evidenceFiles.length >= REPORT_IMAGES_MAX}
+                onChange={handleAddImages}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full rounded-xl font-semibold"
+                disabled={isDisabled || evidenceFiles.length >= REPORT_IMAGES_MAX}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <ImagePlus className="mr-2 size-4" />
+                {evidenceFiles.length > 0
+                  ? `Add more images (${evidenceFiles.length}/${REPORT_IMAGES_MAX})`
+                  : 'Add images'}
+              </Button>
+
+              {evidencePreviews.length > 0 && (
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  {evidencePreviews.map((url, index) => (
+                    <div
+                      key={url}
+                      className="relative aspect-square overflow-hidden rounded-lg border border-border/60 bg-muted/30"
+                    >
+                      <img
+                        src={url}
+                        alt={`Evidence ${index + 1}`}
+                        className="h-full w-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        className="absolute top-1 right-1 rounded-full bg-black/60 p-1 text-white hover:bg-black/80"
+                        aria-label="Remove image"
+                        onClick={() => removeImage(index)}
+                        disabled={isDisabled}
+                      >
+                        <Trash2 className="size-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold mb-2 uppercase tracking-wider text-muted-foreground">
+                Additional notes <span className="font-normal normal-case">(optional)</span>
               </label>
               <Textarea
-                placeholder="Describe what happened (minimum 10 characters)..."
-                className="min-h-[120px] rounded-2xl p-4 bg-muted/30 border-border/40"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Add any extra context (optional)..."
+                className="min-h-[80px] rounded-2xl p-4 bg-muted/30 border-border/40"
+                value={optionalNote}
+                onChange={(e) => setOptionalNote(e.target.value)}
                 disabled={isDisabled}
                 maxLength={REPORT_DESCRIPTION_MAX}
               />
               <p className="text-xs text-muted-foreground mt-1.5">
-                {description.trim().length}/{REPORT_DESCRIPTION_MAX} characters
-                {description.trim().length > 0 && description.trim().length < REPORT_DESCRIPTION_MIN
-                  ? ` · at least ${REPORT_DESCRIPTION_MIN} required`
-                  : ''}
+                {optionalNote.trim().length}/{REPORT_DESCRIPTION_MAX} characters
               </p>
             </div>
 

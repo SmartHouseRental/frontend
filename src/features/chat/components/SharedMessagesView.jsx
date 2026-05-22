@@ -11,8 +11,10 @@ import {
   useMarkAsRead,
   useMessageReactions,
   useDeleteMessage,
+  useDeleteConversation,
   useChatSocket,
 } from '../hooks/useMessaging';
+import DeleteChatDialog from './DeleteChatDialog';
 import ConversationSidebar from './ConversationSidebar';
 import MessageHeader from './MessageHeader';
 import ChatWindow from './ChatWindow';
@@ -26,6 +28,7 @@ export default function SharedMessagesView({ role }) {
   const navigate = useNavigate();
   const [activeConversation, setActiveConversation] = useState(null);
   const [reportModal, setReportModal] = useState(null);
+  const [deleteChatOpen, setDeleteChatOpen] = useState(false);
   const [newMessage, setNewMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [showPanel, setShowPanel] = useState(false);
@@ -58,6 +61,7 @@ export default function SharedMessagesView({ role }) {
   const markAsReadMutation = useMarkAsRead();
   const { addReaction, removeReaction } = useMessageReactions();
   const deleteMessageMutation = useDeleteMessage();
+  const deleteConversationMutation = useDeleteConversation();
 
   // Phase 2 WebSocket Sync Hook
   const {
@@ -189,6 +193,24 @@ export default function SharedMessagesView({ role }) {
   const activeConv = conversations.find((c) => c.id === activeConversation);
   const totalUnread = conversations.reduce((sum, c) => sum + c.unread, 0);
 
+  const handleDeleteChatRequest = () => {
+    if (!activeConversation) return;
+    setDeleteChatOpen(true);
+  };
+
+  const handleConfirmDeleteChat = async () => {
+    if (!activeConversation) return;
+    try {
+      await deleteConversationMutation.mutateAsync(activeConversation);
+      setDeleteChatOpen(false);
+      setActiveConversation(null);
+      setShowPanel(false);
+      setNewMessage('');
+    } catch {
+      /* toast in hook */
+    }
+  };
+
   const handleReportOwner = () => {
     if (!activeConv?.ownerId) return;
 
@@ -263,6 +285,7 @@ export default function SharedMessagesView({ role }) {
                 isTyping={isTyping}
                 showReportMenu={role === 'renter'}
                 onReportOwner={handleReportOwner}
+                onDeleteChat={handleDeleteChatRequest}
               />
               {isLoadingMessages && messages.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center bg-muted/10">
@@ -305,6 +328,14 @@ export default function SharedMessagesView({ role }) {
           subjectName={reportModal.subjectName}
         />
       )}
+
+      <DeleteChatDialog
+        isOpen={deleteChatOpen}
+        subjectName={activeConv?.name}
+        isDeleting={deleteConversationMutation.isPending}
+        onConfirm={handleConfirmDeleteChat}
+        onCancel={() => setDeleteChatOpen(false)}
+      />
     </div>
   );
 }

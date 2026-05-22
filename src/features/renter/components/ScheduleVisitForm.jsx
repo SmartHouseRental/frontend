@@ -7,9 +7,17 @@ import { Calendar, Clock, MessageSquare, MapPin, Star, Home, Info, ChevronLeft, 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { useBookAppointment } from '../../visits/hooks/useAppointments';
+import { useBookAppointment, useAvailability } from '../../visits/hooks/useAppointments';
+import {
+  VISIT_TIME_SLOTS,
+  slotToMinutes,
+  computeBusySlotMap,
+  getBlockedEndSlots,
+  visitRangeConflicts,
+  parseTimeStr,
+} from '../../visits/utils/availability';
 
 const formSchema = z.object({
   date: z.string().min(1, 'Please select a date'),
@@ -17,15 +25,6 @@ const formSchema = z.object({
   endTime: z.string().min(1, 'Please select an end time'),
   message: z.string().optional(),
 });
-
-// Convert "09:00 AM" style string to total minutes from midnight for comparison
-const slotToMinutes = (slot) => {
-  const [time, period] = slot.split(' ');
-  let [h, m] = time.split(':').map(Number);
-  if (period === 'PM' && h < 12) h += 12;
-  if (period === 'AM' && h === 12) h = 0;
-  return h * 60 + m;
-};
 
 const getLocalizedStr = (field) => {
   if (!field) return '';
@@ -106,34 +105,35 @@ export default function ScheduleVisitForm({ property }) {
     });
   }
 
-  const timeSlots = [
-    '09:00 AM', '10:00 AM', '11:00 AM', 
-    '02:00 PM', '03:00 PM', '04:00 PM', 
-    '05:00 PM', '06:00 PM'
-  ];
+  const timeSlots = VISIT_TIME_SLOTS;
 
-  // Mock unavailable data (randomly for the month)
+  const {
+    data: busySlots = [],
+    isLoading: isLoadingAvailability,
+    isError: isAvailabilityError,
+    refetch: refetchAvailability,
+  } = useAvailability(property?.id, currentMonth);
+
+  useEffect(() => {
+    if (isAvailabilityError) {
+      toast.error('Could not load appointment availability. Some slots may be inaccurate.');
+    }
+  }, [isAvailabilityError]);
+
+  const { unavailableTimesPerDate, fullyBlockedDates } = useMemo(
+    () => computeBusySlotMap(busySlots, timeSlots),
+    [busySlots, timeSlots],
+  );
+
   const isDateUnavailable = (year, month, day) => {
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const dateObj = new Date(year, month, day);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    // Past dates are unavailable
-    if (dateObj < today) return true;
-    
-    // Mock random unavailable days (e.g., weekends or specific days)
-    const dayOfWeek = dateObj.getDay();
-    if (dayOfWeek === 0) return true; // Sundays unavailable
-    
-    // Some specific mock dates
-    const mocks = ['2026-05-15', '2026-05-20', '2026-05-25'];
-    return mocks.includes(dateStr);
-  };
 
-  const unavailableTimesPerDate = {
-    '2026-05-09': ['09:00 AM', '11:00 AM'],
-    '2026-05-10': ['02:00 PM', '03:00 PM'],
+    if (dateObj < today) return true;
+
+    return fullyBlockedDates.has(dateStr);
   };
 
   const handleDateSelect = (year, month, day) => {
@@ -145,6 +145,11 @@ export default function ScheduleVisitForm({ property }) {
     setValue('time', '', { shouldValidate: false });
   };
 
+  const blockedEndSlots = useMemo(() => {
+    if (!selectedDate || !selectedTime) return [];
+    return getBlockedEndSlots(busySlots, selectedDate, selectedTime, timeSlots);
+  }, [busySlots, selectedDate, selectedTime, timeSlots]);
+
   const handleTimeSelect = (time) => {
     if (unavailableTimesPerDate[selectedDate]?.includes(time)) return;
     setSelectedTime(time);
@@ -155,13 +160,17 @@ export default function ScheduleVisitForm({ property }) {
   };
 
   const handleEndTimeSelect = (time) => {
+    if (blockedEndSlots.includes(time)) return;
     setSelectedEndTime(time);
     setValue('endTime', time, { shouldValidate: true });
   };
 
-  // End time slots: only slots strictly after the selected start time
+  // End time slots: only slots strictly after the selected start time, excluding busy ranges
   const availableEndSlots = selectedTime
-    ? timeSlots.filter((t) => slotToMinutes(t) > slotToMinutes(selectedTime))
+    ? timeSlots.filter(
+        (t) =>
+          slotToMinutes(t) > slotToMinutes(selectedTime) && !blockedEndSlots.includes(t),
+      )
     : [];
 
   const changeMonth = (offset) => {
@@ -170,14 +179,6 @@ export default function ScheduleVisitForm({ property }) {
   };
 
   const { mutateAsync: bookVisit } = useBookAppointment();
-
-  const parseTimeStr = (timeStr) => {
-    const [time, period] = timeStr.split(' ');
-    let [hours, minutes] = time.split(':').map(Number);
-    if (period === 'PM' && hours < 12) hours += 12;
-    if (period === 'AM' && hours === 12) hours = 0;
-    return { hours, minutes };
-  };
 
   const onSubmit = async (data) => {
     try {
@@ -189,6 +190,12 @@ export default function ScheduleVisitForm({ property }) {
 
       const endsAt = new Date(data.date);
       endsAt.setHours(endH, endM, 0, 0);
+
+      if (visitRangeConflicts(busySlots, startsAt, endsAt)) {
+        toast.error('This time slot is no longer available. Please choose another time.');
+        refetchAvailability();
+        return;
+      }
 
       await bookVisit({
         propertyId: property.id,
@@ -235,7 +242,12 @@ export default function ScheduleVisitForm({ property }) {
             </div>
           </div>
 
-          <Card className="p-4 border-none shadow-sm ring-1 ring-border/50">
+          <Card
+            className={cn(
+              'p-4 border-none shadow-sm ring-1 ring-border/50 relative',
+              isLoadingAvailability && 'opacity-70',
+            )}
+          >
             <div className="grid grid-cols-7 gap-1 mb-2">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
                 <div key={day} className="text-center text-[10px] font-bold uppercase text-muted-foreground py-2">
@@ -330,21 +342,27 @@ export default function ScheduleVisitForm({ property }) {
               <p className="text-sm text-destructive/80 italic">No end times available after the selected start time.</p>
             ) : (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {availableEndSlots.map((time) => (
+                {availableEndSlots.map((time) => {
+                  const isBlocked = blockedEndSlots.includes(time);
+                  return (
                   <button
                     key={time}
                     type="button"
+                    disabled={isBlocked}
                     onClick={() => handleEndTimeSelect(time)}
                     className={cn(
                       "rounded-lg border py-2.5 text-sm font-medium transition-all",
                       selectedEndTime === time
                         ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                        : isBlocked
+                        ? "bg-muted/30 border-dashed border-muted-foreground/20 text-muted-foreground/50 cursor-not-allowed line-through"
                         : "bg-card hover:border-primary/50 hover:bg-primary/5 border-border text-foreground"
                     )}
                   >
                     {time}
                   </button>
-                ))}
+                  );
+                })}
               </div>
             )}
             {errors.endTime && <p className="text-destructive text-sm font-medium">{errors.endTime.message}</p>}

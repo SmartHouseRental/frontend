@@ -24,7 +24,6 @@ export const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest Listings', sortBy: 'createdAt', order: 'desc' },
   { value: 'low', label: 'Price: Low to High', sortBy: 'price', order: 'asc' },
   { value: 'high', label: 'Price: High to Low', sortBy: 'price', order: 'desc' },
-  { value: 'views', label: 'Most Viewed', sortBy: 'viewCount', order: 'desc' },
 ];
 
 const FILTER_PARAM_KEYS = ['category', 'minPrice', 'maxPrice', 'bedrooms', 'bathrooms'];
@@ -47,6 +46,9 @@ function parseOptionalNumber(value) {
 }
 
 export function getSortOption(sortValue) {
+  if (sortValue === 'views') {
+    return SORT_OPTIONS[0];
+  }
   return SORT_OPTIONS.find((o) => o.value === sortValue) || SORT_OPTIONS[0];
 }
 

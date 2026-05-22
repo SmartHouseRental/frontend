@@ -70,6 +70,7 @@ export default function ProfilePage() {
     profileFromState: profileFromState || (owner ? { role: 'owner' } : null),
   });
 
+  /** Profile is public; report still requires renter login at submit time */
   const showOwnerReport =
     isHostProfile && canRenterReportOwner(authUser, profileId);
 

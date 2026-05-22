@@ -11,7 +11,7 @@ export function getUserApiErrorMessage(error, fallback = 'Something went wrong.'
   const { status, data } = error.response;
 
   if (status === 401) {
-    return data?.message || 'Please sign in to view this profile.';
+    return data?.message || 'Unable to load this profile.';
   }
 
   if (status === 404) {
