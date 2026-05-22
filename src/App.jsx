@@ -15,6 +15,7 @@ import RenterLayout from './components/RenterLayout';
 import AppointmentsPage from './pages/renter/AppointmentsPage';
 import RenterAgreementsPage from './pages/renter/AgreementsPage';
 import RenterAgreementDetailPage from './pages/renter/AgreementDetailPage';
+import AgreementPaymentReturnPage from './pages/renter/AgreementPaymentReturnPage';
 import RenterReviewsPage from './pages/renter/ReviewsPage';
 import RenterProfilePage from './pages/renter/ProfilePage';
 import ScheduleVisitPage from './pages/renter/ScheduleVisitPage';
@@ -257,6 +258,16 @@ function App() {
             <Route path="help" element={<HelpSupportPage />} />
           </Route>
           
+          {/* Chapa return URL — must match backend FRONTEND_URL redirect */}
+          <Route
+            path="/agreements/payment/return"
+            element={
+              <ProtectedRoute allowedRoles={['renter']}>
+                <AgreementPaymentReturnPage />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Renter Dashboard Routing */}
           <Route path="/renter" element={
             <ProtectedRoute allowedRoles={['renter']}>

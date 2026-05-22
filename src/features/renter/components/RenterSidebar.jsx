@@ -27,7 +27,7 @@ const menuItems = [
     title: 'My Agreements',
     icon: FileText,
     path: '/renter/agreements',
-    description: 'View and sign contracts'
+    description: 'Offers, deposits & payments'
   },
   {
     title: 'My Reviews',
