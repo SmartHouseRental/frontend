@@ -6,6 +6,17 @@ export const agreementsApi = {
     return data;
   },
 
+  exportOwnerAgreements: async (params = {}) => {
+    const response = await apiClient.get('/owner/agreements/export', {
+      params,
+      responseType: 'blob',
+    });
+    // apiClient interceptors usually return response.data direct if it's JSON,
+    // but for blobs it might return the whole response or data inside depending on axios settings.
+    // Let's assume it returns data in { data } but sometimes it returns the blob directly.
+    return response.data || response;
+  },
+
   getAgreementDetail: async (agreementId) => {
     const { data } = await apiClient.get(`/agreements/${agreementId}`);
     return data;

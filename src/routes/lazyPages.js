@@ -47,6 +47,7 @@ export const EditPropertyPage = lazy(() => import('@/pages/owner/EditPropertyPag
 export const OwnerAppointmentsPage = lazy(() => import('@/pages/owner/AppointmentsPage'));
 export const OwnerAgreementsPage = lazy(() => import('@/pages/owner/AgreementsPage'));
 export const OwnerCreateAgreementPage = lazy(() => import('@/pages/owner/CreateAgreementPage'));
+export const OwnerEditAgreementPage = lazy(() => import('@/pages/owner/EditAgreementPage'));
 export const OwnerAgreementDetailPage = lazy(() => import('@/pages/owner/AgreementDetailPage'));
 export const MessagesPage = lazy(() => import('@/pages/owner/MessagesPage'));
 export const ReviewsPage = lazy(() => import('@/pages/owner/ReviewsPage'));

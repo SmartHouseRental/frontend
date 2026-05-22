@@ -35,15 +35,15 @@ import {
   Eye,
   XCircle,
   Loader2,
-  ChevronLeft,
   ChevronRight,
   Send,
+  Download,
 } from 'lucide-react';
 import { getLocalizedText } from '@/lib/utils/i18n';
 import EmptyState from '@/components/EmptyState';
 import ErrorState from '@/components/ErrorState';
 import { getApiErrorMessage, isSchemaSyncError } from '@/lib/apiErrors';
-import { useOwnerAgreements } from '../hooks/useAgreements';
+import { useOwnerAgreements, useExportAgreements } from '../hooks/useAgreements';
 import { AgreementStatusBadge } from './AgreementStatusBadge';
 import {
   unwrapOwnerAgreementsList,
@@ -64,12 +64,10 @@ export function OwnerAgreementsContent() {
 
   const queryParams = useMemo(
     () => ({
-      page,
-      limit,
       ...(statusFilter !== 'all' ? { status: statusFilter } : {}),
       ...(searchQuery.trim() ? { search: searchQuery.trim() } : {}),
     }),
-    [page, limit, statusFilter, searchQuery]
+    [statusFilter, searchQuery]
   );
 
   const { data, isLoading, isError, error, refetch } = useOwnerAgreements(queryParams);
@@ -77,6 +75,8 @@ export function OwnerAgreementsContent() {
     () => unwrapOwnerAgreementsList(data),
     [data]
   );
+
+  const exportMutation = useExportAgreements();
 
   const stats = useMemo(
     () => ({
@@ -90,6 +90,9 @@ export function OwnerAgreementsContent() {
   );
 
   const totalPages = Math.max(1, Math.ceil((meta.total || 0) / limit));
+  const paginatedAgreements = useMemo(() => {
+    return agreements.slice((page - 1) * limit, page * limit);
+  }, [agreements, page, limit]);
 
   if (isLoading) {
     return (
@@ -125,12 +128,27 @@ export function OwnerAgreementsContent() {
             Create lease offers, track renter responses, and security deposits.
           </p>
         </div>
-        <Button asChild className="gap-2 shrink-0">
-          <Link to="/owner/agreements/create">
-            <Plus size={16} />
-            New agreement
-          </Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <Button
+            variant="outline"
+            className="gap-2"
+            disabled={exportMutation.isPending || agreements.length === 0}
+            onClick={() => exportMutation.mutate()}
+          >
+            {exportMutation.isPending ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Download size={16} />
+            )}
+            Export CSV
+          </Button>
+          <Button asChild className="gap-2 shrink-0">
+            <Link to="/owner/agreements/create">
+              <Plus size={16} />
+              New agreement
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
@@ -212,134 +230,136 @@ export function OwnerAgreementsContent() {
         </Select>
       </Card>
 
-      {agreements.length === 0 ? (
-        <EmptyState
-          icon={Handshake}
-          title="No agreements yet"
-          description="Create a lease offer for a renter who has visited one of your properties."
-          actionLabel="Create agreement"
-          onAction={() => navigate('/owner/agreements/create')}
-        />
-      ) : (
-        <Card className="gap-0 overflow-hidden p-0">
-          <Table>
-            <TableHeader className="bg-muted/30">
-              <TableRow>
-                <TableHead className="px-4 py-3">Property</TableHead>
-                <TableHead className="px-4 py-3">Renter</TableHead>
-                <TableHead className="px-4 py-3">Rent</TableHead>
-                <TableHead className="px-4 py-3">Deposit (ETB)</TableHead>
-                <TableHead className="px-4 py-3">Status</TableHead>
-                <TableHead className="px-4 py-3">Created</TableHead>
-                <TableHead className="px-4 py-3 text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {agreements.map((a) => {
-                const image = getPropertyImage(a.property);
-                const title = getLocalizedText(a.property?.title);
-                return (
-                  <TableRow key={a.id} className="hover:bg-muted/10">
-                    <TableCell className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-muted">
-                          {image ? (
-                            <img src={image} alt="" className="h-full w-full object-cover" />
-                          ) : (
-                            <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
-                              —
-                            </div>
-                          )}
+      {
+        agreements.length === 0 ? (
+          <EmptyState
+            icon={Handshake}
+            title="No agreements yet"
+            description="Create a lease offer for a renter who has visited one of your properties."
+            actionLabel="Create agreement"
+            onAction={() => navigate('/owner/agreements/create')}
+          />
+        ) : (
+          <Card className="gap-0 overflow-hidden p-0">
+            <Table>
+              <TableHeader className="bg-muted/30">
+                <TableRow>
+                  <TableHead className="px-4 py-3">Property</TableHead>
+                  <TableHead className="px-4 py-3">Renter</TableHead>
+                  <TableHead className="px-4 py-3">Rent</TableHead>
+                  <TableHead className="px-4 py-3">Deposit (ETB)</TableHead>
+                  <TableHead className="px-4 py-3">Status</TableHead>
+                  <TableHead className="px-4 py-3">Created</TableHead>
+                  <TableHead className="px-4 py-3 text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paginatedAgreements.map((a) => {
+                  const image = getPropertyImage(a.property);
+                  const title = getLocalizedText(a.property?.title);
+                  return (
+                    <TableRow key={a.id} className="hover:bg-muted/10">
+                      <TableCell className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-muted">
+                            {image ? (
+                              <img src={image} alt="" className="h-full w-full object-cover" />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
+                                —
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-foreground line-clamp-1">
+                              {title || 'Property'}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground font-mono truncate max-w-[140px]">
+                              {a.id.slice(0, 12)}…
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-sm font-bold text-foreground line-clamp-1">
-                            {title || 'Property'}
-                          </p>
-                          <p className="text-[10px] text-muted-foreground font-mono truncate max-w-[140px]">
-                            {a.id.slice(0, 12)}…
-                          </p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-sm font-medium">
-                      {getRenterDisplayName(a.renter)}
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-sm font-bold">
-                      {formatCurrency(a.monthlyRent, a.currency)}
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-sm">
-                      {getDepositDisplay(a)}
-                    </TableCell>
-                    <TableCell className="px-4 py-3">
-                      <AgreementStatusBadge agreement={a} />
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-sm text-muted-foreground">
-                      {formatShortDate(a.createdAt)}
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <EllipsisVertical size={16} />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-44">
-                          <DropdownMenuItem asChild>
-                            <Link
-                              to={`/owner/agreements/${a.id}`}
-                              className="flex cursor-pointer items-center gap-2"
-                            >
-                              <Eye size={14} /> View details
-                            </Link>
-                          </DropdownMenuItem>
-                          {a.status === 'draft' && (
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-sm font-medium">
+                        {getRenterDisplayName(a.renter)}
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-sm font-bold">
+                        {formatCurrency(a.monthlyRent, a.currency)}
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-sm">
+                        {getDepositDisplay(a)}
+                      </TableCell>
+                      <TableCell className="px-4 py-3">
+                        <AgreementStatusBadge agreement={a} />
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-sm text-muted-foreground">
+                        {formatShortDate(a.createdAt)}
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <EllipsisVertical size={16} />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-44">
                             <DropdownMenuItem asChild>
                               <Link
                                 to={`/owner/agreements/${a.id}`}
                                 className="flex cursor-pointer items-center gap-2"
                               >
-                                <Send size={14} /> Send offer
+                                <Eye size={14} /> View details
                               </Link>
                             </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                            {a.status === 'draft' && (
+                              <DropdownMenuItem asChild>
+                                <Link
+                                  to={`/owner/agreements/${a.id}`}
+                                  className="flex cursor-pointer items-center gap-2"
+                                >
+                                  <Send size={14} /> Send offer
+                                </Link>
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
 
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-border bg-muted/20 px-6 py-4">
-              <p className="text-xs font-medium text-muted-foreground">
-                Page {page} of {totalPages} · {meta.total} total
-              </p>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8"
-                  disabled={page <= 1}
-                  onClick={() => setPage((p) => p - 1)}
-                >
-                  <ChevronLeft size={16} />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8"
-                  disabled={page >= totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  <ChevronRight size={16} />
-                </Button>
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between border-t border-border bg-muted/20 px-6 py-4">
+                <p className="text-xs font-medium text-muted-foreground">
+                  Page {page} of {totalPages} · {meta.total} total
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    disabled={page <= 1}
+                    onClick={() => setPage((p) => p - 1)}
+                  >
+                    <ChevronLeft size={16} />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    disabled={page >= totalPages}
+                    onClick={() => setPage((p) => p + 1)}
+                  >
+                    <ChevronRight size={16} />
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
-        </Card>
-      )}
-    </div>
+            )}
+          </Card>
+        )
+      }
+    </div >
   );
 }

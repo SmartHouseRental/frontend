@@ -22,6 +22,7 @@ import {
   AlertCircle,
   Mail,
   Phone,
+  Pencil,
 } from 'lucide-react';
 import { getLocalizedText } from '@/lib/utils/i18n';
 import {
@@ -140,6 +141,13 @@ export function OwnerAgreementDetailContent() {
             Send offer
           </Button>
         )}
+        {canSend && (
+          <Button variant="outline" className="gap-2" asChild>
+            <Link to={`/owner/agreements/${id}/edit`}>
+              <Pencil size={14} /> Edit draft
+            </Link>
+          </Button>
+        )}
         {canCancel && !showCancelConfirm && (
           <Button
             variant="outline"
@@ -230,13 +238,12 @@ export function OwnerAgreementDetailContent() {
                 return (
                   <div key={step.key} className="flex flex-1 min-w-[100px] flex-col items-center text-center">
                     <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                        done
+                      className={`flex h-10 w-10 items-center justify-center rounded-full ${done
                           ? 'bg-emerald-500 text-white'
                           : active
                             ? 'bg-primary text-primary-foreground ring-4 ring-primary/20'
                             : 'bg-muted text-muted-foreground'
-                      }`}
+                        }`}
                     >
                       {done ? <CheckCircle2 size={18} /> : <Icon size={18} />}
                     </div>

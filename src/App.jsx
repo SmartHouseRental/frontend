@@ -44,6 +44,7 @@ import {
   OwnerAppointmentsPage,
   OwnerAgreementsPage,
   OwnerCreateAgreementPage,
+  OwnerEditAgreementPage,
   OwnerAgreementDetailPage,
   MessagesPage,
   ReviewsPage,
@@ -428,6 +429,14 @@ function App() {
               element={
                 <LazyRoute>
                   <OwnerCreateAgreementPage />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path="agreements/:id/edit"
+              element={
+                <LazyRoute>
+                  <OwnerEditAgreementPage />
                 </LazyRoute>
               }
             />

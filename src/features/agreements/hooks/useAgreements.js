@@ -16,6 +16,25 @@ export const useOwnerAgreements = (params = {}, options = {}) => {
   });
 };
 
+export const useExportAgreements = () => {
+  return useMutation({
+    mutationFn: (params) => agreementsApi.exportOwnerAgreements(params),
+    onSuccess: (data) => {
+      const url = window.URL.createObjectURL(new Blob([data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `owner_agreements_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success('Agreements exported successfully');
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Failed to export agreements'));
+    },
+  });
+};
+
 /** Only use on Agreement detail page. */
 export const useAgreementDetail = (agreementId, options = {}) => {
   return useQuery({
@@ -52,6 +71,23 @@ export const useCreateAgreement = () => {
     },
     onError: (error) => {
       const msg = getApiErrorMessage(error, 'Failed to create agreement');
+      toast.error(isSchemaSyncError(error) ? `${msg} Try again after the app is redeployed.` : msg);
+    },
+  });
+};
+
+export const useUpdateDraftAgreement = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ agreementId, payload }) => agreementsApi.updateDraftAgreement(agreementId, payload),
+    onSuccess: (res, { agreementId }) => {
+      queryClient.invalidateQueries({ queryKey: agreementKeys.ownerLists() });
+      queryClient.invalidateQueries({ queryKey: agreementKeys.detail(agreementId) });
+      toast.success('Draft agreement updated successfully');
+    },
+    onError: (error) => {
+      const msg = getApiErrorMessage(error, 'Failed to update draft agreement');
       toast.error(isSchemaSyncError(error) ? `${msg} Try again after the app is redeployed.` : msg);
     },
   });
