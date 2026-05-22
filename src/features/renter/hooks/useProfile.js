@@ -1,13 +1,29 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { renterApi } from '../api';
 import { toast } from 'sonner';
+import { renterApi } from '../api';
+import { renterKeys } from './useAgreements';
+import { authKeys } from '@/features/auth/constants';
+import { getApiErrorMessage } from '../utils/apiErrors';
+import { mergeRawProfilePatch } from '../utils/profileMappers';
+
+function unwrapData(response) {
+  return response?.data ?? response;
+}
+
+function patchProfileCache(queryClient, updater) {
+  queryClient.setQueryData(renterKeys.profile(), (raw) => {
+    if (!raw) return raw;
+    return updater(raw);
+  });
+  queryClient.invalidateQueries({ queryKey: authKeys.me() });
+}
 
 export const useProfile = () => {
   return useQuery({
-    queryKey: ['profile'],
+    queryKey: renterKeys.profile(),
     queryFn: async () => {
       const response = await renterApi.getProfile();
-      return response.data; // Depending on actual response structure, maybe response.data.data or response.data.user
+      return unwrapData(response);
     },
   });
 };
@@ -16,18 +32,63 @@ export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data) => {
-      const response = await renterApi.updateProfile(data);
-      return response.data;
+    mutationFn: async (formData) => {
+      const response = await renterApi.updateProfile(formData);
+      return unwrapData(response);
     },
-    onSuccess: () => {
+    onSuccess: (updated) => {
+      patchProfileCache(queryClient, (raw) => mergeRawProfilePatch(raw, updated));
       toast.success('Profile updated successfully');
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
-      // Might want to invalidate auth/me as well if user data is kept there
-      queryClient.invalidateQueries({ queryKey: ['user'] });
     },
     onError: (error) => {
-      toast.error(error.response?.data?.message || 'Failed to update profile');
+      toast.error(getApiErrorMessage(error, 'Failed to update profile'));
+    },
+  });
+};
+
+export const useUpdateLanguage = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (language) => {
+      const response = await renterApi.updateLanguage({ language });
+      return unwrapData(response);
+    },
+    onSuccess: (result) => {
+      const language = result?.language;
+      patchProfileCache(queryClient, (raw) => ({
+        ...raw,
+        language,
+        preferredLanguage: language,
+      }));
+      toast.success('Language preference saved');
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Failed to update language'));
+    },
+  });
+};
+
+export const useUpdateNotificationPreferences = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (preferences) => {
+      const response = await renterApi.updateNotificationPreferences(preferences);
+      return unwrapData(response);
+    },
+    onSuccess: (prefs) => {
+      patchProfileCache(queryClient, (raw) => ({
+        ...raw,
+        notificationPreferences: {
+          ...(raw.notificationPreferences || {}),
+          ...prefs,
+        },
+      }));
+      toast.success('Notification preferences saved');
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Failed to update notifications'));
     },
   });
 };
@@ -35,14 +96,13 @@ export const useUpdateProfile = () => {
 export const useChangePassword = () => {
   return useMutation({
     mutationFn: async (data) => {
-      const response = await renterApi.changePassword(data);
-      return response.data;
+      return renterApi.changePassword(data);
     },
     onSuccess: () => {
       toast.success('Password changed successfully');
     },
     onError: (error) => {
-      toast.error(error.response?.data?.message || 'Failed to change password');
+      toast.error(getApiErrorMessage(error, 'Failed to change password'));
     },
   });
 };

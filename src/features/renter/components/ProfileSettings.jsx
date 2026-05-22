@@ -1,25 +1,90 @@
-import { useState, useEffect } from 'react';
-import { User, Mail, Phone, Save, Camera, CheckCircle2, Lock, ChevronDown, Loader2, Edit3, MapPin, Globe, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import {
+  User,
+  Save,
+  CheckCircle2,
+  Lock,
+  ChevronDown,
+  Loader2,
+  Edit3,
+  MapPin,
+  Globe,
+  X,
+  AlertCircle,
+  Camera,
+  Bell,
+} from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useProfile, useUpdateProfile, useChangePassword } from '../hooks/useProfile';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  useProfile,
+  useUpdateProfile,
+  useChangePassword,
+  useUpdateLanguage,
+  useUpdateNotificationPreferences,
+} from '../hooks/useProfile';
+import {
+  profileFromApi,
+  buildPersonalInfoFormData,
+  buildLocationFormData,
+  LANGUAGE_OPTIONS,
+  NOTIFICATION_FIELDS,
+  languageLabel,
+} from '../utils/profileMappers';
+import { getApiErrorMessage } from '../utils/apiErrors';
+
+function ProfileErrorState({ message, onRetry }) {
+  return (
+    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center px-6">
+      <div className="bg-destructive/10 rounded-full p-4">
+        <AlertCircle className="h-10 w-10 text-destructive" />
+      </div>
+      <p className="text-destructive font-medium">Failed to load profile</p>
+      <p className="text-sm text-muted-foreground max-w-md">{message}</p>
+      {onRetry && (
+        <Button variant="outline" onClick={onRetry}>
+          Try again
+        </Button>
+      )}
+    </div>
+  );
+}
 
 export default function ProfileSettings() {
-  const { data: profileResponse, isLoading } = useProfile();
+  const { data: profileData, isLoading, isError, error, refetch } = useProfile();
   const updateProfileMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
+  const updateLanguageMutation = useUpdateLanguage();
+  const updateNotificationsMutation = useUpdateNotificationPreferences();
+
+  const profile = profileFromApi(profileData);
+  const avatarInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
+    firstName: '',
+    lastName: '',
     phone: '',
     bio: '',
     location: '',
-    preferredLanguage: 'english',
+    language: 'en',
     image: '',
   });
+
+  const [notifications, setNotifications] = useState({
+    appointments: true,
+    agreements: true,
+    payments: true,
+    reviews: false,
+    reports: true,
+    system: false,
+  });
+
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
@@ -32,21 +97,30 @@ export default function ProfileSettings() {
   const [isEditingPreferences, setIsEditingPreferences] = useState(false);
   const [isPasswordExpanded, setIsPasswordExpanded] = useState(false);
 
-  const user = profileResponse?.user || profileResponse;
+  useEffect(() => {
+    if (!profile) return;
+    setFormData({
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      phone: profile.phone,
+      bio: profile.bio,
+      location: profile.location,
+      language: profile.language,
+      image: profile.image,
+    });
+    setNotifications(profile.notificationPreferences);
+    setAvatarFile(null);
+    if (avatarPreview) {
+      URL.revokeObjectURL(avatarPreview);
+      setAvatarPreview(null);
+    }
+  }, [profileData]);
 
   useEffect(() => {
-    if (user) {
-      setFormData({
-        first_name: user.first_name || user.firstName || user.name?.split(' ')[0] || '',
-        last_name: user.last_name || user.lastName || user.name?.split(' ').slice(1).join(' ') || '',
-        phone: user.phone || '',
-        bio: user.bio || '',
-        location: user.location || '',
-        preferredLanguage: user.preferredLanguage || user.language || 'english',
-        image: user.image || '',
-      });
-    }
-  }, [user]);
+    return () => {
+      if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+    };
+  }, [avatarPreview]);
 
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
@@ -58,148 +132,237 @@ export default function ProfileSettings() {
     setPasswordData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSavePersonalInfo = () => {
-    updateProfileMutation.mutate({
-      first_name: formData.first_name,
-      last_name: formData.last_name,
-      fullName: `${formData.first_name} ${formData.last_name}`.trim(),
-      phone: formData.phone,
-      bio: formData.bio,
-      image: formData.image,
-    }, {
-      onSuccess: () => setIsEditingPersonalInfo(false)
-    });
-  };
+  const handleAvatarSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const handleSaveLocation = () => {
-    updateProfileMutation.mutate({
-      location: formData.location,
-    }, {
-      onSuccess: () => setIsEditingLocation(false)
-    });
-  };
-
-  const handleSavePreferences = () => {
-    updateProfileMutation.mutate({
-      preferredLanguage: formData.preferredLanguage,
-    }, {
-      onSuccess: () => setIsEditingPreferences(false)
-    });
-  };
-
-  const handleSavePassword = () => {
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert("New password and confirm password do not match");
+    const allowed = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (!allowed.includes(file.type)) {
+      toast.error('Avatar must be a JPEG or PNG image');
       return;
     }
-    changePasswordMutation.mutate({
-      currentPassword: passwordData.currentPassword,
-      newPassword: passwordData.newPassword,
-    }, {
-      onSuccess: () => {
-        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-        setIsPasswordExpanded(false);
-      }
-    });
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Avatar must be 5 MB or smaller');
+      return;
+    }
+
+    if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
   };
 
+  const resetPersonalForm = () => {
+    if (!profile) return;
+    setFormData((prev) => ({
+      ...prev,
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      phone: profile.phone,
+      bio: profile.bio,
+      image: profile.image,
+    }));
+    setAvatarFile(null);
+    if (avatarPreview) {
+      URL.revokeObjectURL(avatarPreview);
+      setAvatarPreview(null);
+    }
+  };
+
+  const handleSavePersonalInfo = async () => {
+    const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+    if (fullName.length < 2) {
+      toast.error('Please enter your first and last name (at least 2 characters total).');
+      return;
+    }
+
+    try {
+      const fd = buildPersonalInfoFormData({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,
+        bio: formData.bio,
+        avatarFile,
+      });
+      await updateProfileMutation.mutateAsync(fd);
+      setIsEditingPersonalInfo(false);
+      setAvatarFile(null);
+      if (avatarPreview) {
+        URL.revokeObjectURL(avatarPreview);
+        setAvatarPreview(null);
+      }
+    } catch {
+      // toast handled in hook
+    }
+  };
+
+  const handleSaveLocation = async () => {
+    try {
+      await updateProfileMutation.mutateAsync(buildLocationFormData(formData.location));
+      setIsEditingLocation(false);
+    } catch {
+      // toast handled in hook
+    }
+  };
+
+  const handleSavePreferences = async () => {
+    try {
+      await Promise.all([
+        updateLanguageMutation.mutateAsync(formData.language),
+        updateNotificationsMutation.mutateAsync(notifications),
+      ]);
+      setIsEditingPreferences(false);
+    } catch {
+      // toasts handled in hooks
+    }
+  };
+
+  const handleSavePassword = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error('New password and confirm password do not match');
+      return;
+    }
+
+    try {
+      await changePasswordMutation.mutateAsync({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      });
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      setIsPasswordExpanded(false);
+    } catch {
+      // toast handled in hook
+    }
+  };
+
+  const isSavingPersonal = updateProfileMutation.isPending;
+  const isSavingLocation = updateProfileMutation.isPending;
+  const isSavingPreferences =
+    updateLanguageMutation.isPending || updateNotificationsMutation.isPending;
+
   if (isLoading) {
-    return <div className="flex justify-center items-center h-64">Loading profile...</div>;
+    return (
+      <div className="flex justify-center items-center h-64 gap-3">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-sm text-muted-foreground">Loading profile...</p>
+      </div>
+    );
   }
 
-  const emailVerified = user?.emailVerified ?? false;
+  if (isError) {
+    return (
+      <ProfileErrorState
+        message={getApiErrorMessage(error, 'Unable to load your profile.')}
+        onRetry={() => refetch()}
+      />
+    );
+  }
+
+  if (!profile) {
+    return (
+      <ProfileErrorState
+        message="Profile data was empty. Please try again."
+        onRetry={() => refetch()}
+      />
+    );
+  }
+
+  const displayImage = avatarPreview || formData.image;
+  const displayName =
+    formData.firstName || formData.lastName
+      ? `${formData.firstName} ${formData.lastName}`.trim()
+      : 'Renter';
 
   return (
     <div className="space-y-8 pb-12">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Account Settings</h1>
-          <p className="text-muted-foreground mt-1">Manage your renter profile and settings.</p>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Account Settings</h1>
+        <p className="text-muted-foreground mt-1">Manage your renter profile and settings.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Left Side: Avatar Card */}
         <div className="lg:col-span-1 space-y-6">
-          <Card className="border-none shadow-sm bg-white text-center p-8">
-            <div className="relative mx-auto w-32 h-32 mb-6 group">
-              <div className="w-full h-full rounded-full bg-slate-100 flex items-center justify-center border-4 border-white shadow-md overflow-hidden">
-                {formData.image ? (
-                  <img src={formData.image} alt="Profile" className="w-full h-full object-cover" />
+          <Card className="border-none shadow-sm bg-card text-center p-8">
+            <div className="relative mx-auto w-32 h-32 mb-6">
+              <div className="w-full h-full rounded-full bg-muted flex items-center justify-center border-4 border-background shadow-md overflow-hidden">
+                {displayImage ? (
+                  <img src={displayImage} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
-                  <User className="h-12 w-12 text-slate-300" />
+                  <User className="h-12 w-12 text-muted-foreground" />
                 )}
               </div>
+              {isEditingPersonalInfo && (
+                <>
+                  <input
+                    ref={avatarInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/jpg"
+                    className="hidden"
+                    onChange={handleAvatarSelect}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => avatarInputRef.current?.click()}
+                    className="absolute bottom-0 right-0 flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors"
+                    title="Upload photo"
+                  >
+                    <Camera className="h-4 w-4" />
+                  </button>
+                </>
+              )}
             </div>
-            <h3 className="text-xl font-bold text-slate-900">
-              {formData.first_name || formData.last_name
-                ? `${formData.first_name} ${formData.last_name}`
-                : user?.fullName || 'Renter'}
-            </h3>
-            <p className="text-sm text-muted-foreground font-medium mb-4">{user?.email || 'renter@example.com'}</p>
-            
-            {/* Email Verified Badge */}
-            {emailVerified ? (
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <h3 className="text-xl font-bold text-foreground">{displayName}</h3>
+            <p className="text-sm text-muted-foreground font-medium mb-4">{profile.email}</p>
+
+            {profile.emailVerified ? (
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 <span>Email Verified</span>
               </div>
             ) : (
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-muted text-muted-foreground border">
                 <span>Email Unverified</span>
               </div>
             )}
           </Card>
         </div>
 
-        {/* Right Side: Editable Sections */}
         <div className="lg:col-span-3 space-y-8">
-          
-          {/* Section 1: Personal Information */}
-          <Card className="border-none shadow-sm bg-white p-8">
+          {/* Personal Information */}
+          <Card className="border-none shadow-sm bg-card p-8">
             <CardHeader className="p-0 mb-8 flex flex-row items-center justify-between">
-              <CardTitle className="text-2xl font-bold text-slate-900">Personal Information</CardTitle>
+              <CardTitle className="text-2xl font-bold">Personal Information</CardTitle>
               {!isEditingPersonalInfo ? (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setIsEditingPersonalInfo(true)}
-                  className="text-muted-foreground hover:text-primary transition-colors border border-slate-200"
-                  title="Edit Personal Information"
+                  className="border"
+                  title="Edit"
                 >
                   <Edit3 className="h-4 w-4" />
                 </Button>
               ) : (
                 <div className="flex items-center gap-2">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={() => {
-                      // Reset and cancel
-                      setFormData(prev => ({
-                        ...prev,
-                        first_name: user?.first_name || user?.firstName || '',
-                        last_name: user?.last_name || user?.lastName || '',
-                        phone: user?.phone || '',
-                        bio: user?.bio || '',
-                        image: user?.image || '',
-                      }));
+                      resetPersonalForm();
                       setIsEditingPersonalInfo(false);
                     }}
-                    className="text-muted-foreground hover:text-slate-800"
                     title="Cancel"
                   >
                     <X className="h-4 w-4" />
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={handleSavePersonalInfo}
-                    disabled={updateProfileMutation.isPending}
-                    className="text-primary hover:bg-primary/5 border border-slate-200"
-                    title="Save Changes"
+                    disabled={isSavingPersonal}
+                    className="border"
+                    title="Save"
                   >
-                    {updateProfileMutation.isPending ? (
+                    {isSavingPersonal ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                       <Save className="h-4 w-4" />
@@ -212,78 +375,75 @@ export default function ProfileSettings() {
               {!isEditingPersonalInfo ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">First Name</span>
-                    <span className="text-sm font-semibold text-slate-800">{formData.first_name || '—'}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                      First Name
+                    </span>
+                    <span className="text-sm font-semibold">{formData.firstName || '—'}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Last Name</span>
-                    <span className="text-sm font-semibold text-slate-800">{formData.last_name || '—'}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                      Last Name
+                    </span>
+                    <span className="text-sm font-semibold">{formData.lastName || '—'}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Phone Number</span>
-                    <span className="text-sm font-semibold text-slate-800">{formData.phone || '—'}</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Avatar URL</span>
-                    <span className="text-sm font-semibold text-slate-800 truncate block max-w-xs">{formData.image || '—'}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                      Phone
+                    </span>
+                    <span className="text-sm font-semibold">{formData.phone || '—'}</span>
                   </div>
                   <div className="md:col-span-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Bio</span>
-                    <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{formData.bio || 'No bio written yet.'}</p>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                      Bio
+                    </span>
+                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                      {formData.bio || 'No bio written yet.'}
+                    </p>
                   </div>
                 </div>
               ) : (
-                <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">First Name</Label>
-                      <Input 
-                        name="first_name"
-                        value={formData.first_name}
+                      <Label>First Name</Label>
+                      <Input
+                        name="firstName"
+                        value={formData.firstName}
                         onChange={handleProfileChange}
-                        placeholder="John" 
-                        className="h-12 rounded-xl" 
+                        className="h-12 rounded-xl"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Last Name</Label>
-                      <Input 
-                        name="last_name"
-                        value={formData.last_name}
+                      <Label>Last Name</Label>
+                      <Input
+                        name="lastName"
+                        value={formData.lastName}
                         onChange={handleProfileChange}
-                        placeholder="Doe" 
-                        className="h-12 rounded-xl" 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Phone Number</Label>
-                      <Input 
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleProfileChange}
-                        placeholder="+251 (9) 00-00-00-00" 
-                        className="h-12 rounded-xl" 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Avatar Image URL</Label>
-                      <Input 
-                        name="image"
-                        value={formData.image}
-                        onChange={handleProfileChange}
-                        placeholder="https://example.com/avatar.jpg" 
-                        className="h-12 rounded-xl" 
+                        className="h-12 rounded-xl"
                       />
                     </div>
                     <div className="space-y-2 md:col-span-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Bio</Label>
+                      <Label>Phone</Label>
+                      <Input
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleProfileChange}
+                        placeholder="+251911223344"
+                        className="h-12 rounded-xl"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Use international format, e.g. +251911223344
+                      </p>
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label>Bio</Label>
                       <textarea
                         name="bio"
                         value={formData.bio}
                         onChange={handleProfileChange}
-                        placeholder="Write a short bio about yourself..." 
                         rows={4}
-                        className="flex w-full rounded-xl border border-input bg-transparent px-3 py-3 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" 
+                        maxLength={500}
+                        className="flex w-full rounded-xl border border-input bg-transparent px-3 py-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       />
                     </div>
                   </div>
@@ -292,46 +452,37 @@ export default function ProfileSettings() {
             </CardContent>
           </Card>
 
-          {/* Section 2: Address & Location */}
-          <Card className="border-none shadow-sm bg-white p-8">
+          {/* Location */}
+          <Card className="border-none shadow-sm bg-card p-8">
             <CardHeader className="p-0 mb-8 flex flex-row items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <MapPin className="h-5 w-5 text-slate-400" />
-                <CardTitle className="text-2xl font-bold text-slate-900">Address & Location</CardTitle>
+                <MapPin className="h-5 w-5 text-muted-foreground" />
+                <CardTitle className="text-2xl font-bold">Address & Location</CardTitle>
               </div>
               {!isEditingLocation ? (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={() => setIsEditingLocation(true)}
-                  className="text-muted-foreground hover:text-primary transition-colors border border-slate-200"
-                  title="Edit Location"
-                >
+                <Button variant="ghost" size="icon" onClick={() => setIsEditingLocation(true)} className="border">
                   <Edit3 className="h-4 w-4" />
                 </Button>
               ) : (
                 <div className="flex items-center gap-2">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={() => {
-                      setFormData(prev => ({ ...prev, location: user?.location || '' }));
+                      setFormData((prev) => ({ ...prev, location: profile.location }));
                       setIsEditingLocation(false);
                     }}
-                    className="text-muted-foreground hover:text-slate-800"
-                    title="Cancel"
                   >
                     <X className="h-4 w-4" />
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={handleSaveLocation}
-                    disabled={updateProfileMutation.isPending}
-                    className="text-primary hover:bg-primary/5 border border-slate-200"
-                    title="Save Changes"
+                    disabled={isSavingLocation}
+                    className="border"
                   >
-                    {updateProfileMutation.isPending ? (
+                    {isSavingLocation ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                       <Save className="h-4 w-4" />
@@ -342,67 +493,62 @@ export default function ProfileSettings() {
             </CardHeader>
             <CardContent className="p-0">
               {!isEditingLocation ? (
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Current Location</span>
-                  <span className="text-sm font-semibold text-slate-800">{formData.location || 'No location set yet.'}</span>
-                </div>
+                <span className="text-sm font-semibold">
+                  {formData.location || 'No location set yet.'}
+                </span>
               ) : (
-                <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 max-w-md">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Location / Address</Label>
-                    <Input 
-                      name="location"
-                      value={formData.location}
-                      onChange={handleProfileChange}
-                      placeholder="e.g. Bole, Addis Ababa, Ethiopia" 
-                      className="h-12 rounded-xl" 
-                    />
-                  </div>
+                <div className="max-w-md space-y-2">
+                  <Label>Location / Address</Label>
+                  <Input
+                    name="location"
+                    value={formData.location}
+                    onChange={handleProfileChange}
+                    placeholder="e.g. Bole, Addis Ababa"
+                    className="h-12 rounded-xl"
+                    maxLength={200}
+                  />
                 </div>
               )}
             </CardContent>
           </Card>
 
-          {/* Section 3: Preferences */}
-          <Card className="border-none shadow-sm bg-white p-8">
+          {/* Preferences */}
+          <Card className="border-none shadow-sm bg-card p-8">
             <CardHeader className="p-0 mb-8 flex flex-row items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <Globe className="h-5 w-5 text-slate-400" />
-                <CardTitle className="text-2xl font-bold text-slate-900">Preferences</CardTitle>
+                <Globe className="h-5 w-5 text-muted-foreground" />
+                <CardTitle className="text-2xl font-bold">Preferences</CardTitle>
               </div>
               {!isEditingPreferences ? (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setIsEditingPreferences(true)}
-                  className="text-muted-foreground hover:text-primary transition-colors border border-slate-200"
-                  title="Edit Preferences"
+                  className="border"
                 >
                   <Edit3 className="h-4 w-4" />
                 </Button>
               ) : (
                 <div className="flex items-center gap-2">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={() => {
-                      setFormData(prev => ({ ...prev, preferredLanguage: user?.preferredLanguage || 'english' }));
+                      setFormData((prev) => ({ ...prev, language: profile.language }));
+                      setNotifications(profile.notificationPreferences);
                       setIsEditingPreferences(false);
                     }}
-                    className="text-muted-foreground hover:text-slate-800"
-                    title="Cancel"
                   >
                     <X className="h-4 w-4" />
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={handleSavePreferences}
-                    disabled={updateProfileMutation.isPending}
-                    className="text-primary hover:bg-primary/5 border border-slate-200"
-                    title="Save Changes"
+                    disabled={isSavingPreferences}
+                    className="border"
                   >
-                    {updateProfileMutation.isPending ? (
+                    {isSavingPreferences ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                       <Save className="h-4 w-4" />
@@ -411,123 +557,153 @@ export default function ProfileSettings() {
                 </div>
               )}
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent className="p-0 space-y-6">
               {!isEditingPreferences ? (
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Preferred Language</span>
-                  <span className="text-sm font-semibold text-slate-800 capitalize">{formData.preferredLanguage || 'English'}</span>
-                </div>
+                <>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                      Language
+                    </span>
+                    <span className="text-sm font-semibold">{languageLabel(formData.language)}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-2">
+                      Notifications
+                    </span>
+                    <ul className="text-sm space-y-1 text-muted-foreground">
+                      {NOTIFICATION_FIELDS.map(({ key, label }) => (
+                        <li key={key}>
+                          {label}:{' '}
+                          <span className="font-medium text-foreground">
+                            {notifications[key] ? 'On' : 'Off'}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
               ) : (
-                <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 max-w-xs">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Preferred Language</Label>
+                <>
+                  <div className="max-w-xs space-y-2">
+                    <Label>Preferred language</Label>
                     <select
-                      name="preferredLanguage"
-                      value={formData.preferredLanguage}
+                      name="language"
+                      value={formData.language}
                       onChange={handleProfileChange}
-                      className="flex h-12 w-full rounded-xl border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      className="flex h-12 w-full rounded-xl border border-input bg-transparent px-3 text-sm"
                     >
-                      <option value="english">English</option>
-                      <option value="amharic">Amharic</option>
+                      {LANGUAGE_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
-                </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-sm font-semibold">
+                      <Bell className="h-4 w-4 text-muted-foreground" />
+                      Email notifications
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {NOTIFICATION_FIELDS.map(({ key, label }) => (
+                        <label
+                          key={key}
+                          className="flex items-center gap-3 rounded-xl border border-border/60 px-4 py-3 cursor-pointer hover:bg-muted/30"
+                        >
+                          <Checkbox
+                            checked={notifications[key]}
+                            onCheckedChange={(checked) =>
+                              setNotifications((prev) => ({ ...prev, [key]: Boolean(checked) }))
+                            }
+                          />
+                          <span className="text-sm">{label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </>
               )}
             </CardContent>
           </Card>
 
-          {/* Section 4: Security (Collapsable) */}
-          <Card className="border-none shadow-sm bg-white p-8">
+          {/* Security */}
+          <Card className="border-none shadow-sm bg-card p-8">
             <CardHeader className="p-0 mb-8 flex flex-row items-center justify-between">
-              <CardTitle className="text-2xl font-bold text-slate-900">Security</CardTitle>
+              <CardTitle className="text-2xl font-bold">Security</CardTitle>
               {isPasswordExpanded && (
-                <Button 
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsPasswordExpanded(false)}
-                  className="text-muted-foreground hover:text-slate-800 rounded-xl"
-                  title="Cancel"
-                >
+                <Button variant="ghost" size="icon" onClick={() => setIsPasswordExpanded(false)}>
                   <ChevronDown className="h-5 w-5 rotate-90" />
                 </Button>
               )}
             </CardHeader>
             <CardContent className="p-0">
               {!isPasswordExpanded ? (
-                <div className="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                <div className="flex items-center justify-between p-5 bg-muted/40 rounded-2xl border border-dashed">
                   <div className="flex items-center gap-3.5">
                     <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                       <Lock className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-slate-800">Password Settings</h4>
-                      <p className="text-xs text-muted-foreground mt-0.5">Click the update icon to change your password</p>
+                      <h4 className="text-sm font-semibold">Password</h4>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Min 8 characters with upper, lower, number, and special character
+                      </p>
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsPasswordExpanded(true)}
-                    className="text-primary hover:bg-primary/5 rounded-xl h-10 w-10 border border-slate-200 bg-white shadow-sm"
-                    title="Update Password"
-                  >
+                  <Button variant="outline" size="icon" onClick={() => setIsPasswordExpanded(true)}>
                     <Edit3 className="h-4 w-4" />
                   </Button>
                 </div>
               ) : (
-                <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="space-y-6">
                   <div className="space-y-2 max-w-md">
-                    <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Current Password</Label>
-                    <Input 
+                    <Label>Current password</Label>
+                    <Input
                       type="password"
                       name="currentPassword"
                       value={passwordData.currentPassword}
                       onChange={handlePasswordChange}
-                      placeholder="Enter current password" 
-                      className="h-12 rounded-xl" 
+                      className="h-12 rounded-xl"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl">
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">New Password</Label>
-                      <Input 
+                      <Label>New password</Label>
+                      <Input
                         type="password"
                         name="newPassword"
                         value={passwordData.newPassword}
                         onChange={handlePasswordChange}
-                        placeholder="Enter new password" 
-                        className="h-12 rounded-xl" 
+                        className="h-12 rounded-xl"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Confirm New Password</Label>
-                      <Input 
+                      <Label>Confirm new password</Label>
+                      <Input
                         type="password"
                         name="confirmPassword"
                         value={passwordData.confirmPassword}
                         onChange={handlePasswordChange}
-                        placeholder="Confirm new password" 
-                        className="h-12 rounded-xl" 
+                        className="h-12 rounded-xl"
                       />
                     </div>
                   </div>
-                  
-                  {/* Password Card Save Changes Button with text AND icon */}
-                  <div className="pt-2">
-                    <Button 
-                      onClick={handleSavePassword}
-                      disabled={changePasswordMutation.isPending || !passwordData.currentPassword || !passwordData.newPassword}
-                      className="font-bold shadow-lg shadow-primary/10 rounded-xl px-5 h-12"
-                      title="Save Changes"
-                    >
-                      {changePasswordMutation.isPending ? (
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      ) : (
-                        <Save className="h-4 w-4 mr-2" />
-                      )}
-                      Save Changes
-                    </Button>
-                  </div>
+                  <Button
+                    onClick={handleSavePassword}
+                    disabled={
+                      changePasswordMutation.isPending ||
+                      !passwordData.currentPassword ||
+                      !passwordData.newPassword
+                    }
+                    className="rounded-xl h-12"
+                  >
+                    {changePasswordMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4 mr-2" />
+                    )}
+                    Save password
+                  </Button>
                 </div>
               )}
             </CardContent>

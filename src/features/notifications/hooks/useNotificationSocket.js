@@ -29,13 +29,12 @@ export function useNotificationSocket() {
     });
 
     // Real-time Event Listeners
-    socket.on('notification:new', (notification) => {
-      // Invalidate query to fetch the latest unread count and list
-      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+    socket.on('notification:new', () => {
+      queryClient.invalidateQueries({ queryKey: notificationKeys.lists() });
     });
 
-    socket.on('notification:updated', (notification) => {
-      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+    socket.on('notification:updated', () => {
+      queryClient.invalidateQueries({ queryKey: notificationKeys.lists() });
     });
 
     return () => {

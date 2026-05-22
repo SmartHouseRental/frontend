@@ -13,7 +13,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useLogout } from '@/features/auth/hooks/useLogout';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useNotifications } from '@/features/notifications/hooks/useNotifications';
+import { useNotifications, getUnreadCount } from '@/features/notifications/hooks/useNotifications';
 import { Bell } from 'lucide-react';
 
 const menuItems = [
@@ -53,7 +53,7 @@ export default function RenterSidebar({ isOpen, onClose }) {
   const { user } = useAuth();
   const logoutMutation = useLogout();
   const { data: notifications = [] } = useNotifications();
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = getUnreadCount(notifications);
 
   const handleLogout = () => {
     logoutMutation.mutate();
