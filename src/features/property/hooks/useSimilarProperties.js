@@ -1,12 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
-import axiosInstance from '@/lib/axios';
+import { propertyApi } from '../api';
 import { propertyKeys } from './useProperty';
 
-export const useSimilarProperties = (id) => {
+export const useSimilarProperties = (id, options = {}) => {
+  const limit = options.limit ?? 12;
+
   return useQuery({
-    queryKey: [...propertyKeys.detail(id), 'similar'],
-    queryFn: () => axiosInstance.get(`/api/v1/properties/${id}/similar`),
+    queryKey: [...propertyKeys.detail(id), 'similar', { limit }],
+    queryFn: () => propertyApi.getSimilarProperties(id, { limit }),
     enabled: !!id,
-    select: (response) => response.data,
+    select: (response) => (Array.isArray(response?.data) ? response.data : []),
+    staleTime: 60 * 1000,
   });
 };

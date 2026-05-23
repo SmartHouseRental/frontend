@@ -18,7 +18,18 @@ export default function SimilarProperties({ currentId }) {
         );
     }
 
-    if (isError || !similar || similar.length === 0) return null;
+    if (isError) {
+        return (
+            <div className="mt-16 flex flex-col items-center gap-3 border-t pt-12 text-center">
+                <p className="text-sm text-muted-foreground">Could not load similar properties.</p>
+                <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
+                    Retry
+                </Button>
+            </div>
+        );
+    }
+
+    if (!similar || similar.length === 0) return null;
 
     return (
         <section className="mt-16 border-t pt-12">

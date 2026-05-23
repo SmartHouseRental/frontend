@@ -22,7 +22,33 @@ export const propertyApi = {
 
     return axiosInstance.get('/api/v1/properties', { params: cleanedParams });
   },
+
+  /** GET /api/v1/properties/nearby — public; requires lat & lng query params */
+  getNearbyProperties: (params) => {
+    const numericKeys = new Set(['lat', 'lng', 'radius', 'page', 'limit']);
+
+    const cleanedParams = Object.entries(params).reduce((acc, [key, value]) => {
+      if (value === '' || value === null || value === undefined) return acc;
+      if (key === 'status') {
+        acc[key] = String(value).toUpperCase();
+        return acc;
+      }
+      if (numericKeys.has(key)) {
+        const n = Number(value);
+        if (Number.isFinite(n)) acc[key] = n;
+        return acc;
+      }
+      acc[key] = value;
+      return acc;
+    }, {});
+
+    return axiosInstance.get('/api/v1/properties/nearby', { params: cleanedParams });
+  },
+
   getProperty: (id) => axiosInstance.get(`/api/v1/properties/${id}`),
+
+  getSimilarProperties: (id, params = {}) =>
+    axiosInstance.get(`/api/v1/properties/${id}/similar`, { params }),
   createProperty: (data) => axiosInstance.post('/api/v1/properties', data, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),

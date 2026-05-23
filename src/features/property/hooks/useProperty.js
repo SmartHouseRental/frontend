@@ -5,6 +5,7 @@ export const propertyKeys = {
   all: ['properties'],
   lists: () => [...propertyKeys.all, 'list'],
   list: (filters) => [...propertyKeys.lists(), filters],
+  nearby: (params) => [...propertyKeys.all, 'nearby', params],
   details: () => [...propertyKeys.all, 'detail'],
   detail: (id) => [...propertyKeys.details(), id],
 };
