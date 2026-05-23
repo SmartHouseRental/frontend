@@ -1,147 +1,159 @@
-import { Check, EyeOff, X } from 'lucide-react';
+import { Check, X, FileText, ExternalLink, ImageIcon, IdCard, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useAdminResolveVerification } from '@/features/admin/hooks/useAdmin';
+import EmptyState from '@/components/EmptyState';
 
-function VerficationTab() {
+const STATUS_STYLES = {
+  pending: 'bg-amber-100 text-amber-800 border-amber-200',
+  under_review: 'bg-blue-100 text-blue-800 border-blue-200',
+  approved: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+  rejected: 'bg-rose-100 text-rose-800 border-rose-200',
+};
+
+function isImageUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  return /\.(jpe?g|png|gif|webp|bmp)(\?|$)/i.test(url) || url.includes('/image');
+}
+
+function DocumentPreviewCard({ label, url, icon: Icon }) {
+  const showImage = isImageUrl(url);
+
   return (
-    <div className="col-span-12 space-y-8 lg:col-span-8 xl:col-span-9">
-      <div className="border-primary/10 rounded-xl border bg-white p-8 dark:bg-zinc-900">
-        <h3 className="text-primary mb-8 text-sm font-bold tracking-widest uppercase">
-          Verification Progress
-        </h3>
-        <div className="relative flex justify-between">
-          <div className="bg-primary/10 absolute top-5 left-0 z-0 h-0.5 w-full"></div>
-          <div className="bg-accent absolute top-5 left-0 z-0 h-0.5 w-1/2"></div>
-          <div className="relative z-10 flex flex-col items-center gap-3">
-            <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-full shadow-lg">
-              <Check size={18} className="text-white" />
-            </div>
-            <span className="text-primary text-xs font-bold">Submitted</span>
+    <Card className="border-primary/15 overflow-hidden shadow-sm transition-shadow hover:shadow-md">
+      <div className="bg-muted/40 relative aspect-[4/3] overflow-hidden">
+        {showImage ? (
+          <img src={url} alt={label} className="h-full w-full object-cover" />
+        ) : (
+          <div className="flex h-full flex-col items-center justify-center gap-2 text-primary/50">
+            <Icon size={36} strokeWidth={1.25} />
+            <span className="text-muted-foreground text-[10px] font-semibold uppercase tracking-wider">
+              Document
+            </span>
           </div>
+        )}
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2">
+          <p className="text-xs font-bold text-white">{label}</p>
+        </div>
+      </div>
+      <CardContent className="flex items-center justify-between gap-2 p-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="bg-primary/10 text-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-md">
+            <Icon size={16} />
+          </div>
+          <p className="truncate text-xs font-medium">{label}</p>
+        </div>
+        <Button variant="outline" size="sm" className="h-8 shrink-0 gap-1 text-xs" asChild>
+          <a href={url} target="_blank" rel="noreferrer">
+            <ExternalLink size={14} />
+            View
+          </a>
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
 
-          <div className="relative z-10 flex flex-col items-center gap-3">
-            <div className="bg-accent flex h-10 w-10 items-center justify-center rounded-full shadow-lg">
-              <EyeOff className="text-white" size={18} />
+function VerficationTab({ user }) {
+  const resolveVerification = useAdminResolveVerification();
+  const docs = user?.verificationDocs || [];
+
+  if (docs.length === 0) {
+    return (
+      <EmptyState
+        title="No verification documents"
+        description="This user has not submitted verification documents yet."
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      {docs.map((doc) => {
+        const files = [
+          { key: 'front', label: 'National ID (Front)', url: doc.frontUrl, icon: IdCard },
+          { key: 'back', label: 'National ID (Back)', url: doc.backUrl, icon: IdCard },
+          { key: 'live', label: 'Live verification photo', url: doc.livePhotoUrl, icon: Camera },
+        ].filter((f) => f.url);
+
+        const statusStyle =
+          STATUS_STYLES[doc.status] || 'bg-muted text-muted-foreground border-border';
+
+        return (
+          <div
+            key={doc.id}
+            className="border-primary/10 space-y-5 rounded-2xl border bg-white p-6 shadow-sm dark:bg-zinc-900"
+          >
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex items-start gap-4">
+                <div className="bg-primary/10 text-primary flex h-12 w-12 shrink-0 items-center justify-center rounded-xl">
+                  <FileText size={24} />
+                </div>
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h4 className="text-primary font-bold">Verification submission</h4>
+                    <Badge variant="outline" className={`text-[10px] font-bold uppercase ${statusStyle}`}>
+                      {(doc.status || 'pending').replace('_', ' ')}
+                    </Badge>
+                  </div>
+                  <p className="text-muted-foreground mt-1 text-sm">
+                    Submitted{' '}
+                    {doc.submittedAt
+                      ? new Date(doc.submittedAt).toLocaleString()
+                      : '—'}
+                  </p>
+                  {doc.note && (
+                    <p className="text-muted-foreground mt-2 text-sm">
+                      <span className="font-medium text-foreground">Note:</span> {doc.note}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {(doc.status === 'pending' || doc.status === 'under_review') && (
+                <div className="flex shrink-0 gap-2">
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      resolveVerification.mutate({ id: doc.id, status: 'approved' })
+                    }
+                  >
+                    <Check size={16} /> Approve
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() =>
+                      resolveVerification.mutate({ id: doc.id, status: 'rejected' })
+                    }
+                  >
+                    <X size={16} /> Reject
+                  </Button>
+                </div>
+              )}
             </div>
-            <span className="text-accent text-xs font-bold">Under Review</span>
+
+            {files.length > 0 ? (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {files.map((file) => (
+                  <DocumentPreviewCard
+                    key={`${doc.id}-${file.key}`}
+                    label={file.label}
+                    url={file.url}
+                    icon={file.icon}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-muted-foreground flex items-center gap-2 rounded-lg border border-dashed p-6 text-sm">
+                <ImageIcon size={18} />
+                No document files attached to this submission.
+              </div>
+            )}
           </div>
-          <div className="relative z-10 flex flex-col items-center gap-3">
-            <div className="bg-primary/20 flex h-10 w-10 items-center justify-center rounded-full">
-              <Check className="text-white" size={10} />
-            </div>
-            <span className="text-primary/40 text-xs font-bold">Verified</span>
-          </div>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-        <div className="border-primary/10 flex flex-col overflow-hidden rounded-xl border bg-white shadow-sm dark:bg-zinc-900">
-          <div className="bg-bg-warm group relative flex h-48 items-center justify-center overflow-hidden">
-            <img
-              alt="National ID"
-              className="h-full w-full object-cover transition-transform group-hover:scale-105"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzcO7UdpEQY41Px_4FnC9Aj8v5lfcisylZx0vVMtkk71HIHbU30NootZ8_h8xNAShEEiI8A8CHcy77tdUJyvCGLmUbxap8VWyTIEwsG_MtCFANipRg0X4ePSi-TFV7ibouiTK3xYBtSOTrVgh9iAlEblwOyAH9x9nRz2vZbT2ljkcDsbbi8xNlQ8IgLihUrWVU-8rftcNVmB8umZUU63m-dgLPNU9heU_Ts70AaxZIzPztFLJHTLkNEDdZYHLai81f4opVu5GqK5hB"
-            />
-            <div className="absolute inset-0 flex items-center justify-center gap-4 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-              <Button className="text-primary hover:bg-bg-warm rounded-full bg-white p-2">
-                <span className="material-icons">zoom_in</span>
-              </Button>
-            </div>
-            <div className="absolute top-3 right-3">
-              <span className="rounded bg-yellow-100 px-2 py-1 text-[10px] font-bold text-yellow-700">
-                PENDING REVIEW
-              </span>
-            </div>
-          </div>
-          <div className="flex flex-1 flex-col p-4">
-            <h4 className="text-primary mb-1 font-bold">National ID (Kebele)</h4>
-            <p className="text-primary/40 mb-4 text-[10px] font-bold uppercase">
-              Uploaded: Oct 24, 2023
-            </p>
-            <div className="mt-auto grid grid-cols-2 gap-2">
-              <Button>
-                <Check size={17} /> Approve
-              </Button>
-              <Button className="bg-destructive flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-bold text-white transition-all hover:bg-red-600">
-                <X size={17} />
-                Reject
-              </Button>
-            </div>
-          </div>
-        </div>
-        <div className="border-primary/10 flex flex-col overflow-hidden rounded-xl border bg-white shadow-sm dark:bg-zinc-900">
-          <div className="bg-bg-warm group relative flex h-48 items-center justify-center overflow-hidden">
-            <img
-              alt="Business License"
-              className="h-full w-full object-cover transition-transform group-hover:scale-105"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwh_ocMjFsd5tkP3OXR4btW8gQBVw4jICpZtma1h_Rj28Hv6st0riPfGYbDNzTqU_eOObrvRo05N9oXww9T2kkjKlIWRzC_potEip0DpsQ8mjSFvLsLLlqvqotNJNa8BD5vkgFsS1Ia4GVNXAvtamQ48zjA_iphgQ8o2U7wc8ufC-kQkG1GuWnYXBBdHnUzApN7XL6JNWVCUxkWClbpsG7YQ9i7YIvWyPm9lAwLO0ADdmGpXiN-TRBHSS8KJIwtDhs1g9nDT4DhR6p"
-            />
-            <div className="absolute inset-0 flex items-center justify-center gap-4 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-              <Button className="text-primary hover:bg-bg-warm rounded-full bg-white p-2">
-                <span className="material-icons">zoom_in</span>
-              </Button>
-            </div>
-            <div className="absolute top-3 right-3">
-              <span className="rounded bg-green-100 px-2 py-1 text-[10px] font-bold text-green-700">
-                VERIFIED
-              </span>
-            </div>
-          </div>
-          <div className="flex flex-1 flex-col p-4">
-            <h4 className="text-primary mb-1 font-bold">Business License</h4>
-            <p className="text-primary/40 mb-4 text-[10px] font-bold uppercase">
-              Uploaded: Oct 20, 2023
-            </p>
-            <div className="mt-auto grid cursor-not-allowed grid-cols-2 gap-2 opacity-50">
-              <Button
-                className="flex items-center justify-center gap-1.5 rounded-lg bg-green-500 py-2 text-xs font-bold text-white"
-                disabled=""
-              >
-                <Check size={17} /> Approve
-              </Button>
-              <Button
-                className="bg-destructive flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-bold text-white"
-                disabled=""
-              >
-                <X size={17} />
-                Reject
-              </Button>
-            </div>
-          </div>
-        </div>
-        <div className="border-primary/10 flex flex-col overflow-hidden rounded-xl border bg-white shadow-sm dark:bg-zinc-900">
-          <div className="bg-bg-warm group relative flex h-48 items-center justify-center overflow-hidden">
-            <img
-              alt="Property Title"
-              className="h-full w-full object-cover transition-transform group-hover:scale-105"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcrBDGtr8cfzsO7iEuBH_26p0J1R0vhkjkGwcXaDWkav7oNdEhhQKQc28nfR3z4ZWTME_rmArI2XMiBqEVP3RgpS-wBCSYvTwJc51q51G4wY2G0fwtao2hfhTwCpoF4gU36qVePVURCObdxGlZ3tDV9HV1HBrhWfrGpKz4vVkG9K-3cvpoMneQ8S8P3V44KWdhHUp-6X-u3UFtQPq6s84cLg-2oTpLcvTzu1qPwoxavabwbOM5Md7JQ1G9UXsLf0sm74yq2TIFmFIP"
-            />
-            <div className="absolute inset-0 flex items-center justify-center gap-4 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-              <Button className="text-primary hover:bg-bg-warm rounded-full bg-white p-2">
-                <span className="material-icons">zoom_in</span>
-              </Button>
-            </div>
-            <div className="absolute top-3 right-3">
-              <span className="rounded bg-blue-100 px-2 py-1 text-[10px] font-bold text-blue-700">
-                UNDER REVIEW
-              </span>
-            </div>
-          </div>
-          <div className="flex flex-1 flex-col p-4">
-            <h4 className="text-primary mb-1 font-bold">Property Title Deed</h4>
-            <p className="text-primary/40 mb-4 text-[10px] font-bold uppercase">
-              Uploaded: Oct 22, 2023
-            </p>
-            <div className="mt-auto grid grid-cols-2 gap-2">
-              <Button className="flex items-center justify-center gap-1.5 rounded-lg bg-green-500 py-2 text-xs font-bold text-white transition-all hover:bg-green-600">
-                <Check size={17} /> Approve
-              </Button>
-              <Button className="bg-destructive flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-bold text-white transition-all hover:bg-red-600">
-                <X size={17} />
-                Reject
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+        );
+      })}
     </div>
   );
 }

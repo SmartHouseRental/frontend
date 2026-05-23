@@ -13,10 +13,61 @@ import {
 import { Button } from '@/components/ui/button';
 import UserDetailTabs from '@/features/user-managment/components/UserDetailTab';
 
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
+import {
+  useAdminResolveVerification,
+  useAdminUpdateUserStatus,
+  useAdminUpdateUserVerification,
+  useAdminUser,
+} from '@/features/admin/hooks/useAdmin';
+import TableSkeleton from '@/components/TableSkeleton';
+import ErrorState from '@/components/ErrorState';
+import { getUserStatusMeta, getVerificationStateMeta } from '@/features/admin/mappers';
 
 function UserDetailPage() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { data: user, isLoading, isError, refetch } = useAdminUser(id);
+  const updateStatus = useAdminUpdateUserStatus();
+  const updateVerification = useAdminUpdateUserVerification();
+  const resolveVerification = useAdminResolveVerification();
+
+  if (isLoading) {
+    return (
+      <div className="p-8">
+        <TableSkeleton rows={4} columns={2} showHeader={false} />
+      </div>
+    );
+  }
+
+  if (isError || !user) {
+    return (
+      <div className="p-8">
+        <ErrorState title="Failed to load user" onRetry={refetch} />
+      </div>
+    );
+  }
+
+  const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email;
+  const statusMeta = getUserStatusMeta(user.status);
+  const verificationMeta = getVerificationStateMeta(user.verificationState);
+  const isVerified = user.verificationState === 'verified';
+
+  const handleToggleVerification = () => {
+    const latestDoc = user.verificationDocs?.[0];
+    if (latestDoc?.id) {
+      resolveVerification.mutate({
+        id: latestDoc.id,
+        status: isVerified ? 'pending' : 'approved',
+      });
+      return;
+    }
+
+    updateVerification.mutate({
+      id: user.id,
+      verificationState: isVerified ? 'pending' : 'verified',
+    });
+  };
 
   return (
     <div className="p-8 pt-4">
@@ -38,18 +89,18 @@ function UserDetailPage() {
                 <img
                   className="border-primary/10 h-32 w-32 rounded-full border-4 object-cover"
                   data-alt="User profile portrait"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAL8yIjaWw-SQJnRJtjgRuWFP9YrNTUdAjazpYXG4k2erZkNpDkDcTXbpNQhnU4nz0t7uanx75chxQXEFAwy7JIWEFvSJSIs8huv56v3M9WB2JyN1kdQ1vrGzhGEpcCagIUXWC3D_IPYrDvG6CeUnrhX0djVcXc87kMkyXIlpoFvTv3gWCyI4cXHk3vXsTfBljBvW9hKMv6EFh7EbOA3kKsEmGwae4jhRELLSRAoCa-tKuv6WnJCxQXaxFtZlUdu3BEGtuvr4BSngfy"
+                  src={user.image || 'https://via.placeholder.com/128'}
                 />
                 <div className="absolute right-1 bottom-1 h-6 w-6 rounded-full border-4 border-white bg-green-500 dark:border-zinc-900"></div>
               </div>
               <div className="text-center md:text-left">
                 <div className="mb-2 flex flex-wrap items-center justify-center gap-3 md:justify-start">
-                  <h2 className="text-primary text-3xl font-extrabold">Dawit Gebre</h2>
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                    <BadgeCheck /> Verified Owner
+                  <h2 className="text-primary text-3xl font-extrabold">{fullName}</h2>
+                  <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ${verificationMeta.style}`}>
+                    <BadgeCheck /> {verificationMeta.label}
                   </span>
                   <span className="bg-primary/10 text-primary inline-flex items-center rounded-full px-3 py-1 text-xs font-bold">
-                    Owner
+                    {user.role}
                   </span>
                 </div>
                 <div className="text-primary/60 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-medium">
@@ -57,23 +108,34 @@ function UserDetailPage() {
                     <span>
                       <CircleUserRound size={16} />
                     </span>
-                    Account: <span className="ml-0.5 font-bold text-green-600">Active</span>
+                    Account: <span className="ml-0.5 font-bold text-green-600">{statusMeta.label}</span>
                   </span>
                   <span className="flex items-center gap-1.5">
                     <span className="text-[18px]">
                       <MailCheck size={16} />
                     </span>
-                    Email: <span className="ml-0.5 font-bold text-green-600">Verified</span>
+                    Email: <span className="ml-0.5 font-bold text-green-600">{user.emailVerified ? 'Verified' : 'Not Verified'}</span>
                   </span>
                 </div>
               </div>
             </div>
             <div className="flex w-full flex-wrap gap-3 lg:w-auto">
-              <Button className="bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 inline-flex flex-1 items-center justify-center rounded-lg border px-5 py-2.5 font-bold transition-all lg:flex-none">
+              <Button
+                className="bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 inline-flex flex-1 items-center justify-center rounded-lg border px-5 py-2.5 font-bold transition-all lg:flex-none"
+                onClick={handleToggleVerification}
+              >
                 <ShieldCheck />
-                Unverify
+                {isVerified ? 'Unverify' : 'Verify'}
               </Button>
-              <Button className="bg-accent/10 text-accent hover:bg-accent/20 border-accent/20 inline-flex flex-1 items-center justify-center rounded-lg border px-5 py-2.5 font-bold transition-all lg:flex-none">
+              <Button
+                className="bg-accent/10 text-accent hover:bg-accent/20 border-accent/20 inline-flex flex-1 items-center justify-center rounded-lg border px-5 py-2.5 font-bold transition-all lg:flex-none"
+                onClick={() =>
+                  updateStatus.mutate({
+                    id: user.id,
+                    status: user.status === 'suspended' ? 'active' : 'suspended',
+                  })
+                }
+              >
                 <ShieldBan /> Suspend
               </Button>
               <Button className="bg-primary shadow-primary/20 inline-flex flex-1 items-center justify-center rounded-lg px-5 py-2.5 font-bold text-white shadow-lg transition-all hover:brightness-110 lg:flex-none">
@@ -87,7 +149,7 @@ function UserDetailPage() {
         </Card>
 
         <div className="">
-          <UserDetailTabs />
+          <UserDetailTabs user={user} />
         </div>
       </div>
     </div>

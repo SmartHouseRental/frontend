@@ -26,8 +26,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {
   Filter,
-  ChevronLeft,
-  ChevronRight,
   MoreVertical,
   Search,
   Eye,
@@ -38,100 +36,42 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { useNavigate } from 'react-router';
-
-const properties = [
-  {
-    id: 'PRP-9402',
-    title: 'Horizon Peak Villa',
-    owner: 'Michael Chen',
-    ownerVerified: true,
-    type: 'Villa',
-    price: '85,000 ETB',
-    status: 'pending',
-    editCount: 0,
-    isDeleted: false,
-    location: 'Bole, Addis Ababa',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuBnuoTFnm7eiUv3aKP_BJ5piF4y8mlzYH5ClM5cBXvCWiUBoKTyYq1fVvBa1ON_b343Lnm8gmkoCZu--XjCNHqF0C_MeQTDaVpBbPejgSOMxhesm8QdPtka1Sf7nq8DJL7UhC_eZs_rTsy4xIu6xuYQGKmdGUEc1F9lQPDNQ6jWkuyV_vzyE-JvOZVwndSvv4-arIqjshonMQ_Cvrc8GSp1iaQcWcbzTUNuOqCFGwTWZutx9kXsgtmfjULDan6j82KWu2NOo2-Z_dXl',
-  },
-  {
-    id: 'PRP-8829',
-    title: 'Bole Skyline Apartment',
-    owner: 'Dawit Tesfaye',
-    ownerVerified: true,
-    type: 'Apartment',
-    price: '55,000 ETB',
-    status: 'available',
-    editCount: 1,
-    isDeleted: false,
-    location: 'Bole, Addis Ababa',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDJmCVHHK5IgTYuMnEBX8RO1nOinrW0cnVikNmuGhYgY_CkHYI8gfpCp3SEvgug4SdZc7v6SX_o6N0eaXn-2EA9Z4xMqc9UosSSlqEGjec-0k91lXxF97pnVZ-EP6Vmf8WW4roVyCo5Am06bkxTHfotXf9mc3BScw9j6P4xBfjmzaQ5Z9Z9aX84jQ5oWmTUzI8Ifu0io--9zkixMk-fH4LdGKr80ZMqIQUK8K38xJmywgMq0LVHHEmKYxLMYGS6lfgFMprudQ4gCRcO',
-  },
-  {
-    id: 'PRP-8210',
-    title: 'Urban Loft 42',
-    owner: 'Sarah Jenkins',
-    ownerVerified: false,
-    type: 'Condominium',
-    price: '45,000 ETB',
-    status: 'rented',
-    editCount: 0,
-    isDeleted: false,
-    location: 'Kazanchis, Addis Ababa',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuBHK4MBf-7UqrhDns85XvQ8rILU5gDaYMqKUfF9Wf5uB7jOthE-628mLKysKbIm1k6jW99udN3BX2TELrn_bQhFYQE4qiEKrxf9Uvwi94473iylGn2WS5r61GBMgRbO7vN-8WO902Pk_3LWwYfkGACDKym_P-aSaMjnt5XB3lL6_i562wLzPu0wKH5lnacfnK0J1c_n9mz4fslMIn6wohA3b1ddHEiYTpShBnbHAmhp5ifGDttU_5ZxLoR-BUPiZwEpwYOYUg1kB9Q2',
-  },
-  {
-    id: 'PRP-7731',
-    title: 'Cottage by the Lake',
-    owner: 'David Miller',
-    ownerVerified: true,
-    type: 'Villa',
-    price: '32,000 ETB',
-    status: 'pending',
-    editCount: 0,
-    isDeleted: false,
-    location: 'Hawassa',
-    image: null,
-  },
-  {
-    id: 'PRP-6210',
-    title: 'Megenagna Studio',
-    owner: 'Marta Kebede',
-    ownerVerified: true,
-    type: 'Apartment',
-    price: '28,000 ETB',
-    status: 'available',
-    editCount: 1,
-    isDeleted: false,
-    location: 'Megenagna, Addis Ababa',
-    image: null,
-  },
-  {
-    id: 'PRP-5102',
-    title: 'Suspicious Listing',
-    owner: 'Unknown Account',
-    ownerVerified: false,
-    type: 'Apartment',
-    price: '5,000 ETB',
-    status: 'deleted',
-    editCount: 0,
-    isDeleted: true,
-    location: 'N/A',
-    image: null,
-  },
-];
-
-const statusStyles = {
-  available: { label: 'Available', style: 'bg-emerald-100 text-emerald-700' },
-  pending: { label: 'Pending', style: 'bg-amber-100 text-amber-700' },
-  rented: { label: 'Rented', style: 'bg-blue-100 text-blue-700' },
-  deleted: { label: 'Deleted', style: 'bg-rose-100 text-rose-700' },
-};
+import { useState } from 'react';
+import {
+  useAdminApproveProperty,
+  useAdminProperties,
+  useAdminRejectProperty,
+} from '@/features/admin/hooks/useAdmin';
+import { getAdminListItems } from '@/features/admin/adminSanitize';
+import { formatLocalizedText, formatPersonName, getPropertyStatusMeta } from '@/features/admin/mappers';
+import TableSkeleton from '@/components/TableSkeleton';
+import ErrorState from '@/components/ErrorState';
+import EmptyState from '@/components/EmptyState';
+import DataTablePagination from '@/components/DataTablePagination';
 
 function PropertiesPage() {
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [status, setStatus] = useState('all');
+
+  const params = {
+    page,
+    limit: 20,
+    ...(search.trim() ? { search: search.trim() } : {}),
+    ...(status !== 'all' ? { status } : {}),
+  };
+
+  const { data, isLoading, isError, refetch } = useAdminProperties(params);
+  const approveProperty = useAdminApproveProperty();
+  const rejectProperty = useAdminRejectProperty();
+
+  const properties = getAdminListItems(data);
+  const meta = data?.meta || { page: 1, limit: 20, total: 0, totalPages: 1 };
+
+  const handleApprove = (id) => approveProperty.mutate({ id });
+  const handleReject = (id) =>
+    rejectProperty.mutate({ id, reason: 'REJECTED_BY_ADMIN', note: 'Rejected by admin review' });
 
   return (
     <div className="space-y-6 p-8">
@@ -178,6 +118,11 @@ function PropertiesPage() {
             placeholder="Search by ID, title, owner, or location..."
             type="text"
             className="pl-10"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
           />
         </div>
         <div className="flex items-center gap-3">
@@ -196,17 +141,25 @@ function PropertiesPage() {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Select>
+          <Select
+            value={status}
+            onValueChange={(value) => {
+              setStatus(value);
+              setPage(1);
+            }}
+          >
             <SelectTrigger className="w-36">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectItem value="all">All</SelectItem>
-                <SelectItem value="available">Available</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="rented">Rented</SelectItem>
-                <SelectItem value="deleted">Deleted</SelectItem>
+                <SelectItem value="AVAILABLE">Available</SelectItem>
+                <SelectItem value="PENDING">Pending</SelectItem>
+                <SelectItem value="RENTED">Rented</SelectItem>
+                <SelectItem value="UNAVAILABLE">Unavailable</SelectItem>
+                <SelectItem value="MAINTENANCE">Maintenance</SelectItem>
+                <SelectItem value="RESTRICTED">Restricted</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -216,6 +169,13 @@ function PropertiesPage() {
         </div>
       </Card>
 
+      {isLoading ? (
+        <TableSkeleton rows={6} columns={8} />
+      ) : isError ? (
+        <ErrorState title="Failed to load properties" onRetry={refetch} />
+      ) : properties.length === 0 ? (
+        <EmptyState title="No properties found" description="Try changing search or status filters." />
+      ) : (
       <Card className="gap-0 overflow-hidden p-0">
         <Table className="w-full min-w-full border-collapse text-left">
           <TableHeader className="bg-muted/30 w-full">
@@ -226,13 +186,15 @@ function PropertiesPage() {
               <TableHead className="px-6 py-4">Price</TableHead>
               <TableHead className="px-6 py-4">Status</TableHead>
               <TableHead className="px-6 py-4">Edits</TableHead>
-              <TableHead className="px-6 py-4">Location</TableHead>
               <TableHead className="px-4 py-4">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {properties.map((property) => {
-              const sState = statusStyles[property.status];
+              {properties.map((property) => {
+                const statusMeta = getPropertyStatusMeta(property.status);
+                const title = formatLocalizedText(property.title, 'Untitled Property');
+                const ownerName = formatPersonName(property.owner);
+                const firstImage = property.images?.[0] || null;
               return (
                 <TableRow
                   key={property.id}
@@ -241,10 +203,10 @@ function PropertiesPage() {
                 >
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      {property.image ? (
+                      {firstImage ? (
                         <div
                           className="h-10 w-14 rounded-lg bg-slate-100 bg-cover bg-center"
-                          style={{ backgroundImage: `url('${property.image}')` }}
+                          style={{ backgroundImage: `url('${firstImage}')` }}
                         />
                       ) : (
                         <div className="flex h-10 w-14 items-center justify-center rounded-lg bg-slate-100 text-[10px] font-bold text-slate-400">
@@ -252,42 +214,41 @@ function PropertiesPage() {
                         </div>
                       )}
                       <div>
-                        <p className="text-sm font-bold">{property.title}</p>
+                        <p className="text-sm font-bold">{title}</p>
                         <p className="text-muted-foreground text-[10px]">{property.id}</p>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-medium">{property.owner}</span>
-                      {property.ownerVerified && (
+                      <span className="text-sm font-medium">{ownerName}</span>
+                      {property.owner?.isVerified && (
                         <ShieldCheck size={14} className="text-emerald-500" />
                       )}
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground px-6 py-4 text-sm">
-                    {property.type}
+                    {property.categoryType || '-'}
                   </TableCell>
-                  <TableCell className="px-6 py-4 text-sm font-bold">{property.price}</TableCell>
+                  <TableCell className="px-6 py-4 text-sm font-bold">
+                    {formatLocalizedText(property.price, '-')}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     <span
-                      className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${sState.style}`}
+                      className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${statusMeta.style}`}
                     >
-                      {sState.label}
+                      {statusMeta.label}
                     </span>
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     <span
-                      className={`rounded px-2 py-0.5 text-xs font-bold ${property.editCount >= 1
+                      className={`rounded px-2 py-0.5 text-xs font-bold ${(property.editCount || 0) >= 1
                         ? 'bg-amber-100 text-amber-700'
                         : 'text-muted-foreground'
                         }`}
                     >
-                      {property.editCount}/1
+                      {property.editCount || 0}/1
                     </span>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground px-6 py-4 text-xs">
-                    {property.location}
                   </TableCell>
                   <TableCell className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
                     <DropdownMenu>
@@ -304,22 +265,24 @@ function PropertiesPage() {
                           <Eye className="mr-2 h-4 w-4" />
                           <span>View Details</span>
                         </DropdownMenuItem>
-                        {property.status === 'pending' && (
+                        {property.status === 'PENDING' && (
                           <>
-                            <DropdownMenuItem className="cursor-pointer text-emerald-600 focus:text-emerald-600">
+                            <DropdownMenuItem
+                              className="cursor-pointer text-emerald-600 focus:text-emerald-600"
+                              onClick={() => handleApprove(property.id)}
+                            >
                               <CheckCircle2 className="mr-2 h-4 w-4" />
                               <span>Approve</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
+                            <DropdownMenuItem
+                              className="cursor-pointer text-rose-600 focus:text-rose-600"
+                              onClick={() => handleReject(property.id)}
+                            >
                               <XCircle className="mr-2 h-4 w-4" />
                               <span>Reject</span>
                             </DropdownMenuItem>
                           </>
                         )}
-                        <DropdownMenuItem className="cursor-pointer">
-                          <Edit className="mr-2 h-4 w-4" />
-                          <span>Admin Override Edit</span>
-                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
                           <Trash2 className="mr-2 h-4 w-4" />
@@ -333,33 +296,16 @@ function PropertiesPage() {
             })}
           </TableBody>
         </Table>
-        <div className="flex items-center justify-between border-t border-border bg-muted/20 px-6 py-4">
-          <span className="text-muted-foreground text-xs font-medium">
-            Showing 1-{properties.length} of 3,820 properties
-          </span>
-          <div className="flex items-center gap-1">
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-white">
-              <ChevronLeft size={16} />
-            </button>
-            <button className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-white">
-              1
-            </button>
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-white">
-              2
-            </button>
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-white">
-              3
-            </button>
-            <span className="text-muted-foreground px-1">...</span>
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-white">
-              637
-            </button>
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-white">
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+        <DataTablePagination
+          currentPage={meta.page || 1}
+          totalPages={meta.totalPages || 1}
+          totalItems={meta.total || 0}
+          itemsPerPage={meta.limit || 20}
+          itemLabel="properties"
+          onPageChange={setPage}
+        />
       </Card>
+      )}
     </div>
   );
 }
