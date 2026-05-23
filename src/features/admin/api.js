@@ -20,11 +20,16 @@ export const adminApi = {
 
   getAgreements: (params) => apiClient.get('/admin/agreements', { params }),
   getAgreementById: (id) => apiClient.get(`/admin/agreements/${id}`),
+  getAgreementRiskAssessment: (id) => apiClient.get(`/admin/agreements/${id}/risk-assessment`),
+  getAgreementPaymentSummary: (id) => apiClient.get(`/admin/agreements/${id}/payment-summary`),
+  getAgreementPayments: (agreementId) => apiClient.get(`/admin/agreements/${agreementId}/payments`),
+  getPaymentProof: (paymentId) => apiClient.get(`/admin/payments/${paymentId}/proof`),
   createAgreement: (payload) => apiClient.post('/admin/agreements', payload),
   updateAgreementStatus: (id, payload) => apiClient.patch(`/admin/agreements/${id}/status`, payload),
 
   getReports: (params) => apiClient.get('/admin/reports', { params }),
   getReportById: (id) => apiClient.get(`/admin/reports/${id}`),
+  getReportRiskAssessment: (id) => apiClient.get(`/admin/reports/${id}/risk-assessment`),
   updateReportStatus: (id, payload) => apiClient.patch(`/admin/reports/${id}/status`, payload),
 
   resolveVerification: (id, payload) => apiClient.patch(`/admin/verifications/${id}/resolve`, payload),

@@ -36,9 +36,9 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
-import {
-  useAdminAgreements,
-} from '@/features/admin/hooks/useAdmin';
+import { useAdminAgreements } from '@/features/admin/hooks/useAdmin';
+import { useAdminAgreementStats } from '@/features/admin/hooks/useAdminPageStats';
+import CardSkeleton from '@/components/CardSkeleton';
 import { getAdminListItems } from '@/features/admin/adminSanitize';
 import { getAgreementStatusMeta } from '@/features/admin/mappers';
 import { useAdminLookupMaps } from '@/features/admin/hooks/useAdminLookupMaps';
@@ -60,6 +60,12 @@ function AgreementsPage() {
   };
 
   const { data, isLoading, isError, refetch } = useAdminAgreements(params);
+  const {
+    data: agreementStats,
+    isLoading: statsLoading,
+    isError: statsError,
+    refetch: refetchStats,
+  } = useAdminAgreementStats();
   const { getUserName, getPropertyTitle } = useAdminLookupMaps();
 
   const agreements = getAdminListItems(data).filter((item) =>
@@ -80,28 +86,54 @@ function AgreementsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <Card className="border-0 border-l-4 border-emerald-400 p-5">
-          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">Active</p>
-          <p className="mt-1 text-2xl font-extrabold text-emerald-600">890</p>
+      {statsLoading ? (
+        <CardSkeleton count={4} />
+      ) : statsError ? (
+        <Card className="border-dashed p-4">
+          <p className="text-muted-foreground text-sm">Could not load agreement summary.</p>
+          <Button variant="outline" size="sm" className="mt-2" onClick={() => refetchStats()}>
+            Retry
+          </Button>
         </Card>
-        <Card className="border-0 border-l-4 border-amber-400 p-5">
-          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-            Pending
-          </p>
-          <p className="mt-1 text-2xl font-extrabold text-amber-600">248</p>
-        </Card>
-        <Card className="border-0 border-l-4 border-slate-300 p-5">
-          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">Draft</p>
-          <p className="mt-1 text-2xl font-extrabold text-slate-600">146</p>
-        </Card>
-        <Card className="border-0 border-l-4 border-rose-400 p-5">
-          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-            Terminated
-          </p>
-          <p className="mt-1 text-2xl font-extrabold text-rose-600">38</p>
-        </Card>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          <Card className="border-0 border-l-4 border-emerald-400 p-5">
+            <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+              Active
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-emerald-600">
+              {agreementStats?.active?.toLocaleString() ?? 0}
+            </p>
+            <p className="text-muted-foreground mt-1 text-[10px]">Completed agreements</p>
+          </Card>
+          <Card className="border-0 border-l-4 border-amber-400 p-5">
+            <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+              Pending
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-amber-600">
+              {agreementStats?.pending?.toLocaleString() ?? 0}
+            </p>
+            <p className="text-muted-foreground mt-1 text-[10px]">Sent or awaiting payment</p>
+          </Card>
+          <Card className="border-0 border-l-4 border-slate-300 p-5">
+            <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+              Draft
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-slate-600">
+              {agreementStats?.draft?.toLocaleString() ?? 0}
+            </p>
+          </Card>
+          <Card className="border-0 border-l-4 border-rose-400 p-5">
+            <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+              Terminated
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-rose-600">
+              {agreementStats?.terminated?.toLocaleString() ?? 0}
+            </p>
+            <p className="text-muted-foreground mt-1 text-[10px]">Ended or cancelled</p>
+          </Card>
+        </div>
+      )}
 
       <Card className="flex flex-row flex-wrap items-center justify-between gap-4 px-6 py-4">
         <div className="relative max-w-xl flex-1">

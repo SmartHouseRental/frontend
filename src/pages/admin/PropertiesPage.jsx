@@ -42,6 +42,8 @@ import {
   useAdminProperties,
   useAdminRejectProperty,
 } from '@/features/admin/hooks/useAdmin';
+import { useAdminPropertyStats } from '@/features/admin/hooks/useAdminPageStats';
+import CardSkeleton from '@/components/CardSkeleton';
 import { getAdminListItems } from '@/features/admin/adminSanitize';
 import { formatLocalizedText, formatPersonName, getPropertyStatusMeta } from '@/features/admin/mappers';
 import TableSkeleton from '@/components/TableSkeleton';
@@ -63,6 +65,12 @@ function PropertiesPage() {
   };
 
   const { data, isLoading, isError, refetch } = useAdminProperties(params);
+  const {
+    data: propertyStats,
+    isLoading: statsLoading,
+    isError: statsError,
+    refetch: refetchStats,
+  } = useAdminPropertyStats();
   const approveProperty = useAdminApproveProperty();
   const rejectProperty = useAdminRejectProperty();
 
@@ -84,30 +92,51 @@ function PropertiesPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <Card className="border-0 border-l-4 border-emerald-400 p-5">
-          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-            Available
-          </p>
-          <p className="mt-1 text-2xl font-extrabold text-emerald-600">2,640</p>
+      {statsLoading ? (
+        <CardSkeleton count={4} />
+      ) : statsError ? (
+        <Card className="border-dashed p-4">
+          <p className="text-muted-foreground text-sm">Could not load property summary.</p>
+          <Button variant="outline" size="sm" className="mt-2" onClick={() => refetchStats()}>
+            Retry
+          </Button>
         </Card>
-        <Card className="border-0 border-l-4 border-amber-400 p-5">
-          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-            Pending Review
-          </p>
-          <p className="mt-1 text-2xl font-extrabold text-amber-600">342</p>
-        </Card>
-        <Card className="border-0 border-l-4 border-blue-400 p-5">
-          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">Rented</p>
-          <p className="mt-1 text-2xl font-extrabold text-blue-600">838</p>
-        </Card>
-        <Card className="border-0 border-l-4 border-rose-400 p-5">
-          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-            Deleted
-          </p>
-          <p className="mt-1 text-2xl font-extrabold text-rose-600">42</p>
-        </Card>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          <Card className="border-0 border-l-4 border-emerald-400 p-5">
+            <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+              Available
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-emerald-600">
+              {propertyStats?.available?.toLocaleString() ?? 0}
+            </p>
+          </Card>
+          <Card className="border-0 border-l-4 border-amber-400 p-5">
+            <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+              Pending Review
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-amber-600">
+              {propertyStats?.pending?.toLocaleString() ?? 0}
+            </p>
+          </Card>
+          <Card className="border-0 border-l-4 border-blue-400 p-5">
+            <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+              Rented
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-blue-600">
+              {propertyStats?.rented?.toLocaleString() ?? 0}
+            </p>
+          </Card>
+          <Card className="border-0 border-l-4 border-slate-400 p-5">
+            <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+              Total Listings
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-slate-700">
+              {propertyStats?.total?.toLocaleString() ?? 0}
+            </p>
+          </Card>
+        </div>
+      )}
 
       <Card className="flex flex-row flex-wrap items-center justify-between gap-4 px-6 py-4">
         <div className="relative max-w-xl flex-1">

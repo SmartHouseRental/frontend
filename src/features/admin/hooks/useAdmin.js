@@ -10,6 +10,7 @@ import {
   normalizeAdminNotifications,
   normalizeAdminDocuments,
   asArray,
+  unwrapAdminPayload,
 } from '../adminResponse';
 import {
   normalizeAdminOverview,
@@ -50,9 +51,19 @@ export const adminKeys = {
 
   agreement: (id) => [...adminKeys.all, 'agreement', id],
 
+  agreementRiskAssessment: (id) => [...adminKeys.all, 'agreement', id, 'risk-assessment'],
+
+  agreementPaymentSummary: (id) => [...adminKeys.all, 'agreement', id, 'payment-summary'],
+
+  agreementPayments: (id) => [...adminKeys.all, 'agreement', id, 'payments'],
+
+  paymentProof: (paymentId) => [...adminKeys.all, 'payment', paymentId, 'proof'],
+
   reports: (params = {}) => [...adminKeys.all, 'reports', params],
 
   report: (id) => [...adminKeys.all, 'report', id],
+
+  reportRiskAssessment: (id) => [...adminKeys.all, 'report', id, 'risk-assessment'],
 
   notifications: (params = {}) => [...adminKeys.all, 'notifications', params],
 
@@ -261,6 +272,61 @@ export function useAdminAgreement(id) {
   });
 }
 
+export function useAdminAgreementRiskAssessment(id) {
+  return useQuery({
+    queryKey: adminKeys.agreementRiskAssessment(id),
+    queryFn: () => adminApi.getAgreementRiskAssessment(id),
+    enabled: !!id,
+    select: (response) => normalizeAdminObject(response),
+    retry: (failureCount, error) => {
+      if (error?.response?.status === 404) return false;
+      return failureCount < 2;
+    },
+  });
+}
+
+export function useAdminAgreementPaymentSummary(agreementId) {
+  return useQuery({
+    queryKey: adminKeys.agreementPaymentSummary(agreementId),
+    queryFn: () => adminApi.getAgreementPaymentSummary(agreementId),
+    enabled: !!agreementId,
+    select: (response) => normalizeAdminObject(response),
+    retry: (failureCount, error) => {
+      if (error?.response?.status === 404) return false;
+      return failureCount < 2;
+    },
+  });
+}
+
+export function useAdminAgreementPayments(agreementId) {
+  return useQuery({
+    queryKey: adminKeys.agreementPayments(agreementId),
+    queryFn: () => adminApi.getAgreementPayments(agreementId),
+    enabled: !!agreementId,
+    select: (response) => {
+      const payload = normalizeAdminObject(response) ?? unwrapAdminPayload(response);
+      return asArray(payload);
+    },
+    retry: (failureCount, error) => {
+      if (error?.response?.status === 404) return false;
+      return failureCount < 2;
+    },
+  });
+}
+
+export function useAdminPaymentProof(paymentId, options = {}) {
+  return useQuery({
+    queryKey: adminKeys.paymentProof(paymentId),
+    queryFn: () => adminApi.getPaymentProof(paymentId),
+    enabled: !!paymentId && options.enabled !== false,
+    select: (response) => normalizeAdminObject(response),
+    retry: (failureCount, error) => {
+      if (error?.response?.status === 403 || error?.response?.status === 404) return false;
+      return failureCount < 2;
+    },
+  });
+}
+
 export function useAdminReports(params) {
 
   return useQuery({
@@ -281,6 +347,19 @@ export function useAdminReport(id) {
     select: (response) => {
       const report = normalizeAdminObject(response);
       return report ? sanitizeReportEntity(report) : null;
+    },
+  });
+}
+
+export function useAdminReportRiskAssessment(id) {
+  return useQuery({
+    queryKey: adminKeys.reportRiskAssessment(id),
+    queryFn: () => adminApi.getReportRiskAssessment(id),
+    enabled: !!id,
+    select: (response) => normalizeAdminObject(response),
+    retry: (failureCount, error) => {
+      if (error?.response?.status === 404) return false;
+      return failureCount < 2;
     },
   });
 }

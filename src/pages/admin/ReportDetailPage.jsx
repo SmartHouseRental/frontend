@@ -43,16 +43,22 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router';
-import { useAdminReport, useAdminUpdateReportStatus } from '@/features/admin/hooks/useAdmin';
+import {
+  useAdminReport,
+  useAdminReportRiskAssessment,
+  useAdminUpdateReportStatus,
+} from '@/features/admin/hooks/useAdmin';
 import TableSkeleton from '@/components/TableSkeleton';
 import ErrorState from '@/components/ErrorState';
 import { getReportStatusMeta, formatPersonName } from '@/features/admin/mappers';
 import { useAdminReportTarget } from '@/features/admin/hooks/useAdminLookupMaps';
+import RiskAssessmentCard from '@/features/admin/components/RiskAssessmentCard';
 
 export default function ReportDetailPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { data: report, isLoading, isError, refetch } = useAdminReport(id);
+  const riskQuery = useAdminReportRiskAssessment(id);
   const updateStatus = useAdminUpdateReportStatus();
   const target = useAdminReportTarget(report);
 
@@ -224,6 +230,14 @@ export default function ReportDetailPage() {
         </div>
 
         <div className="space-y-6 lg:col-span-4">
+          <RiskAssessmentCard
+            data={riskQuery.data}
+            isLoading={riskQuery.isLoading}
+            isError={riskQuery.isError}
+            refetch={riskQuery.refetch}
+            emptyMessage="Risk assessment could not be computed for this report subject."
+          />
+
           <Card>
             <CardContent className="space-y-6 pt-6">
               <div>
