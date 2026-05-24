@@ -7,11 +7,14 @@ import ReviewModal from './ReviewModal';
 import { usePropertyReviewStats } from '../hooks/useReviews';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useCreateConversation, useConversations } from '@/features/chat/hooks/useMessaging';
+import { getLocalizedText } from '@/lib/utils/i18n';
+import ScheduleVisitModal from '@/features/visits/components/ScheduleVisitModal';
 
 export default function BookingCard({ property }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
   const { isAuthenticated, user } = useAuth();
   const createConversation = useCreateConversation();
   const { data: conversations = [] } = useConversations();
@@ -35,10 +38,11 @@ export default function BookingCard({ property }) {
     const targetOwnerId = property.owner?.id;
 
     // Check locally for an existing conversation first
-    const existingChat = conversations.find(c =>
-      c.propertyId === property.id &&
-      (c.ownerId === targetOwnerId || c.owner?.id === targetOwnerId) &&
-      (c.renterId === user.id || c.renter?.id === user.id)
+    const existingChat = conversations.find(
+      (c) =>
+        c.propertyId === property.id &&
+        (c.ownerId === targetOwnerId || c.owner?.id === targetOwnerId) &&
+        (c.renterId === user.id || c.renter?.id === user.id),
     );
 
     if (existingChat) {
@@ -83,8 +87,10 @@ export default function BookingCard({ property }) {
             </div>
 
             <div className="flex items-center gap-1">
-              <Star className="text-primary h-4 w-4 fill-primary" />
-              <span className="font-bold">{statsData.averageRating ? Number(statsData.averageRating).toFixed(1) : "New"}</span>
+              <Star className="text-primary fill-primary h-4 w-4" />
+              <span className="font-bold">
+                {statsData.averageRating ? Number(statsData.averageRating).toFixed(1) : 'New'}
+              </span>
             </div>
           </div>
 
