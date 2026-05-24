@@ -1,3 +1,29 @@
+export const reportQueryDefaults = {
+  staleTime: 5 * 60 * 1000,
+  gcTime: 10 * 60 * 1000,
+};
+
+export const reportKeys = {
+  all: ['reports'],
+  ownerLists: () => [...reportKeys.all, 'owner', 'list'],
+  ownerList: (filters) => [...reportKeys.ownerLists(), filters],
+  ownerDetail: (id) => [...reportKeys.all, 'owner', 'detail', id],
+};
+
+export const REPORT_STATUS_LABELS = {
+  open: 'Open',
+  in_review: 'Under Review',
+  resolved: 'Resolved',
+  dismissed: 'Dismissed',
+};
+
+export const REPORT_STATUS_COLORS = {
+  open: 'bg-amber-100 text-amber-700',
+  in_review: 'bg-blue-100 text-blue-700',
+  resolved: 'bg-emerald-100 text-emerald-700',
+  dismissed: 'bg-slate-100 text-slate-600',
+};
+
 /** Frontend report categories (backend accepts free-text `category`, no enum). */
 export const REPORT_CATEGORIES = [
   { value: 'false_advertising', label: 'False advertising' },
