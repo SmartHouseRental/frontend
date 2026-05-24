@@ -1,9 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router';
 import { Building2, ChevronLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { LoginForm } from '@/features/auth/components/LoginForm';
 
 function LoginPage() {
+    const { t } = useTranslation();
+
     return (
         <div className="flex min-h-screen bg-background">
             {/* Left Column: Image Area */}
@@ -13,12 +16,12 @@ function LoginPage() {
                     alt="Modern house exterior at dusk"
                     className="absolute inset-0 h-full w-full object-cover opacity-80"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent mix-blend-multiply" />
+                <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-900/40 to-transparent mix-blend-multiply" />
 
                 {/* Subtle top nav for going back */}
                 <div className="absolute top-8 left-8 z-20">
                     <Link to="/" className="flex items-center text-sm font-semibold text-white/80 hover:text-white transition-colors gap-2">
-                        <ChevronLeft size={16} /> Back to Home
+                        <ChevronLeft size={16} /> {t('auth.backToHome')}
                     </Link>
                 </div>
 
@@ -29,26 +32,26 @@ function LoginPage() {
                         </div>
                     </div>
                     <h2 className="text-4xl font-black tracking-tight text-white sm:text-5xl mb-4">
-                        Welcome Back to <span className="text-blue-400">SmartHouseRental</span>
+                        {t('auth.welcomeBackTo')} <span className="text-blue-400">SmartHouseRental</span>
                     </h2>
                     <p className="text-lg font-medium text-slate-300">
-                        Log in to manage your properties, sign agreements, and find your next perfect home.
+                        {t('auth.loginHeroDesc')}
                     </p>
                 </div>
             </div>
 
             {/* Right Column: Form Area */}
             <div className="flex w-full items-center justify-center p-4 lg:w-1/2">
-                <div className="w-full max-w-[420px]">
+                <div className="w-full max-w-105">
                     {/* Mobile Back Button */}
                     <Link to="/" className="flex items-center text-sm font-semibold text-muted-foreground hover:text-foreground mb-8 lg:hidden gap-1 transition-colors">
-                        <ChevronLeft size={16} /> Home
+                        <ChevronLeft size={16} /> {t('auth.home')}
                     </Link>
 
                     <div className="mb-8 flex flex-col items-start">
-                        <h1 className="text-3xl font-black tracking-tight text-foreground">Sign In</h1>
+                        <h1 className="text-3xl font-black tracking-tight text-foreground">{t('auth.signIn')}</h1>
                         <p className="text-muted-foreground mt-2 font-medium">
-                            Enter your credentials to securely access your account.
+                            {t('auth.signInIntro')}
                         </p>
                     </div>
 
@@ -59,7 +62,7 @@ function LoginPage() {
                             <div className="w-full border-t border-border/60"></div>
                         </div>
                         <div className="relative flex justify-center text-xs uppercase tracking-widest font-bold">
-                            <span className="bg-background px-3 text-muted-foreground/70">Or continue with</span>
+                            <span className="bg-background px-3 text-muted-foreground/70">{t('auth.orContinueWith')}</span>
                         </div>
                     </div>
 
@@ -70,13 +73,13 @@ function LoginPage() {
                             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
                             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                         </svg>
-                        Google Account
+                        {t('auth.googleAccount')}
                     </Button>
 
                     <p className="mt-10 text-center text-[15px] font-medium text-muted-foreground">
-                        Don't have an account?{' '}
+                        {t('auth.dontHaveAccount')}{' '}
                         <Link to="/signup" className="font-bold text-primary hover:text-primary/80 transition-colors">
-                            Create an account
+                            {t('auth.createAnAccount')}
                         </Link>
                     </p>
                 </div>

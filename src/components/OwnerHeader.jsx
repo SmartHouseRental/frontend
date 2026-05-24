@@ -4,6 +4,8 @@ import { Bell, MessageCircle, ChevronDown, LogOut, User, HelpCircle, Sun, Moon, 
 import { useTheme } from '@/components/ThemeProvider';
 import { useLogout } from '@/features/auth/hooks/useLogout';
 import { useNotifications, getUnreadCount } from '@/features/notifications/hooks/useNotifications';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,6 +18,7 @@ import {
 const HEADER_NOTIFICATION_LIMIT = 5;
 
 function OwnerHeader() {
+    const { t } = useTranslation();
     const location = useLocation();
     const [notifOpen, setNotifOpen] = useState(false);
     const { theme, setTheme } = useTheme();
@@ -34,26 +37,26 @@ function OwnerHeader() {
     const subSegments = ownerIndex !== -1 ? segments.slice(ownerIndex + 1) : [];
 
     const breadcrumbMap = {
-        overview: 'Overview',
-        properties: 'My Properties',
-        'property-detail': 'Property Detail',
-        appointments: 'Appointments',
-        agreements: 'Agreements',
-        create: 'Create Agreement',
-        'agreement-detail': 'Agreement Detail',
-        messages: 'Messages',
-        reviews: 'Reviews',
-        notifications: 'Notifications',
-        reports: 'Reports',
-        analytics: 'Analytics',
-        'add-property': 'Add Property',
-        'edit-property': 'Edit Property',
-        profile: 'Profile & Settings',
-        payments: 'Payment History',
-        help: 'Help & Support',
+        overview: t('header.overview'),
+        properties: t('sidebar.myProperties'),
+        'property-detail': t('header.propertyDetail'),
+        appointments: t('sidebar.appointments'),
+        agreements: t('sidebar.agreements'),
+        create: t('header.createAgreement'),
+        'agreement-detail': t('header.agreementDetail'),
+        messages: t('messages'),
+        reviews: t('sidebar.reviews'),
+        notifications: t('sidebar.notifications'),
+        reports: t('sidebar.reports'),
+        analytics: t('sidebar.analytics'),
+        'add-property': t('header.propertyDetail'),
+        'edit-property': t('header.propertyDetail'),
+        profile: t('sidebar.profileAndSettings'),
+        payments: t('header.paymentHistory'),
+        help: t('sidebar.helpAndSupport'),
     };
 
-    const breadcrumbs = [{ label: 'Owner Dashboard', to: '/owner' }];
+    const breadcrumbs = [{ label: t('header.ownerDashboard'), to: '/owner' }];
     let cumulativePath = '/owner';
 
     subSegments.forEach((segment, index) => {
@@ -61,7 +64,7 @@ function OwnerHeader() {
         const prev = subSegments[index - 1];
         let label = breadcrumbMap[segment];
         if (!label && prev === 'agreements' && segment !== 'create') {
-            label = 'Agreement details';
+            label = t('header.agreementDetails');
         }
         if (!label) {
             label = segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
@@ -94,10 +97,11 @@ function OwnerHeader() {
                     type="button"
                     className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
                     onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                    title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                    title={theme === 'dark' ? t('header.switchToLightMode') : t('header.switchToDarkMode')}
                 >
                     {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
                 </button>
+                <LanguageSwitcher />
                 {/* Notifications Dropdown */}
                 <DropdownMenu open={notifOpen} onOpenChange={setNotifOpen}>
                     <DropdownMenuTrigger asChild>
@@ -107,7 +111,7 @@ function OwnerHeader() {
                         >
                             <Bell size={18} />
                             {unreadCount > 0 && (
-                                <span className="absolute top-1 right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold text-destructive-foreground">
+                                <span className="absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold text-destructive-foreground">
                                     {unreadCount > 99 ? '99+' : unreadCount}
                                 </span>
                             )}
@@ -115,10 +119,10 @@ function OwnerHeader() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-80">
                         <DropdownMenuLabel className="flex items-center justify-between">
-                            <span>Notifications</span>
+                            <span>{t('sidebar.notifications')}</span>
                             {unreadCount > 0 && (
                                 <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
-                                    {unreadCount} new
+                                    {unreadCount} {t('header.new')}
                                 </span>
                             )}
                         </DropdownMenuLabel>
@@ -129,7 +133,7 @@ function OwnerHeader() {
                             </div>
                         ) : previewNotifications.length === 0 ? (
                             <div className="px-3 py-6 text-center text-sm text-muted-foreground">
-                                No notifications yet
+                                {t('header.noNotificationsYet')}
                             </div>
                         ) : (
                             previewNotifications.map((n) => (
@@ -150,7 +154,7 @@ function OwnerHeader() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild className="cursor-pointer justify-center">
                             <Link to="/owner/notifications" className="text-xs font-semibold text-primary">
-                                View all notifications
+                                {t('header.viewAllNotifications')}
                             </Link>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -159,7 +163,7 @@ function OwnerHeader() {
                 {/* Messages */}
                 <Link to="/owner/messages" className="relative rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground">
                     <MessageCircle size={18} />
-                    <span className="absolute top-1 right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-blue-500 px-1 text-[9px] font-bold text-white">
+                    <span className="absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-500 px-1 text-[9px] font-bold text-white">
                         3
                     </span>
                 </Link>
@@ -172,7 +176,7 @@ function OwnerHeader() {
                         <button type="button" className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/50 outline-none">
                             <div className="text-right hidden sm:block">
                                 <p className="text-sm leading-none font-bold text-foreground">Dawit M.</p>
-                                <p className="text-[10px] font-medium text-muted-foreground">Owner</p>
+                                <p className="text-[10px] font-medium text-muted-foreground">{t('user.owner')}</p>
                             </div>
                             <div
                                 className="size-9 rounded-full border-2 border-primary/20 bg-primary/10 bg-cover bg-center"
@@ -184,13 +188,13 @@ function OwnerHeader() {
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuLabel>{t('header.myAccount')}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild className="cursor-pointer gap-2">
-                            <Link to="/owner/profile"><User size={14} /> Profile & Settings</Link>
+                            <Link to="/owner/profile"><User size={14} /> {t('sidebar.profileAndSettings')}</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild className="cursor-pointer gap-2">
-                            <Link to="/owner/help"><HelpCircle size={14} /> Help & Support</Link>
+                            <Link to="/owner/help"><HelpCircle size={14} /> {t('sidebar.helpAndSupport')}</Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
@@ -198,7 +202,7 @@ function OwnerHeader() {
                             onClick={handleLogout}
                             disabled={logoutMutation.isPending}
                         >
-                            <LogOut size={14} /> {logoutMutation.isPending ? 'Signing out...' : 'Sign Out'}
+                            <LogOut size={14} /> {logoutMutation.isPending ? t('header.signingOut') : t('header.signOut')}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

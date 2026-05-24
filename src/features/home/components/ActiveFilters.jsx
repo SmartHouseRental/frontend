@@ -1,13 +1,18 @@
 import { X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 export default function ActiveFilters({ filters = [], onRemove, onClearAll }) {
+    const { t } = useTranslation();
+
     if (!filters.length) return null;
 
     return (
         <div className="flex flex-wrap items-center gap-2">
-            <span className="text-muted-foreground mr-1 text-sm font-semibold">Active Filters:</span>
+            <span className="text-muted-foreground mr-1 text-sm font-semibold">
+                {t('explorePage.activeFilters.title')}
+            </span>
 
             {filters.map((filter) => (
                 <Badge
@@ -20,7 +25,9 @@ export default function ActiveFilters({ filters = [], onRemove, onClearAll }) {
                     <button
                         onClick={() => onRemove?.(filter.id)}
                         className="hover:bg-foreground/10 -mr-1 ml-0.5 rounded-full p-0.5 transition-colors"
-                        aria-label={`Remove ${filter.label} filter`}
+                        aria-label={t('explorePage.activeFilters.removeFilterAria', {
+                            filter: filter.label,
+                        })}
                     >
                         <X className="h-3 w-3" />
                     </button>
@@ -33,7 +40,7 @@ export default function ActiveFilters({ filters = [], onRemove, onClearAll }) {
                 onClick={onClearAll}
                 className="text-primary h-auto px-2 py-1 text-xs font-bold hover:underline"
             >
-                Clear All
+                {t('explorePage.activeFilters.clearAll')}
             </Button>
         </div>
     );

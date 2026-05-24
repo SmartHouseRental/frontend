@@ -4,8 +4,10 @@ import { Link } from 'react-router';
 import { useProperties } from '@/features/property/hooks/useProperties';
 import { parseLocation } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function MapSection() {
+  const { t } = useTranslation();
   const { data: propertiesData, isLoading } = useProperties({
     status: 'available',
     limit: 6,
@@ -23,7 +25,7 @@ export default function MapSection() {
       ...p,
       lat: coords?.lat || 9.0128,
       lng: coords?.lng || 38.7508,
-      titleStr: title || "Property Details",
+      titleStr: title || t('landing.map.propertyDetails'),
       priceStr: `${price} ${currency}`,
       image: p.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image',
     };
@@ -38,19 +40,25 @@ export default function MapSection() {
               <span className="bg-primary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
               <span className="bg-primary relative inline-flex h-2 w-2 rounded-full"></span>
             </span>
-            Live Listings
+            {t('landing.map.liveListings')}
           </div>
 
           <h2 className="mb-6 text-4xl leading-tight font-black md:text-5xl">
-            Available Across <br /> <span className="text-primary italic">Addis Ababa</span>
+            {t('landing.map.availableAcross')} <br /> <span className="text-primary italic">{t('landing.map.addisAbaba')}</span>
           </h2>
           <p className="text-background/60 mb-10 text-lg leading-relaxed">
-            Finding a home is easier when you can see the neighborhood. Explore our verified
-            listings in prime locations.
+            {t('landing.map.subtitle')}
           </p>
 
           <div className="mb-10 grid grid-cols-2 gap-4">
-            {['Bole Atlas', 'Old Airport', 'Sarbet', 'Kazanchis', 'CMC', 'Ayat'].map((loc) => (
+            {[
+              t('landing.map.locations.boleAtlas'),
+              t('landing.map.locations.oldAirport'),
+              t('landing.map.locations.sarbet'),
+              t('landing.map.locations.kazanchis'),
+              t('landing.map.locations.cmc'),
+              t('landing.map.locations.ayat'),
+            ].map((loc) => (
               <div
                 key={loc}
                 className="hover:text-primary flex cursor-default items-center gap-2 text-sm font-medium transition-colors"
@@ -66,11 +74,11 @@ export default function MapSection() {
             asChild
             className="shadow-primary/20 h-14 rounded-full px-8 text-lg font-bold shadow-xl transition-transform hover:scale-105"
           >
-            <Link to="/explore?view=map">Explore Full Map</Link>
+            <Link to="/explore?view=map">{t('landing.map.exploreFullMap')}</Link>
           </Button>
         </div>
 
-        <div className="h-[500px] w-full overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl ring-8 ring-white/5 lg:w-2/3 relative">
+        <div className="h-125 w-full overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl ring-8 ring-white/5 lg:w-2/3 relative">
           {isLoading ? (
             <div className="flex h-full w-full items-center justify-center bg-zinc-900/50">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -82,7 +90,7 @@ export default function MapSection() {
       </div>
 
       {/* Decorative background element */}
-      <div className="bg-primary/10 absolute top-1/2 left-0 -z-0 h-96 w-96 -translate-y-1/2 rounded-full blur-[120px]" />
+      <div className="bg-primary/10 absolute top-1/2 left-0 z-0 h-96 w-96 -translate-y-1/2 rounded-full blur-[120px]" />
     </section>
   );
 }

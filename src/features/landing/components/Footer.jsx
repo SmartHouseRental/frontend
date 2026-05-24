@@ -1,8 +1,23 @@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 export default function Footer() {
+  const { t } = useTranslation();
+
+  const platformItems = [
+    { label: t('landing.footer.platform.findHouse'), path: '/explore' },
+    { label: t('landing.footer.platform.listProperty'), path: '/owner/properties/new' },
+    { label: t('landing.footer.platform.howItWorks'), path: '/#how-it-works' },
+  ];
+
+  const companyItems = [
+    { label: t('landing.footer.company.aboutUs'), path: '/about' },
+    { label: t('landing.footer.company.contact'), path: '/contact' },
+    { label: t('landing.footer.company.support'), path: '/contact' },
+  ];
+
   return (
     <footer className="bg-foreground text-background border-t border-white/5 px-6 pt-20 pb-10 lg:px-20">
       <div className="mx-auto max-w-7xl">
@@ -10,54 +25,45 @@ export default function Footer() {
           <div>
             <h2 className="text-primary mb-4 text-xl font-extrabold">Bet-Connect</h2>
             <p className="text-background/50 text-sm leading-relaxed">
-              Redefining rentals for families in Ethiopia by providing secure, verified, and
-              comfortable long-stay homes.
+              {t('landing.footer.brandDescription')}
             </p>
           </div>
 
           <FooterCol
-            title="Platform"
-            items={[
-              { label: 'Find a House', path: '/explore' },
-              { label: 'List Property', path: '/owner/properties/new' },
-              { label: 'How it Works', path: '/#how-it-works' },
-            ]}
+            title={t('landing.footer.platform.title')}
+            items={platformItems}
           />
 
           <FooterCol
-            title="Company"
-            items={[
-              { label: 'About Us', path: '/about' },
-              { label: 'Contact', path: '/contact' },
-              { label: 'Support', path: '/contact' },
-            ]}
+            title={t('landing.footer.company.title')}
+            items={companyItems}
           />
 
           <div>
             <h4 className="text-primary mb-6 text-xs font-bold tracking-widest uppercase">
-              Newsletter
+              {t('landing.footer.newsletter.title')}
             </h4>
             <div className="flex gap-2">
               <Input
-                placeholder="Email address"
+                placeholder={t('landing.footer.newsletter.emailPlaceholder')}
                 className="bg-background/10 text-background placeholder:text-background/30 border-white/20"
               />
-              <Button className="font-bold">Join</Button>
+              <Button className="font-bold">{t('landing.footer.newsletter.join')}</Button>
             </div>
           </div>
         </div>
 
         <div className="border-background/10 text-background/40 flex flex-col items-center justify-between gap-4 border-t pt-8 text-xs md:flex-row">
-          <p>© 2024 Bet-Connect. All rights reserved.</p>
+          <p>{t('landing.footer.copyright')}</p>
           <div className="flex gap-6">
             <span className="hover:text-background cursor-pointer transition-colors">
-              Privacy Policy
+              {t('landing.footer.legal.privacyPolicy')}
             </span>
             <span className="hover:text-background cursor-pointer transition-colors">
-              Terms of Service
+              {t('landing.footer.legal.termsOfService')}
             </span>
             <span className="hover:text-background cursor-pointer transition-colors">
-              Cookie Policy
+              {t('landing.footer.legal.cookiePolicy')}
             </span>
           </div>
         </div>

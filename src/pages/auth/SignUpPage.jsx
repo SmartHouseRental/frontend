@@ -1,8 +1,11 @@
 import { Link } from 'react-router';
 import { ChevronLeft, CheckCircle2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { SignUpForm } from '@/features/auth/components/SignUpForm';
 
 function SignUpPage() {
+    const { t } = useTranslation();
+
     return (
         <div className="flex min-h-screen bg-background text-foreground">
             {/* Left Column: Image Area */}
@@ -12,11 +15,11 @@ function SignUpPage() {
                     alt="Beautiful modern living room"
                     className="absolute inset-0 h-full w-full object-cover opacity-80"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-slate-900/20 mix-blend-multiply" />
+                <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-900/60 to-slate-900/20 mix-blend-multiply" />
 
                 <div className="absolute top-8 left-8 z-20">
                     <Link to="/" className="flex items-center text-sm font-semibold text-white/80 hover:text-white transition-colors gap-2">
-                        <ChevronLeft size={16} /> Back to Home
+                        <ChevronLeft size={16} /> {t('auth.backToHome')}
                     </Link>
                 </div>
 
@@ -44,18 +47,18 @@ function SignUpPage() {
 
             {/* Right Column: Form Area */}
             <div className="flex w-full items-center justify-center p-4 lg:w-7/12">
-                <div className="w-full max-w-[480px]">
+                <div className="w-full max-w-120">
                     {/* Mobile Back Button */}
                     <Link to="/" className="flex items-center text-sm font-semibold text-muted-foreground hover:text-foreground mb-8 lg:hidden gap-1 transition-colors">
-                        <ChevronLeft size={16} /> Home
+                        <ChevronLeft size={16} /> {t('auth.home')}
                     </Link>
 
                     <div className="mb-10 text-left">
                         <h1 className="text-3xl font-black tracking-tight text-foreground">
-                            Join the community
+                            {t('auth.joinCommunity')}
                         </h1>
                         <p className="text-muted-foreground mt-2 font-medium leading-relaxed">
-                            Complete your details to get started with SmartHouseRental.
+                            {t('auth.signupIntro')}
                         </p>
                     </div>
 
@@ -64,9 +67,9 @@ function SignUpPage() {
                     </div>
 
                     <p className="mt-10 text-center text-[15px] font-medium text-muted-foreground">
-                        Already have an account?{' '}
+                        {t('auth.alreadyHaveAccount')}{' '}
                         <Link to="/login" className="font-bold text-primary hover:text-primary/80 transition-colors">
-                            Log in instead
+                            {t('auth.loginInstead')}
                         </Link>
                     </p>
                 </div>

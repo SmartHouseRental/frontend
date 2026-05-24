@@ -58,7 +58,7 @@ export default function NearMeSection() {
 
   const handleRetryProperties = () => {
     refetch().catch(() => {
-      toast.error('Could not load nearby properties. Please try again.');
+      toast.error(t('landing.nearby.retryLoadError'));
     });
   };
 

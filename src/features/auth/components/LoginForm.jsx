@@ -4,6 +4,7 @@ import * as z from 'zod';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useLogin } from '../hooks/useLogin';
@@ -17,6 +18,7 @@ const loginSchema = z.object({
 });
 
 export function LoginForm() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
     const loginMutation = useLogin();
@@ -54,7 +56,7 @@ export function LoginForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="email">
-                    Email Address
+                    {t('auth.emailAddress')}
                 </label>
                 <div className="relative group">
                     <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
@@ -72,10 +74,10 @@ export function LoginForm() {
             <div className="space-y-2">
                 <div className="flex items-center justify-between ml-1">
                     <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground" htmlFor="password">
-                        Password
+                        {t('auth.password')}
                     </label>
                     <Link to="/forgot-password" className="text-xs font-bold text-primary hover:text-primary/80 transition-colors">
-                        Forgot Password?
+                        {t('auth.forgotPassword')}
                     </Link>
                 </div>
                 <div className="relative group">
@@ -99,7 +101,7 @@ export function LoginForm() {
             </div>
 
             <Button type="submit" className="w-full h-12 rounded-xl font-bold shadow-md text-[15px]" disabled={loginMutation.isPending}>
-                {loginMutation.isPending ? 'Signing In...' : 'Login securely'}
+                {loginMutation.isPending ? t('auth.signingIn') : t('auth.loginSecurely')}
             </Button>
         </form>
     );

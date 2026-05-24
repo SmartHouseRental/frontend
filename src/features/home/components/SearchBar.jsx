@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, Sparkles } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function SearchBar({ defaultValue = '', className = '' }) {
+    const { t } = useTranslation();
     const [query, setQuery] = useState(defaultValue);
     const navigate = useNavigate();
 
@@ -25,20 +27,20 @@ export default function SearchBar({ defaultValue = '', className = '' }) {
                 <Input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder='Try "3 bedroom villa in Bole near schools"'
+                    placeholder={t('explorePage.search.placeholder')}
                     className="flex-1 border-0 bg-transparent text-base shadow-none focus-visible:ring-0"
                 />
 
                 <div className="text-muted-foreground/50 hidden items-center gap-1 pr-2 text-xs sm:flex">
                     <Sparkles className="h-3 w-3" />
-                    <span>AI-powered</span>
+                    <span>{t('explorePage.search.aiPowered')}</span>
                 </div>
 
                 <Button
                     type="submit"
                     className="rounded-xl px-6 font-bold"
                 >
-                    Search
+                    {t('explorePage.search.button')}
                 </Button>
             </div>
         </form>

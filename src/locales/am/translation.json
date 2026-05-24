@@ -1,0 +1,394 @@
+{
+  "welcome": "እንኳን ደህና መጡ",
+  "home": "መነሻ",
+  "login": "ግባ",
+  "signup": "ይመዝገቡ",
+  "dashboard": "ዳሽቦርድ",
+  "explore": "አስሱ",
+  "saved": "የተቀመጡ",
+  "messages": "መልዕክቶች",
+  "about": "ስለ እኛ",
+  "contact": "አግኙን",
+  "logout": "ውጣ",
+  "loggingOut": "በመውጣት ላይ...",
+  "nearMe": "በአቅራቢያዎ",
+  "nearMeSubtitle": "ከአሁኑ ቦታዎ በ{{radius}} ኪ.ሜ. ውስጥ የሚገኙ ቤቶች",
+  "findingLocation": "ቦታዎን በመፈለግ ላይ",
+  "findingLocationDesc": "በአቅራቢያዎ የሚገኙ ቤቶችን ለማሳየት ቦታ መድረስ ይፍቀዱ።",
+  "locationPermissionNeeded": "የቦታ ፍቃድ ያስፈልጋል",
+  "locationUnavailable": "ቦታ አልተገኘም",
+  "tryAgain": "እንደገና ይሞክሩ",
+  "browseAllListings": "ሁሉንም ዝርዝሮች ይመልከቱ",
+  "refreshLocation": "ቦታ አድስ",
+  "failedNearby": "በአቅራቢያ ያሉ ቤቶችን ማምጣት አልተሳካም",
+  "noRentalsNearby": "በአቅራቢያ ቤቶች የሉም",
+  "noRentalsNearbyDesc": "ከአሁኑ ቦታዎ በ{{radius}} ኪ.ሜ. ውስጥ የሚገኙ ቤቶች አልተገኙም።",
+  "exploreMoreAreas": "ተጨማሪ አካባቢዎችን ይመልከቱ",
+  "retry": "እንደገና",
+  "featuredTitle": "ተመራጭ የቤተሰብ ቤቶች",
+  "featuredSubtitle": "ለምቾትና ለደህንነት የተመረጡ ቤቶች",
+  "seeAllListings": "ሁሉንም ዝርዝሮች ይመልከቱ ->",
+  "beds": "አልጋዎች",
+  "baths": "መታጠቢያዎች",
+  "perMonth": "/ወር",
+  "language": {
+    "select": "ቋንቋ ይምረጡ",
+    "english": "English",
+    "amharic": "አማርኛ"
+  },
+  "auth": {
+    "backToHome": "ወደ መነሻ ተመለስ",
+    "home": "መነሻ",
+    "signIn": "ግባ",
+    "signInIntro": "መለያዎን ለመግባት መረጃዎን ያስገቡ።",
+    "forgotPassword": "የይለፍ ቃል ረሱ?",
+    "loginSecurely": "በደህንነት ግባ",
+    "signingIn": "በመግባት ላይ...",
+    "orContinueWith": "ወይም በዚህ ይቀጥሉ",
+    "googleAccount": "Google መለያ",
+    "welcomeBackTo": "እንኳን በደህና ተመለሱ ወደ",
+    "loginHeroDesc": "ንብረቶችዎን ለማስተዳደር፣ ስምምነቶችን ለመፈረም እና ተስማሚ ቤትዎን ለማግኘት ይግቡ።",
+    "dontHaveAccount": "መለያ የለዎትም?",
+    "createAnAccount": "መለያ ፍጠር",
+    "joinCommunity": "ማህበረሰቡን ይቀላቀሉ",
+    "signupIntro": "በ SmartHouseRental ለመጀመር መረጃዎን ያጠናቅቁ።",
+    "alreadyHaveAccount": "አካውንት አለዎት?",
+    "loginInstead": "በምትኩ ይግቡ",
+    "iAmJoiningAs": "እኔ እንደ... እቀላቀላለሁ",
+    "renter": "ተከራይ",
+    "owner": "ባለቤት",
+    "firstName": "የመጀመሪያ ስም",
+    "lastName": "የአባት ስም",
+    "emailAddress": "ኢሜይል አድራሻ",
+    "phoneNumber": "ስልክ ቁጥር",
+    "password": "የይለፍ ቃል",
+    "passwordHint": "ቢያንስ 8 ቁምፊ እና አንድ ከፍተኛ ፊደል ያካትታል",
+    "createAccount": "መለያ ፍጠር",
+    "creatingAccount": "መለያ በመፍጠር ላይ..."
+  },
+  "sidebar": {
+    "main": "ዋና",
+    "adminSection": "አስተዳደር",
+    "adminControl": "የአስተዳደር መቆጣጠሪያ",
+    "ownerPortal": "የባለቤት ፖርታል",
+    "renterDashboard": "የተከራይ ዳሽቦርድ",
+    "userManagement": "የተጠቃሚ አስተዳደር",
+    "properties": "ንብረቶች",
+    "agreements": "ስምምነቶች",
+    "reports": "ሪፖርቶች",
+    "reviews": "ግምገማዎች",
+    "pendingVerifications": "በመጠባበቅ ላይ ያሉ ማረጋገጫዎች",
+    "notifications": "ማሳወቂያዎች",
+    "analytics": "ትንታኔ",
+    "auditLogs": "የኦዲት መዝገቦች",
+    "settings": "ቅንብሮች",
+    "myProperties": "የእኔ ንብረቶች",
+    "appointments": "ቀጠሮዎች",
+    "reportsAgainstMe": "በእኔ ላይ ሪፖርቶች",
+    "payments": "ክፍያዎች",
+    "profileAndSettings": "መገለጫ እና ቅንብሮች",
+    "helpAndSupport": "እገዛ እና ድጋፍ",
+    "myAppointments": "የእኔ ቀጠሮዎች",
+    "managePropertyVisits": "የንብረት ጉብኝቶችን ያስተዳድሩ",
+    "myAgreements": "የእኔ ስምምነቶች",
+    "offersDepositsPayments": "ቅናሾች፣ ዋስትና እና ክፍያዎች",
+    "myReviews": "የእኔ ግምገማዎች",
+    "yourFeedbackHistory": "የእርስዎ አስተያየት ታሪክ",
+    "systemAlertsUpdates": "የስርዓት ማሳወቂያዎች እና ዝማኔዎች",
+    "personalizeAccount": "መለያዎን ያብጁ"
+  },
+  "header": {
+    "ownerDashboard": "የባለቤት ዳሽቦርድ",
+    "overview": "አጠቃላይ እይታ",
+    "detail": "ዝርዝር",
+    "edit": "አርትዕ",
+    "propertyDetail": "የንብረት ዝርዝር",
+    "createAgreement": "ስምምነት ፍጠር",
+    "agreementDetail": "የስምምነት ዝርዝር",
+    "paymentHistory": "የክፍያ ታሪክ",
+    "agreementDetails": "የስምምነት ዝርዝሮች",
+    "myAccount": "የእኔ መለያ",
+    "profile": "መገለጫ",
+    "signOut": "ውጣ",
+    "signingOut": "በመውጣት ላይ...",
+    "switchToLightMode": "ወደ ብሩህ ሁነታ ቀይር",
+    "switchToDarkMode": "ወደ ጨለማ ሁነታ ቀይር",
+    "noNotificationsYet": "እስካሁን ማሳወቂያዎች የሉም",
+    "viewAllNotifications": "ሁሉንም ማሳወቂያዎች ይመልከቱ",
+    "new": "አዲስ",
+    "newPropertySubmission": "አዲስ የንብረት ማቅረብ",
+    "awaitingReview": "Horizon Peak Villa ለግምገማ በመጠባበቅ ላይ ነው።",
+    "urgentReport": "አስቸኳይ ሪፖርት",
+    "fraudReportFiled": "አዲስ የማጭበርበር ሪፖርት ተመዝግቧል።",
+    "toggleTheme": "ገጽታ ቀይር",
+    "systemManager": "የስርዓት አስተዳዳሪ"
+  },
+  "landing": {
+    "hero": {
+      "title": "ተስማሚ የሆነ",
+      "titleAccent": "የቤተሰብ ቤት ያግኙ",
+      "subtitle": "የተረጋገጡ እና ለቤተሰብ ተስማሚ የረጅም ጊዜ ቆይታዎች።",
+      "cityPlaceholder": "ከተማ...",
+      "priceRangePlaceholder": "የዋጋ ክልል",
+      "bedroomsPlaceholder": "መኝታ ቤቶች",
+      "search": "ፈልግ"
+    },
+    "featured": {
+      "error": "የተመራጭ ዝርዝሮችን ማሳየት አልተቻለም።"
+    },
+    "nearby": {
+      "retryLoadError": "በአቅራቢያ ያሉ ንብረቶችን መጫን አልተቻለም። እባክዎ እንደገና ይሞክሩ።"
+    },
+    "howItWorks": {
+      "title": "ወደ አዲስ ቤትዎ የሚወስድ ጉዞ",
+      "step1": {
+        "title": "1. ፈልግ እና ማጣራት",
+        "desc": "ለቤተሰብ ተስማሚ የተመረጡ ቤቶችን ይመልከቱ።"
+      },
+      "step2": {
+        "title": "2. ጉብኝት ያስይዙ",
+        "desc": "በአካል ወይም በቨርቹዋል ጉብኝት ያስይዙ።"
+      },
+      "step3": {
+        "title": "3. በደህና ይግቡ",
+        "desc": "ቀላል ውል እና አስተማማኝ ርክክብ።"
+      }
+    },
+    "benefits": {
+      "badge": "Beten ለምን ይመረጣል",
+      "title": "ለቤተሰብዎ ምቾት እምነት እና ቴክኖሎጂ",
+      "feature1": {
+        "title": "የተረጋገጡ ዝርዝሮች",
+        "desc": "እያንዳንዱ ንብረት በአካል ይጎበኛል እና ይረጋገጣል።"
+      },
+      "feature2": {
+        "title": "በAI የተጎለበተ የረጅም ጊዜ ቆይታ",
+        "desc": "ለረጅም ጊዜ ኑሮ ብልጥ መዛመድ።"
+      },
+      "feature3": {
+        "title": "24/7 ድጋፍ",
+        "desc": "ሁልጊዜ ለማገዝ ዝግጁ ቡድን።"
+      }
+    },
+    "testimonials": {
+      "badge": "ሰዎች የሚሉት",
+      "titlePrefix": "በ",
+      "titleAccent": "ቤተሰቦች",
+      "titleSuffix": "በመላው አዲስ አበባ የታመነ",
+      "subtitle": "በBet-Connect የተስማሚ ምርጫቸውን ያገኙ ተከራዮች እና ባለቤቶች እውነተኛ ታሪኮች።",
+      "items": {
+        "almaz": {
+          "role": "ተከራይ • ቦሌ",
+          "text": "ለቤተሰባችን ፍጹም ቤት በአንድ ሳምንት ውስጥ አግኝተናል! የማረጋገጫ ሂደቱ ሙሉ እርግጠኝነት ሰጠን።"
+        },
+        "samuel": {
+          "role": "ተከራይ • ካዛንቺስ",
+          "text": "በAI የተጎለበተው ፍለጋ የምንፈልገውን ትክክለኛ ተረድቷል፤ ትምህርት ቤቶች አቅራቢያ ያለ ዝምታ ቦታ።"
+        },
+        "hana": {
+          "role": "የንብረት ባለቤት",
+          "text": "ንብረቴን ማስገባት በጣም ቀላል ነበር። በጥቂት ቀናት ውስጥ የተረጋገጡ ተከራዮች ጀመሩ ማግኘት።"
+        },
+        "dawit": {
+          "role": "ተከራይ • CMC",
+          "text": "ብዙ መድረኮችን ከሞከርኩ በኋላ፣ Bet-Connect ብቻ ትክክለኛ እና የተረጋገጡ ዝርዝሮች ያሉበት ነበር።"
+        }
+      }
+    },
+    "cta": {
+      "title": "ለቤተሰብዎ ቀጣይ ቤት ለማግኘት ዝግጁ ነዎት?",
+      "subtitle": "በBet-Connect የተረጋገጡ፣ ደህንነታቸው የተጠበቀ እና ምቹ ቤቶችን ካገኙ ቤተሰቦች ጋር ይቀላቀሉ።",
+      "browseHomes": "ቤቶችን ይመልከቱ",
+      "listYourProperty": "ንብረትዎን ያስገቡ"
+    },
+    "map": {
+      "propertyDetails": "የንብረት ዝርዝር",
+      "liveListings": "ቀጥታ ዝርዝሮች",
+      "availableAcross": "የሚገኙ በ",
+      "addisAbaba": "አዲስ አበባ",
+      "addisAbabaEthiopia": "አዲስ አበባ፣ ኢትዮጵያ",
+      "subtitle": "ሰፈሩን በማየት ቤት መፈለግ ይቀላል። በዋና ስፍራዎች ያሉ የተረጋገጡ ዝርዝሮቻችንን ያስሱ።",
+      "exploreFullMap": "ሙሉ ካርታውን ያስሱ",
+      "locations": {
+        "boleAtlas": "ቦሌ አትላስ",
+        "oldAirport": "ኦልድ ኤርፖርት",
+        "sarbet": "ሳርቤት",
+        "kazanchis": "ካዛንቺስ",
+        "cmc": "CMC",
+        "ayat": "አያት"
+      }
+    },
+    "footer": {
+      "brandDescription": "በኢትዮጵያ ለቤተሰቦች ደህንነቱ የተጠበቀ፣ የተረጋገጠ እና ምቹ የረጅም ጊዜ መኖሪያ በማቅረብ የኪራይ አገልግሎትን እንደገና እየተገለፀ ነው።",
+      "platform": {
+        "title": "መድረክ",
+        "findHouse": "ቤት ፈልግ",
+        "listProperty": "ንብረት ያስገቡ",
+        "howItWorks": "እንዴት እንደሚሰራ"
+      },
+      "company": {
+        "title": "ኩባንያ",
+        "aboutUs": "ስለ እኛ",
+        "contact": "አግኙን",
+        "support": "ድጋፍ"
+      },
+      "newsletter": {
+        "title": "የዜና ደብዳቤ",
+        "emailPlaceholder": "ኢሜይል አድራሻ",
+        "join": "ይቀላቀሉ"
+      },
+      "copyright": "© 2024 Bet-Connect. መብቶች በሙሉ የተጠበቁ ናቸው።",
+      "legal": {
+        "privacyPolicy": "የግላዊነት ፖሊሲ",
+        "termsOfService": "የአገልግሎት ደንቦች",
+        "cookiePolicy": "የኩኪ ፖሊሲ"
+      }
+    }
+  },
+  "explorePage": {
+    "search": {
+      "placeholder": "\"በቦሌ ትምህርት ቤቶች አቅራቢያ 3 መኝታ ቪላ\" ይሞክሩ",
+      "aiPowered": "በAI የተጎለበተ",
+      "button": "ፈልግ"
+    },
+    "activeFilters": {
+      "title": "ንቁ ማጣሪያዎች:",
+      "removeFilterAria": "{{filter}} ማጣሪያ አስወግድ",
+      "clearAll": "ሁሉንም አጽዳ",
+      "search": "ፍለጋ",
+      "type": "አይነት",
+      "budget": "በጀት",
+      "bedrooms": "መኝታ ቤቶች",
+      "bathrooms": "መታጠቢያ ቤቶች",
+      "any": "ማንኛውም"
+    },
+    "sort": {
+      "label": "አስቀድም በ:",
+      "gridView": "ግሪድ እይታ",
+      "mapView": "ካርታ እይታ",
+      "options": {
+        "newestListings": "አዲስ ዝርዝሮች",
+        "priceLowToHigh": "ዋጋ: ከዝቅተኛ ወደ ከፍተኛ",
+        "priceHighToLow": "ዋጋ: ከከፍተኛ ወደ ዝቅተኛ"
+      }
+    },
+    "filters": {
+      "title": "ማጣሪያዎች",
+      "clearAll": "ሁሉንም አጽዳ",
+      "propertyType": "የንብረት አይነት",
+      "monthlyBudget": "ወርሃዊ በጀት",
+      "bedrooms": "መኝታ ቤቶች",
+      "bathrooms": "መታጠቢያ ቤቶች",
+      "showResults": "ውጤቶችን አሳይ"
+    },
+    "categories": {
+      "allTypes": "ሁሉም አይነቶች",
+      "apartment": "አፓርትመንት",
+      "villa": "ቪላ",
+      "condominium": "ኮንዶሚኒየም",
+      "serviceApartment": "አገልግሎት አፓርትመንት",
+      "privateCompound": "የግል ኮምፓውንድ"
+    },
+    "listings": {
+      "propertyDetailsFallback": "የንብረት ዝርዝር",
+      "defaultAddress": "አዲስ አበባ፣ ኢትዮጵያ",
+      "sqm": "ካ.ሜ.",
+      "available": "ዝግጁ",
+      "propertyLabel": "ንብረት",
+      "emptyTitle": "ምንም ንብረት አልተገኘም",
+      "emptyDescription": "ተጨማሪ ንብረቶች ለማግኘት ማጣሪያዎችዎን ያስተካክሉ።",
+      "errorTitle": "ንብረቶችን መጫን አልተቻለም",
+      "errorDescription": "ዝርዝሮችን ሲያመጣ ችግኝ ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።",
+      "retry": "እንደገና ይሞክሩ",
+      "showing": "በማሳየት ላይ",
+      "of": "ከ"
+    },
+    "card": {
+      "perMonth": "/ ወር",
+      "beds": "አልጋ",
+      "baths": "መታጠቢያ"
+    }
+  },
+  "aboutPage": {
+    "hero": {
+      "titlePrefix": "እንደገና በመግለጽ",
+      "titleAccent": "የቤተሰብ ኑሮን",
+      "titleSuffix": "በኢትዮጵያ",
+      "subtitle": "Bet-Connect ቤተሰቦች ደህንነቱ የተጠበቀ፣ ምቹ እና የተረጋገጠ የረጅም ጊዜ ኪራይ ቤቶችን በአዲስ አበባ እና ከዚያ በላይ ለማግኘት የሚጠቀሙበት መሪ መድረክ ነው።",
+      "exploreListings": "ዝርዝሮችን ያስሱ",
+      "contactUs": "አግኙን"
+    },
+    "mission": {
+      "title": "ተልዕኳችን",
+      "description1": "ተልዕኳችን በንብረት ባለቤቶች እና የረጅም ጊዜ ቤት ፈላጊ ቤተሰቦች መካከል ቀላል ድልድይ መፍጠር ነው። ቤት መፈለግ ደስታ ያለው ልምድ መሆን አለበት እንጂ ጭንቀት የሚፈጥር አይደለም ብለን እናምናለን።",
+      "description2": "ቴክኖሎጂን እና ሰው ላይ ያለ እምነትን በመጠቀም በመድረካችን ላይ ያሉ ሁሉም ዝርዝሮች የ\"Excellence\" ምድብ እንዲሆኑ-ደህንነት፣ አገልግሎቶች እና የቤተሰብ ምቾት የተረጋገጡ-እናረጋግጣለን።",
+      "stats": {
+        "verifiedHomes": "የተረጋገጡ ቤቶች",
+        "happyFamilies": "ደስተኛ ቤተሰቦች",
+        "secureProfile": "ደህንነቱ የተጠበቀ ፕሮፋይል",
+        "topRated": "ከፍተኛ ደረጃ",
+        "customerSupport": "የደንበኛ ድጋፍ"
+      }
+    },
+    "values": {
+      "title": "ዋና እሴቶች",
+      "subtitle": "የኢትዮጵያ የኪራይ ወደፊትን በመገንባት ላይ በየቀኑ የሚመሩን መርሆዎች።",
+      "items": {
+        "trustFirst": {
+          "title": "እምነት ቅድሚያ",
+          "desc": "እያንዳንዱ ባለቤት እና እያንዳንዱ ንብረት በስክሪንዎ ላይ ከመታየቱ በፊት በቡድናችን በእጅ ይረጋገጣል።"
+        },
+        "familyCentric": {
+          "title": "ቤተሰብ-ተኮር",
+          "desc": "ቤተሰቦች ለማደግ የሚያስፈልጋቸውን ቦታ እና ደህንነት በሚሰጡ የረጅም ጊዜ ኪራዮች ላይ ብቻ እናተኩራለን።"
+        },
+        "innovation": {
+          "title": "ኢኖቬሽን",
+          "desc": "ኪራይ ሂደትን እንደ አንድ ቡና ማዘዝ ቀላል ለማድረግ የዲጂታል መድረካችንን ቀጣይነት ያለው ማሻሻያ።"
+        }
+      }
+    },
+    "cta": {
+      "titleLine1": "ቀጣይ ቋሚ ቤትዎን",
+      "titleLine2": "ለማግኘት ዝግጁ ነዎት?",
+      "startSearching": "መፈለግ ይጀምሩ"
+    }
+  },
+  "contactPage": {
+    "hero": {
+      "titlePrefix": "ያግኙን",
+      "titleAccent": "አሁን",
+      "subtitle": "ስለ አንድ ዝርዝር ጥያቄ አለዎት ወይስ ከእኛ ጋር መተባበር ይፈልጋሉ? ቡድናችን ለቤተሰብዎ ተስማሚ ቤት እንዲያገኙ ለማገዝ ዝግጁ ነው።"
+    },
+    "info": {
+      "title": "የመገኛ መረጃ",
+      "emailUs": "ኢሜይል ይላኩልን",
+      "callUs": "ይደውሉልን",
+      "hours": "ሰኞ-ዓርብ: 8:00 ጠዋት - 6:00 ምሽት",
+      "officeLocation": "የቢሮ አድራሻ",
+      "responsePrefix": "መደበኛ የምላሽ ጊዜ:",
+      "responseTime": "ከ2 ሰዓት በታች",
+      "viewOnGoogleMaps": "በGoogle Maps ላይ ይመልከቱ"
+    },
+    "form": {
+      "title": "መልዕክት ይላኩልን",
+      "fullNameLabel": "ሙሉ ስም",
+      "fullNamePlaceholder": "አበበ ቢቂላ",
+      "emailLabel": "ኢሜይል አድራሻ",
+      "emailPlaceholder": "abebe@example.com",
+      "phoneLabel": "ስልክ ቁጥር",
+      "phonePlaceholder": "+251 911...",
+      "subjectLabel": "ርዕስ",
+      "subjectPlaceholder": "ስለ ዋጋ ጥያቄ",
+      "messageLabel": "መልዕክትዎ",
+      "messagePlaceholder": "እንዴት ልናግዝዎ እንችላለን?",
+      "sendMessage": "መልዕክት ላክ",
+      "privacyPrefix": "ይህን ቅጽ በማስገባት የእኛን",
+      "privacyPolicy": "የግላዊነት ፖሊሲ"
+    }
+  },
+  "user": {
+    "propertyOwner": "የንብረት ባለቤት",
+    "owner": "ባለቤት"
+  }
+}

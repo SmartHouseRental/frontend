@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -14,13 +15,15 @@ import {
   PRICE_MAX_THOUSANDS,
   PRICE_MIN_THOUSANDS,
   PRICE_SLIDER_STEP_THOUSANDS,
-  PROPERTY_CATEGORY_OPTIONS,
+  getPropertyCategoryOptions,
   draftToFilterPatch,
   filtersToDraft,
 } from "@/features/explore/utils/propertyFilters";
 
 export function FilterSidebar({ filters, onApply, onClear }) {
+  const { t } = useTranslation();
   const [draft, setDraft] = useState(() => filtersToDraft(filters));
+  const categoryOptions = getPropertyCategoryOptions(t);
 
   useEffect(() => {
     setDraft(filtersToDraft(filters));
@@ -63,18 +66,18 @@ export function FilterSidebar({ filters, onApply, onClear }) {
     <aside className="w-72 hidden xl:block sticky top-24 self-start h-[calc(100vh-120px)] overflow-y-auto pr-4">
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">Filters</h2>
+          <h2 className="text-xl font-bold">{t('explorePage.filters.title')}</h2>
           <button
             type="button"
             onClick={handleClear}
             className="text-sm text-primary hover:underline"
           >
-            Clear All
+            {t('explorePage.filters.clearAll')}
           </button>
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-bold uppercase">Property Type</label>
+          <label className="text-xs font-bold uppercase">{t('explorePage.filters.propertyType')}</label>
           <Select
             value={draft.category}
             onValueChange={(value) =>
@@ -82,10 +85,10 @@ export function FilterSidebar({ filters, onApply, onClear }) {
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder="All Types" />
+              <SelectValue placeholder={t('explorePage.categories.allTypes')} />
             </SelectTrigger>
             <SelectContent>
-              {PROPERTY_CATEGORY_OPTIONS.map((option) => (
+              {categoryOptions.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}
                 </SelectItem>
@@ -95,7 +98,7 @@ export function FilterSidebar({ filters, onApply, onClear }) {
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-bold uppercase">Monthly Budget</label>
+          <label className="text-xs font-bold uppercase">{t('explorePage.filters.monthlyBudget')}</label>
           <p className="text-muted-foreground text-xs">
             {formatThousands(draft.minPriceThousands)} – {formatThousands(draft.maxPriceThousands)}
           </p>
@@ -115,7 +118,7 @@ export function FilterSidebar({ filters, onApply, onClear }) {
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-bold uppercase">Bedrooms</label>
+          <label className="text-xs font-bold uppercase">{t('explorePage.filters.bedrooms')}</label>
           <div className="flex gap-2">
             {BEDROOM_OPTIONS.map((bed) => (
               <Button
@@ -132,7 +135,7 @@ export function FilterSidebar({ filters, onApply, onClear }) {
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-bold uppercase">Bathrooms</label>
+          <label className="text-xs font-bold uppercase">{t('explorePage.filters.bathrooms')}</label>
           <div className="flex gap-2">
             {BATHROOM_OPTIONS.map((bath) => (
               <Button
@@ -149,7 +152,7 @@ export function FilterSidebar({ filters, onApply, onClear }) {
         </div>
 
         <Button type="button" className="w-full" onClick={handleApply}>
-          Show Results
+          {t('explorePage.filters.showResults')}
         </Button>
       </div>
     </aside>

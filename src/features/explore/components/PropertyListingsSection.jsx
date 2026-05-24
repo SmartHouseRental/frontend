@@ -6,8 +6,9 @@ import PropertyMap from '@/components/map/PropertyMap';
 import { parseLocation } from '@/lib/utils';
 import { getLocalizedField } from '@/lib/i18n/getLocalizedField';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslation } from 'react-i18next';
 
-function enrichProperties(properties, locale) {
+function enrichProperties(properties, locale, t) {
   return properties.map((p) => {
     const coords = parseLocation(p.location);
 
@@ -24,20 +25,20 @@ function enrichProperties(properties, locale) {
       ...p,
       lat: coords?.lat || 9.0128,
       lng: coords?.lng || 38.7508,
-      titleStr: title || 'Property Details',
-      addressStr: address || p.location || 'Addis Ababa, Ethiopia',
+      titleStr: title || t('explorePage.listings.propertyDetailsFallback'),
+      addressStr: address || p.location || t('explorePage.listings.defaultAddress'),
       image:
         p.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image',
       priceStr: `${price} ${currency}`,
       beds: p.bedrooms,
       baths: p.bathrooms,
-      size: `${area} sqm`,
+      size: `${area} ${t('explorePage.listings.sqm')}`,
       statusStr:
         p.status === 'AVAILABLE' || p.status === 'available'
-          ? 'Available'
+          ? t('explorePage.listings.available')
           : p.status,
-      typeStr: type || 'Villa',
-      category: category || 'Property',
+      typeStr: type || t('explorePage.categories.villa'),
+      category: category || t('explorePage.listings.propertyLabel'),
     };
   });
 }
@@ -57,11 +58,24 @@ export function PropertyListingsSection({
   emptyDescription = 'Try adjusting your filters to find more properties.',
   errorTitle = 'Failed to load properties',
 }) {
+  const { t } = useTranslation();
   const { locale } = useLanguage();
 
+  const resolvedEmptyTitle = emptyTitle === 'No properties found'
+    ? t('explorePage.listings.emptyTitle')
+    : emptyTitle;
+  const resolvedEmptyDescription =
+    emptyDescription === 'Try adjusting your filters to find more properties.'
+      ? t('explorePage.listings.emptyDescription')
+      : emptyDescription;
+  const resolvedErrorTitle =
+    errorTitle === 'Failed to load properties'
+      ? t('explorePage.listings.errorTitle')
+      : errorTitle;
+
   const enrichedProperties = useMemo(
-    () => enrichProperties(properties, locale),
-    [properties, locale],
+    () => enrichProperties(properties, locale, t),
+    [properties, locale, t],
   );
 
   const pageStart = meta ? (meta.page - 1) * meta.limit + 1 : 1;
@@ -84,15 +98,15 @@ export function PropertyListingsSection({
           <AlertCircle className="h-10 w-10 text-destructive" />
         </div>
         <div className="max-w-md space-y-2">
-          <h3 className="text-xl font-bold">{errorTitle}</h3>
+          <h3 className="text-xl font-bold">{resolvedErrorTitle}</h3>
           <p className="text-muted-foreground">
             {error?.response?.data?.message ||
               error?.message ||
-              'We encountered an error while fetching listings. Please try again.'}
+              t('explorePage.listings.errorDescription')}
           </p>
         </div>
         <Button variant="outline" onClick={onRetry} className="rounded-xl px-8">
-          Retry
+          {t('explorePage.listings.retry')}
         </Button>
       </div>
     );
@@ -140,19 +154,19 @@ export function PropertyListingsSection({
               <div className="bg-muted flex h-16 w-16 items-center justify-center rounded-full">
                 <SearchX className="text-muted-foreground h-8 w-8" />
               </div>
-              <h3 className="text-lg font-bold">{emptyTitle}</h3>
-              <p className="text-muted-foreground max-w-md text-sm">{emptyDescription}</p>
+              <h3 className="text-lg font-bold">{resolvedEmptyTitle}</h3>
+              <p className="text-muted-foreground max-w-md text-sm">{resolvedEmptyDescription}</p>
             </div>
           )}
 
           {enrichedProperties.length > 0 && meta?.totalPages > 1 && (
             <div className="flex flex-col items-center justify-between gap-6 border-t pt-6 sm:flex-row">
               <p className="text-muted-foreground text-sm">
-                Showing{' '}
+                {t('explorePage.listings.showing')}{' '}
                 <span className="text-foreground font-bold">
                   {pageStart} - {pageEnd}
                 </span>{' '}
-                of <span className="text-foreground font-bold">{meta.total}</span>
+                {t('explorePage.listings.of')} <span className="text-foreground font-bold">{meta.total}</span>
               </p>
 
               <div className="flex items-center gap-2">

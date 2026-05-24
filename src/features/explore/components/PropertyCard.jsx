@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router';
 import { Star } from 'lucide-react';
 import HeartButton from '@/features/favorites/components/HeartButton';
+import { useTranslation } from 'react-i18next';
 
 export function PropertyCard(props) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   // Build a property object with an id for the favorites system
   const property = {
@@ -50,13 +52,13 @@ export function PropertyCard(props) {
           </div>
           <div className="text-right">
             <span className="text-primary text-lg font-bold">{props.price}</span>
-            <span className="text-muted-foreground text-xs">/ month</span>
+            <span className="text-muted-foreground text-xs">{t('explorePage.card.perMonth')}</span>
           </div>
         </div>
 
         <div className="my-3 flex items-center gap-4 border-y py-3 text-xs">
-          <span>{props.beds} Beds</span>
-          <span>{props.baths} Baths</span>
+          <span>{props.beds} {t('explorePage.card.beds')}</span>
+          <span>{props.baths} {t('explorePage.card.baths')}</span>
           <span>{props.size}</span>
         </div>
 

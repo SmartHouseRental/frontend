@@ -1,12 +1,16 @@
 import { View, Map } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SORT_OPTIONS } from "@/features/explore/utils/propertyFilters";
+import { useTranslation } from 'react-i18next';
+import { getSortOptions } from "@/features/explore/utils/propertyFilters";
 
 export function SortBar({ viewMode, setViewMode, sort, onSortChange }) {
+  const { t } = useTranslation();
+  const sortOptions = getSortOptions(t);
+
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card p-4 rounded-xl border">
       <div className="flex items-center gap-3">
-        <span className="text-sm font-bold text-muted-foreground">Sort by:</span>
+        <span className="text-sm font-bold text-muted-foreground">{t('explorePage.sort.label')}</span>
         <Select
           value={sort === 'views' ? 'newest' : sort}
           onValueChange={onSortChange}
@@ -16,7 +20,7 @@ export function SortBar({ viewMode, setViewMode, sort, onSortChange }) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {SORT_OPTIONS.map((option) => (
+            {sortOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>
@@ -36,7 +40,7 @@ export function SortBar({ viewMode, setViewMode, sort, onSortChange }) {
           }`}
         >
           <View className="h-4 w-4" />
-          Grid View
+          {t('explorePage.sort.gridView')}
         </button>
 
         <button 
@@ -49,7 +53,7 @@ export function SortBar({ viewMode, setViewMode, sort, onSortChange }) {
           }`}
         >
           <Map className="h-4 w-4" />
-          Map View
+          {t('explorePage.sort.mapView')}
         </button>
       </div>
     </div>

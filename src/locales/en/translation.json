@@ -1,0 +1,394 @@
+{
+  "welcome": "Welcome",
+  "home": "Home",
+  "login": "Login",
+  "signup": "Sign Up",
+  "dashboard": "Dashboard",
+  "explore": "Explore",
+  "saved": "Saved",
+  "messages": "Messages",
+  "about": "About",
+  "contact": "Contact",
+  "logout": "Logout",
+  "loggingOut": "Logging out...",
+  "nearMe": "Near Me",
+  "nearMeSubtitle": "Available rentals within {{radius}} km of your current location",
+  "findingLocation": "Finding your location",
+  "findingLocationDesc": "Allow location access when prompted so we can show rentals near you.",
+  "locationPermissionNeeded": "Location permission needed",
+  "locationUnavailable": "Location unavailable",
+  "tryAgain": "Try again",
+  "browseAllListings": "Browse all listings",
+  "refreshLocation": "Refresh location",
+  "failedNearby": "Failed to load nearby homes",
+  "noRentalsNearby": "No rentals nearby",
+  "noRentalsNearbyDesc": "We could not find available properties within {{radius}} km of your location.",
+  "exploreMoreAreas": "Explore more areas",
+  "retry": "Retry",
+  "featuredTitle": "Featured Family Homes",
+  "featuredSubtitle": "Hand-picked residences for comfort and security",
+  "seeAllListings": "See all listings ->",
+  "beds": "Beds",
+  "baths": "Baths",
+  "perMonth": "/mo",
+  "language": {
+    "select": "Select language",
+    "english": "English",
+    "amharic": "አማርኛ"
+  },
+  "auth": {
+    "backToHome": "Back to Home",
+    "home": "Home",
+    "signIn": "Sign In",
+    "signInIntro": "Enter your credentials to securely access your account.",
+    "forgotPassword": "Forgot Password?",
+    "loginSecurely": "Login securely",
+    "signingIn": "Signing In...",
+    "orContinueWith": "Or continue with",
+    "googleAccount": "Google Account",
+    "welcomeBackTo": "Welcome Back to",
+    "loginHeroDesc": "Log in to manage your properties, sign agreements, and find your next perfect home.",
+    "dontHaveAccount": "Don't have an account?",
+    "createAnAccount": "Create an account",
+    "joinCommunity": "Join the community",
+    "signupIntro": "Complete your details to get started with SmartHouseRental.",
+    "alreadyHaveAccount": "Already have an account?",
+    "loginInstead": "Log in instead",
+    "iAmJoiningAs": "I am joining as a...",
+    "renter": "Renter",
+    "owner": "Owner",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "emailAddress": "Email Address",
+    "phoneNumber": "Phone Number",
+    "password": "Password",
+    "passwordHint": "At least 8 characters long with an uppercase letter",
+    "createAccount": "Create Account",
+    "creatingAccount": "Creating Account..."
+  },
+  "sidebar": {
+    "main": "Main",
+    "adminSection": "Admin",
+    "adminControl": "Admin Control",
+    "ownerPortal": "Owner Portal",
+    "renterDashboard": "Renter Dashboard",
+    "userManagement": "User Management",
+    "properties": "Properties",
+    "agreements": "Agreements",
+    "reports": "Reports",
+    "reviews": "Reviews",
+    "pendingVerifications": "Pending Verifications",
+    "notifications": "Notifications",
+    "analytics": "Analytics",
+    "auditLogs": "Audit Logs",
+    "settings": "Settings",
+    "myProperties": "My Properties",
+    "appointments": "Appointments",
+    "reportsAgainstMe": "Reports Against Me",
+    "payments": "Payments",
+    "profileAndSettings": "Profile & Settings",
+    "helpAndSupport": "Help & Support",
+    "myAppointments": "My Appointments",
+    "managePropertyVisits": "Manage property visits",
+    "myAgreements": "My Agreements",
+    "offersDepositsPayments": "Offers, deposits & payments",
+    "myReviews": "My Reviews",
+    "yourFeedbackHistory": "Your feedback history",
+    "systemAlertsUpdates": "System alerts and updates",
+    "personalizeAccount": "Personalize your account"
+  },
+  "header": {
+    "ownerDashboard": "Owner Dashboard",
+    "overview": "Overview",
+    "detail": "Detail",
+    "edit": "Edit",
+    "propertyDetail": "Property Detail",
+    "createAgreement": "Create Agreement",
+    "agreementDetail": "Agreement Detail",
+    "paymentHistory": "Payment History",
+    "agreementDetails": "Agreement details",
+    "myAccount": "My Account",
+    "profile": "Profile",
+    "signOut": "Sign Out",
+    "signingOut": "Signing out...",
+    "switchToLightMode": "Switch to light mode",
+    "switchToDarkMode": "Switch to dark mode",
+    "noNotificationsYet": "No notifications yet",
+    "viewAllNotifications": "View all notifications",
+    "new": "new",
+    "newPropertySubmission": "New Property Submission",
+    "awaitingReview": "Horizon Peak Villa is awaiting review.",
+    "urgentReport": "Urgent Report",
+    "fraudReportFiled": "A new fraud report has been filed.",
+    "toggleTheme": "Toggle theme",
+    "systemManager": "System Manager"
+  },
+  "landing": {
+    "hero": {
+      "title": "Find Your Perfect",
+      "titleAccent": "Family Home",
+      "subtitle": "Verified, family-oriented long stays.",
+      "cityPlaceholder": "City...",
+      "priceRangePlaceholder": "Price Range",
+      "bedroomsPlaceholder": "Bedrooms",
+      "search": "Search"
+    },
+    "featured": {
+      "error": "Could not load featured listings at this time."
+    },
+    "nearby": {
+      "retryLoadError": "Could not load nearby properties. Please try again."
+    },
+    "howItWorks": {
+      "title": "The Journey to Your New Home",
+      "step1": {
+        "title": "1. Search & Filter",
+        "desc": "Browse curated family-ready homes."
+      },
+      "step2": {
+        "title": "2. Schedule a Visit",
+        "desc": "Book a physical or virtual tour."
+      },
+      "step3": {
+        "title": "3. Move In Securely",
+        "desc": "Seamless contracts and secure handovers."
+      }
+    },
+    "benefits": {
+      "badge": "Why Choose Beten",
+      "title": "Trust & Technology For Your Family's Comfort",
+      "feature1": {
+        "title": "Verified Listings",
+        "desc": "Every property is physically visited and verified."
+      },
+      "feature2": {
+        "title": "AI-Powered Long Stays",
+        "desc": "Smart matching for long-term living."
+      },
+      "feature3": {
+        "title": "24/7 Support",
+        "desc": "Dedicated team ready to assist."
+      }
+    },
+    "testimonials": {
+      "badge": "What People Say",
+      "titlePrefix": "Trusted by",
+      "titleAccent": "Families",
+      "titleSuffix": "Across Addis",
+      "subtitle": "Real stories from renters and owners who found their perfect match through Bet-Connect.",
+      "items": {
+        "almaz": {
+          "role": "Renter • Bole",
+          "text": "We found the perfect home for our family within a week! The verification process gave us complete peace of mind. Our kids love the neighborhood."
+        },
+        "samuel": {
+          "role": "Renter • Kazanchis",
+          "text": "The AI-powered search understood exactly what we needed — a quiet place near schools with reliable internet. Bet-Connect delivered!"
+        },
+        "hana": {
+          "role": "Property Owner",
+          "text": "Listing my property was incredibly simple. I had verified tenants reaching out within days. The platform handles everything professionally."
+        },
+        "dawit": {
+          "role": "Renter • CMC",
+          "text": "After trying many platforms, Bet-Connect was the only one where every listing was real and verified. No surprises, no scams. Just honest homes."
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to Find Your Family's Next Home?",
+      "subtitle": "Join thousands of families who have found verified, safe, and comfortable homes through Bet-Connect. Start your journey today.",
+      "browseHomes": "Browse Homes",
+      "listYourProperty": "List Your Property"
+    },
+    "map": {
+      "propertyDetails": "Property Details",
+      "liveListings": "Live Listings",
+      "availableAcross": "Available Across",
+      "addisAbaba": "Addis Ababa",
+      "addisAbabaEthiopia": "Addis Ababa, Ethiopia",
+      "subtitle": "Finding a home is easier when you can see the neighborhood. Explore our verified listings in prime locations.",
+      "exploreFullMap": "Explore Full Map",
+      "locations": {
+        "boleAtlas": "Bole Atlas",
+        "oldAirport": "Old Airport",
+        "sarbet": "Sarbet",
+        "kazanchis": "Kazanchis",
+        "cmc": "CMC",
+        "ayat": "Ayat"
+      }
+    },
+    "footer": {
+      "brandDescription": "Redefining rentals for families in Ethiopia by providing secure, verified, and comfortable long-stay homes.",
+      "platform": {
+        "title": "Platform",
+        "findHouse": "Find a House",
+        "listProperty": "List Property",
+        "howItWorks": "How it Works"
+      },
+      "company": {
+        "title": "Company",
+        "aboutUs": "About Us",
+        "contact": "Contact",
+        "support": "Support"
+      },
+      "newsletter": {
+        "title": "Newsletter",
+        "emailPlaceholder": "Email address",
+        "join": "Join"
+      },
+      "copyright": "© 2024 Bet-Connect. All rights reserved.",
+      "legal": {
+        "privacyPolicy": "Privacy Policy",
+        "termsOfService": "Terms of Service",
+        "cookiePolicy": "Cookie Policy"
+      }
+    }
+  },
+  "explorePage": {
+    "search": {
+      "placeholder": "Try \"3 bedroom villa in Bole near schools\"",
+      "aiPowered": "AI-powered",
+      "button": "Search"
+    },
+    "activeFilters": {
+      "title": "Active Filters:",
+      "removeFilterAria": "Remove {{filter}} filter",
+      "clearAll": "Clear All",
+      "search": "Search",
+      "type": "Type",
+      "budget": "Budget",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "any": "Any"
+    },
+    "sort": {
+      "label": "Sort by:",
+      "gridView": "Grid View",
+      "mapView": "Map View",
+      "options": {
+        "newestListings": "Newest Listings",
+        "priceLowToHigh": "Price: Low to High",
+        "priceHighToLow": "Price: High to Low"
+      }
+    },
+    "filters": {
+      "title": "Filters",
+      "clearAll": "Clear All",
+      "propertyType": "Property Type",
+      "monthlyBudget": "Monthly Budget",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "showResults": "Show Results"
+    },
+    "categories": {
+      "allTypes": "All Types",
+      "apartment": "Apartment",
+      "villa": "Villa",
+      "condominium": "Condominium",
+      "serviceApartment": "Service Apartment",
+      "privateCompound": "Private Compound"
+    },
+    "listings": {
+      "propertyDetailsFallback": "Property Details",
+      "defaultAddress": "Addis Ababa, Ethiopia",
+      "sqm": "sqm",
+      "available": "Available",
+      "propertyLabel": "Property",
+      "emptyTitle": "No properties found",
+      "emptyDescription": "Try adjusting your filters to find more properties.",
+      "errorTitle": "Failed to load properties",
+      "errorDescription": "We encountered an error while fetching listings. Please try again.",
+      "retry": "Retry",
+      "showing": "Showing",
+      "of": "of"
+    },
+    "card": {
+      "perMonth": "/ month",
+      "beds": "Beds",
+      "baths": "Baths"
+    }
+  },
+  "aboutPage": {
+    "hero": {
+      "titlePrefix": "Redefining",
+      "titleAccent": "Family Living",
+      "titleSuffix": "in Ethiopia",
+      "subtitle": "Bet-Connect is the leading platform for families to find secure, comfortable, and verified long-stay rentals across Addis Ababa and beyond.",
+      "exploreListings": "Explore Listings",
+      "contactUs": "Contact Us"
+    },
+    "mission": {
+      "title": "Our Mission",
+      "description1": "Our mission is to create a seamless bridge between property owners and families seeking long-term homes. We believe that finding a home should be a joyful experience, not a stressful one.",
+      "description2": "By leveraging technology and human trust, we ensure every listing on our platform belongs to the \"Excellence\" category-verified for security, amenities, and family comfort.",
+      "stats": {
+        "verifiedHomes": "Verified Homes",
+        "happyFamilies": "Happy Families",
+        "secureProfile": "Secure Profile",
+        "topRated": "Top Rated",
+        "customerSupport": "Customer Support"
+      }
+    },
+    "values": {
+      "title": "Core Values",
+      "subtitle": "The principles that guide us every day in building the future of Ethiopian rentals.",
+      "items": {
+        "trustFirst": {
+          "title": "Trust First",
+          "desc": "Every owner and every property is manually verified by our team before they appear on your screen."
+        },
+        "familyCentric": {
+          "title": "Family Centric",
+          "desc": "We focus exclusively on long-stay rentals that offer the space and security families need to thrive."
+        },
+        "innovation": {
+          "title": "Innovation",
+          "desc": "Continuous improvement of our digital platform to make renting as easy as ordering a cup of coffee."
+        }
+      }
+    },
+    "cta": {
+      "titleLine1": "Ready to find your",
+      "titleLine2": "next forever home?",
+      "startSearching": "Start Searching"
+    }
+  },
+  "contactPage": {
+    "hero": {
+      "titlePrefix": "Get in",
+      "titleAccent": "Touch",
+      "subtitle": "Have questions about a listing or want to partner with us? Our team is here to help you find the perfect family home."
+    },
+    "info": {
+      "title": "Contact Information",
+      "emailUs": "Email Us",
+      "callUs": "Call Us",
+      "hours": "Mon-Fri: 8:00 AM - 6:00 PM",
+      "officeLocation": "Office Location",
+      "responsePrefix": "Typical response time:",
+      "responseTime": "Under 2 hours",
+      "viewOnGoogleMaps": "View on Google Maps"
+    },
+    "form": {
+      "title": "Send us a Message",
+      "fullNameLabel": "Full Name",
+      "fullNamePlaceholder": "Abebe Bikila",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "abebe@example.com",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "+251 911...",
+      "subjectLabel": "Subject",
+      "subjectPlaceholder": "Inquiry about pricing",
+      "messageLabel": "Your Message",
+      "messagePlaceholder": "How can we help you?",
+      "sendMessage": "Send Message",
+      "privacyPrefix": "By submitting this form, you agree to our",
+      "privacyPolicy": "Privacy Policy"
+    }
+  },
+  "user": {
+    "propertyOwner": "Property Owner",
+    "owner": "Owner"
+  }
+}

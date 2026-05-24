@@ -1,32 +1,23 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Search, CalendarCheck, KeyRound } from "lucide-react"
+import { useTranslation } from 'react-i18next';
 
 const steps = [
-  {
-    icon: Search,
-    title: "1. Search & Filter",
-    desc: "Browse curated family-ready homes.",
-  },
-  {
-    icon: CalendarCheck,
-    title: "2. Schedule a Visit",
-    desc: "Book a physical or virtual tour.",
-  },
-  {
-    icon: KeyRound,
-    title: "3. Move In Securely",
-    desc: "Seamless contracts and secure handovers.",
-  },
+  { icon: Search, titleKey: 'landing.howItWorks.step1.title', descKey: 'landing.howItWorks.step1.desc' },
+  { icon: CalendarCheck, titleKey: 'landing.howItWorks.step2.title', descKey: 'landing.howItWorks.step2.desc' },
+  { icon: KeyRound, titleKey: 'landing.howItWorks.step3.title', descKey: 'landing.howItWorks.step3.desc' },
 ]
 
 export default function HowItWorks() {
+  const { t } = useTranslation();
+
   return (
     <section className="bg-muted/30 py-20 px-6 lg:px-20 relative overflow-hidden">
       <div className="absolute inset-0 ethiopian-pattern" />
 
       <div className="max-w-7xl mx-auto relative z-10 text-center">
         <h2 className="text-4xl font-extrabold mb-16">
-          The Journey to Your New Home
+          {t('landing.howItWorks.title')}
         </h2>
 
         <div className="grid md:grid-cols-3 gap-12">
@@ -44,11 +35,11 @@ export default function HowItWorks() {
                   </div>
 
                   <h3 className="text-xl font-bold mb-3">
-                    {step.title}
+                    {t(step.titleKey)}
                   </h3>
 
                   <p className="text-muted-foreground">
-                    {step.desc}
+                    {t(step.descKey)}
                   </p>
                 </CardContent>
               </Card>
