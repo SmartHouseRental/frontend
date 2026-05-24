@@ -36,6 +36,7 @@ export default function NotificationsView({
   onClearAll,
   isMarkingAll = false,
   isMarkingOne = false,
+  subtitle = 'Stay updated on your rental activities.',
 }) {
   const [activeTab, setActiveTab] = useState('all');
 
@@ -113,7 +114,7 @@ export default function NotificationsView({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Notifications</h1>
-          <p className="text-muted-foreground mt-1">Stay updated on your rental activities.</p>
+          <p className="text-muted-foreground mt-1">{subtitle}</p>
         </div>
         <div className="flex items-center gap-2">
           {unreadCount > 0 && onMarkAllRead && (

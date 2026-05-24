@@ -1,5 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate, useSearchParams } from 'react-router';
+import ErrorState from '@/components/ErrorState';
+import { getApiErrorMessage } from '@/lib/apiErrors';
 import { useProfile } from '@/features/profile/hooks/useProfile';
 import { Loader2 } from 'lucide-react';
 
@@ -14,7 +16,7 @@ function ProfilePage() {
   const navigate = useNavigate();
   const activeTab = searchParams.get('tab') || 'profile';
 
-  const { data: profileResponse, isLoading } = useProfile();
+  const { data: profileResponse, isLoading, isError, error, refetch } = useProfile();
   const profile = profileResponse?.data;
 
   const handleTabChange = (value) => {
@@ -27,6 +29,18 @@ function ProfilePage() {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="animate-spin text-primary" size={32} />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="scrollbar-hide h-screen overflow-y-auto p-8">
+        <ErrorState
+          title="Failed to load profile"
+          message={getApiErrorMessage(error, 'Unable to load your profile and settings.')}
+          onRetry={() => refetch()}
+        />
       </div>
     );
   }

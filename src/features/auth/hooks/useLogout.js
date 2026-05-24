@@ -15,12 +15,12 @@ export const useLogout = () => {
             removeToken();
             queryClient.clear();
             toast.success('Logged out successfully');
-            navigate('/', { replace: true });
+            navigate('/login', { replace: true });
         },
         onError: () => {
             removeToken();
             queryClient.clear();
-            navigate('/', { replace: true });
+            navigate('/login', { replace: true });
         },
     });
 };

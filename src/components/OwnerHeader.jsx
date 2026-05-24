@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router';
-import { Bell, MessageCircle, ChevronDown, LogOut, User, Settings, HelpCircle, Sun, Moon } from 'lucide-react';
+import { Bell, MessageCircle, ChevronDown, LogOut, User, HelpCircle, Sun, Moon, Loader2 } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
+import { useLogout } from '@/features/auth/hooks/useLogout';
+import { useNotifications, getUnreadCount } from '@/features/notifications/hooks/useNotifications';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,17 +13,21 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-const notifications = [
-    { id: 1, title: 'New appointment request', desc: 'Sara T. wants to view Luxury Villa', time: '5m ago', unread: true },
-    { id: 2, title: 'Payment received', desc: '45,000 ETB — Bole Skyline Apt', time: '2h ago', unread: true },
-    { id: 3, title: 'Agreement signed', desc: 'Mulugeta K. — Bole Skyline Apt', time: '5h ago', unread: false },
-];
+const HEADER_NOTIFICATION_LIMIT = 5;
 
 function OwnerHeader() {
     const location = useLocation();
     const [notifOpen, setNotifOpen] = useState(false);
     const { theme, setTheme } = useTheme();
-    const unreadCount = notifications.filter(n => n.unread).length;
+    const logoutMutation = useLogout();
+    const { data: notifications = [], isLoading: notificationsLoading } = useNotifications();
+
+    const unreadCount = getUnreadCount(notifications);
+    const previewNotifications = notifications.slice(0, HEADER_NOTIFICATION_LIMIT);
+
+    const handleLogout = () => {
+        logoutMutation.mutate();
+    };
 
     const segments = location.pathname.split('/').filter(Boolean);
     const ownerIndex = segments.indexOf('owner');
@@ -85,6 +91,7 @@ function OwnerHeader() {
             <div className="flex items-center gap-2">
                 {/* Dark Mode Toggle */}
                 <button
+                    type="button"
                     className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
                     onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                     title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -94,11 +101,14 @@ function OwnerHeader() {
                 {/* Notifications Dropdown */}
                 <DropdownMenu open={notifOpen} onOpenChange={setNotifOpen}>
                     <DropdownMenuTrigger asChild>
-                        <button className="relative rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground outline-none">
+                        <button
+                            type="button"
+                            className="relative rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground outline-none"
+                        >
                             <Bell size={18} />
                             {unreadCount > 0 && (
                                 <span className="absolute top-1 right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold text-destructive-foreground">
-                                    {unreadCount}
+                                    {unreadCount > 99 ? '99+' : unreadCount}
                                 </span>
                             )}
                         </button>
@@ -113,20 +123,30 @@ function OwnerHeader() {
                             )}
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        {notifications.map((n) => (
-                            <DropdownMenuItem key={n.id} asChild className="cursor-pointer">
-                                <Link to="/owner/notifications" className="flex items-start gap-3 py-2.5">
-                                    <div className={`mt-0.5 size-2 shrink-0 rounded-full ${n.unread ? 'bg-primary' : 'bg-transparent'}`} />
-                                    <div className="min-w-0 flex-1">
-                                        <p className={`text-sm truncate ${n.unread ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
-                                            {n.title}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground truncate">{n.desc}</p>
-                                        <p className="text-[10px] text-muted-foreground/60 mt-0.5">{n.time}</p>
-                                    </div>
-                                </Link>
-                            </DropdownMenuItem>
-                        ))}
+                        {notificationsLoading ? (
+                            <div className="flex items-center justify-center py-6">
+                                <Loader2 size={18} className="animate-spin text-muted-foreground" />
+                            </div>
+                        ) : previewNotifications.length === 0 ? (
+                            <div className="px-3 py-6 text-center text-sm text-muted-foreground">
+                                No notifications yet
+                            </div>
+                        ) : (
+                            previewNotifications.map((n) => (
+                                <DropdownMenuItem key={n.id} asChild className="cursor-pointer">
+                                    <Link to="/owner/notifications" className="flex items-start gap-3 py-2.5">
+                                        <div className={`mt-0.5 size-2 shrink-0 rounded-full ${!n.read ? 'bg-primary' : 'bg-transparent'}`} />
+                                        <div className="min-w-0 flex-1">
+                                            <p className={`text-sm truncate ${!n.read ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
+                                                {n.title}
+                                            </p>
+                                            <p className="text-xs text-muted-foreground truncate">{n.desc || n.body}</p>
+                                            <p className="text-[10px] text-muted-foreground/60 mt-0.5">{n.time}</p>
+                                        </div>
+                                    </Link>
+                                </DropdownMenuItem>
+                            ))
+                        )}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild className="cursor-pointer justify-center">
                             <Link to="/owner/notifications" className="text-xs font-semibold text-primary">
@@ -149,7 +169,7 @@ function OwnerHeader() {
                 {/* User Profile Dropdown */}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/50 outline-none">
+                        <button type="button" className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/50 outline-none">
                             <div className="text-right hidden sm:block">
                                 <p className="text-sm leading-none font-bold text-foreground">Dawit M.</p>
                                 <p className="text-[10px] font-medium text-muted-foreground">Owner</p>
@@ -173,8 +193,12 @@ function OwnerHeader() {
                             <Link to="/owner/help"><HelpCircle size={14} /> Help & Support</Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="cursor-pointer gap-2 text-destructive focus:text-destructive">
-                            <LogOut size={14} /> Sign Out
+                        <DropdownMenuItem
+                            className="cursor-pointer gap-2 text-destructive focus:text-destructive"
+                            onClick={handleLogout}
+                            disabled={logoutMutation.isPending}
+                        >
+                            <LogOut size={14} /> {logoutMutation.isPending ? 'Signing out...' : 'Sign Out'}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
