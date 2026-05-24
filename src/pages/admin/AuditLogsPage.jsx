@@ -21,8 +21,6 @@ import {
     Search,
     Download,
     Filter,
-    ChevronLeft,
-    ChevronRight,
     ScrollText,
     ShieldCheck,
     UserX,
@@ -33,97 +31,13 @@ import {
     AlertTriangle,
     Eye,
 } from 'lucide-react';
-
-const auditLogs = [
-    {
-        id: 'AUD-0012',
-        timestamp: 'Mar 23, 2026 01:14 AM',
-        admin: 'Alex Rivera',
-        action: 'user_suspended',
-        actionLabel: 'User Suspended',
-        target: 'David Vance (USR-3421)',
-        details: 'Suspended for multiple fraud reports. Reason: Repeated false advertising.',
-        severity: 'high',
-        icon: UserX,
-    },
-    {
-        id: 'AUD-0011',
-        timestamp: 'Mar 22, 2026 11:30 PM',
-        admin: 'Alex Rivera',
-        action: 'property_approved',
-        actionLabel: 'Property Approved',
-        target: 'Horizon Peak Villa (PRP-9402)',
-        details: 'Property listing approved after document verification.',
-        severity: 'normal',
-        icon: CheckCircle2,
-    },
-    {
-        id: 'AUD-0010',
-        timestamp: 'Mar 22, 2026 10:15 PM',
-        admin: 'System',
-        action: 'property_auto_approved',
-        actionLabel: 'Auto-Approved',
-        target: 'Bole Skyline Apt (PRP-8829)',
-        details: 'Automatically approved — owner is verified.',
-        severity: 'normal',
-        icon: ShieldCheck,
-    },
-    {
-        id: 'AUD-0009',
-        timestamp: 'Mar 22, 2026 08:45 PM',
-        admin: 'Alex Rivera',
-        action: 'report_resolved',
-        actionLabel: 'Report Resolved',
-        target: 'Report #RPT-4521',
-        details: 'Fraud report resolved. No action taken — insufficient evidence.',
-        severity: 'normal',
-        icon: FileText,
-    },
-    {
-        id: 'AUD-0008',
-        timestamp: 'Mar 22, 2026 06:20 PM',
-        admin: 'Alex Rivera',
-        action: 'documents_verified',
-        actionLabel: 'Documents Verified',
-        target: 'Dawit Tesfaye (USR-4842)',
-        details: 'Owner documents approved. User verification state changed to verified.',
-        severity: 'normal',
-        icon: ShieldCheck,
-    },
-    {
-        id: 'AUD-0007',
-        timestamp: 'Mar 22, 2026 04:00 PM',
-        admin: 'Alex Rivera',
-        action: 'property_rejected',
-        actionLabel: 'Property Rejected',
-        target: 'Suspicious Listing (PRP-8102)',
-        details: 'Rejected due to misleading photos and inconsistent pricing.',
-        severity: 'warning',
-        icon: XCircle,
-    },
-    {
-        id: 'AUD-0006',
-        timestamp: 'Mar 22, 2026 02:30 PM',
-        admin: 'Alex Rivera',
-        action: 'agreement_terminated',
-        actionLabel: 'Agreement Terminated',
-        target: 'Agreement #AG-7102',
-        details: 'Early termination by admin due to ongoing dispute between parties.',
-        severity: 'high',
-        icon: AlertTriangle,
-    },
-    {
-        id: 'AUD-0005',
-        timestamp: 'Mar 22, 2026 11:00 AM',
-        admin: 'System',
-        action: 'broadcast_sent',
-        actionLabel: 'Broadcast Sent',
-        target: 'All Users',
-        details: 'Platform maintenance notification sent to 12,450 users.',
-        severity: 'normal',
-        icon: Home,
-    },
-];
+import { useState } from 'react';
+import { useAdminAuditLogs } from '@/features/admin/hooks/useAdmin';
+import { getAdminListItems } from '@/features/admin/adminSanitize';
+import TableSkeleton from '@/components/TableSkeleton';
+import ErrorState from '@/components/ErrorState';
+import EmptyState from '@/components/EmptyState';
+import DataTablePagination from '@/components/DataTablePagination';
 
 const severityStyles = {
     high: 'bg-rose-100 text-rose-700',
@@ -132,6 +46,42 @@ const severityStyles = {
 };
 
 function AuditLogsPage() {
+    const [page, setPage] = useState(1);
+    const [search, setSearch] = useState('');
+
+    const params = {
+      page,
+      limit: 50,
+      ...(search.trim() ? { search: search.trim() } : {}),
+    };
+
+    const { data, isLoading, isError, refetch } = useAdminAuditLogs(params);
+
+    const auditLogs = getAdminListItems(data);
+    const meta = data?.meta || { page: 1, limit: 50, total: 0, totalPages: 1 };
+
+    const toLabel = (value = '') =>
+      String(value)
+        .toLowerCase()
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+
+    const getIconByEvent = (eventType = '') => {
+      if (eventType.includes('SUSPEND') || eventType.includes('BAN')) return UserX;
+      if (eventType.includes('APPROVE')) return CheckCircle2;
+      if (eventType.includes('VERIFY')) return ShieldCheck;
+      if (eventType.includes('REJECT')) return XCircle;
+      if (eventType.includes('REPORT')) return AlertTriangle;
+      if (eventType.includes('BROADCAST')) return Home;
+      return FileText;
+    };
+
+    const toSeverity = (eventType = '') => {
+      if (eventType.includes('DELETE') || eventType.includes('REJECT') || eventType.includes('SUSPEND')) return 'high';
+      if (eventType.includes('PENDING') || eventType.includes('UPDATE')) return 'warning';
+      return 'normal';
+    };
+
     return (
         <div className="space-y-6 p-8">
             <div className="flex items-end justify-between">
@@ -156,6 +106,11 @@ function AuditLogsPage() {
                         placeholder="Search by admin, action, or target..."
                         type="text"
                         className="pl-10"
+                        value={search}
+                        onChange={(e) => {
+                          setSearch(e.target.value);
+                          setPage(1);
+                        }}
                     />
                 </div>
                 <div className="flex items-center gap-3">
@@ -194,6 +149,13 @@ function AuditLogsPage() {
                 </div>
             </Card>
 
+            {isLoading ? (
+              <TableSkeleton rows={8} columns={6} />
+            ) : isError ? (
+              <ErrorState title="Failed to load audit logs" onRetry={refetch} />
+            ) : auditLogs.length === 0 ? (
+              <EmptyState title="No audit logs found" description="Try changing search filters." />
+            ) : (
             <Card className="gap-0 overflow-hidden p-0">
                 <Table className="w-full min-w-full border-collapse text-left">
                     <TableHeader className="bg-muted/30 w-full">
@@ -208,38 +170,46 @@ function AuditLogsPage() {
                     </TableHeader>
                     <TableBody>
                         {auditLogs.map((log) => {
-                            const IconComp = log.icon;
+                            const IconComp = getIconByEvent(log.eventType);
+                            const severity = toSeverity(log.eventType);
+                            const actorName = log.actor
+                              ? `${log.actor.first_name || ''} ${log.actor.last_name || ''}`.trim() || log.actor.email
+                              : 'System';
                             return (
                                 <TableRow key={log.id} className="transition-colors hover:bg-muted/20">
                                     <TableCell className="px-6 py-4">
-                                        <p className="whitespace-nowrap text-xs font-medium">{log.timestamp}</p>
+                                        <p className="whitespace-nowrap text-xs font-medium">{new Date(log.createdAt).toLocaleString()}</p>
                                     </TableCell>
                                     <TableCell className="px-6 py-4">
                                         <span
-                                            className={`text-sm font-medium ${log.admin === 'System' ? 'text-muted-foreground italic' : ''}`}
+                                            className={`text-sm font-medium ${actorName === 'System' ? 'text-muted-foreground italic' : ''}`}
                                         >
-                                            {log.admin}
+                                            {actorName}
                                         </span>
                                     </TableCell>
                                     <TableCell className="px-6 py-4">
                                         <div className="flex items-center gap-2">
                                             <IconComp size={14} className="text-muted-foreground" />
                                             <span className="whitespace-nowrap text-sm font-semibold">
-                                                {log.actionLabel}
+                                                {toLabel(log.eventType)}
                                             </span>
                                         </div>
                                     </TableCell>
                                     <TableCell className="px-6 py-4">
-                                        <span className="text-primary text-sm font-medium">{log.target}</span>
+                                        <span className="text-primary text-sm font-medium">
+                                          {log.entityType}{log.entityId ? ` (${log.entityId})` : ''}
+                                        </span>
                                     </TableCell>
                                     <TableCell className="max-w-xs px-6 py-4">
-                                        <p className="text-muted-foreground truncate text-xs">{log.details}</p>
+                                        <p className="text-muted-foreground truncate text-xs">
+                                          {log.metadata ? JSON.stringify(log.metadata) : 'No details'}
+                                        </p>
                                     </TableCell>
                                     <TableCell className="px-4 py-4">
                                         <span
-                                            className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${severityStyles[log.severity]}`}
+                                            className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${severityStyles[severity]}`}
                                         >
-                                            {log.severity}
+                                            {severity}
                                         </span>
                                     </TableCell>
                                 </TableRow>
@@ -247,33 +217,16 @@ function AuditLogsPage() {
                         })}
                     </TableBody>
                 </Table>
-                <div className="flex items-center justify-between border-t border-border bg-muted/20 px-6 py-4">
-                    <span className="text-muted-foreground text-xs font-medium">
-                        Showing 1-{auditLogs.length} of 248 entries
-                    </span>
-                    <div className="flex items-center gap-1">
-                        <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-white">
-                            <ChevronLeft size={16} />
-                        </button>
-                        <button className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-white">
-                            1
-                        </button>
-                        <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-white">
-                            2
-                        </button>
-                        <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-white">
-                            3
-                        </button>
-                        <span className="text-muted-foreground px-1">...</span>
-                        <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-white">
-                            31
-                        </button>
-                        <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-white">
-                            <ChevronRight size={16} />
-                        </button>
-                    </div>
-                </div>
+                <DataTablePagination
+                  currentPage={meta.page || 1}
+                  totalPages={meta.totalPages || 1}
+                  totalItems={meta.total || 0}
+                  itemsPerPage={meta.limit || 50}
+                  itemLabel="entries"
+                  onPageChange={setPage}
+                />
             </Card>
+            )}
         </div>
     );
 }
