@@ -1,6 +1,5 @@
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import {
   Select,
@@ -9,52 +8,123 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  BATHROOM_OPTIONS,
+  BEDROOM_OPTIONS,
+  PRICE_MAX_THOUSANDS,
+  PRICE_MIN_THOUSANDS,
+  PRICE_SLIDER_STEP_THOUSANDS,
+  PROPERTY_CATEGORY_OPTIONS,
+  draftToFilterPatch,
+  filtersToDraft,
+} from "@/features/explore/utils/propertyFilters";
 
-export function FilterSidebar() {
+export function FilterSidebar({ filters, onApply, onClear }) {
+  const [draft, setDraft] = useState(() => filtersToDraft(filters));
+
+  useEffect(() => {
+    setDraft(filtersToDraft(filters));
+  }, [filters]);
+
+  const toggleBedroom = (bed) => {
+    setDraft((prev) => ({
+      ...prev,
+      bedrooms: prev.bedrooms === bed ? "" : bed,
+    }));
+  };
+
+  const toggleBathroom = (bath) => {
+    setDraft((prev) => ({
+      ...prev,
+      bathrooms: prev.bathrooms === bath ? "" : bath,
+    }));
+  };
+
+  const handleApply = () => {
+    onApply?.(draftToFilterPatch(draft));
+  };
+
+  const handleClear = () => {
+    const cleared = filtersToDraft({
+      category: "",
+      minPriceThousands: PRICE_MIN_THOUSANDS,
+      maxPriceThousands: PRICE_MAX_THOUSANDS,
+      bedrooms: "",
+      bathrooms: "",
+    });
+    setDraft(cleared);
+    onClear?.();
+  };
+
+  const formatThousands = (value) =>
+    `${(value * 1000).toLocaleString()} ETB`;
+
   return (
     <aside className="w-72 hidden xl:block sticky top-24 self-start h-[calc(100vh-120px)] overflow-y-auto pr-4">
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold">Filters</h2>
-          <button className="text-sm text-primary hover:underline">Clear All</button>
+          <button
+            type="button"
+            onClick={handleClear}
+            className="text-sm text-primary hover:underline"
+          >
+            Clear All
+          </button>
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-bold uppercase">Sub-city Area</label>
-          <Select>
+          <label className="text-xs font-bold uppercase">Property Type</label>
+          <Select
+            value={draft.category}
+            onValueChange={(value) =>
+              setDraft((prev) => ({ ...prev, category: value }))
+            }
+          >
             <SelectTrigger>
-              <SelectValue placeholder="All Sub-cities" />
+              <SelectValue placeholder="All Types" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="bole">
-                Bole (Bole Bulbula, Atlas)
-              </SelectItem>
-
-              <SelectItem value="oldairport">
-                Old Airport
-              </SelectItem>
-
-              <SelectItem value="kazanchis">
-                Kazanchis
-              </SelectItem>
-
-              <SelectItem value="cmc">
-                CMC & Summit
-              </SelectItem>
-</SelectContent>
+              {PROPERTY_CATEGORY_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </div>
 
         <div className="flex flex-col gap-2">
           <label className="text-xs font-bold uppercase">Monthly Budget</label>
-          <Slider defaultValue={[20]} max={100} step={1} />
+          <p className="text-muted-foreground text-xs">
+            {formatThousands(draft.minPriceThousands)} – {formatThousands(draft.maxPriceThousands)}
+          </p>
+          <Slider
+            min={PRICE_MIN_THOUSANDS}
+            max={PRICE_MAX_THOUSANDS}
+            step={PRICE_SLIDER_STEP_THOUSANDS}
+            value={[draft.minPriceThousands, draft.maxPriceThousands]}
+            onValueChange={([min, max]) =>
+              setDraft((prev) => ({
+                ...prev,
+                minPriceThousands: min,
+                maxPriceThousands: max,
+              }))
+            }
+          />
         </div>
 
         <div className="flex flex-col gap-2">
           <label className="text-xs font-bold uppercase">Bedrooms</label>
           <div className="flex gap-2">
-            {["1", "2", "3", "4+"].map((bed) => (
-              <Button key={bed} variant="outline" className="flex-1">
+            {BEDROOM_OPTIONS.map((bed) => (
+              <Button
+                key={bed}
+                type="button"
+                variant={draft.bedrooms === bed ? "default" : "outline"}
+                className="flex-1"
+                onClick={() => toggleBedroom(bed)}
+              >
                 {bed}
               </Button>
             ))}
@@ -62,34 +132,25 @@ export function FilterSidebar() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-bold uppercase">Furnishing</label>
-          <div className="space-y-2">
-            <label className="flex items-center gap-2">
-              <Checkbox defaultChecked />
-              Fully Furnished
-            </label>
-            <label className="flex items-center gap-2">
-              <Checkbox />
-              Unfurnished
-            </label>
+          <label className="text-xs font-bold uppercase">Bathrooms</label>
+          <div className="flex gap-2">
+            {BATHROOM_OPTIONS.map((bath) => (
+              <Button
+                key={bath}
+                type="button"
+                variant={draft.bathrooms === bath ? "default" : "outline"}
+                className="flex-1"
+                onClick={() => toggleBathroom(bath)}
+              >
+                {bath}
+              </Button>
+            ))}
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label className="text-xs font-bold uppercase">Availability</label>
-          <RadioGroup defaultValue="ready">
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="ready" />
-              Move-in Ready
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="30" />
-              Next 30 Days
-            </div>
-          </RadioGroup>
-        </div>
-
-        <Button className="w-full">Show Results</Button>
+        <Button type="button" className="w-full" onClick={handleApply}>
+          Show Results
+        </Button>
       </div>
     </aside>
   );

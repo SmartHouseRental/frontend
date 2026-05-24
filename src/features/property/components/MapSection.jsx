@@ -10,6 +10,11 @@ export default function MapSection({ property }) {
     { label: "Hospital", distance: "2.5km" },
   ];
 
+  // Get coordinates from location object or fallback
+  const lat = property.location?.lat || 9.0300;
+  const lng = property.location?.lng || 38.7578;
+  const address = property.address || "Addis Ababa, Ethiopia";
+
   return (
     <section className="mb-12">
       <div className="flex items-center justify-between mb-6">
@@ -17,10 +22,10 @@ export default function MapSection({ property }) {
           <h3 className="text-2xl font-bold mb-1">Location & Neighborhood</h3>
           <p className="text-muted-foreground text-sm flex items-center gap-1">
             <MapPin className="w-3 h-3" />
-            {property.location}
+            {address}
           </p>
         </div>
-        
+
         <div className="hidden sm:flex items-center gap-2 text-xs font-semibold bg-primary/5 text-primary px-3 py-1.5 rounded-full border border-primary/10">
           <Info className="w-3 h-3" />
           Verified Coordinates
@@ -28,11 +33,11 @@ export default function MapSection({ property }) {
       </div>
 
       <div className="h-96 rounded-3xl overflow-hidden relative border border-border shadow-xl ring-8 ring-muted/30">
-        <PropertyMap 
-          properties={[property]} 
-          center={[property.lat, property.lng]} 
+        <PropertyMap
+          properties={[property]}
+          center={[lat, lng]}
           zoom={15}
-          mode="detail" 
+          mode="detail"
         />
 
         {/* POI Overlay */}
@@ -48,9 +53,9 @@ export default function MapSection({ property }) {
           ))}
         </div>
       </div>
-      
+
       <p className="mt-6 text-sm text-muted-foreground leading-relaxed italic">
-        "This neighborhood is known for its safety, quiet streets, and proximity to major international schools and shopping centers in {property.location.split(',')[0]}."
+        "This neighborhood is known for its safety, quiet streets, and proximity to major international schools and shopping centers in {address.split(',')[0]}."
       </p>
     </section>
   );

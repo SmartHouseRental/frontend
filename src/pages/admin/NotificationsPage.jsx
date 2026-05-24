@@ -24,82 +24,48 @@ import {
     MessageCircle,
     Shield,
 } from 'lucide-react';
-
-const notifications = [
-    {
-        id: 1,
-        type: 'document_approval',
-        title: 'New Document Submission',
-        content: 'Mulugeta Abebe submitted verification documents for review.',
-        time: '5 minutes ago',
-        isRead: false,
-        icon: FileText,
-        iconColor: 'text-blue-600 bg-blue-50',
-    },
-    {
-        id: 2,
-        type: 'report',
-        title: 'Urgent Fraud Report',
-        content: 'A high-severity fraud report has been filed against property #PRP-2841.',
-        time: '23 minutes ago',
-        isRead: false,
-        icon: AlertTriangle,
-        iconColor: 'text-rose-600 bg-rose-50',
-    },
-    {
-        id: 3,
-        type: 'agreement_update',
-        title: 'Agreement Activated',
-        content: 'Agreement #AG-9428 between Mulugeta K. and Tadesse W. is now active after payment confirmation.',
-        time: '1 hour ago',
-        isRead: false,
-        icon: Handshake,
-        iconColor: 'text-emerald-600 bg-emerald-50',
-    },
-    {
-        id: 4,
-        type: 'property_update',
-        title: 'Property Auto-Approved',
-        content: 'Luxury Villa in Bole Atlas by verified owner Michael Chen was auto-approved.',
-        time: '2 hours ago',
-        isRead: true,
-        icon: Home,
-        iconColor: 'text-primary bg-primary/10',
-    },
-    {
-        id: 5,
-        type: 'payment_confirmation',
-        title: 'Payment Proof Uploaded',
-        content: 'Renter Abebe B. uploaded payment proof for agreement #AG-1024.',
-        time: '3 hours ago',
-        isRead: true,
-        icon: CheckCircle2,
-        iconColor: 'text-emerald-600 bg-emerald-50',
-    },
-    {
-        id: 6,
-        type: 'message',
-        title: 'New Support Message',
-        content: 'Tigist Hailu sent a message regarding her property verification delay.',
-        time: '5 hours ago',
-        isRead: true,
-        icon: MessageCircle,
-        iconColor: 'text-violet-600 bg-violet-50',
-    },
-    {
-        id: 7,
-        type: 'report',
-        title: 'Report Resolved',
-        content: 'Report #RPT-4521 against David Vance has been marked as resolved.',
-        time: '1 day ago',
-        isRead: true,
-        icon: Shield,
-        iconColor: 'text-emerald-600 bg-emerald-50',
-    },
-];
+import { useMemo } from 'react';
+import { useAdminBroadcastNotification, useAdminNotifications } from '@/features/admin/hooks/useAdmin';
+import { getAdminListItems } from '@/features/admin/adminSanitize';
+import ErrorState from '@/components/ErrorState';
+import EmptyState from '@/components/EmptyState';
+import TableSkeleton from '@/components/TableSkeleton';
 
 function NotificationsPage() {
     const [broadcastTarget, setBroadcastTarget] = useState('');
+    const [title, setTitle] = useState('');
+    const [message, setMessage] = useState('');
+
+    const { data, isLoading, isError, refetch } = useAdminNotifications({ page: 1, limit: 50 });
+    const broadcastMutation = useAdminBroadcastNotification();
+    const notifications = getAdminListItems(data);
+
+    const typeMeta = {
+      MESSAGE_NEW: { icon: MessageCircle, iconColor: 'text-violet-600 bg-violet-50' },
+      APPOINTMENT_BOOKED: { icon: Handshake, iconColor: 'text-emerald-600 bg-emerald-50' },
+      APPOINTMENT_UPDATED: { icon: Clock, iconColor: 'text-amber-600 bg-amber-50' },
+      PAYMENT_RECEIVED: { icon: CheckCircle2, iconColor: 'text-emerald-600 bg-emerald-50' },
+      PAYMENT_CONFIRMED: { icon: Shield, iconColor: 'text-blue-600 bg-blue-50' },
+    };
+
+    const stats = useMemo(() => {
+      const unread = notifications.filter((item) => !item.readAt).length;
+      const today = notifications.filter((item) => {
+        const now = new Date();
+        const created = new Date(item.createdAt);
+        return created.toDateString() === now.toDateString();
+      }).length;
+      return { unread, today };
+    }, [notifications]);
+
+    const sendBroadcast = () => {
+      if (!broadcastTarget || !title.trim() || !message.trim()) return;
+      broadcastMutation.mutate({
+        audience: broadcastTarget,
+        title: title.trim(),
+        message: message.trim(),
+      });
+    };
 
     return (
         <div className="space-y-8 p-8">
@@ -121,37 +87,45 @@ function NotificationsPage() {
                     </div>
 
                     <div className="space-y-3">
-                        {notifications.map((notification) => {
-                            const IconComp = notification.icon;
+                        {isLoading ? (
+                          <TableSkeleton rows={4} columns={1} showHeader={false} />
+                        ) : isError ? (
+                          <ErrorState title="Failed to load notifications" onRetry={refetch} />
+                        ) : notifications.length === 0 ? (
+                          <EmptyState title="No notifications yet" description="Recent platform notifications will appear here." />
+                        ) : notifications.map((notification) => {
+                            const meta = typeMeta[notification.type] || {
+                              icon: Bell,
+                              iconColor: 'text-primary bg-primary/10',
+                            };
+                            const IconComp = meta.icon;
                             return (
                                 <Card
                                     key={notification.id}
-                                    className={`cursor-pointer transition-all hover:shadow-md ${!notification.isRead ? 'border-primary/20 bg-primary/[0.02]' : ''
+                                    className={`cursor-pointer transition-all hover:shadow-md ${!notification.readAt ? 'border-primary/20 bg-primary/[0.02]' : ''
                                         }`}
                                 >
                                     <CardContent className="flex items-start gap-4 p-5">
                                         <div
-                                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${notification.iconColor}`}
+                                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${meta.iconColor}`}
                                         >
                                             <IconComp size={18} />
                                         </div>
                                         <div className="min-w-0 flex-1">
                                             <div className="flex items-start justify-between gap-3">
                                                 <div>
-                                                    <p
-                                                        className={`text-sm ${!notification.isRead ? 'font-bold' : 'font-semibold'}`}
-                                                    >
+                                                    <p className={`text-sm ${!notification.readAt ? 'font-bold' : 'font-semibold'}`}>
                                                         {notification.title}
                                                     </p>
                                                     <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
-                                                        {notification.content}
+                                                        {notification.body}
                                                     </p>
                                                 </div>
                                                 <div className="flex shrink-0 items-center gap-2">
                                                     <span className="text-muted-foreground whitespace-nowrap text-[11px]">
-                                                        {notification.time}
+                                                        {new Date(notification.createdAt).toLocaleString()}
                                                     </span>
-                                                    {!notification.isRead && (
+                                                    {!notification.readAt && (
                                                         <span className="bg-primary h-2 w-2 rounded-full" />
                                                     )}
                                                 </div>
@@ -199,7 +173,6 @@ function NotificationsPage() {
                                             <SelectItem value="renters">Renters Only</SelectItem>
                                             <SelectItem value="owners">Owners Only</SelectItem>
                                             <SelectItem value="verified_owners">Verified Owners</SelectItem>
-                                            <SelectItem value="pending_owners">Pending Owners</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -209,7 +182,11 @@ function NotificationsPage() {
                                 <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
                                     Notification Title
                                 </label>
-                                <Input placeholder="e.g. Platform Maintenance Notice" />
+                                <Input
+                                  placeholder="e.g. Platform Maintenance Notice"
+                                  value={title}
+                                  onChange={(e) => setTitle(e.target.value)}
+                                />
                             </div>
 
                             <div>
@@ -219,10 +196,12 @@ function NotificationsPage() {
                                 <Textarea
                                     placeholder="Write your broadcast message..."
                                     className="min-h-[120px] resize-none"
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
                                 />
                             </div>
 
-                            <Button className="w-full gap-2">
+                            <Button className="w-full gap-2" onClick={sendBroadcast}>
                                 <Send size={16} />
                                 Send Broadcast
                             </Button>
@@ -238,12 +217,12 @@ function NotificationsPage() {
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-muted-foreground">Unread</span>
                                 <span className="font-bold text-amber-600">
-                                    {notifications.filter((n) => !n.isRead).length}
+                                    {stats.unread}
                                 </span>
                             </div>
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-muted-foreground">Today</span>
-                                <span className="font-bold">6</span>
+                                <span className="font-bold">{stats.today}</span>
                             </div>
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-muted-foreground">This Week</span>

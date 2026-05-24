@@ -15,12 +15,14 @@ import {
   Home,
 } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router';
+import { useLogout } from '@/features/auth/hooks/useLogout';
 
 function OwnerSidebar() {
   const navigate = useNavigate();
+  const logoutMutation = useLogout();
 
   const handleLogout = () => {
-    navigate('/login');
+    logoutMutation.mutate();
   };
 
   const navItems = [
@@ -84,7 +86,8 @@ function OwnerSidebar() {
           </div>
           <button
             onClick={handleLogout}
-            className="text-muted-foreground transition-colors hover:text-destructive"
+            disabled={logoutMutation.isPending}
+            className="text-muted-foreground transition-colors hover:text-destructive disabled:opacity-50"
             aria-label="Logout"
           >
             <LogOut size={18} />

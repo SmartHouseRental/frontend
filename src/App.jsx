@@ -59,11 +59,24 @@ import {
 function LazyRoute({ children }) {
   return <Suspense fallback={<PageLoader />}>{children}</Suspense>;
 }
+import ProtectedRoute from './components/ProtectedRoute';
+import RenterLayout from './components/RenterLayout';
+import AppointmentsPage from './pages/renter/AppointmentsPage';
+import RenterAgreementsPage from './pages/renter/AgreementsPage';
+import RenterAgreementDetailPage from './pages/renter/AgreementDetailPage';
+import AgreementPaymentReturnPage from './pages/renter/AgreementPaymentReturnPage';
+import RenterReviewsPage from './pages/renter/ReviewsPage';
+import RenterProfilePage from './pages/renter/ProfilePage';
+import ScheduleVisitPage from './pages/renter/ScheduleVisitPage';
+import RenterNotificationsPage from './pages/renter/NotificationsPage';
+import { Toaster } from '@/components/ui/sonner';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route
             path="/signup"
@@ -92,9 +105,11 @@ function App() {
           <Route
             path="/forgot-password"
             element={
-              <LazyRoute>
-                <ForgotPasswordPage />
-              </LazyRoute>
+              <ProtectedRoute allowedRoles={['renter']}>
+                <MainLayout>
+                  <SavedPropertiesPage />
+                </MainLayout>
+              </ProtectedRoute>
             }
           />
           <Route
@@ -116,9 +131,11 @@ function App() {
           <Route
             path="/welcome"
             element={
-              <LazyRoute>
-                <WelcomePage />
-              </LazyRoute>
+              <ProtectedRoute allowedRoles={['renter']}>
+                <MainLayout>
+                  <RenterChatPage />
+                </MainLayout>
+              </ProtectedRoute>
             }
           />
 
@@ -219,14 +236,21 @@ function App() {
             />
           </Route>
 
-          <Route
+          {/* <Route
             path="/admin"
             element={
               <LazyRoute>
                 <AdminLayout />
               </LazyRoute>
             }
-          >
+          /> */}
+
+          {/* Admin Routing */}
+          <Route path="/admin" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }>
             <Route index element={<Navigate replace to="overview" />} />
             <Route
               path="overview"
@@ -367,14 +391,12 @@ function App() {
             element={<Navigate replace to="/admin/agreements/AG-9428" />}
           />
 
-          <Route
-            path="/owner"
-            element={
-              <LazyRoute>
-                <OwnerLayout />
-              </LazyRoute>
-            }
-          >
+          {/* Owner Routing */}
+          <Route path="/owner" element={
+            <ProtectedRoute allowedRoles={['owner']}>
+              <OwnerLayout />
+            </ProtectedRoute>
+          }>
             <Route index element={<Navigate replace to="overview" />} />
             <Route
               path="overview"
@@ -525,7 +547,36 @@ function App() {
               }
             />
           </Route>
+          
+          {/* Chapa return URL — must match backend FRONTEND_URL redirect */}
+          <Route
+            path="/agreements/payment/return"
+            element={
+              <ProtectedRoute allowedRoles={['renter']}>
+                <AgreementPaymentReturnPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Renter Dashboard Routing */}
+          <Route path="/renter" element={
+            <ProtectedRoute allowedRoles={['renter']}>
+              <RenterLayout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<Navigate replace to="appointments" />} />
+            <Route path="appointments" element={<AppointmentsPage />} />
+            <Route path="agreements" element={<RenterAgreementsPage />} />
+            <Route path="agreements/:id" element={<RenterAgreementDetailPage />} />
+            <Route path="reviews" element={<RenterReviewsPage />} />
+            <Route path="profile" element={<RenterProfilePage />} />
+            <Route path="notifications" element={<RenterNotificationsPage />} />
+            <Route path="schedule-visit/:id" element={<ScheduleVisitPage />} />
+          </Route>
+
+          {/* <Route path="*" element={<NotFound />} /> */}
         </Routes>
+        <Toaster />
       </BrowserRouter>
     </ThemeProvider>
   );

@@ -3,22 +3,10 @@ import { getToken } from '@/features/auth/utils';
 
 export const propertyApi = {
   createProperty: async (formData) => {
-    const token = getToken();
-    const url = (import.meta.env.VITE_API_URL || 'https://smarthouserental.onrender.com/api/v1') + '/properties';
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-      },
-      body: formData
+    const { data } = await apiClient.post('/properties', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw Object.assign(new Error(data.message || 'Internal server error'), { response: { data } });
-    }
-    return data.data;
+    return data;
   },
 
   getProperties: async (params = {}) => {
@@ -37,22 +25,10 @@ export const propertyApi = {
   },
 
   updateProperty: async (propertyId, formData) => {
-    const token = getToken();
-    const url = (import.meta.env.VITE_API_URL || 'https://smarthouserental.onrender.com/api/v1') + `/properties/${propertyId}`;
-
-    const response = await fetch(url, {
-      method: 'PATCH',
-      headers: {
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
-      },
-      body: formData,
+    const { data } = await apiClient.patch(`/properties/${propertyId}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw Object.assign(new Error(data.message || 'Internal server error'), { response: { data } });
-    }
-    return data.data;
+    return data;
   },
 
   deleteProperty: async (propertyId) => {

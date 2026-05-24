@@ -1,0 +1,181 @@
+import { useMemo } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { visitsApi } from '../api';
+import { toast } from 'sonner';
+import { buildMonthAvailabilityRange } from '../utils/availability';
+import { getApiErrorMessage } from '@/features/renter/utils/apiErrors';
+
+export const visitKeys = {
+  all: ['visits'],
+  appointments: (filters = {}) => [...visitKeys.all, 'appointments', filters],
+  availability: (propertyId, from, to) => [...visitKeys.all, 'availability', propertyId, from, to],
+};
+
+function extractBusySlots(response) {
+  if (!response) return [];
+  if (Array.isArray(response?.data?.busy)) return response.data.busy;
+  if (Array.isArray(response?.busy)) return response.busy;
+  return [];
+}
+
+const getLocalizedStr = (field) => {
+  if (!field) return '';
+  if (typeof field === 'object') return field.en || field.am || '';
+  return String(field);
+};
+
+const normalizeAppointments = (response) => {
+  if (!response) return [];
+  
+  let appointments = null;
+  
+  if (Array.isArray(response)) {
+    appointments = response;
+  } else if (response.data && Array.isArray(response.data.appointments)) {
+    appointments = response.data.appointments;
+  } else if (Array.isArray(response.appointments)) {
+    appointments = response.appointments;
+  } else if (response.data?.data && Array.isArray(response.data.data.appointments)) {
+    appointments = response.data.data.appointments;
+  } else if (response.appointments?.items && Array.isArray(response.appointments.items)) {
+    appointments = response.appointments.items;
+  } else if (response.data && Array.isArray(response.data)) {
+    appointments = response.data;
+  }
+  
+  if (!appointments) return [];
+
+  return appointments.map((apt) => {
+    const property = apt?.property;
+    const propertyTitle = getLocalizedStr(property?.title) || 'Property Details';
+    const propertyAddress = getLocalizedStr(property?.address) || getLocalizedStr(property?.location) || 'Address not available';
+    const propertyCity = getLocalizedStr(property?.city) || '';
+    const propertySubCity = getLocalizedStr(property?.subCity) || '';
+    const propertyDescription = getLocalizedStr(property?.description) || '';
+
+    return {
+      ...apt,
+      propertyTitle,
+      propertyAddress,
+      propertyCity,
+      propertySubCity,
+      propertyDescription,
+      status: apt?.status || 'PENDING',
+    };
+  });
+};
+
+export const useAvailability = (propertyId, currentMonth, options = {}) => {
+  const range = useMemo(
+    () => (currentMonth ? buildMonthAvailabilityRange(currentMonth) : null),
+    [currentMonth],
+  );
+
+  return useQuery({
+    queryKey: visitKeys.availability(propertyId, range?.from, range?.to),
+    queryFn: () =>
+      visitsApi.getAvailability({
+        propertyId,
+        from: range.from,
+        to: range.to,
+      }),
+    enabled: !!propertyId && !!range && options.enabled !== false,
+    select: extractBusySlots,
+    staleTime: 60 * 1000,
+  });
+};
+
+export const useAppointments = (filters = {}) => {
+  return useQuery({
+    queryKey: visitKeys.appointments(filters),
+    queryFn: async () => {
+      try {
+        return await visitsApi.getRenterAppointments();
+      } catch (err) {
+        if (err.response?.status === 404) {
+          return await visitsApi.getAppointments(filters);
+        }
+        throw err;
+      }
+    },
+    select: normalizeAppointments,
+  });
+};
+
+export const useBookAppointment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data) => visitsApi.bookAppointment(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: visitKeys.appointments() });
+      queryClient.invalidateQueries({ queryKey: visitKeys.all });
+      toast.success('Appointment request sent successfully');
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Failed to book appointment'));
+    },
+  });
+};
+
+export const useUpdateAppointmentStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, status }) => visitsApi.updateAppointmentStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: visitKeys.appointments() });
+      toast.success('Appointment Status Updated');
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Failed to update status'));
+    },
+  });
+};
+
+function patchAppointmentsInCache(queryClient, appointmentId, patch) {
+  queryClient.setQueriesData(
+    { queryKey: [...visitKeys.all, 'appointments'] },
+    (old) => {
+      if (!Array.isArray(old)) return old;
+      return old.map((apt) =>
+        apt.id === appointmentId ? { ...apt, ...patch } : apt,
+      );
+    },
+  );
+}
+
+export const useCancelAppointment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id) => {
+      try {
+        return await visitsApi.cancelAppointment(id);
+      } catch (err) {
+        if (err.response?.status === 404) {
+          return await visitsApi.deleteAppointment(id);
+        }
+        throw err;
+      }
+    },
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: [...visitKeys.all, 'appointments'] });
+      const snapshots = queryClient.getQueriesData({
+        queryKey: [...visitKeys.all, 'appointments'],
+      });
+      patchAppointmentsInCache(queryClient, id, { status: 'CANCELLED' });
+      return { snapshots };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...visitKeys.all, 'appointments'] });
+      toast.success('Appointment Cancelled');
+    },
+    onError: (error, _id, context) => {
+      context?.snapshots?.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data);
+      });
+      toast.error(getApiErrorMessage(error, 'Failed to cancel appointment'));
+    },
+  });
+};

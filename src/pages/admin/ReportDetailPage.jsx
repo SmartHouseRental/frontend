@@ -42,9 +42,47 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 import { useNavigate } from 'react-router';
+import { useParams } from 'react-router';
+import {
+  useAdminReport,
+  useAdminReportRiskAssessment,
+  useAdminUpdateReportStatus,
+} from '@/features/admin/hooks/useAdmin';
+import TableSkeleton from '@/components/TableSkeleton';
+import ErrorState from '@/components/ErrorState';
+import { getReportStatusMeta, formatPersonName } from '@/features/admin/mappers';
+import { useAdminReportTarget } from '@/features/admin/hooks/useAdminLookupMaps';
+import RiskAssessmentCard from '@/features/admin/components/RiskAssessmentCard';
 
 export default function ReportDetailPage() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { data: report, isLoading, isError, refetch } = useAdminReport(id);
+  const riskQuery = useAdminReportRiskAssessment(id);
+  const updateStatus = useAdminUpdateReportStatus();
+  const target = useAdminReportTarget(report);
+
+  if (isLoading) {
+    return (
+      <main className="mx-auto max-w-[1440px] p-6">
+        <TableSkeleton rows={4} columns={2} showHeader={false} />
+      </main>
+    );
+  }
+
+  if (isError || !report) {
+    return (
+      <main className="mx-auto max-w-[1440px] p-6">
+        <ErrorState title="Failed to load report details" onRetry={refetch} />
+      </main>
+    );
+  }
+
+  const statusMeta = getReportStatusMeta(report.status);
+  const createdAt = new Date(report.createdAt).toLocaleString();
+  const reporterName = report.reportedBy
+    ? formatPersonName(report.reportedBy)
+    : 'Unknown reporter';
 
   return (
     <main className="mx-auto max-w-[1440px] px-6 py-6">
@@ -59,7 +97,7 @@ export default function ReportDetailPage() {
         <ChevronRight className="h-3.5 w-3.5" />
         <span className="hover:text-foreground transition-colors">Fraud Reports</span>
         <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-foreground font-semibold">#REP-45678</span>
+        <span className="text-foreground font-semibold">#{report.id}</span>
       </div>
 
       {/* Header */}
@@ -73,10 +111,10 @@ export default function ReportDetailPage() {
           </button>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-slate-900">Report #RPT-7429</h1>
-              <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">In Review</Badge>
+              <h1 className="text-2xl font-bold text-slate-900">Report #{report.id}</h1>
+              <Badge className={`${statusMeta.style} hover:brightness-95`}>{statusMeta.label}</Badge>
             </div>
-            <p className="mt-1 text-slate-500">Filed on Oct 24, 2023 • 2 days ago</p>
+            <p className="mt-1 text-slate-500">Filed on {createdAt}</p>
           </div>
         </div>
       </div>
@@ -90,92 +128,60 @@ export default function ReportDetailPage() {
               <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-center">
                 <div>
                   <div className="mb-2 flex flex-wrap items-center gap-3">
-                    <h2 className="text-2xl font-bold tracking-tight">Report #REP-45678</h2>
+                    <h2 className="text-2xl font-bold tracking-tight">Report #{report.id}</h2>
 
                     <Badge
                       variant="outline"
                       className="gap-1 border-yellow-200 bg-yellow-50 text-yellow-800"
                     >
                       <Clock className="h-3.5 w-3.5" />
-                      Under Review
+                      {statusMeta.label}
                     </Badge>
 
-                    <Badge variant="destructive" className="gap-1">
-                      <AlertTriangle className="h-3.5 w-3.5" />
-                      High Severity
-                    </Badge>
                   </div>
 
-                  <p className="text-muted-foreground text-sm">
-                    Submitted 3 hours ago • Assigned to:{' '}
-                    <span className="text-foreground font-medium">Me</span>
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="outline" size="sm">
-                    EN
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    AM
-                  </Button>
-                  <Button variant="outline" size="icon">
-                    <Printer className="h-4 w-4" />
-                  </Button>
+                  <p className="text-muted-foreground text-sm">Submitted {createdAt}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {/* Reporter */}
-                <Card className="hover:border-primary/50 cursor-pointer transition-colors">
+                <Card
+                  className="hover:border-primary/50 cursor-pointer transition-colors"
+                  onClick={() => report.reportedBy?.id && navigate(`/admin/users/${report.reportedBy.id}`)}
+                >
                   <CardContent className="flex items-center gap-4 p-5">
                     <Avatar className="h-14 w-14">
-                      <AvatarImage
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjVUAEeIuZWvIEuPcfm4NSxU-MscNKIZ84VevnpbJTYdoBPtYCnfeMe_hjemPueFm0o1Sb1EcVPEcD5kxrCXvaODuQTngJD0RdEDLIm6HxNEuLtiRK-x6ejpkCKEcKlnjEyWmxXQaTNfOxCkbpdGKAkWzMc0v4rgf6TaBXrutwtv3gus9hyGVjMefMBt2h8Y52WK7PDVy1j66LOUYn26QjECUsYRy3kVTGVrW_23mi3IYiB64oDlGdzzOyb5Rc2Rq3c7VMjtEViqBA"
-                        alt="Abebe"
-                      />
-                      <AvatarFallback>A</AvatarFallback>
+                      <AvatarFallback>{reporterName[0]?.toUpperCase()}</AvatarFallback>
                     </Avatar>
-
                     <div className="flex-1">
-                      <p className="text-muted-foreground text-xs font-medium uppercase">
-                        Reporter
-                      </p>
-                      <p className="font-semibold">Abebe</p>
-                      <p className="text-muted-foreground mt-1 flex items-center gap-1.5 text-xs">
-                        Renter •{' '}
-                        <span className="inline-flex items-center gap-1 font-medium text-green-600">
-                          <CheckCircle className="h-3.5 w-3.5" /> ID Verified
-                        </span>
-                      </p>
+                      <p className="text-muted-foreground text-xs font-medium uppercase">Reporter</p>
+                      <p className="font-semibold">{reporterName}</p>
+                      <p className="text-muted-foreground mt-1 text-xs">{report.reportedBy?.email}</p>
                     </div>
-
                     <ArrowRight className="text-muted-foreground h-4 w-4" />
                   </CardContent>
                 </Card>
 
-                {/* Reported Target */}
-                <Card className="cursor-pointer border-red-200 transition-colors hover:border-red-400">
-                  <CardContent className="flex items-center gap-4 p-5">
-                    <Avatar className="h-14 w-14">
-                      <AvatarImage
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEnIUaVKEmYIXTvYv2aXtxXm9yPeZr6CwS2kLl6r04-q8ElcutP6h-29OAa1pIB3QGmx34_YtTb8dozQsgJriEcbT2xnA6mt8DrhXilQQgn_bWSO5_yCsFY1lcgzLZvNewAzHkpQ8G2_gk5MrePsqFBnvvpuLnMrIrtIw8XjjFng7h_MS-O8zbHpgFehb4BCwJ26PIlX5eaUb1KfZFOdXz9Nu8rph4STRWpOBreaMdiOQYvNeA8Rr2XYvMqqqvt8r8UXg9JKSrDGrQ"
-                        alt="Dawit"
-                      />
-                      <AvatarFallback>D</AvatarFallback>
-                    </Avatar>
-
-                    <div className="flex-1">
-                      <p className="text-xs font-medium text-red-600 uppercase">Reported Target</p>
-                      <p className="font-semibold">Dawit</p>
-                      <p className="text-muted-foreground mt-1 text-xs">
-                        Property Owner • 4.2 Rating
-                      </p>
-                    </div>
-
-                    <ArrowRight className="text-muted-foreground h-4 w-4" />
-                  </CardContent>
-                </Card>
+                {target.navigateTo && (
+                  <Card
+                    className="cursor-pointer border-red-200 transition-colors hover:border-red-400"
+                    onClick={() => navigate(target.navigateTo)}
+                  >
+                    <CardContent className="flex items-center gap-4 p-5">
+                      <div className="flex-1">
+                        <p className="text-xs font-medium text-red-600 uppercase capitalize">
+                          Reported {report.targetType}
+                        </p>
+                        <p className="font-semibold">{target.label}</p>
+                        {target.sublabel && (
+                          <p className="text-muted-foreground mt-1 text-xs">{target.sublabel}</p>
+                        )}
+                      </div>
+                      <ArrowRight className="text-muted-foreground h-4 w-4" />
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -191,112 +197,47 @@ export default function ReportDetailPage() {
                   >
                     <Gavel className="h-5 w-5" /> FRAUD
                   </Badge>
-                  <h3 className="text-xl font-bold">Inaccurate Property Listing & Deposit Scam</h3>
+                  <h3 className="text-xl font-bold capitalize">{report.category || 'Report'}</h3>
                 </div>
 
                 <div className="prose text-foreground max-w-none">
-                  <p className="text-lg leading-relaxed font-medium">
-                    "The owner requested a deposit of 15,000 ETB before I could view the property.
-                    After sending the payment through Telebirr, the owner ceased all communication
-                    and blocked my phone number. The photos provided in the listing appear to be
-                    stolen from an international real estate website and do not match the Bole
-                    Apartment exterior."
-                  </p>
+                  <p className="text-lg leading-relaxed font-medium">{report.description}</p>
                 </div>
 
-                <div className="flex items-center gap-4 rounded-xl border border-dashed border-orange-200 bg-orange-50/30 p-5">
-                  <img
-                    className="size-20 rounded-lg object-cover"
-                    alt="Bole Apartment modern exterior view"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMadIFppQTgGd2CMySBd15PmZRLv-dx0At8tXPxNH-GuubUOaq-gFEkhDRiYoUQ4DYvRaGONUrbwOPrIz6ZyHjMbCfXrd6zil5OH1xT2gi7rtZVbr7jvSPvamRlFuyFsoKbulc6AnznqP8AQi--oAatB5Xw9sh6LeC-2UVLg7tRBFt13zuGgT8w-9rqKUle3Cr2cMCT7uNUpZovKq5V1ktgvXZmh3_vbVU7Gu-1-JI1fkDA3YzcYqP1SCzMs-2nb5qpG4KTgDqwXDn"
-                  />
-                  <div className="flex-1">
-                    <p className="text-primary text-xs font-medium uppercase">Linked Property</p>
-                    <h4 className="font-semibold">Bole Apartment - 2BHK Luxury</h4>
-                    <p className="text-muted-foreground mt-1 text-sm">
-                      Bole, Addis Ababa • 45,000 ETB/mo
-                    </p>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    View Listing
-                  </Button>
-                </div>
-
-                {/* Evidence Gallery */}
-                <div>
-                  <div className="mb-4 flex items-center justify-between">
-                    <h4 className="flex items-center gap-2 text-base font-semibold">
-                      <LucideImage className="text-primary h-5 w-5" /> Evidence Gallery
+                {Array.isArray(report.images) && report.images.length > 0 && (
+                  <div>
+                    <h4 className="mb-4 flex items-center gap-2 text-base font-semibold">
+                      <LucideImage className="text-primary h-5 w-5" /> Evidence
                     </h4>
-                    <span className="text-muted-foreground text-xs font-medium">4 Attachments</span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                    <div className="group relative cursor-zoom-in overflow-hidden rounded-lg border">
-                      <img
-                        className="aspect-square h-full w-full object-cover"
-                        alt="Screenshot of a chat log complaint"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOPjwvGnbXKkXyVgDP9uCtBxWQAxmSPo2b16IEoV5zgKmQlgzssAnYNAxQlMAICUBeBsrcCBOG4_idk6q-LLF4JJpE2pvhhihnNuX7DxBs6KmZfy_kU_X3xIA0cM_kNow6qG15rQLfiqp9rZLXCQPO9a8-41h5Ne7fovv-RQV9SMRqXTwjJ8ltwv1ynVz7u-JIjUzrDXXIWdd_FE6maURC9SNovgY3bX5TaAian-ADwuBaxCT2QK2y6O2dBrSYvp6uRAFrU8DqPeyp"
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
-                        <ZoomIn className="h-8 w-8 text-white" />
-                      </div>
-                      <p className="text-muted-foreground mt-2 text-center text-[10px] font-medium">
-                        Chat_Log_01.png
-                      </p>
+                    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                      {report.images.map((url, idx) => (
+                        <a
+                          key={`evidence-${idx}`}
+                          href={url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="block overflow-hidden rounded-lg border"
+                        >
+                          <img src={url} alt={`Evidence ${idx + 1}`} className="aspect-square w-full object-cover" />
+                        </a>
+                      ))}
                     </div>
-
-                    {/* Add remaining evidence items using the same structure */}
                   </div>
-                </div>
+                )}
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Sidebar - right column */}
-        <div className="space-y-6 lg:sticky lg:top-24 lg:col-span-4">
-          {/* Risk Assessment */}
-          <Card>
-            <CardHeader className="bg-red-50/50 pb-4">
-              <CardTitle className="flex items-center gap-2 text-red-700">
-                <AlertTriangle className="h-5 w-5" /> Risk Assessment
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="mb-4 flex items-end justify-between">
-                <div>
-                  <p className="text-3xl font-black text-red-600">HIGH</p>
-                  <p className="text-muted-foreground text-xs font-medium uppercase">
-                    Risk Level Score
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold">5 Unresolved</p>
-                  <p className="text-muted-foreground text-xs font-medium uppercase">
-                    Previous Reports
-                  </p>
-                </div>
-              </div>
+        <div className="space-y-6 lg:col-span-4">
+          <RiskAssessmentCard
+            data={riskQuery.data}
+            isLoading={riskQuery.isLoading}
+            isError={riskQuery.isError}
+            refetch={riskQuery.refetch}
+            emptyMessage="Risk assessment could not be computed for this report subject."
+          />
 
-              <div className="bg-muted h-2.5 w-full overflow-hidden rounded-full">
-                <div className="h-full w-[80%] bg-red-500" />
-              </div>
-
-              <ul className="mt-6 space-y-3 text-sm">
-                <li className="flex items-start gap-2">
-                  <Info className="mt-0.5 h-4 w-4 text-red-600" />
-                  <span>Owner account flagged in 3 different cities.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Info className="mt-0.5 h-4 w-4 text-red-600" />
-                  <span>IP address matches known VPN proxy.</span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          {/* Actions & Status */}
           <Card>
             <CardContent className="space-y-6 pt-6">
               <div>
@@ -304,49 +245,34 @@ export default function ReportDetailPage() {
                   Update Investigation Status
                 </label>
                 <div className="relative">
-                  <select className="border-input bg-background focus:ring-ring w-full appearance-none rounded-md border px-3 py-2 pr-10 text-sm focus:ring-2 focus:ring-offset-2 focus:outline-none">
-                    <option>Under Review</option>
-                    <option>In-Progress</option>
-                    <option>Escalated to Legal</option>
-                    <option>Awaiting User Response</option>
-                    <option>Pending Closure</option>
+                  <select
+                    className="border-input bg-background focus:ring-ring w-full appearance-none rounded-md border px-3 py-2 pr-10 text-sm focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                    value={report.status}
+                    onChange={(e) =>
+                      updateStatus.mutate({ id: report.id, status: e.target.value })
+                    }
+                    disabled={updateStatus.isPending}
+                  >
+                    <option value="open">Open</option>
+                    <option value="in_review">In Review</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="dismissed">Dismissed</option>
                   </select>
                   <ChevronDown className="text-muted-foreground pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2" />
                 </div>
               </div>
 
               <div className="space-y-3">
-                <Button className="w-full gap-2">
+                <Button className="w-full gap-2" onClick={() => updateStatus.mutate({ id: report.id, status: 'resolved' })}>
                   <CheckCircle className="h-4 w-4" />
                   Resolve Report
                 </Button>
-                <Button variant="outline" className="w-full gap-2">
+                <Button variant="outline" className="w-full gap-2" onClick={() => updateStatus.mutate({ id: report.id, status: 'dismissed' })}>
                   <X className="h-4 w-4" />
                   Dismiss Report
                 </Button>
               </div>
 
-              <div className="border-t pt-6">
-                <p className="mb-3 text-xs font-black tracking-wider text-red-600 uppercase">
-                  Administrative Sanctions
-                </p>
-                <div className="grid grid-cols-2 gap-3">
-                  <Button
-                    variant="outline"
-                    className="gap-2 text-red-600 hover:bg-red-50 hover:text-red-700"
-                  >
-                    <UserX className="h-4 w-4" />
-                    Ban User
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="gap-2 text-red-600 hover:bg-red-50 hover:text-red-700"
-                  >
-                    <Flag className="h-4 w-4" />
-                    Flag Property
-                  </Button>
-                </div>
-              </div>
             </CardContent>
           </Card>
         </div>
