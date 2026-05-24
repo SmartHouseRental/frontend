@@ -26,8 +26,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {
   Filter,
-  ChevronLeft,
-  ChevronRight,
   MoreVertical,
   Search,
   Eye,
@@ -35,102 +33,47 @@ import {
   XCircle,
   Handshake,
   FileText,
-  CreditCard,
 } from 'lucide-react';
 import { useNavigate } from 'react-router';
-
-const agreements = [
-  {
-    id: 'AG-9428',
-    property: 'Horizon Peak Villa',
-    propertyId: 'PRP-9402',
-    renter: 'Mulugeta K.',
-    owner: 'Michael Chen',
-    monthlyRent: '85,000 ETB',
-    startDate: 'Mar 1, 2026',
-    endDate: 'Aug 31, 2026',
-    status: 'active',
-    paymentStatus: 'confirmed',
-  },
-  {
-    id: 'AG-9425',
-    property: 'Urban Loft 42',
-    propertyId: 'PRP-8210',
-    renter: 'Tigist H.',
-    owner: 'Sarah Jenkins',
-    monthlyRent: '45,000 ETB',
-    startDate: 'Feb 15, 2026',
-    endDate: 'Feb 14, 2027',
-    status: 'pending_renter',
-    paymentStatus: 'proof_uploaded',
-  },
-  {
-    id: 'AG-9418',
-    property: 'Cottage by the Lake',
-    propertyId: 'PRP-7731',
-    renter: 'Abebe T.',
-    owner: 'David Miller',
-    monthlyRent: '32,000 ETB',
-    startDate: 'Jan 1, 2026',
-    endDate: 'Dec 31, 2026',
-    status: 'pending_owner',
-    paymentStatus: 'pending',
-  },
-  {
-    id: 'AG-9410',
-    property: 'Bole Skyline Apt',
-    propertyId: 'PRP-8829',
-    renter: 'Sara K.',
-    owner: 'Dawit T.',
-    monthlyRent: '55,000 ETB',
-    startDate: 'Mar 1, 2026',
-    endDate: 'Mar 1, 2027',
-    status: 'draft',
-    paymentStatus: 'pending',
-  },
-  {
-    id: 'AG-7102',
-    property: 'Megenagna Studio',
-    propertyId: 'PRP-6210',
-    renter: 'Henok B.',
-    owner: 'Marta K.',
-    monthlyRent: '28,000 ETB',
-    startDate: 'Nov 1, 2025',
-    endDate: 'Apr 30, 2026',
-    status: 'terminated',
-    paymentStatus: 'confirmed',
-  },
-  {
-    id: 'AG-6891',
-    property: 'CMC Area House',
-    propertyId: 'PRP-5832',
-    renter: 'Yonas G.',
-    owner: 'Hana B.',
-    monthlyRent: '120,000 ETB',
-    startDate: 'Jun 1, 2025',
-    endDate: 'May 31, 2026',
-    status: 'expired',
-    paymentStatus: 'confirmed',
-  },
-];
-
-const statusStyles = {
-  active: { label: 'Active', style: 'bg-emerald-100 text-emerald-700' },
-  pending_renter: { label: 'Pending Renter', style: 'bg-amber-100 text-amber-700' },
-  pending_owner: { label: 'Pending Owner', style: 'bg-orange-100 text-orange-700' },
-  draft: { label: 'Draft', style: 'bg-slate-100 text-slate-600' },
-  terminated: { label: 'Terminated', style: 'bg-rose-100 text-rose-700' },
-  expired: { label: 'Expired', style: 'bg-red-100 text-red-700' },
-};
-
-const paymentStatusStyles = {
-  confirmed: { label: 'Confirmed', style: 'bg-emerald-100 text-emerald-700' },
-  proof_uploaded: { label: 'Proof Uploaded', style: 'bg-blue-100 text-blue-700' },
-  pending: { label: 'Pending', style: 'bg-slate-100 text-slate-600' },
-};
+import { useState } from 'react';
+import { useAdminAgreements } from '@/features/admin/hooks/useAdmin';
+import { useAdminAgreementStats } from '@/features/admin/hooks/useAdminPageStats';
+import CardSkeleton from '@/components/CardSkeleton';
+import { getAdminListItems } from '@/features/admin/adminSanitize';
+import { getAgreementStatusMeta } from '@/features/admin/mappers';
+import { useAdminLookupMaps } from '@/features/admin/hooks/useAdminLookupMaps';
+import TableSkeleton from '@/components/TableSkeleton';
+import ErrorState from '@/components/ErrorState';
+import EmptyState from '@/components/EmptyState';
+import DataTablePagination from '@/components/DataTablePagination';
 
 function AgreementsPage() {
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [status, setStatus] = useState('all');
+
+  const params = {
+    page,
+    limit: 20,
+    ...(search.trim() ? { search: search.trim() } : {}),
+  };
+
+  const { data, isLoading, isError, refetch } = useAdminAgreements(params);
+  const {
+    data: agreementStats,
+    isLoading: statsLoading,
+    isError: statsError,
+    refetch: refetchStats,
+  } = useAdminAgreementStats();
+  const { getUserName, getPropertyTitle } = useAdminLookupMaps();
+
+  const agreements = getAdminListItems(data).filter((item) =>
+    status === 'all' ? true : item.status === status
+  );
+  const meta = data?.meta || { page: 1, limit: 20, total: 0, totalPages: 1 };
+
+  const formatDate = (value) => new Date(value).toLocaleDateString();
 
   return (
     <div className="space-y-6 px-4 py-8">
@@ -143,28 +86,54 @@ function AgreementsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <Card className="border-0 border-l-4 border-emerald-400 p-5">
-          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">Active</p>
-          <p className="mt-1 text-2xl font-extrabold text-emerald-600">890</p>
+      {statsLoading ? (
+        <CardSkeleton count={4} />
+      ) : statsError ? (
+        <Card className="border-dashed p-4">
+          <p className="text-muted-foreground text-sm">Could not load agreement summary.</p>
+          <Button variant="outline" size="sm" className="mt-2" onClick={() => refetchStats()}>
+            Retry
+          </Button>
         </Card>
-        <Card className="border-0 border-l-4 border-amber-400 p-5">
-          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-            Pending
-          </p>
-          <p className="mt-1 text-2xl font-extrabold text-amber-600">248</p>
-        </Card>
-        <Card className="border-0 border-l-4 border-slate-300 p-5">
-          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">Draft</p>
-          <p className="mt-1 text-2xl font-extrabold text-slate-600">146</p>
-        </Card>
-        <Card className="border-0 border-l-4 border-rose-400 p-5">
-          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-            Terminated
-          </p>
-          <p className="mt-1 text-2xl font-extrabold text-rose-600">38</p>
-        </Card>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          <Card className="border-0 border-l-4 border-emerald-400 p-5">
+            <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+              Active
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-emerald-600">
+              {agreementStats?.active?.toLocaleString() ?? 0}
+            </p>
+            <p className="text-muted-foreground mt-1 text-[10px]">Completed agreements</p>
+          </Card>
+          <Card className="border-0 border-l-4 border-amber-400 p-5">
+            <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+              Pending
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-amber-600">
+              {agreementStats?.pending?.toLocaleString() ?? 0}
+            </p>
+            <p className="text-muted-foreground mt-1 text-[10px]">Sent or awaiting payment</p>
+          </Card>
+          <Card className="border-0 border-l-4 border-slate-300 p-5">
+            <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+              Draft
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-slate-600">
+              {agreementStats?.draft?.toLocaleString() ?? 0}
+            </p>
+          </Card>
+          <Card className="border-0 border-l-4 border-rose-400 p-5">
+            <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+              Terminated
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-rose-600">
+              {agreementStats?.terminated?.toLocaleString() ?? 0}
+            </p>
+            <p className="text-muted-foreground mt-1 text-[10px]">Ended or cancelled</p>
+          </Card>
+        </div>
+      )}
 
       <Card className="flex flex-row flex-wrap items-center justify-between gap-4 px-6 py-4">
         <div className="relative max-w-xl flex-1">
@@ -175,20 +144,27 @@ function AgreementsPage() {
             placeholder="Search by ID, property, renter, or owner..."
             type="text"
             className="pl-10"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
           />
         </div>
         <div className="flex items-center gap-3">
-          <Select>
+          <Select value={status} onValueChange={setStatus}>
             <SelectTrigger className="w-36">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectItem value="all">All</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="pending_renter">Pending Renter</SelectItem>
-                <SelectItem value="pending_owner">Pending Owner</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="sent">Sent</SelectItem>
+                <SelectItem value="payment_pending">Payment Pending</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
                 <SelectItem value="terminated">Terminated</SelectItem>
                 <SelectItem value="expired">Expired</SelectItem>
               </SelectGroup>
@@ -213,6 +189,13 @@ function AgreementsPage() {
         </div>
       </Card>
 
+      {isLoading ? (
+        <TableSkeleton rows={6} columns={8} />
+      ) : isError ? (
+        <ErrorState title="Failed to load agreements" onRetry={refetch} />
+      ) : agreements.length === 0 ? (
+        <EmptyState title="No agreements found" description="Try another filter or search." />
+      ) : (
       <Card className="gap-0 overflow-hidden p-0">
         <Table className="w-full min-w-full border-collapse text-left">
           <TableHeader className="bg-muted/30 w-full">
@@ -229,8 +212,7 @@ function AgreementsPage() {
           </TableHeader>
           <TableBody>
             {agreements.map((agreement) => {
-              const sState = statusStyles[agreement.status];
-              const pState = paymentStatusStyles[agreement.paymentStatus];
+              const sState = getAgreementStatusMeta(agreement.status);
               return (
                 <TableRow
                   key={agreement.id}
@@ -239,20 +221,21 @@ function AgreementsPage() {
                 >
                   <TableCell className="px-6 py-4 text-sm font-bold">#{agreement.id}</TableCell>
                   <TableCell className="px-6 py-4">
-                    <p className="text-sm font-semibold">{agreement.property}</p>
-                    <p className="text-muted-foreground text-[10px]">{agreement.propertyId}</p>
+                    <p className="text-sm font-semibold">
+                      {getPropertyTitle(agreement.propertyId)}
+                    </p>
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     <p className="text-xs">
-                      <span className="font-semibold">{agreement.renter}</span>
+                      <span className="font-semibold">{getUserName(agreement.renterId, 'Renter')}</span>
                       <span className="text-muted-foreground"> → </span>
-                      <span className="font-semibold">{agreement.owner}</span>
+                      <span className="font-semibold">{getUserName(agreement.ownerId, 'Owner')}</span>
                     </p>
                   </TableCell>
-                  <TableCell className="px-6 py-4 text-sm font-bold">{agreement.monthlyRent}</TableCell>
+                  <TableCell className="px-6 py-4 text-sm font-bold">{agreement.monthlyRent} ETB</TableCell>
                   <TableCell className="px-6 py-4">
-                    <p className="text-xs">{agreement.startDate}</p>
-                    <p className="text-muted-foreground text-[10px]">to {agreement.endDate}</p>
+                    <p className="text-xs">{formatDate(agreement.startDate)}</p>
+                    <p className="text-muted-foreground text-[10px]">to {formatDate(agreement.endDate)}</p>
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     <span
@@ -263,9 +246,9 @@ function AgreementsPage() {
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     <span
-                      className={`rounded-full px-2.5 py-1 text-[10px] font-bold whitespace-nowrap uppercase ${pState.style}`}
+                      className="bg-slate-100 text-slate-600 rounded-full px-2.5 py-1 text-[10px] font-bold whitespace-nowrap uppercase"
                     >
-                      {pState.label}
+                      {agreement.status === 'payment_pending' ? 'Pending' : 'Confirmed'}
                     </span>
                   </TableCell>
                   <TableCell className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
@@ -287,17 +270,6 @@ function AgreementsPage() {
                           <FileText className="mr-2 h-4 w-4" />
                           <span>View Contract</span>
                         </DropdownMenuItem>
-                        {agreement.paymentStatus === 'proof_uploaded' && (
-                          <DropdownMenuItem className="cursor-pointer text-blue-600 focus:text-blue-600">
-                            <CreditCard className="mr-2 h-4 w-4" />
-                            <span>Verify Payment</span>
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
-                          <XCircle className="mr-2 h-4 w-4" />
-                          <span>Terminate Agreement</span>
-                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -306,33 +278,16 @@ function AgreementsPage() {
             })}
           </TableBody>
         </Table>
-        <div className="flex items-center justify-between border-t border-border bg-muted/20 px-6 py-4">
-          <span className="text-muted-foreground text-xs font-medium">
-            Showing 1-{agreements.length} of 1,284 agreements
-          </span>
-          <div className="flex items-center gap-1">
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-white">
-              <ChevronLeft size={16} />
-            </button>
-            <button className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-white">
-              1
-            </button>
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-white">
-              2
-            </button>
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-white">
-              3
-            </button>
-            <span className="text-muted-foreground px-1">...</span>
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-white">
-              214
-            </button>
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-white">
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+        <DataTablePagination
+          currentPage={meta.page || 1}
+          totalPages={meta.totalPages || 1}
+          totalItems={meta.total || 0}
+          itemsPerPage={meta.limit || 20}
+          itemLabel="agreements"
+          onPageChange={setPage}
+        />
       </Card>
+      )}
     </div>
   );
 }

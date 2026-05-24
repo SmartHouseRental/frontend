@@ -52,38 +52,66 @@ export default function PropertyMap({
 }) {
   const navigate = useNavigate();
 
+  // Filter out any properties with invalid/missing coordinates
+  const validProperties = properties.filter((property) => {
+    const lat = parseFloat(property?.lat || property?.location?.lat);
+    const lng = parseFloat(property?.lng || property?.location?.lng);
+    return !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
+  });
+
+  // Dynamically center the map on the first valid property if the default Addis Ababa center is used
+  let mapCenter = center;
+  if (
+    center &&
+    center[0] === 9.0128 &&
+    center[1] === 38.7508 &&
+    validProperties.length > 0
+  ) {
+    const firstLat = parseFloat(validProperties[0].lat || validProperties[0].location?.lat);
+    const firstLng = parseFloat(validProperties[0].lng || validProperties[0].location?.lng);
+    mapCenter = [firstLat, firstLng];
+  }
+
   return (
     <div
       className={`border-border relative h-full w-full overflow-hidden rounded-2xl border shadow-inner ${mode === 'preview' ? 'grayscale-[0.5] transition-all duration-700 hover:grayscale-0' : ''}`}
     >
       <MapContainer
-        center={center}
+        center={mapCenter}
         zoom={zoom}
         scrollWheelZoom={mode !== 'preview'}
         className="h-full w-full"
       >
-        <ChangeView center={center} zoom={zoom} />
+        <ChangeView center={mapCenter} zoom={zoom} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {properties.map((property) => (
-          <Marker key={property.id} position={[property.lat, property.lng]} icon={customIcon}>
-            <Popup closeButton={false} className="custom-popup">
-              <div className="map-popup-card" onClick={() => navigate(`/property/${property.id}`)}>
-                <img src={property.image} alt={property.title} className="map-popup-image" />
-                <div className="map-popup-info">
-                  <h3 className="map-popup-title">{property.title}</h3>
-                  <p className="map-popup-price">{property.price}</p>
-                  <p className="text-muted-foreground mt-1 text-[10px] font-bold tracking-widest uppercase">
-                    Click to view details
-                  </p>
+        {validProperties.map((property) => {
+          const propLat = parseFloat(property.lat || property.location?.lat);
+          const propLng = parseFloat(property.lng || property.location?.lng);
+          const title = (property.title && typeof property.title === 'object') ? (property.title.en || property.title.am) : (property.titleStr || property.title || "Property Details");
+          const price = (property.price && typeof property.price === 'object') ? `${property.price.value} ${property.price.currency || 'ETB'}` : (property.priceStr || property.price || "0 ETB");
+          const image = property.image || property.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
+
+          return (
+            <Marker key={property.id} position={[propLat, propLng]} icon={customIcon}>
+              <Popup closeButton={false} className="custom-popup">
+                <div className="map-popup-card" onClick={() => navigate(`/property/${property.id}`)}>
+                  <img src={image} alt={title} className="map-popup-image" />
+                  <div className="map-popup-info">
+                    <h3 className="map-popup-title">{title}</h3>
+                    <p className="map-popup-price">{price}</p>
+                    <p className="text-muted-foreground mt-1 text-[10px] font-bold tracking-widest uppercase">
+                      Click to view details
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
     </div>
   );

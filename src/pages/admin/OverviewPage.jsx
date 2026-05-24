@@ -1,111 +1,50 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
-  CircleDot,
   Home,
   TrendingUp,
   Handshake,
   Users,
-  MoreVertical,
   Eye,
-  CheckCircle2,
-  XCircle,
   ClipboardCheck,
   AlertTriangle,
-  FileText,
   UserPlus,
   Activity,
+  XCircle,
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router';
+import { cn } from '@/lib/utils';
+import { useAdminOverview } from '@/features/admin/hooks/useAdmin';
+import { getAdminItemKey } from '@/features/admin/mappers';
+import CardSkeleton from '@/components/CardSkeleton';
+import ErrorState from '@/components/ErrorState';
+import EmptyState from '@/components/EmptyState';
 
-const recentActivity = [
-  {
-    icon: UserPlus,
-    iconColor: 'text-blue-600 bg-blue-50 dark:bg-blue-900/40 dark:text-blue-400',
-    text: 'New owner registration',
-    detail: 'Hana Bekele signed up and submitted verification documents.',
-    time: '12 min ago',
-  },
-  {
-    icon: Home,
-    iconColor: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/40 dark:text-emerald-400',
-    text: 'Property auto-approved',
-    detail: 'Luxury Villa in Bole Atlas by verified owner Michael Chen.',
-    time: '45 min ago',
-  },
-  {
-    icon: AlertTriangle,
-    iconColor: 'text-rose-600 bg-rose-50 dark:bg-rose-900/40 dark:text-rose-400',
-    text: 'Fraud report filed',
-    detail: 'Report #RPT-7430 against property listing PRP-2841.',
-    time: '1 hour ago',
-  },
-  {
-    icon: Handshake,
-    iconColor: 'text-primary bg-primary/10 dark:bg-primary/20 dark:text-primary-foreground',
-    text: 'Agreement activated',
-    detail: 'Agreement #AG-9428 between Mulugeta K. and Tadesse W.',
-    time: '2 hours ago',
-  },
-  {
-    icon: FileText,
-    iconColor: 'text-amber-600 bg-amber-50 dark:bg-amber-900/40 dark:text-amber-400',
-    text: 'Documents submitted',
-    detail: 'Tigist Hailu uploaded business license for verification.',
-    time: '3 hours ago',
-  },
-];
+const activityIconMap = {
+  OWNER_REGISTRATION: UserPlus,
+  PROPERTY_APPROVED: Home,
+  PROPERTY_REJECTED: XCircle,
+  REPORT_CREATED: AlertTriangle,
+  AGREEMENT_CREATED: Handshake,
+};
 
-const recentProperties = [
-  {
-    id: 'PRP-9402',
-    name: 'Horizon Peak Villa',
-    owner: 'Michael Chen',
-    location: 'Bole, Addis Ababa',
-    status: 'Pending',
-    statusStyle: 'bg-amber-100 text-amber-700',
-    date: 'Mar 22, 2026',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuBnuoTFnm7eiUv3aKP_BJ5piF4y8mlzYH5ClM5cBXvCWiUBoKTyYq1fVvBa1ON_b343Lnm8gmkoCZu--XjCNHqF0C_MeQTDaVpBbPejgSOMxhesm8QdPtka1Sf7nq8DJL7UhC_eZs_rTsy4xIu6xuYQGKmdGUEc1F9lQPDNQ6jWkuyV_vzyE-JvOZVwndSvv4-arIqjshonMQ_Cvrc8GSp1iaQcWcbzTUNuOqCFGwTWZutx9kXsgtmfjULDan6j82KWu2NOo2-Z_dXl',
-    ownerAvatar:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuD3Zv5Qqs1eb6dibqsV7q3gViURackqyH78pXKOUpHJolFGSCT3Z9RmgzlbHVW0PQYom3kc45jw3Ie1_Pxkmq90DBfahykycUdNLLkMeE0M-FuaJrbjQ_RxEhLGcKwvq1HbdNi1H2hixXsPhQTvldB0WNMdV8XR-fqotDrYQ1VrZPmaATTS4_81szDJs1krDraYZdDI48uHTQOkotqaTOiLPAyutyq6aPPE2GOqN9tKNsxzpH7pEDaFpbcnErDDMJzgeAcHaMOJa-MZ',
-  },
-  {
-    id: 'PRP-8210',
-    name: 'Urban Loft 42',
-    owner: 'Sarah Jenkins',
-    location: 'Kazanchis, Addis Ababa',
-    status: 'Needs Review',
-    statusStyle: 'bg-rose-100 text-rose-700',
-    date: 'Mar 21, 2026',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDJmCVHHK5IgTYuMnEBX8RO1nOinrW0cnVikNmuGhYgY_CkHYI8gfpCp3SEvgug4SdZc7v6SX_o6N0eaXn-2EA9Z4xMqc9UosSSlqEGjec-0k91lXxF97pnVZ-EP6Vmf8WW4roVyCo5Am06bkxTHfotXf9mc3BScw9j6P4xBfjmzaQ5Z9Z9aX84jQ5oWmTUzI8Ifu0io--9zkixMk-fH4LdGKr80ZMqIQUK8K38xJmywgMq0LVHHEmKYxLMYGS6lfgFMprudQ4gCRcO',
-    ownerAvatar:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuBj58V8RTH3-AtT79g3d6qGb2vavhXgSE2y1aHqa6J3tjxe8UN7OTlhY3Dv7V-NpJ-JZPcvyYQ_7LbBvyVShv7Y7xAlEt4He29exApLTZmthojFIWaXAX5XWEv92fDhDAAGx-3zHKSWrpqBwM43OG2TloV5-pRsF_4bJThIfwcdJYsR2Q05oebDMTZ27fZuDl3lcBlf_WSwF3hUX__7szfXtzoC0BS6R-Z9EW_07NaiAsB95UZHwoGfl4MsLKT4QdANRqNXlOdFTQ1E',
-  },
-  {
-    id: 'PRP-7731',
-    name: 'Cottage by the Lake',
-    owner: 'David Miller',
-    location: 'Hawassa',
-    status: 'Pending',
-    statusStyle: 'bg-amber-100 text-amber-700',
-    date: 'Mar 20, 2026',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuBHK4MBf-7UqrhDns85XvQ8rILU5gDaYMqKUfF9Wf5uB7jOthE-628mLKysKbIm1k6jW99udN3BX2TELrn_bQhFYQE4qiEKrxf9Uvwi94473iylGn2WS5r61GBMgRbO7vN-8WO902Pk_3LWwYfkGACDKym_P-aSaMjnt5XB3lL6_i562wLzPu0wKH5lnacfnK0J1c_n9mz4fslMIn6wohA3b1ddHEiYTpShBnbHAmhp5ifGDttU_5ZxLoR-BUPiZwEpwYOYUg1kB9Q2',
-    ownerAvatar:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDXoMCKst5jXLQ8v_86OCtrjKWx_6NRcwIrSJdYnUIuvt5FqNVAz7jcQyn-gjTfoHUwLcb-bJyS3i_bwZlJrbtxyvONegIxNnETExN4gqFboL72O1D1vprxu6LfD2mSKpBVLn33z6d8HXvX4qSFAj1zyYHBe6FCTPqWCNcnX-BLK2qYW8FWLAbFzZ7eLgWSkTm0G84GZqbMZnESTcIct3EplMEpbSPVvp-pzQIXv0OCyh7ZJ8yv8OJszLUVdNCceHXei526huSrZtlI',
-  },
-];
+function formatDate(value) {
+  if (!value) return '-';
+  return new Date(value).toLocaleDateString();
+}
 
 function OverviewPage() {
   const navigate = useNavigate();
+  const [growthRange, setGrowthRange] = useState('monthly');
+  const { data, isLoading, isError, refetch } = useAdminOverview({ range: growthRange });
+
+  const activity = data?.recentActivity || [];
+  const properties = data?.recentProperties || [];
+  const stats = data?.stats;
+  const growthLabels = data?.userGrowth?.labels || [];
+  const growthCurrent = data?.userGrowth?.currentPeriod || [];
+  const growthMax = Math.max(...growthCurrent, 1);
 
   return (
     <div className="space-y-8 p-8">
@@ -118,27 +57,38 @@ function OverviewPage() {
         </div>
         <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm text-muted-foreground">
           <Activity size={14} />
-          <span>Last updated: 2 mins ago</span>
+          <span>
+            Last updated:{' '}
+            {data?.lastUpdated ? new Date(data.lastUpdated).toLocaleTimeString() : 'N/A'}
+          </span>
         </div>
       </div>
 
       {/* Stat Cards */}
+      {isLoading ? (
+        <CardSkeleton count={4} />
+      ) : isError ? (
+        <ErrorState title="Failed to load overview" onRetry={refetch} />
+      ) : (
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border-0 border-l-4 border-blue-400">
           <CardHeader className="flex justify-between">
             <span className="text-accent rounded-lg bg-blue-400/10 p-2">
               <Users />
             </span>
-            <span className="flex items-center gap-1 text-xs font-bold text-blue-500">
-              <TrendingUp size={14} />
-              +12%
-            </span>
+            {stats?.totalUsers?.trendPercent != null && (
+              <span className="flex items-center gap-1 text-xs font-bold text-blue-500">
+                <TrendingUp size={14} />
+                {stats.totalUsers.trendPercent > 0 ? '+' : ''}
+                {stats.totalUsers.trendPercent}%
+              </span>
+            )}
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
               Total Users
             </p>
-            <h3 className="mt-1 text-3xl font-bold">12,450</h3>
+            <h3 className="mt-1 text-3xl font-bold">{stats?.totalUsers?.value || 0}</h3>
           </CardContent>
         </Card>
 
@@ -147,16 +97,19 @@ function OverviewPage() {
             <span className="bg-accent/10 text-accent rounded-lg p-2">
               <Home />
             </span>
-            <span className="flex items-center gap-1 text-xs font-bold text-emerald-500">
-              <TrendingUp size={14} />
-              +8%
-            </span>
+            {stats?.activeListings?.trendPercent != null && (
+              <span className="flex items-center gap-1 text-xs font-bold text-emerald-500">
+                <TrendingUp size={14} />
+                {stats.activeListings.trendPercent > 0 ? '+' : ''}
+                {stats.activeListings.trendPercent}%
+              </span>
+            )}
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
               Active Listings
             </p>
-            <h3 className="mt-1 text-3xl font-bold">3,820</h3>
+            <h3 className="mt-1 text-3xl font-bold">{stats?.activeListings?.value || 0}</h3>
           </CardContent>
         </Card>
 
@@ -176,7 +129,9 @@ function OverviewPage() {
             <p className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
               Pending Verifications
             </p>
-            <h3 className="mt-1 text-3xl font-bold">24</h3>
+            <h3 className="mt-1 text-3xl font-bold">
+              {stats?.pendingVerifications?.value || 0}
+            </h3>
           </CardContent>
         </Card>
 
@@ -185,19 +140,23 @@ function OverviewPage() {
             <span className="bg-accent/10 text-accent rounded-lg p-2">
               <Handshake />
             </span>
-            <span className="flex items-center gap-1 text-xs font-bold text-emerald-500">
-              <TrendingUp size={14} />
-              +15%
-            </span>
+            {stats?.activeAgreements?.trendPercent != null && (
+              <span className="flex items-center gap-1 text-xs font-bold text-emerald-500">
+                <TrendingUp size={14} />
+                {stats.activeAgreements.trendPercent > 0 ? '+' : ''}
+                {stats.activeAgreements.trendPercent}%
+              </span>
+            )}
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
               Active Agreements
             </p>
-            <h3 className="mt-1 text-3xl font-bold">890</h3>
+            <h3 className="mt-1 text-3xl font-bold">{stats?.activeAgreements?.value || 0}</h3>
           </CardContent>
         </Card>
       </div>
+      )}
 
       {/* Chart + Activity */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -218,52 +177,62 @@ function OverviewPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <button className="rounded-md bg-muted px-3 py-1.5 text-xs font-bold text-foreground shadow-sm">
+              <button
+                type="button"
+                onClick={() => setGrowthRange('monthly')}
+                className={cn(
+                  'rounded-md px-3 py-1.5 text-xs font-bold transition-all',
+                  growthRange === 'monthly'
+                    ? 'bg-muted text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
                 Monthly
               </button>
-              <button className="rounded-md px-3 py-1.5 text-xs font-bold text-muted-foreground transition-all hover:text-foreground">
+              <button
+                type="button"
+                onClick={() => setGrowthRange('weekly')}
+                className={cn(
+                  'rounded-md px-3 py-1.5 text-xs font-bold transition-all',
+                  growthRange === 'weekly'
+                    ? 'bg-muted text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
                 Weekly
               </button>
             </div>
           </div>
-          <div className="relative h-72">
-            <svg className="h-full w-full" preserveAspectRatio="none" viewBox="0 0 1000 300">
-              <defs>
-                <linearGradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.25" />
-                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              <path
-                d="M0,250 C100,240 200,270 300,230 C400,190 500,210 600,160 C700,110 800,140 900,120 L1000,100"
-                fill="none"
-                opacity="0.4"
-                stroke="hsl(var(--muted-foreground))"
-                strokeDasharray="6,6"
-                strokeWidth="2"
-              />
-              <path
-                d="M0,220 C100,210 200,240 300,180 C400,120 500,150 600,90 C700,30 800,60 900,40 L1000,20 L1000,300 L0,300 Z"
-                fill="url(#areaGradient)"
-              />
-              <path
-                d="M0,220 C100,210 200,240 300,180 C400,120 500,150 600,90 C700,30 800,60 900,40 L1000,20"
-                fill="none"
-                stroke="hsl(var(--primary))"
-                strokeLinecap="round"
-                strokeWidth="3"
-              />
-              <circle cx="600" cy="90" fill="hsl(var(--primary))" r="5" stroke="hsl(var(--background))" strokeWidth="2.5" />
-            </svg>
-            <div className="mt-6 flex justify-between px-2 text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
-              <span>Oct</span>
-              <span>Nov</span>
-              <span>Dec</span>
-              <span>Jan</span>
-              <span>Feb</span>
-              <span>Mar</span>
-            </div>
+          <div className="flex h-72 items-end gap-2 px-2">
+            {growthLabels.length === 0 ? (
+              <p className="text-muted-foreground text-sm">No growth data for this period.</p>
+            ) : (
+              growthLabels.map((label, index) => {
+                const value = growthCurrent[index] ?? 0;
+                const heightPct = Math.max(8, (value / growthMax) * 100);
+                return (
+                  <div
+                    key={getAdminItemKey({ id: label }, index, 'growth-label')}
+                    className="flex flex-1 flex-col items-center gap-2"
+                  >
+                    <span className="text-[10px] font-bold text-primary">{value}</span>
+                    <div
+                      className="bg-primary/80 w-full rounded-t-md transition-all"
+                      style={{ height: `${heightPct}%`, minHeight: '8px' }}
+                      title={`${label}: ${value} registrations`}
+                    />
+                    <span className="text-muted-foreground text-[10px] font-bold uppercase">
+                      {label}
+                    </span>
+                  </div>
+                );
+              })
+            )}
           </div>
+          <p className="text-muted-foreground mt-4 text-xs">
+            Data from <code className="text-[10px]">GET /admin/overview</code> (
+            {data?.userGrowth?.range || 'monthly'} registrations).
+          </p>
         </div>
 
         {/* Recent Activity Feed */}
@@ -273,11 +242,14 @@ function OverviewPage() {
             <button className="text-primary text-xs font-bold hover:underline">View All</button>
           </div>
           <div className="space-y-4">
-            {recentActivity.map((item, index) => {
-              const IconComp = item.icon;
+            {activity.length === 0 ? (
+              <EmptyState title="No recent activity" description="No admin activity was found yet." />
+            ) : (
+              activity.map((item, index) => {
+              const IconComp = activityIconMap[item.type] || Activity;
               return (
-                <div key={index} className="flex gap-3 items-start group rounded-lg p-1.5 -m-1.5 hover:bg-muted/30 transition-colors">
-                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${item.iconColor}`}>
+                <div key={getAdminItemKey(item, index, 'activity')} className="flex gap-3 items-start group rounded-lg p-1.5 -m-1.5 hover:bg-muted/30 transition-colors">
+                  <div className="bg-primary/10 text-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
                     <IconComp size={14} />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -287,59 +259,8 @@ function OverviewPage() {
                   </div>
                 </div>
               );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Stats Row */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
-            <h4 className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-              Listings by Area
-            </h4>
-          </div>
-          <div className="space-y-3">
-            {[
-              { area: 'Bole', count: '1.4k', pct: 85 },
-              { area: 'Kazanchis', count: '680', pct: 65 },
-              { area: 'CMC', count: '520', pct: 50 },
-              { area: 'Megenagna', count: '420', pct: 42 },
-            ].map((item) => (
-              <div key={item.area} className="space-y-1">
-                <div className="flex justify-between text-[11px] font-bold">
-                  <span>{item.area}</span>
-                  <span>{item.count}</span>
-                </div>
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                  <div className="bg-primary h-full rounded-full" style={{ width: `${item.pct}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center gap-6 rounded-2xl border border-border bg-card p-5 shadow-sm">
-          <div className="relative flex size-20 shrink-0 items-center justify-center">
-            <svg className="size-full -rotate-90 transform">
-              <circle cx="40" cy="40" fill="transparent" r="34" stroke="currentColor" strokeWidth="6" className="text-muted/50" />
-              <circle cx="40" cy="40" fill="transparent" r="34" stroke="currentColor" strokeDasharray="213.6" strokeDashoffset="21.36" strokeLinecap="round" strokeWidth="6" className="text-accent" />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-sm font-black text-foreground">90%</span>
-            </div>
-          </div>
-          <div className="flex-1">
-            <h4 className="text-muted-foreground mb-2 text-xs font-bold tracking-wider uppercase">
-              Payment Success
-            </h4>
-            <div className="flex flex-col gap-1">
-              <p className="text-lg leading-tight font-bold">₿ 2.4M ETB</p>
-              <p className="flex items-center gap-1 text-[10px] font-bold text-emerald-500">
-                <CheckCircle2 size={12} />
-                On Time Collection
-              </p>
-            </div>
+              })
+            )}
           </div>
         </div>
       </div>
@@ -349,9 +270,7 @@ function OverviewPage() {
         <div className="flex items-center justify-between border-b border-border p-6">
           <div>
             <h4 className="text-lg font-bold text-foreground">Recently Submitted Properties</h4>
-            <p className="text-muted-foreground text-sm">
-              Review new listings awaiting platform approval.
-            </p>
+            <p className="text-muted-foreground text-sm">Latest property submissions on the platform.</p>
           </div>
           <button
             onClick={() => navigate('/admin/properties')}
@@ -374,21 +293,24 @@ function OverviewPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {recentProperties.map((property) => (
+              {properties.map((property) => (
                 <tr
                   key={property.id}
                   className="cursor-pointer transition-colors hover:bg-muted/20"
                   onClick={() => navigate(`/admin/properties/${property.id}`)}
                 >
                   <td className="px-6 py-4">
-                    <div
-                      className="size-14 rounded-lg border border-slate-200 bg-slate-100 bg-cover bg-center"
-                      style={{ backgroundImage: `url('${property.image}')` }}
-                    />
+                    {property.image ? (
+                      <div
+                        className="size-14 rounded-lg border border-slate-200 bg-slate-100 bg-cover bg-center"
+                        style={{ backgroundImage: `url('${property.image}')` }}
+                      />
+                    ) : (
+                      <div className="size-14 rounded-lg border border-slate-200 bg-slate-100" />
+                    )}
                   </td>
                   <td className="px-6 py-4">
                     <p className="text-sm font-bold">{property.name}</p>
-                    <p className="text-muted-foreground text-xs">ID: {property.id}</p>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
@@ -401,33 +323,25 @@ function OverviewPage() {
                   </td>
                   <td className="px-6 py-4 text-sm">{property.location}</td>
                   <td className="px-6 py-4">
-                    <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${property.statusStyle}`}>
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${property.statusStyle}`}
+                    >
                       {property.status}
                     </span>
                   </td>
-                  <td className="text-muted-foreground px-6 py-4 text-sm">{property.date}</td>
-                  <td className="px-6 py-4">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem className="cursor-pointer">
-                          <Eye className="mr-2 h-4 w-4" />
-                          <span>Review Details</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer text-emerald-600 focus:text-emerald-600">
-                          <CheckCircle2 className="mr-2 h-4 w-4" />
-                          <span>Approve Property</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
-                          <XCircle className="mr-2 h-4 w-4" />
-                          <span>Reject Property</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                  <td className="text-muted-foreground px-6 py-4 text-sm">
+                    {formatDate(property.dateSubmitted)}
+                  </td>
+                  <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => navigate(`/admin/properties/${property.id}`)}
+                    >
+                      <Eye className="mr-2 h-4 w-4" />
+                      View Property Details
+                    </Button>
                   </td>
                 </tr>
               ))}

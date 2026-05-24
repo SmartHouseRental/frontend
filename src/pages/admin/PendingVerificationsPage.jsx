@@ -24,74 +24,43 @@ import {
     Eye,
     FileText,
     Download,
-    ChevronLeft,
-    ChevronRight,
     ClipboardCheck,
     Clock,
-    ShieldCheck,
 } from 'lucide-react';
 import { useNavigate } from 'react-router';
-
-const pendingOwners = [
-    {
-        id: 'USR-4821',
-        name: 'Mulugeta Abebe',
-        email: 'mulugeta.a@email.com',
-        phone: '+251 911 234 567',
-        submittedDate: 'Mar 18, 2026',
-        daysWaiting: 5,
-        documents: ['National ID', 'Business License', 'Property Title Deed'],
-        avatar: 'MA',
-        avatarColor: 'bg-blue-500/10 text-blue-600',
-    },
-    {
-        id: 'USR-4835',
-        name: 'Tigist Hailu',
-        email: 'tigist.h@email.com',
-        phone: '+251 922 345 678',
-        submittedDate: 'Mar 16, 2026',
-        daysWaiting: 7,
-        documents: ['National ID', 'Tax Certificate'],
-        avatar: 'TH',
-        avatarColor: 'bg-rose-500/10 text-rose-600',
-    },
-    {
-        id: 'USR-4842',
-        name: 'Dawit Tesfaye',
-        email: 'dawit.t@email.com',
-        phone: '+251 933 456 789',
-        submittedDate: 'Mar 20, 2026',
-        daysWaiting: 3,
-        documents: ['National ID', 'Business License', 'Utility Bill'],
-        avatar: 'DT',
-        avatarColor: 'bg-emerald-500/10 text-emerald-600',
-    },
-    {
-        id: 'USR-4856',
-        name: 'Hana Bekele',
-        email: 'hana.b@email.com',
-        phone: '+251 944 567 890',
-        submittedDate: 'Mar 21, 2026',
-        daysWaiting: 2,
-        documents: ['National ID', 'Property Title Deed'],
-        avatar: 'HB',
-        avatarColor: 'bg-amber-500/10 text-amber-600',
-    },
-    {
-        id: 'USR-4867',
-        name: 'Yonas Gebre',
-        email: 'yonas.g@email.com',
-        phone: '+251 955 678 901',
-        submittedDate: 'Mar 22, 2026',
-        daysWaiting: 1,
-        documents: ['National ID', 'Business License'],
-        avatar: 'YG',
-        avatarColor: 'bg-violet-500/10 text-violet-600',
-    },
-];
+import { useState } from 'react';
+import {
+  useAdminPendingVerifications,
+  useAdminResolveVerification,
+} from '@/features/admin/hooks/useAdmin';
+import { getAdminListItems } from '@/features/admin/adminSanitize';
+import TableSkeleton from '@/components/TableSkeleton';
+import ErrorState from '@/components/ErrorState';
+import EmptyState from '@/components/EmptyState';
+import DataTablePagination from '@/components/DataTablePagination';
 
 function PendingVerificationsPage() {
     const navigate = useNavigate();
+    const [page, setPage] = useState(1);
+    const [search, setSearch] = useState('');
+    const resolveVerification = useAdminResolveVerification();
+
+    const params = {
+      page,
+      limit: 20,
+      ...(search.trim() ? { search: search.trim() } : {}),
+    };
+
+    const { data, isLoading, isError, refetch } = useAdminPendingVerifications(params);
+
+    const pendingOwners = getAdminListItems(data);
+    const meta = data?.meta || { page: 1, limit: 20, total: 0, totalPages: 1 };
+
+    const onResolve = (id, nextStatus) => {
+      resolveVerification.mutate({ id, status: nextStatus });
+    };
+
+    const formatDate = (value) => (value ? new Date(value).toLocaleDateString() : '-');
 
     return (
         <div className="space-y-6 p-8">
@@ -142,6 +111,11 @@ function PendingVerificationsPage() {
                         placeholder="Search by name, email, or ID..."
                         type="text"
                         className="pl-10"
+                        value={search}
+                        onChange={(e) => {
+                          setSearch(e.target.value);
+                          setPage(1);
+                        }}
                     />
                 </div>
                 <Button variant="outline" className="gap-2">
@@ -150,6 +124,13 @@ function PendingVerificationsPage() {
                 </Button>
             </Card>
 
+            {isLoading ? (
+              <TableSkeleton rows={6} columns={6} />
+            ) : isError ? (
+              <ErrorState title="Failed to load pending verifications" onRetry={refetch} />
+            ) : pendingOwners.length === 0 ? (
+              <EmptyState title="No pending verifications" description="All submissions are up to date." />
+            ) : (
             <Card className="gap-0 overflow-hidden p-0">
                 <Table className="w-full min-w-full border-collapse text-left">
                     <TableHeader className="bg-muted/30 w-full">
@@ -171,10 +152,13 @@ function PendingVerificationsPage() {
                             >
                                 <TableCell className="px-6 py-4">
                                     <div className="flex items-center gap-3">
-                                        <div
-                                            className={`flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold ${owner.avatarColor}`}
-                                        >
-                                            {owner.avatar}
+                                        <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold">
+                                            {(owner.name || 'U')
+                                              .split(' ')
+                                              .filter(Boolean)
+                                              .slice(0, 2)
+                                              .map((part) => part[0]?.toUpperCase())
+                                              .join('')}
                                         </div>
                                         <div>
                                             <p className="text-sm font-bold">{owner.name}</p>
@@ -187,7 +171,7 @@ function PendingVerificationsPage() {
                                     <p className="text-muted-foreground text-xs">{owner.phone}</p>
                                 </TableCell>
                                 <TableCell className="text-muted-foreground px-6 py-4 text-sm">
-                                    {owner.submittedDate}
+                                    {formatDate(owner.submittedDate)}
                                 </TableCell>
                                 <TableCell className="px-6 py-4">
                                     <span
@@ -203,9 +187,9 @@ function PendingVerificationsPage() {
                                 </TableCell>
                                 <TableCell className="px-6 py-4">
                                     <div className="flex flex-wrap gap-1">
-                                        {owner.documents.map((doc) => (
+                                        {owner.documents.map((doc, docIndex) => (
                                             <span
-                                                key={doc}
+                                                key={`${owner.id}-doc-${docIndex}`}
                                                 className="bg-primary/5 text-primary rounded px-2 py-0.5 text-[10px] font-medium"
                                             >
                                                 {doc}
@@ -230,11 +214,17 @@ function PendingVerificationsPage() {
                                                 <span>View Profile</span>
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="cursor-pointer text-emerald-600 focus:text-emerald-600">
+                                            <DropdownMenuItem
+                                              className="cursor-pointer text-emerald-600 focus:text-emerald-600"
+                                              onClick={() => onResolve(owner.id, 'approved')}
+                                            >
                                                 <CheckCircle2 className="mr-2 h-4 w-4" />
                                                 <span>Approve & Verify</span>
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
+                                            <DropdownMenuItem
+                                              className="cursor-pointer text-rose-600 focus:text-rose-600"
+                                              onClick={() => onResolve(owner.id, 'rejected')}
+                                            >
                                                 <XCircle className="mr-2 h-4 w-4" />
                                                 <span>Reject Documents</span>
                                             </DropdownMenuItem>
@@ -245,23 +235,16 @@ function PendingVerificationsPage() {
                         ))}
                     </TableBody>
                 </Table>
-                <div className="flex items-center justify-between border-t border-border bg-muted/20 px-6 py-4">
-                    <span className="text-muted-foreground text-xs font-medium">
-                        Showing 1-{pendingOwners.length} of {pendingOwners.length} owners
-                    </span>
-                    <div className="flex items-center gap-1">
-                        <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-white">
-                            <ChevronLeft size={16} />
-                        </button>
-                        <button className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-white">
-                            1
-                        </button>
-                        <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-white">
-                            <ChevronRight size={16} />
-                        </button>
-                    </div>
-                </div>
+                <DataTablePagination
+                  currentPage={meta.page || 1}
+                  totalPages={meta.totalPages || 1}
+                  totalItems={meta.total || 0}
+                  itemsPerPage={meta.limit || 20}
+                  itemLabel="owners"
+                  onPageChange={setPage}
+                />
             </Card>
+            )}
         </div>
     );
 }

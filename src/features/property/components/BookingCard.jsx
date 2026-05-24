@@ -2,31 +2,77 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, MessageCircle, CalendarDays, Edit3 } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import ReviewModal from './ReviewModal';
+import { usePropertyReviewStats } from '../hooks/useReviews';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useCreateConversation, useConversations } from '@/features/chat/hooks/useMessaging';
+import { getLocalizedText } from '@/lib/utils/i18n';
+import ScheduleVisitModal from '@/features/visits/components/ScheduleVisitModal';
 
 export default function BookingCard({ property }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
+  const { isAuthenticated, user } = useAuth();
+  const createConversation = useCreateConversation();
+  const { data: conversations = [] } = useConversations();
 
-  const propertyData = property || {
-    id: 'modern-villa-old-airport',
-    title: 'Modern Villa, Old Airport',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCVgURC1lpKm2NhTjoN7OKXfArljV4h3wLH6LpjWuPeGCTDtBV4kJ6qriA-GgEEHF6goYhJeqb-X1HUf1VAFWd3UGza05kHoGe5oin8TRXd4XbpTFnTYCD_yhWbtJvRw3xGH18_ymJt-97r6da6q_0I4Fi7xHoi5Yj8CB4Z_W5cmZx0S9tnPh2ZcqMF6zmzAB503SOjajS9edta0m4A1QiiqKhVLEpN3y9o1OzCZILWZefKYilnrTnmZvmQmpcWFj8hUaP_rQKBv34',
-    ownerName: 'Dawit',
-    price: '45,000 ETB',
-  };
+  const propertyData = property || {};
 
-  const displayPrice = property?.price || '45,000 ETB';
+  // Format price from API: { value: 35000, currency: "ETB" }
+  const displayPrice = property?.price
+    ? `${property.currency || 'ETB'} ${property.price.toLocaleString()} /month`
+    : 'Contact for pricing';
 
-  const handleChat = () => {
-    navigate('/chat');
+  const { data: stats } = usePropertyReviewStats(property?.id);
+  const statsData = stats || { averageRating: 0 };
+
+  const handleChat = async () => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
+
+    const targetOwnerId = property.owner?.id;
+
+    // Check locally for an existing conversation first
+    const existingChat = conversations.find(
+      (c) =>
+        c.propertyId === property.id &&
+        (c.ownerId === targetOwnerId || c.owner?.id === targetOwnerId) &&
+        (c.renterId === user.id || c.renter?.id === user.id),
+    );
+
+    if (existingChat) {
+      navigate('/chat', { state: { conversationId: existingChat.id } });
+      return;
+    }
+
+    try {
+      const response = await createConversation.mutateAsync({
+        ownerId: targetOwnerId,
+        renterId: user.id,
+        propertyId: property.id,
+      });
+      navigate('/chat', { state: { conversationId: response.id } });
+    } catch (error) {
+      console.error('Failed to create conversation:', error);
+      navigate('/chat');
+    }
   };
 
   const handleSchedule = () => {
-    // Will be wired up during visit integration
+    navigate(`/renter/schedule-visit/${property.id}`);
   };
+
+  const scheduleProperty = property?.id
+    ? {
+        id: property.id,
+        title: getLocalizedText(property.title, 'en') || 'Property',
+      }
+    : null;
 
   return (
     <div className="sticky top-28">
@@ -35,14 +81,16 @@ export default function BookingCard({ property }) {
           <div className="mb-6 flex justify-between">
             <div>
               <span className="text-primary text-3xl font-extrabold">
-                {displayPrice.split(' ')[0]} {displayPrice.split(' ')[1]}
+                {displayPrice.split('/')[0].trim()}
               </span>
               <span className="text-muted-foreground text-sm"> / month</span>
             </div>
 
             <div className="flex items-center gap-1">
-              <Star className="text-primary h-4 w-4" />
-              4.9
+              <Star className="text-primary fill-primary h-4 w-4" />
+              <span className="font-bold">
+                {statsData.averageRating ? Number(statsData.averageRating).toFixed(1) : 'New'}
+              </span>
             </div>
           </div>
 
@@ -67,7 +115,13 @@ export default function BookingCard({ property }) {
             <Button
               variant="ghost"
               className="text-muted-foreground hover:text-primary hover:bg-primary/5 w-full gap-2 rounded-xl py-5 text-xs font-bold transition-all"
-              onClick={() => setIsReviewModalOpen(true)}
+              onClick={() => {
+                if (!isAuthenticated) {
+                  navigate('/login', { state: { from: location } });
+                } else {
+                  setIsReviewModalOpen(true);
+                }
+              }}
             >
               <Edit3 size={16} />
               Leave a Review
@@ -84,6 +138,12 @@ export default function BookingCard({ property }) {
         isOpen={isReviewModalOpen}
         onClose={() => setIsReviewModalOpen(false)}
         property={propertyData}
+      />
+
+      <ScheduleVisitModal
+        open={scheduleOpen}
+        property={scheduleProperty}
+        onClose={() => setScheduleOpen(false)}
       />
     </div>
   );

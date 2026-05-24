@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Link, useNavigate } from 'react-router';
-import { Mail, Lock, User, Phone, ChevronLeft } from 'lucide-react';
+import { Mail, Lock, User, Phone, ChevronLeft, Eye, EyeOff } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,11 +14,14 @@ const registerSchema = z.object({
     last_name: z.string().min(2, 'Last name is required'),
     email: z.string().email('Please enter a valid email address'),
     phone: z.string().min(6, 'Please enter a valid phone number'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
+    password: z.string()
+        .min(8, 'Password must be at least 8 characters')
+        .regex(/[A-Z]/, 'Password must contain at least one uppercase letter'),
 });
 
 export function SignUpForm() {
     const [role, setRole] = useState('renter'); // Default role
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const registerMutation = useRegister();
 
@@ -157,13 +160,20 @@ export function SignUpForm() {
                         <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
                         <Input
                             id="password"
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             placeholder="••••••••"
-                            className={`pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm ${errors.password ? 'border-destructive' : ''}`}
+                            className={`pl-11 pr-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm ${errors.password ? 'border-destructive' : ''}`}
                             {...register('password')}
                         />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                        >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
                     </div>
-                    <p className="text-[11px] text-muted-foreground ml-1 mt-1 font-medium">At least 8 characters long</p>
+                    <p className="text-[11px] text-muted-foreground ml-1 mt-1 font-medium">At least 8 characters long with an uppercase letter</p>
                     {errors.password && <p className="text-destructive text-xs ml-1">{errors.password.message}</p>}
                 </div>
             </div>

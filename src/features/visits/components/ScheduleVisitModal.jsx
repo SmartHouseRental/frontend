@@ -11,6 +11,9 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useBookAppointment } from "@/features/appointments/hooks/useAppointments";
+import { slotToIsoRange } from "@/features/appointments/utils";
+import { toast } from "sonner";
 
 /* ─── Constants ─── */
 const TIME_SLOTS = [
@@ -153,12 +156,12 @@ function Steps({ current }) {
 
 /* ─── Main Modal ─── */
 export default function ScheduleVisitModal({ open, property, onClose }) {
+  const bookMutation = useBookAppointment();
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedSlot, setSelectedSlot] = useState("");
   const [visitType, setVisitType] = useState("physical");
   const [note, setNote] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const reset = useCallback(() => {
@@ -167,7 +170,6 @@ export default function ScheduleVisitModal({ open, property, onClose }) {
     setSelectedSlot("");
     setVisitType("physical");
     setNote("");
-    setSubmitting(false);
     setSubmitted(false);
   }, []);
 
@@ -177,13 +179,34 @@ export default function ScheduleVisitModal({ open, property, onClose }) {
   };
 
   const handleSubmit = () => {
-    if (!property) return;
-    setSubmitting(true);
-    setTimeout(() => {
-      // Will submit via API during integration
-      setSubmitting(false);
-      setSubmitted(true);
-    }, 900);
+    if (!property?.id || !selectedDate || !selectedSlot) return;
+
+    let range;
+    try {
+      range = slotToIsoRange(selectedDate, selectedSlot);
+    } catch {
+      toast.error("Invalid time slot");
+      return;
+    }
+
+    const visitNote = [
+      note.trim(),
+      visitType === "virtual" ? "[Virtual visit]" : "[In-person visit]",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    bookMutation.mutate(
+      {
+        propertyId: property.id,
+        startsAt: range.startsAt,
+        endsAt: range.endsAt,
+        note: visitNote || undefined,
+      },
+      {
+        onSuccess: () => setSubmitted(true),
+      }
+    );
   };
 
   const formatDate = (iso) => {
@@ -436,16 +459,16 @@ export default function ScheduleVisitModal({ open, property, onClose }) {
                         variant="outline"
                         onClick={() => setStep(2)}
                         className="flex-1 rounded-xl font-semibold"
-                        disabled={submitting}
+                        disabled={bookMutation.isPending}
                       >
                         Back
                       </Button>
                       <Button
                         onClick={handleSubmit}
-                        disabled={submitting}
+                        disabled={bookMutation.isPending}
                         className="flex-1 bg-[#D97745] hover:bg-[#C96635] text-white rounded-xl font-bold"
                       >
-                        {submitting ? (
+                        {bookMutation.isPending ? (
                           <span className="flex items-center gap-2">
                             <Loader2 className="h-4 w-4 animate-spin" />
                             Sending…

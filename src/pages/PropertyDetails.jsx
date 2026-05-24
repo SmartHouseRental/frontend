@@ -1,5 +1,7 @@
 import { useParams } from 'react-router';
-import { properties } from '@/lib/dummyData';
+import { Loader2 } from 'lucide-react';
+import { useProperty } from '@/features/property/hooks/useProperty';
+import { adaptProperty } from '@/features/property/utils/propertyAdapter';
 import PropertyHero from '@/features/property/components/PropertyHero';
 import PropertyContent from '@/features/property/components/PropertyContent';
 import BookingCard from '@/features/property/components/BookingCard';
@@ -9,9 +11,30 @@ import Reviews from '@/features/property/components/Reviews';
 
 export default function PropertyDetails() {
   const { id } = useParams();
+  const { data: rawProperty, isLoading, isError, error } = useProperty(id);
 
-  // Find property from dummy data or use the first one as fallback for demo
-  const property = properties.find((p) => p.id === id) || properties[0];
+  const property = rawProperty ? adaptProperty(rawProperty) : null;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (isError || !property) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2">Property Not Found</h2>
+          <p className="text-muted-foreground">
+            {error?.message || 'Could not load property details'}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
