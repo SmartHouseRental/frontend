@@ -1,172 +1,131 @@
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { useNavigate } from 'react-router';
+import { Bed, Bath, Eye, Home, MapPin } from 'lucide-react';
+import { useAdminProperties } from '@/features/admin/hooks/useAdmin';
+import { getAdminListItems } from '@/features/admin/adminSanitize';
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+  formatLocalizedText,
+  formatPropertyCategory,
+  formatPropertyPrice,
+  getPropertyStatusMeta,
+} from '@/features/admin/mappers';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import EmptyState from '@/components/EmptyState';
+import TableSkeleton from '@/components/TableSkeleton';
 
-import { Filter, EllipsisVertical, ChevronLeft, MapPin, ChevronRight, Search } from 'lucide-react';
+function PropertiesTab({ user }) {
+  const navigate = useNavigate();
+  const searchTerm = user?.first_name || user?.email || '';
+  const { data, isLoading } = useAdminProperties({
+    page: 1,
+    limit: 100,
+    ...(searchTerm ? { search: searchTerm } : {}),
+  });
 
-function PropertiesTab() {
+  const allItems = getAdminListItems(data);
+  const properties = allItems.filter((p) => p.owner?.id === user?.id || p.ownerId === user?.id);
+
+  if (isLoading) return <TableSkeleton rows={4} columns={3} />;
+
+  if (properties.length === 0) {
+    return (
+      <EmptyState
+        title="No properties"
+        description="This owner has no listings matching their profile."
+      />
+    );
+  }
+
   return (
-    <>
-      <Card className="mb-6 flex-row flex-wrap items-center justify-between gap-4 rounded-xl border p-4">
-        <div className="relative max-w-2xl min-w-[200px] flex-1">
-          <span className="text-muted-foreground/90 absolute top-1/2 left-3 -translate-y-1/2">
-            <Search />
-          </span>
-          <Input
-            className="py-2 pr-4 pl-10 outline-none focus:ring-2"
-            placeholder="Search by ID, Title or Owner..."
-            type="text"
-          />
-        </div>
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      {properties.map((property) => {
+        const statusMeta = getPropertyStatusMeta(property.status);
+        const title = formatLocalizedText(property.title, 'Untitled');
+        const address = formatLocalizedText(
+          property.address || property.location,
+          'No address'
+        );
+        const price = formatPropertyPrice(property.price, '—');
+        const category =
+          property.categoryType || formatPropertyCategory(property.category);
+        const image = property.images?.[0];
 
-        <div className="flex items-center justify-between gap-4">
-          <Select>
-            <SelectTrigger className="w-full max-w-48">
-              <SelectValue placeholder="Property Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="villa">Villa</SelectItem>
-                <SelectItem value="apartmenta">Apartment</SelectItem>
-                <SelectItem value="service">Service</SelectItem>
-                <SelectItem value="full-compound">Full Compound</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-
-          <Select>
-            <SelectTrigger className="w-full max-w-48">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="available">Available</SelectItem>
-                <SelectItem value="service">Service</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-
-          <Button className="rounded-lg px-5 py-2">
-            <Filter />
-          </Button>
-        </div>
-      </Card>
-
-      <section className="">
-        <Card className="border-primary/5 gap-0 overflow-hidden rounded-xl border p-0 shadow-sm">
-          <Table className="w-full min-w-full border-collapse text-left">
-            <TableHeader className="w-full bg-slate-50">
-              <TableRow>
-                <TableHead className="px-6 py-4">ID</TableHead>
-                <TableHead className="px-6 py-4">Title / Location</TableHead>
-                <TableHead className="px-6 py-4">Type</TableHead>
-                <TableHead className="px-6 py-4">Price</TableHead>
-                <TableHead className="px-6 py-4">Status</TableHead>
-                <TableHead className="px-4 py-4">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="px-6 py-4">#PRP-1024</TableCell>
-                <TableCell className="px-6 py-4">
-                  <div className="flex items-center gap-4">
-                    <img
-                      alt="Villa in Bole"
-                      className="h-12 w-12 rounded-lg object-cover"
-                      data-alt="Modern luxury villa with white exterior and large windows"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAenV_3qVcY9Qwk4wakHFXyVXSOEDbP8zpfnM2v9TbZZ2Dx6DLWg5WzQMyNUilW90Vq6f0sOyGmDlljmxE7SRGuPZ-mGD-mS_QOap5qzI1l0B9w5oqkoaVuzgP0alYz1POLq1Z7wdkOyl9G_RiBmtBc7JBDBBkBfJWkaugjSN-COItg-1H_5I30pLWoet3qEwRfjR7o65lqEoboTysrWFX5ACBJPW9fma8PplImAgccKF74CzCl70Hn_SR2cYk6Y1xVSWEP6nDHyYs"
-                    />
-                    <div>
-                      <p className="font-bold text-slate-800 dark:text-slate-100">
-                        Luxury Villa in Bole Atlas
-                      </p>
-                      <p className="text-muted-foreground/90 flex items-center gap-1 text-xs">
-                        <span className="material-icons text-primary text-[12px]">
-                          <MapPin className="h-3 w-3" />
-                        </span>
-                        Bole, Addis Ababa
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-
-                <TableCell className="px-6 py-4">
-                  <p className="text-primary text-sm font-extrabold">85,000 ETB</p>
-                  <p className="text-muted-foreground/90 text-[10px] uppercase">per month</p>
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  <p>Villa</p>
-                </TableCell>
-
-                <TableCell className="px-6 py-4">
-                  <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-bold tracking-tight text-orange-600 uppercase dark:bg-orange-500/20 dark:text-orange-400">
-                    Pending
-                  </span>
-                </TableCell>
-
-                <TableCell className="px-6 py-4">
-                  <Button className="bg-transparent" variant="outline">
-                    <EllipsisVertical />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-
-          <div className="dark:bg-background-dark/40 border-primary/5 flex items-center justify-between border-t bg-slate-50 px-6 py-4">
-            <p className="text-muted-foreground text-xs font-medium">
-              Showing 1-4 of 1,284 properties
-            </p>
-            <div className="flex items-center gap-2">
-              <button
-                className="text-muted-foreground/90 rounded-lg border border-slate-200 p-2 hover:bg-white disabled:opacity-50"
-                disabled=""
+        return (
+          <Card
+            key={property.id}
+            className="group cursor-pointer overflow-hidden border-border/60 transition-all hover:border-primary/30 hover:shadow-lg"
+            onClick={() => navigate(`/admin/properties/${property.id}`)}
+          >
+            <div className="relative h-40 overflow-hidden bg-muted">
+              {image ? (
+                <img
+                  src={image}
+                  alt={title}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center text-muted-foreground/40">
+                  <Home size={40} strokeWidth={1.25} />
+                </div>
+              )}
+              <Badge
+                className={`absolute top-3 right-3 text-[10px] font-bold uppercase shadow-sm ${statusMeta.style}`}
               >
-                <span className="material-icons text-sm">
-                  <ChevronLeft />
-                </span>
-              </button>
-              <button className="bg-primary rounded-lg px-3 py-1 text-xs font-bold text-white">
-                1
-              </button>
-              <button className="text-muted-foreground rounded-lg px-3 py-1 text-xs font-bold hover:bg-white">
-                2
-              </button>
-              <button className="text-muted-foreground rounded-lg px-3 py-1 text-xs font-bold hover:bg-white">
-                3
-              </button>
-              <span className="text-muted-foreground/90 px-1">...</span>
-              <button className="text-muted-foreground rounded-lg px-3 py-1 text-xs font-bold hover:bg-white">
-                321
-              </button>
-              <button className="text-muted-foreground/90 rounded-lg border border-slate-200 p-2 hover:bg-white">
-                <span className="material-icons text-sm">
-                  <ChevronRight />
-                </span>
-              </button>
+                {statusMeta.label}
+              </Badge>
             </div>
-          </div>
-        </Card>
-      </section>
-    </>
+
+            <CardContent className="space-y-3 p-4">
+              <div>
+                <p className="line-clamp-1 text-base font-bold">{title}</p>
+                <p className="text-muted-foreground mt-1 flex items-start gap-1.5 text-xs">
+                  <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                  <span className="line-clamp-2">{address}</span>
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline" className="text-[10px] font-semibold">
+                  {category}
+                </Badge>
+                {(property.bedrooms != null || property.bathrooms != null) && (
+                  <div className="text-muted-foreground flex items-center gap-3 text-xs">
+                    {property.bedrooms != null && (
+                      <span className="flex items-center gap-1">
+                        <Bed size={14} /> {property.bedrooms}
+                      </span>
+                    )}
+                    {property.bathrooms != null && (
+                      <span className="flex items-center gap-1">
+                        <Bath size={14} /> {property.bathrooms}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="border-border/60 flex items-center justify-between border-t pt-3">
+                <div>
+                  <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-wider">
+                    Monthly rent
+                  </p>
+                  <p className="text-primary text-lg font-extrabold">{price}</p>
+                </div>
+                <div className="text-muted-foreground flex items-center gap-3 text-xs">
+                  <span className="flex items-center gap-1">
+                    <Eye size={14} />
+                    {property.viewCount ?? 0}
+                  </span>
+                  <span className="rounded bg-muted px-1.5 py-0.5 font-bold">
+                    Edits {property.editCount ?? 0}/1
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
   );
 }
 

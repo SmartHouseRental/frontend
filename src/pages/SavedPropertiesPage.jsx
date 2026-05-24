@@ -1,9 +1,22 @@
-import { Heart, Home, ArrowLeft } from 'lucide-react';
+import { Heart, Home, ArrowLeft, Loader2 } from 'lucide-react';
 import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
+import { useFavorites } from '@/features/favorites/hooks/useFavorites';
+import { PropertyCard } from '@/features/explore/components/PropertyCard';
 
-// Stub: shows empty state until favorites integration
 export default function SavedPropertiesPage() {
+  const { data: favorites, isLoading, isError } = useFavorites();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const hasFavorites = favorites && favorites.length > 0;
+
   return (
     <div className="min-h-screen">
       {/* Hero / Header */}
@@ -18,30 +31,64 @@ export default function SavedPropertiesPage() {
                 <h1 className="text-3xl font-extrabold tracking-tight">Saved Properties</h1>
               </div>
               <p className="text-muted-foreground ml-[60px]">
-                You haven't saved any properties yet.
+                {hasFavorites 
+                  ? `You have ${favorites.length} properties saved to your collection.` 
+                  : "You haven't saved any properties yet."}
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Content — Empty State */}
+      {/* Content */}
       <section className="mx-auto max-w-7xl px-6 py-10 lg:px-20">
-        <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="bg-muted mb-6 flex size-24 items-center justify-center rounded-2xl">
-            <Home className="text-muted-foreground h-10 w-10" />
+        {!hasFavorites ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="bg-muted mb-6 flex size-24 items-center justify-center rounded-2xl">
+              <Home className="text-muted-foreground h-10 w-10" />
+            </div>
+            <h2 className="mb-2 text-xl font-bold">No Saved Properties</h2>
+            <p className="text-muted-foreground mb-8 max-w-md">
+              Start exploring homes and tap the <Heart className="inline h-4 w-4 text-[#D97745]" />{' '}
+              icon to save your favorites here.
+            </p>
+            <Link to="/explore">
+              <Button className="bg-primary text-primary-foreground rounded-xl px-8 py-3 font-bold shadow-lg">
+                Explore Listings
+              </Button>
+            </Link>
           </div>
-          <h2 className="mb-2 text-xl font-bold">No Saved Properties</h2>
-          <p className="text-muted-foreground mb-8 max-w-md">
-            Start exploring homes and tap the <Heart className="inline h-4 w-4 text-[#D97745]" />{' '}
-            icon to save your favorites here.
-          </p>
-          <Link to="/explore">
-            <Button className="bg-primary text-primary-foreground rounded-xl px-8 py-3 font-bold shadow-lg">
-              Explore Listings
-            </Button>
-          </Link>
-        </div>
+        ) : (
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {favorites.map((p) => {
+              const title = (p.title && typeof p.title === 'object') ? (p.title.en || p.title.am) : p.title;
+              const address = (p.address && typeof p.address === 'object') ? (p.address.en || p.address.am) : (p.address || p.location || "Addis Ababa, Ethiopia");
+              const priceValue = (p.price && typeof p.price === 'object') ? p.price.value : p.price;
+              const priceCurrency = (p.price && typeof p.price === 'object') ? (p.price.currency || 'ETB') : 'ETB';
+              const areaValue = (p.area && typeof p.area === 'object') ? p.area.value : p.area;
+              const category = (p.category && typeof p.category === 'object') ? (p.category.en || p.category.am) : p.category;
+              const type = (p.type && typeof p.type === 'object') ? (p.type.en || p.type.am) : (p.type || category);
+              const image = p.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
+
+              return (
+                <PropertyCard
+                  key={p.id}
+                  id={p.id}
+                  title={title}
+                  location={address}
+                  price={`${priceValue} ${priceCurrency}`}
+                  beds={p.bedrooms}
+                  baths={p.bathrooms}
+                  size={`${areaValue} m²`}
+                  image={image}
+                  rating={p.rating || 0}
+                  status={p.status === 'AVAILABLE' || p.status === 'available' ? 'Available' : p.status}
+                  badge={type}
+                />
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* Subtle background pattern */}

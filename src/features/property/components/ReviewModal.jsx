@@ -2,19 +2,30 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Star, X } from "lucide-react";
+import { useCreateReview } from '../hooks/useReviews';
 
 export default function ReviewModal({ isOpen, onClose, property }) {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [hoveredRating, setHoveredRating] = useState(0);
+  
+  const createReviewMutation = useCreateReview();
 
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // In a real app, you'd send this to an API
-    console.log("Review submitted:", { rating, comment, propertyId: property.id });
-    onClose();
+    createReviewMutation.mutate({ 
+      propertyId: property.id, 
+      rating, 
+      comment 
+    }, {
+      onSuccess: () => {
+        setRating(0);
+        setComment("");
+        onClose();
+      }
+    });
   };
 
   return (
@@ -26,7 +37,7 @@ export default function ReviewModal({ isOpen, onClose, property }) {
           <div>
             <h2 className="text-2xl font-bold mb-1">Leave a Review</h2>
             <p className="text-muted-foreground text-sm">
-              Share your experience at {property.title}
+              Share your experience at {property.titleStr || (typeof property.title === 'object' ? (property.title?.en || property.title?.am) : property.title) || 'this property'}
             </p>
           </div>
           <button 
@@ -90,9 +101,9 @@ export default function ReviewModal({ isOpen, onClose, property }) {
             <Button 
               type="submit" 
               className="flex-1 py-6 rounded-xl font-bold bg-[#D97745] hover:bg-[#C96635] shadow-lg shadow-[#D97745]/20"
-              disabled={rating === 0}
+              disabled={rating === 0 || createReviewMutation.isPending}
             >
-              Submit Review
+              {createReviewMutation.isPending ? "Submitting..." : "Submit Review"}
             </Button>
           </div>
         </form>

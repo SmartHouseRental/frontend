@@ -1,10 +1,33 @@
 import PropertyMap from '@/components/map/PropertyMap';
-import { properties } from '@/lib/dummyData';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router';
+import { useProperties } from '@/features/property/hooks/useProperties';
+import { parseLocation } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 
 export default function MapSection() {
-  const previewProperties = properties.slice(0, 3); // Just show a few on homepage
+  const { data: propertiesData, isLoading } = useProperties({
+    status: 'available',
+    limit: 6,
+  });
+
+  const listings = propertiesData?.data || [];
+
+  const enrichedProperties = listings.map((p) => {
+    const coords = parseLocation(p.location);
+    const title = (p.title && typeof p.title === 'object') ? (p.title.en || p.title.am) : p.title;
+    const price = (p.price && typeof p.price === 'object') ? p.price.value : p.price;
+    const currency = (p.price && typeof p.price === 'object') ? (p.price.currency || 'ETB') : 'ETB';
+
+    return {
+      ...p,
+      lat: coords?.lat || 9.0128,
+      lng: coords?.lng || 38.7508,
+      titleStr: title || "Property Details",
+      priceStr: `${price} ${currency}`,
+      image: p.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image',
+    };
+  });
 
   return (
     <section className="bg-foreground text-background relative overflow-hidden rounded-t-[3rem] px-6 py-24 lg:px-20">
@@ -47,8 +70,14 @@ export default function MapSection() {
           </Button>
         </div>
 
-        <div className="h-[500px] w-full overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl ring-8 ring-white/5 lg:w-2/3">
-          <PropertyMap properties={previewProperties} mode="preview" zoom={12} />
+        <div className="h-[500px] w-full overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl ring-8 ring-white/5 lg:w-2/3 relative">
+          {isLoading ? (
+            <div className="flex h-full w-full items-center justify-center bg-zinc-900/50">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <PropertyMap properties={enrichedProperties} mode="preview" zoom={12} />
+          )}
         </div>
       </div>
 

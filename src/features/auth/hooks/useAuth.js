@@ -14,9 +14,11 @@ export const useAuth = () => {
         staleTime: 5 * 60 * 1000, // 5 minutes
     });
 
+    const user = query.data?.data?.user || query.data?.user || (query.data?.id || query.data?.role ? query.data : null);
+
     return {
         ...query,
-        user: query.data?.data?.user || null,
-        isAuthenticated: !!query.data?.data?.user,
+        user: user || null,
+        isAuthenticated: !!user,
     };
 };

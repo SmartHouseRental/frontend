@@ -1,8 +1,19 @@
 import { Button } from '@/components/ui/button';
 import { Home, Globe, Heart, MessageCircle, User, LogOut, ChevronDown } from 'lucide-react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useLogout } from '@/features/auth/hooks/useLogout';
 
 export default function Header() {
+  const { isAuthenticated, user } = useAuth();
+  const isRenter = user?.role?.toLowerCase() === 'renter';
+  const logoutMutation = useLogout();
+  const location = useLocation();
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
+
   return (
     <header className="bg-background/80 sticky top-0 z-50 w-full border-b px-6 py-4 shadow-sm backdrop-blur-md lg:px-20">
       <div className="mx-auto flex max-w-7xl items-center justify-between">
@@ -26,6 +37,17 @@ export default function Header() {
             Explore
           </Link>
 
+          {isAuthenticated && isRenter && (
+            <>
+              <Link to="/saved" className="hover:text-primary text-sm font-semibold transition-colors">
+                Saved
+              </Link>
+              <Link to="/chat" className="hover:text-primary text-sm font-semibold transition-colors">
+                Messages
+              </Link>
+            </>
+          )}
+
           <Link to="/about" className="hover:text-primary text-sm font-semibold transition-colors">
             About
           </Link>
@@ -48,13 +70,35 @@ export default function Header() {
             EN / አማ
           </Button>
 
-          <Link to="/signup">
+          {isAuthenticated && isRenter && (
+            <Link to="/renter">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full border bg-muted/50 transition-all hover:ring-2 hover:ring-primary"
+              >
+                <User className="h-5 w-5" />
+              </Button>
+            </Link>
+          )}
+
+          {isAuthenticated ? (
             <Button
+              onClick={handleLogout}
+              disabled={logoutMutation.isPending}
               className="shadow-primary/20 rounded-full px-6 font-bold shadow-lg transition-transform hover:scale-105"
             >
-              Login
+              {logoutMutation.isPending ? 'Logging out...' : 'Logout'}
             </Button>
-          </Link>
+          ) : (
+            <Link to="/login" state={{ from: location }}>
+              <Button
+                className="shadow-primary/20 rounded-full px-6 font-bold shadow-lg transition-transform hover:scale-105"
+              >
+                Login
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     </header>

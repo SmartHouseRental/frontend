@@ -37,93 +37,18 @@ import {
     Star,
     MessageSquare,
 } from 'lucide-react';
-import { useNavigate } from 'react-router';
-
-const reviews = [
-    {
-        id: 'REV-2401',
-        reviewer: { name: 'Mulugeta K.', initials: 'MK', color: 'bg-blue-100 text-blue-600' },
-        targetType: 'property',
-        target: 'Horizon Peak Villa',
-        targetId: 'PRP-9402',
-        rating: 5,
-        comment: 'Outstanding property! The villa exceeded all our expectations. Spacious rooms, modern amenities, and the landlord was incredibly responsive.',
-        date: 'Mar 22, 2026',
-        status: 'published',
-    },
-    {
-        id: 'REV-2398',
-        reviewer: { name: 'Tigist H.', initials: 'TH', color: 'bg-rose-100 text-rose-600' },
-        targetType: 'property',
-        target: 'Urban Loft 42',
-        targetId: 'PRP-8210',
-        rating: 4,
-        comment: 'Great location and reasonable price. The building is well-maintained. Only downside is limited parking space.',
-        date: 'Mar 21, 2026',
-        status: 'published',
-    },
-    {
-        id: 'REV-2395',
-        reviewer: { name: 'Abebe T.', initials: 'AT', color: 'bg-emerald-100 text-emerald-600' },
-        targetType: 'owner',
-        target: 'Michael Chen',
-        targetId: 'USR-1001',
-        rating: 5,
-        comment: 'Michael is one of the best landlords I have worked with. Very professional, responds quickly, and keeps the property in excellent condition.',
-        date: 'Mar 20, 2026',
-        status: 'published',
-    },
-    {
-        id: 'REV-2390',
-        reviewer: { name: 'Sara K.', initials: 'SK', color: 'bg-violet-100 text-violet-600' },
-        targetType: 'property',
-        target: 'Bole Skyline Apt',
-        targetId: 'PRP-8829',
-        rating: 2,
-        comment: 'The photos were misleading. The apartment looked much better online. Plumbing issues and noisy neighbors. Not worth the listed price.',
-        date: 'Mar 19, 2026',
-        status: 'flagged',
-    },
-    {
-        id: 'REV-2385',
-        reviewer: { name: 'Henok B.', initials: 'HB', color: 'bg-amber-100 text-amber-600' },
-        targetType: 'owner',
-        target: 'David Vance',
-        targetId: 'USR-1203',
-        rating: 1,
-        comment: 'Terrible experience. The owner never responded to maintenance requests and tried to increase rent mid-lease without proper notice.',
-        date: 'Mar 18, 2026',
-        status: 'flagged',
-    },
-    {
-        id: 'REV-2380',
-        reviewer: { name: 'Dawit T.', initials: 'DT', color: 'bg-teal-100 text-teal-600' },
-        targetType: 'property',
-        target: 'Cottage by the Lake',
-        targetId: 'PRP-7731',
-        rating: 4,
-        comment: 'Beautiful location and peaceful environment. Perfect for families. Would have given 5 stars if not for the occasional water supply issues.',
-        date: 'Mar 15, 2026',
-        status: 'published',
-    },
-    {
-        id: 'REV-2370',
-        reviewer: { name: 'Unknown', initials: '??', color: 'bg-slate-100 text-slate-400' },
-        targetType: 'property',
-        target: 'Suspicious Listing',
-        targetId: 'PRP-5102',
-        rating: 5,
-        comment: 'Best apartment ever!!! Super cheap and amazing deal. Contact me for more details on WhatsApp.',
-        date: 'Mar 12, 2026',
-        status: 'removed',
-    },
-];
-
-const statusMap = {
-    published: { label: 'Published', style: 'bg-emerald-100 text-emerald-700' },
-    flagged: { label: 'Flagged', style: 'bg-amber-100 text-amber-700' },
-    removed: { label: 'Removed', style: 'bg-rose-100 text-rose-700' },
-};
+import { useState } from 'react';
+import {
+  useAdminDeleteReview,
+  useAdminReviews,
+  useAdminUpdateReviewStatus,
+} from '@/features/admin/hooks/useAdmin';
+import { getAdminListItems } from '@/features/admin/adminSanitize';
+import { getReviewStatusMeta } from '@/features/admin/mappers';
+import { useAdminLookupMaps } from '@/features/admin/hooks/useAdminLookupMaps';
+import TableSkeleton from '@/components/TableSkeleton';
+import ErrorState from '@/components/ErrorState';
+import EmptyState from '@/components/EmptyState';
 
 function StarRating({ rating }) {
     return (
@@ -141,7 +66,27 @@ function StarRating({ rating }) {
 }
 
 function ReviewsPage() {
-    const navigate = useNavigate();
+    const [page, setPage] = useState(1);
+    const [search, setSearch] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
+
+    const { data, isLoading, isError, refetch } = useAdminReviews({
+      page,
+      limit: 20,
+      ...(search.trim() ? { search: search.trim() } : {}),
+    });
+    const updateReviewStatus = useAdminUpdateReviewStatus();
+    const deleteReview = useAdminDeleteReview();
+
+    const { getPropertyTitle } = useAdminLookupMaps();
+    const reviews = getAdminListItems(data);
+    const reviewItems = reviews.filter((item) =>
+      statusFilter === 'all' ? true : item.status === statusFilter
+    );
+    const meta = data?.meta ?? { page: 1, limit: 20, total: 0, totalPages: 1 };
+
+    const updateStatus = (id, status) => updateReviewStatus.mutate({ id, status });
+    const removeReview = (id) => deleteReview.mutate({ id });
 
     return (
         <div className="space-y-6 p-8">
@@ -156,37 +101,6 @@ function ReviewsPage() {
                 </div>
             </PageHeader>
 
-            {/* Stats Row */}
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-                <Card className="border-0 border-l-4 border-emerald-400 p-5">
-                    <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">Published</p>
-                    <p className="mt-1 text-2xl font-extrabold text-emerald-600">
-                        {reviews.filter((r) => r.status === 'published').length}
-                    </p>
-                </Card>
-                <Card className="border-0 border-l-4 border-amber-400 p-5">
-                    <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">Flagged</p>
-                    <p className="mt-1 text-2xl font-extrabold text-amber-600">
-                        {reviews.filter((r) => r.status === 'flagged').length}
-                    </p>
-                </Card>
-                <Card className="border-0 border-l-4 border-rose-400 p-5">
-                    <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">Removed</p>
-                    <p className="mt-1 text-2xl font-extrabold text-rose-600">
-                        {reviews.filter((r) => r.status === 'removed').length}
-                    </p>
-                </Card>
-                <Card className="border-0 border-l-4 border-primary p-5">
-                    <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">Avg Rating</p>
-                    <div className="mt-1 flex items-center gap-2">
-                        <p className="text-2xl font-extrabold">
-                            {(reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)}
-                        </p>
-                        <Star size={20} className="fill-amber-400 text-amber-400" />
-                    </div>
-                </Card>
-            </div>
-
             {/* Filters */}
             <Card className="flex flex-row flex-wrap items-center justify-between gap-4 px-6 py-4">
                 <div className="relative max-w-xl flex-1">
@@ -197,10 +111,15 @@ function ReviewsPage() {
                         placeholder="Search by reviewer, property, or comment..."
                         type="text"
                         className="pl-10"
+                        value={search}
+                        onChange={(e) => {
+                          setSearch(e.target.value);
+                          setPage(1);
+                        }}
                     />
                 </div>
                 <div className="flex items-center gap-3">
-                    <Select>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
                         <SelectTrigger className="w-36">
                             <SelectValue placeholder="Status" />
                         </SelectTrigger>
@@ -247,6 +166,13 @@ function ReviewsPage() {
             </Card>
 
             {/* Table */}
+            {isLoading ? (
+              <TableSkeleton rows={6} columns={7} />
+            ) : isError ? (
+              <ErrorState title="Failed to load reviews" onRetry={refetch} />
+            ) : reviewItems.length === 0 ? (
+              <EmptyState title="No reviews found" description="Try changing current filters." />
+            ) : (
             <Card className="gap-0 overflow-hidden p-0">
                 <Table className="w-full min-w-full border-collapse text-left">
                     <TableHeader className="bg-muted/30 w-full">
@@ -261,7 +187,18 @@ function ReviewsPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {reviews.map((review) => (
+                        {reviewItems.map((review) => {
+                            const reviewerName = review.reviewer
+                              ? `${review.reviewer.first_name || ''} ${review.reviewer.last_name || ''}`.trim() || review.reviewer.email
+                              : 'Unknown';
+                            const initials = reviewerName
+                              .split(' ')
+                              .filter(Boolean)
+                              .slice(0, 2)
+                              .map((part) => part[0]?.toUpperCase())
+                              .join('');
+                            const statusMeta = getReviewStatusMeta(review.status);
+                            return (
                             <TableRow
                                 key={review.id}
                                 className={`transition-colors hover:bg-muted/20 ${review.status === 'removed' ? 'opacity-50' : ''}`}
@@ -269,20 +206,19 @@ function ReviewsPage() {
                                 <TableCell className="px-6 py-4">
                                     <div className="flex items-center gap-3">
                                         <div
-                                            className={`flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-bold ${review.reviewer.color}`}
+                                            className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-bold"
                                         >
-                                            {review.reviewer.initials}
+                                            {initials || 'NA'}
                                         </div>
                                         <div>
-                                            <span className="text-sm font-semibold">{review.reviewer.name}</span>
+                                            <span className="text-sm font-semibold">{reviewerName}</span>
                                             <p className="text-muted-foreground text-[10px]">{review.id}</p>
                                         </div>
                                     </div>
                                 </TableCell>
                                 <TableCell className="px-6 py-4">
-                                    <p className="text-sm font-semibold">{review.target}</p>
-                                    <p className="text-muted-foreground text-[10px]">
-                                        {review.targetType === 'property' ? '🏠' : '👤'} {review.targetId}
+                                    <p className="text-sm font-semibold">
+                                      {getPropertyTitle(review.propertyId)}
                                     </p>
                                 </TableCell>
                                 <TableCell className="px-6 py-4">
@@ -294,10 +230,10 @@ function ReviewsPage() {
                                     </p>
                                 </TableCell>
                                 <TableCell className="px-6 py-4">
-                                    <StatusBadge status={review.status} statusMap={statusMap} />
+                                    <StatusBadge status={statusMeta.label} statusMap={{ [statusMeta.label]: statusMeta.style }} />
                                 </TableCell>
                                 <TableCell className="text-muted-foreground px-6 py-4 text-sm">
-                                    {review.date}
+                                    {new Date(review.createdAt).toLocaleDateString()}
                                 </TableCell>
                                 <TableCell className="px-4 py-4">
                                     <DropdownMenu>
@@ -307,12 +243,11 @@ function ReviewsPage() {
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                            <DropdownMenuItem className="cursor-pointer">
-                                                <Eye className="mr-2 h-4 w-4" />
-                                                <span>View Full Review</span>
-                                            </DropdownMenuItem>
                                             {review.status === 'published' && (
-                                                <DropdownMenuItem className="cursor-pointer text-amber-600 focus:text-amber-600">
+                                                <DropdownMenuItem
+                                                  className="cursor-pointer text-amber-600 focus:text-amber-600"
+                                                  onClick={() => updateStatus(review.id, 'flagged')}
+                                                >
                                                     <Flag className="mr-2 h-4 w-4" />
                                                     <span>Flag Review</span>
                                                 </DropdownMenuItem>
@@ -322,7 +257,7 @@ function ReviewsPage() {
                                                     <DropdownMenuSeparator />
                                                     <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
                                                         <Trash2 className="mr-2 h-4 w-4" />
-                                                        <span>Remove Review</span>
+                                                        <span onClick={() => removeReview(review.id)}>Remove Review</span>
                                                     </DropdownMenuItem>
                                                 </>
                                             )}
@@ -330,17 +265,19 @@ function ReviewsPage() {
                                     </DropdownMenu>
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        )})}
                     </TableBody>
                 </Table>
                 <DataTablePagination
-                    currentPage={1}
-                    totalPages={1}
-                    totalItems={reviews.length}
-                    itemsPerPage={reviews.length}
+                    currentPage={meta.page || 1}
+                    totalPages={meta.totalPages || 1}
+                    totalItems={meta.total || 0}
+                    itemsPerPage={meta.limit || 20}
                     itemLabel="reviews"
+                    onPageChange={setPage}
                 />
             </Card>
+            )}
         </div>
     );
 }

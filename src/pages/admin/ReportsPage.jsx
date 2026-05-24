@@ -19,8 +19,6 @@ import {
 } from '@/components/ui/table';
 import {
   Filter,
-  ChevronLeft,
-  ChevronRight,
   MoreVertical,
   Search,
   Eye,
@@ -36,77 +34,59 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { useNavigate } from 'react-router';
-
-const reports = [
-  {
-    id: 'RPT-7429',
-    reporter: { name: 'Sarah Miller', initials: 'SM', color: 'bg-primary/10 text-primary' },
-    reportedUser: {
-      name: 'David Vance',
-      avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDLo23h_KguS-ROG8AAz4Hh75lsMt85_WPOlhWMXv4mmd98oGP2I8YcvMb-7qOmvd-l3Sj0e5TAPVHbKHXYo_95miDYERderalz4iloWyTeabX2SeiZ_v385qRFwyqBILvrx7hUGH8X1nQghHaNHJxAMusaCksdS0iE04z5DTpU2ak0lQirtw7DejH3uw5d_F6RloSIaUrptfzZljWB2XaokQQfEMnA2KF9JLcota_3YHMZAxRCsaQqb7lKjqYt26yLqgJcBcaZUWFW',
-    },
-    reason: 'false_advertising',
-    reasonLabel: 'False Advertising',
-    reasonStyle: 'bg-orange-100 text-orange-700',
-    status: 'under_review',
-    createdDate: 'Mar 22, 2026',
-    createdTime: '14:20 PM',
-  },
-  {
-    id: 'RPT-7430',
-    reporter: { name: 'Abebe T.', initials: 'AT', color: 'bg-blue-100 text-blue-600' },
-    reportedUser: { name: 'Dawit G.', initials: 'DG', color: 'bg-rose-100 text-rose-600' },
-    reason: 'fraud',
-    reasonLabel: 'Fraud',
-    reasonStyle: 'bg-rose-100 text-rose-700',
-    status: 'pending',
-    createdDate: 'Mar 21, 2026',
-    createdTime: '09:45 AM',
-  },
-  {
-    id: 'RPT-7418',
-    reporter: { name: 'Marta K.', initials: 'MK', color: 'bg-emerald-100 text-emerald-600' },
-    reportedUser: { name: 'Yonas H.', initials: 'YH', color: 'bg-violet-100 text-violet-600' },
-    reason: 'inappropriate_behavior',
-    reasonLabel: 'Inappropriate',
-    reasonStyle: 'bg-violet-100 text-violet-700',
-    status: 'resolved',
-    createdDate: 'Mar 18, 2026',
-    createdTime: '16:30 PM',
-  },
-  {
-    id: 'RPT-7405',
-    reporter: { name: 'Henok B.', initials: 'HB', color: 'bg-amber-100 text-amber-600' },
-    reportedUser: { name: 'Tigist M.', initials: 'TM', color: 'bg-pink-100 text-pink-600' },
-    reason: 'spam',
-    reasonLabel: 'Spam',
-    reasonStyle: 'bg-slate-100 text-slate-700',
-    status: 'dismissed',
-    createdDate: 'Mar 15, 2026',
-    createdTime: '11:00 AM',
-  },
-  {
-    id: 'RPT-7398',
-    reporter: { name: 'Sara A.', initials: 'SA', color: 'bg-teal-100 text-teal-600' },
-    reportedUser: { name: 'Kiflom D.', initials: 'KD', color: 'bg-orange-100 text-orange-600' },
-    reason: 'fraud',
-    reasonLabel: 'Fraud',
-    reasonStyle: 'bg-rose-100 text-rose-700',
-    status: 'under_review',
-    createdDate: 'Mar 12, 2026',
-    createdTime: '08:15 AM',
-  },
-];
-
-const statusStyles = {
-  pending: { label: 'Pending', style: 'bg-amber-100 text-amber-700' },
-  under_review: { label: 'Under Review', style: 'bg-blue-100 text-blue-700' },
-  resolved: { label: 'Resolved', style: 'bg-emerald-100 text-emerald-700' },
-  dismissed: { label: 'Dismissed', style: 'bg-slate-100 text-slate-600' },
-};
+import { useState } from 'react';
+import { useAdminReports, useAdminUpdateReportStatus } from '@/features/admin/hooks/useAdmin';
+import { getAdminListItems } from '@/features/admin/adminSanitize';
+import { getReportStatusMeta } from '@/features/admin/mappers';
+import { useAdminLookupMaps } from '@/features/admin/hooks/useAdminLookupMaps';
+import ErrorState from '@/components/ErrorState';
+import EmptyState from '@/components/EmptyState';
+import TableSkeleton from '@/components/TableSkeleton';
+import DataTablePagination from '@/components/DataTablePagination';
 
 function ReportsPage() {
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [status, setStatus] = useState('all');
+
+  const [reasonFilter, setReasonFilter] = useState('all');
+
+  const params = {
+    page,
+    limit: 20,
+    ...(search.trim() ? { search: search.trim() } : {}),
+  };
+
+  const { data, isLoading, isError, refetch } = useAdminReports(params);
+  const updateReportStatus = useAdminUpdateReportStatus();
+
+  const { getUserName } = useAdminLookupMaps();
+  const reports = getAdminListItems(data).filter((item) => {
+    const statusOk = status === 'all' ? true : item.status === status;
+    const reasonOk =
+      reasonFilter === 'all'
+        ? true
+        : String(item.category || '').toLowerCase() === reasonFilter.toLowerCase();
+    return statusOk && reasonOk;
+  });
+  const meta = data?.meta || { page: 1, limit: 20, total: 0, totalPages: 1 };
+
+  const handleReportStatus = (id, nextStatus) => {
+    updateReportStatus.mutate({ id, status: nextStatus });
+  };
+
+  const toInitials = (name = '') =>
+    name
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join('') || 'NA';
+
+  const formatDate = (value) => new Date(value).toLocaleDateString();
+  const formatTime = (value) => new Date(value).toLocaleTimeString();
+
   return (
     <div className="space-y-6 px-4 py-8">
       <div>
@@ -122,32 +102,37 @@ function ReportsPage() {
             className="py-2 pr-4 pl-10 outline-none focus:ring-2"
             placeholder="Search by ID, reporter, or target..."
             type="text"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
           />
         </div>
 
         <div className="flex flex-row flex-wrap items-center gap-3">
-          <Select>
+          <Select value={status} onValueChange={setStatus}>
             <SelectTrigger className="w-36">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectItem value="all">All</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="under_review">Under Review</SelectItem>
+                <SelectItem value="open">Open</SelectItem>
+                <SelectItem value="in_review">In Review</SelectItem>
                 <SelectItem value="resolved">Resolved</SelectItem>
                 <SelectItem value="dismissed">Dismissed</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
 
-          <Select>
+          <Select value={reasonFilter} onValueChange={setReasonFilter}>
             <SelectTrigger className="w-44">
               <SelectValue placeholder="Reason" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="all">All reasons</SelectItem>
                 <SelectItem value="fraud">Fraud</SelectItem>
                 <SelectItem value="false_advertising">False Advertising</SelectItem>
                 <SelectItem value="inappropriate_behavior">Inappropriate</SelectItem>
@@ -163,6 +148,13 @@ function ReportsPage() {
         </div>
       </Card>
 
+      {isLoading ? (
+        <TableSkeleton rows={6} columns={7} />
+      ) : isError ? (
+        <ErrorState title="Failed to load reports" onRetry={refetch} />
+      ) : reports.length === 0 ? (
+        <EmptyState title="No reports found" description="Try adjusting filters." />
+      ) : (
       <Card className="gap-0 overflow-visible p-0">
         <div className="overflow-x-auto overflow-y-visible">
           <Table className="w-full min-w-full border-collapse text-left">
@@ -179,7 +171,11 @@ function ReportsPage() {
             </TableHeader>
             <TableBody>
               {reports.map((report) => {
-                const sState = statusStyles[report.status];
+                const sState = getReportStatusMeta(report.status);
+                const reporterName = report?.reportedBy
+                  ? `${report.reportedBy.first_name || ''} ${report.reportedBy.last_name || ''}`.trim() ||
+                    report.reportedBy.email
+                  : 'Unknown Reporter';
                 return (
                   <TableRow
                     key={report.id}
@@ -190,36 +186,28 @@ function ReportsPage() {
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-bold ${report.reporter.color}`}
+                          className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-bold"
                         >
-                          {report.reporter.initials}
+                          {toInitials(reporterName)}
                         </div>
-                        <span className="text-sm font-semibold">{report.reporter.name}</span>
+                        <span className="text-sm font-semibold">{reporterName}</span>
                       </div>
                     </TableCell>
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        {report.reportedUser.avatar ? (
-                          <img
-                            className="h-8 w-8 rounded-full object-cover"
-                            src={report.reportedUser.avatar}
-                            alt={report.reportedUser.name}
-                          />
-                        ) : (
-                          <div
-                            className={`flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-bold ${report.reportedUser.color}`}
-                          >
-                            {report.reportedUser.initials}
-                          </div>
-                        )}
-                        <span className="text-sm font-semibold">{report.reportedUser.name}</span>
+                        <div className="bg-slate-100 text-slate-600 flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-bold">
+                          {String(report.targetType || 'O')[0]?.toUpperCase()}
+                        </div>
+                        <span className="text-sm font-semibold capitalize">
+                          {report.targetType || 'target'}: {report.targetId?.slice(0, 8)}…
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell className="px-6 py-4">
                       <span
-                        className={`rounded px-2 py-1 text-[10px] font-extrabold whitespace-nowrap uppercase ${report.reasonStyle}`}
+                        className="bg-orange-100 text-orange-700 rounded px-2 py-1 text-[10px] font-extrabold whitespace-nowrap uppercase"
                       >
-                        {report.reasonLabel}
+                        {report.category || 'Other'}
                       </span>
                     </TableCell>
                     <TableCell className="px-6 py-4">
@@ -231,9 +219,9 @@ function ReportsPage() {
                     </TableCell>
                     <TableCell className="px-6 py-4">
                       <p className="text-muted-foreground text-[11px] font-medium uppercase">
-                        {report.createdDate}
+                        {formatDate(report.createdAt)}
                       </p>
-                      <p className="text-muted-foreground/40 text-[10px]">{report.createdTime}</p>
+                      <p className="text-muted-foreground/40 text-[10px]">{formatTime(report.createdAt)}</p>
                     </TableCell>
                     <TableCell className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
                       <DropdownMenu>
@@ -250,18 +238,19 @@ function ReportsPage() {
                             <Eye className="mr-2 h-4 w-4" />
                             <span>Investigate</span>
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="cursor-pointer text-emerald-600 focus:text-emerald-600">
+                          <DropdownMenuItem
+                            className="cursor-pointer text-emerald-600 focus:text-emerald-600"
+                            onClick={() => handleReportStatus(report.id, 'resolved')}
+                          >
                             <CheckCircle2 className="mr-2 h-4 w-4" />
                             <span>Resolve Report</span>
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="cursor-pointer text-amber-600 focus:text-amber-600">
+                          <DropdownMenuItem
+                            className="cursor-pointer text-amber-600 focus:text-amber-600"
+                            onClick={() => handleReportStatus(report.id, 'dismissed')}
+                          >
                             <XCircle className="mr-2 h-4 w-4" />
                             <span>Dismiss Report</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
-                            <UserX className="mr-2 h-4 w-4" />
-                            <span>Ban User</span>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -272,29 +261,16 @@ function ReportsPage() {
             </TableBody>
           </Table>
         </div>
-        <div className="flex items-center justify-between border-t border-stone-200 bg-stone-50 px-6 py-4">
-          <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-            Showing 1-{reports.length} of 124 Reports
-          </span>
-          <div className="flex items-center gap-1">
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-stone-200 text-stone-400 transition-colors hover:bg-white">
-              <ChevronLeft size={16} />
-            </button>
-            <button className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-white">
-              1
-            </button>
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-stone-200 text-xs font-bold text-stone-600 transition-colors hover:bg-white">
-              2
-            </button>
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-stone-200 text-xs font-bold text-stone-600 transition-colors hover:bg-white">
-              3
-            </button>
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-stone-200 text-stone-400 transition-colors hover:bg-white">
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+        <DataTablePagination
+          currentPage={meta.page || 1}
+          totalPages={meta.totalPages || 1}
+          totalItems={meta.total || 0}
+          itemsPerPage={meta.limit || 20}
+          itemLabel="reports"
+          onPageChange={setPage}
+        />
       </Card>
+      )}
     </div>
   );
 }
