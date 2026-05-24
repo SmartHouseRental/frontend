@@ -8,6 +8,7 @@ import HeartButton from '@/features/favorites/components/HeartButton';
 import { useGeolocation } from '@/features/property/hooks/useGeolocation';
 import { useNearbyProperties, DEFAULT_RADIUS_KM } from '@/features/property/hooks/useNearbyProperties';
 import { getPropertyCardFields } from '@/features/property/utils/propertyCardHelpers';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 function LocationMessage({ icon: Icon, title, description, children }) {
   return (
@@ -26,8 +27,13 @@ function LocationMessage({ icon: Icon, title, description, children }) {
 
 export default function NearMeSection() {
   const navigate = useNavigate();
-  const { status: geoStatus, coords, error: geoError, request: requestLocation } =
-    useGeolocation({ auto: true });
+  const { locale, t } = useLanguage();
+  const {
+    status: geoStatus,
+    coords,
+    error: geoError,
+    retry: retryLocation,
+  } = useGeolocation({ auto: true });
 
   const {
     data,
@@ -46,6 +52,10 @@ export default function NearMeSection() {
 
   const listings = data?.properties ?? [];
 
+  const handleRetryLocation = () => {
+    retryLocation();
+  };
+
   const handleRetryProperties = () => {
     refetch().catch(() => {
       toast.error('Could not load nearby properties. Please try again.');
@@ -57,8 +67,8 @@ export default function NearMeSection() {
       return (
         <LocationMessage
           icon={Navigation}
-          title="Finding your location"
-          description="Allow location access when prompted so we can show rentals near you."
+          title={t('findingLocation')}
+          description={t('findingLocationDesc')}
         >
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </LocationMessage>
@@ -71,17 +81,22 @@ export default function NearMeSection() {
           icon={AlertCircle}
           title={
             geoStatus === 'denied'
-              ? 'Location permission needed'
-              : 'Location unavailable'
+              ? t('locationPermissionNeeded')
+              : t('locationUnavailable')
           }
-          description={geoError || 'We could not determine your location.'}
+          description={geoError || t('locationUnavailable')}
         >
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <Button variant="outline" className="font-semibold" onClick={requestLocation}>
-              Try again
+            <Button
+              variant="outline"
+              className="font-semibold"
+              onClick={handleRetryLocation}
+              type="button"
+            >
+              {t('tryAgain')}
             </Button>
             <Button variant="ghost" className="font-semibold text-primary" asChild>
-              <Link to="/explore">Browse all listings</Link>
+              <Link to="/explore">{t('browseAllListings')}</Link>
             </Button>
           </div>
         </LocationMessage>
@@ -100,16 +115,12 @@ export default function NearMeSection() {
       const message =
         propertiesError?.response?.data?.message ||
         propertiesError?.message ||
-        'Could not load nearby properties.';
+        t('failedNearby');
 
       return (
-        <LocationMessage
-          icon={AlertCircle}
-          title="Failed to load nearby homes"
-          description={message}
-        >
+        <LocationMessage icon={AlertCircle} title={t('failedNearby')} description={message}>
           <Button variant="outline" className="font-semibold" onClick={handleRetryProperties}>
-            Retry
+            {t('retry')}
           </Button>
         </LocationMessage>
       );
@@ -119,11 +130,11 @@ export default function NearMeSection() {
       return (
         <LocationMessage
           icon={MapPin}
-          title="No rentals nearby"
-          description={`We could not find available properties within ${DEFAULT_RADIUS_KM} km of your location.`}
+          title={t('noRentalsNearby')}
+          description={t('noRentalsNearbyDesc', { radius: DEFAULT_RADIUS_KM })}
         >
           <Button variant="ghost" className="font-semibold text-primary" asChild>
-            <Link to="/explore">Explore more areas</Link>
+            <Link to="/explore">{t('exploreMoreAreas')}</Link>
           </Button>
         </LocationMessage>
       );
@@ -133,7 +144,7 @@ export default function NearMeSection() {
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {listings.map((home) => {
           const { title, address, priceValue, priceCurrency, areaValue, type, image } =
-            getPropertyCardFields(home);
+            getPropertyCardFields(home, locale);
 
           return (
             <Card
@@ -159,7 +170,7 @@ export default function NearMeSection() {
                 )}
                 <HeartButton property={home} className="absolute top-4 right-4 z-10" />
                 <div className="absolute bottom-4 left-4 rounded-md bg-white/90 px-3 py-1 text-sm font-bold">
-                  {priceValue} {priceCurrency} /mo
+                  {priceValue} {priceCurrency} {t('perMonth')}
                 </div>
               </div>
 
@@ -170,8 +181,12 @@ export default function NearMeSection() {
                 <p className="text-muted-foreground mb-4 text-sm line-clamp-1">{address}</p>
 
                 <div className="text-muted-foreground flex gap-4 border-t pt-3 text-sm">
-                  <span>{home.bedrooms} Beds</span>
-                  <span>{home.bathrooms} Baths</span>
+                  <span>
+                    {home.bedrooms} {t('beds')}
+                  </span>
+                  <span>
+                    {home.bathrooms} {t('baths')}
+                  </span>
                   <span>{areaValue} m²</span>
                 </div>
               </CardContent>
@@ -187,9 +202,9 @@ export default function NearMeSection() {
       <div className="mx-auto max-w-7xl">
         <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="mb-2 text-3xl font-extrabold">Near Me</h2>
+            <h2 className="mb-2 text-3xl font-extrabold">{t('nearMe')}</h2>
             <p className="text-muted-foreground">
-              Available rentals within {DEFAULT_RADIUS_KM} km of your current location
+              {t('nearMeSubtitle', { radius: DEFAULT_RADIUS_KM })}
             </p>
           </div>
           {geoStatus === 'success' && (
@@ -197,10 +212,11 @@ export default function NearMeSection() {
               variant="outline"
               size="sm"
               className="font-semibold shrink-0"
-              onClick={requestLocation}
+              onClick={retryLocation}
+              type="button"
             >
               <Navigation className="mr-2 h-4 w-4" />
-              Refresh location
+              {t('refreshLocation')}
             </Button>
           )}
         </div>

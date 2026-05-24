@@ -27,6 +27,7 @@ import {
   renterKeys,
 } from '../hooks/useAgreements';
 import { AgreementStatusBadge, PaymentStatusBadge } from '../agreements/statusBadge';
+import SafeImage from '@/components/SafeImage';
 function ActionPanel({ agreement, id }) {
   const acceptMutation = useAcceptAgreement();
   const rejectMutation = useRejectAgreement();
@@ -372,11 +373,11 @@ export default function AgreementDetailView() {
           <ActionPanel agreement={agreement} id={id} />
 
           <Card className="border-slate-200 overflow-hidden">
-            <div className="h-48 sm:h-56 relative">
-              <img
+            <div className="aspect-[21/9] sm:aspect-[2/1] w-full relative overflow-hidden">
+              <SafeImage
                 src={agreement.propertyImage}
                 alt={agreement.propertyTitle}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
               />
             </div>
             <CardHeader className="border-b bg-slate-50/50">

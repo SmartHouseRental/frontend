@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'sonner'
 import './index.css'
 import App from './App.jsx'
+import { LanguageProvider } from './contexts/LanguageContext.jsx'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,8 +17,10 @@ const queryClient = new QueryClient({
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App />
-      <Toaster position="top-right" />
+      <LanguageProvider>
+        <App />
+        <Toaster position="top-right" />
+      </LanguageProvider>
     </QueryClientProvider>
   </StrictMode>,
 )

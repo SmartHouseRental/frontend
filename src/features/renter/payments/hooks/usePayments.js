@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { paymentsApi } from '../api';
 import { normalizePaymentRow, unwrapPaymentsData } from '../paymentMappers';
@@ -22,6 +22,7 @@ export const useRenterPayments = (filters = {}) => {
       };
     },
     staleTime: 30 * 1000,
+    placeholderData: keepPreviousData,
   });
 };
 

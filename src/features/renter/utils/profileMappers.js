@@ -1,3 +1,5 @@
+import { resolveImageUrl } from '@/lib/resolveImageUrl';
+
 export const LANGUAGE_OPTIONS = [
   { value: 'en', label: 'English' },
   { value: 'am', label: 'Amharic' },
@@ -55,7 +57,7 @@ export function profileFromApi(data) {
     phone: data.phone ?? '',
     bio: data.bio ?? '',
     location: data.location ?? '',
-    image: data.image ?? '',
+    image: resolveImageUrl(data.image ?? data.avatar ?? '') ?? '',
     language: normalizeLanguage(data.language || data.preferredLanguage),
     emailVerified: Boolean(data.emailVerified),
     role: data.role,
@@ -79,7 +81,7 @@ export function mergeRawProfilePatch(raw, patch) {
     phone: patch.phone ?? raw.phone,
     location: patch.location ?? raw.location,
     bio: patch.bio ?? raw.bio,
-    image: patch.image ?? raw.image,
+    image: resolveImageUrl(patch.image ?? raw.image) ?? raw.image,
   };
 }
 

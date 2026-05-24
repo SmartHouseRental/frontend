@@ -1,6 +1,8 @@
 import { useParams } from 'react-router';
 import { useProperty } from '@/features/property/hooks/useProperty';
 import { parseLocation } from '@/lib/utils';
+import { getLocalizedField } from '@/lib/i18n/getLocalizedField';
+import { useLanguage } from '@/contexts/LanguageContext';
 import PropertyHero from '@/features/property/components/PropertyHero';
 import PropertyContent from '@/features/property/components/PropertyContent';
 import BookingCard from '@/features/property/components/BookingCard';
@@ -25,6 +27,7 @@ import {
 
 export default function PropertyDetailContent() {
     const { id } = useParams();
+    const { locale } = useLanguage();
     const { data: property, isLoading, isError, error } = useProperty(id);
 
     if (isLoading) {
@@ -64,11 +67,11 @@ export default function PropertyDetailContent() {
     const coords = parseLocation(property.location);
     
     // Extract values from new nested objects
-    const title = (property.title && typeof property.title === 'object') ? (property.title.en || property.title.am) : property.title;
-    const address = (property.address && typeof property.address === 'object') ? (property.address.en || property.address.am) : property.address;
-    const description = (property.description && typeof property.description === 'object') ? (property.description.en || property.description.am) : property.description;
-    const category = (property.category && typeof property.category === 'object') ? (property.category.en || property.category.am) : property.category;
-    const type = (property.type && typeof property.type === 'object') ? (property.type.en || property.type.am) : (property.type || category);
+    const title = getLocalizedField(property.title, locale);
+    const address = getLocalizedField(property.address, locale);
+    const description = getLocalizedField(property.description, locale);
+    const category = getLocalizedField(property.category, locale);
+    const type = getLocalizedField(property.type, locale) || category;
     const priceValue = (property.price && typeof property.price === 'object') ? property.price.value : property.price;
     const priceCurrency = (property.price && typeof property.price === 'object') ? (property.price.currency || 'ETB') : 'ETB';
     const areaValue = (property.area && typeof property.area === 'object') ? property.area.value : property.area;

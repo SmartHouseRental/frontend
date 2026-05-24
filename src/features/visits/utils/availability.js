@@ -52,7 +52,7 @@ export function computeBusySlotMap(busySlots = [], timeSlots = VISIT_TIME_SLOTS)
   const fullyBlockedDates = new Set();
 
   if (!busySlots.length) {
-    return { unavailableTimesPerDate, fullyBlockedDates };
+    return { unavailableTimesPerDate, fullyBlockedDates, busyDates: datesSeen };
   }
 
   const busyIntervals = busySlots
@@ -106,7 +106,7 @@ export function computeBusySlotMap(busySlots = [], timeSlots = VISIT_TIME_SLOTS)
     }
   });
 
-  return { unavailableTimesPerDate, fullyBlockedDates };
+  return { unavailableTimesPerDate, fullyBlockedDates, busyDates: datesSeen };
 }
 
 /** Whether [visitStart, visitEnd) overlaps any busy interval */

@@ -4,29 +4,21 @@ import { Button } from '@/components/ui/button';
 import { PropertyCard } from '@/features/explore/components/PropertyCard';
 import PropertyMap from '@/components/map/PropertyMap';
 import { parseLocation } from '@/lib/utils';
+import { getLocalizedField } from '@/lib/i18n/getLocalizedField';
+import { useLanguage } from '@/contexts/LanguageContext';
 
-function enrichProperties(properties) {
+function enrichProperties(properties, locale) {
   return properties.map((p) => {
     const coords = parseLocation(p.location);
 
-    const title =
-      p.title && typeof p.title === 'object' ? p.title.en || p.title.am : p.title;
-    const address =
-      p.address && typeof p.address === 'object'
-        ? p.address.en || p.address.am
-        : p.address;
+    const title = getLocalizedField(p.title, locale);
+    const address = getLocalizedField(p.address, locale);
     const price = p.price && typeof p.price === 'object' ? p.price.value : p.price;
     const currency =
       p.price && typeof p.price === 'object' ? p.price.currency || 'ETB' : 'ETB';
     const area = p.area && typeof p.area === 'object' ? p.area.value : p.area;
-    const category =
-      p.category && typeof p.category === 'object'
-        ? p.category.en || p.category.am
-        : p.category;
-    const type =
-      p.type && typeof p.type === 'object'
-        ? p.type.en || p.type.am
-        : p.type || category;
+    const category = getLocalizedField(p.category, locale);
+    const type = getLocalizedField(p.type, locale) || category;
 
     return {
       ...p,
@@ -65,9 +57,11 @@ export function PropertyListingsSection({
   emptyDescription = 'Try adjusting your filters to find more properties.',
   errorTitle = 'Failed to load properties',
 }) {
+  const { locale } = useLanguage();
+
   const enrichedProperties = useMemo(
-    () => enrichProperties(properties),
-    [properties],
+    () => enrichProperties(properties, locale),
+    [properties, locale],
   );
 
   const pageStart = meta ? (meta.page - 1) * meta.limit + 1 : 1;
