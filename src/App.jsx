@@ -60,16 +60,6 @@ function LazyRoute({ children }) {
   return <Suspense fallback={<PageLoader />}>{children}</Suspense>;
 }
 import ProtectedRoute from './components/ProtectedRoute';
-import AdminLayout from './components/AdminLayout';
-import OverviewPage from './pages/admin/OverviewPage';
-import UserManagementPage from './pages/admin/UserManagementPage';
-import PropertiesPage from './pages/admin/PropertiesPage';
-import ReportsPage from './pages/admin/ReportsPage';
-import AgreementsPage from './pages/admin/AgreementsPage';
-import UserDetailPage from './pages/admin/UserDetailPage';
-import PropertiesDetailPage from './pages/admin/PropertiesDetailPage';
-import ReportDetailPage from './pages/admin/ReportDetailPage';
-import AgreementDetailPage from './pages/admin/AgreementDetailPage';
 import RenterLayout from './components/RenterLayout';
 import AppointmentsPage from './pages/renter/AppointmentsPage';
 import RenterAgreementsPage from './pages/renter/AgreementsPage';
@@ -80,49 +70,6 @@ import RenterProfilePage from './pages/renter/ProfilePage';
 import ScheduleVisitPage from './pages/renter/ScheduleVisitPage';
 import RenterNotificationsPage from './pages/renter/NotificationsPage';
 import { Toaster } from '@/components/ui/sonner';
-
-// Owner Dashboard
-import OwnerLayout from './components/OwnerLayout';
-import OwnerOverviewPage from './pages/owner/OverviewPage';
-import MyPropertiesPage from './pages/owner/MyPropertiesPage';
-import PropertyDetailPage from './pages/owner/PropertyDetailPage';
-import AddPropertyPage from './pages/owner/AddPropertyPage';
-import EditPropertyPage from './pages/owner/EditPropertyPage';
-import OwnerAppointmentsPage from './pages/owner/AppointmentsPage';
-import OwnerAgreementsPage from './pages/owner/AgreementsPage';
-import OwnerAgreementDetailPage from './pages/owner/AgreementDetailPage';
-import MessagesPage from './pages/owner/MessagesPage';
-import ReviewsPage from './pages/owner/ReviewsPage';
-import NotificationsPage from './pages/owner/NotificationsPage';
-import OwnerReportsPage from './pages/owner/ReportsPage';
-import AnalyticsPage from './pages/owner/AnalyticsPage';
-import ProfilePage from './pages/owner/ProfilePage';
-import PaymentHistoryPage from './pages/owner/PaymentHistoryPage';
-import HelpSupportPage from './pages/owner/HelpSupportPage';
-import PendingVerificationsPage from './pages/admin/PendingVerificationsPage';
-import NotificationsAdminPage from './pages/admin/NotificationsPage';
-import AuditLogsPage from './pages/admin/AuditLogsPage';
-import AnalyticsAdminPage from './pages/admin/AnalyticsPage';
-import SettingsPage from './pages/admin/SettingsPage';
-import ReviewsAdminPage from './pages/admin/ReviewsPage';
-import SignUpPage from './pages/auth/SignUpPage';
-import OTPVerificationPage from './pages/auth/OTPVerificationPage';
-import RenterPreferencesWizard from './pages/auth/RenterPreferencesWizard';
-import WelcomePage from './pages/auth/WelcomePage';
-import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
-import ResetPasswordPage from './pages/auth/ResetPasswordPage';
-import MainLayout from './components/MainLayout';
-import SavedPropertiesPage from './pages/SavedPropertiesPage';
-import AboutPage from './pages/AboutPage';
-import ContactPage from './pages/ContactPage';
-import RenterChatPage from './pages/RenterChatPage';
-import EditProfilePage from './pages/EditProfilePage';
-import LandingPage from './pages/home/LandingPage';
-import ExplorePage from './pages/home/ExplorePage';
-import PropertyDetailRenterPage from './pages/home/PropertyDetailPage';
-import SearchResultsPage from './pages/home/SearchResultsPage';
-import LoginPage from './pages/auth/LoginPage';
-import UserProfilePage from './pages/ProfilePage';
 import ScrollToTop from './components/ScrollToTop';
 
 function App() {
@@ -289,14 +236,14 @@ function App() {
             />
           </Route>
 
-          <Route
+          {/* <Route
             path="/admin"
             element={
               <LazyRoute>
                 <AdminLayout />
               </LazyRoute>
             }
-          />
+          /> */}
 
           {/* Admin Routing */}
           <Route path="/admin" element={
