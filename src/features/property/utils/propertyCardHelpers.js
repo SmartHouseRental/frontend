@@ -1,15 +1,15 @@
+import { getLocalizedField } from '@/lib/i18n/getLocalizedField';
+
 /** Normalize API property fields for listing cards (Featured, Near Me, Similar). */
 
-export function getPropertyCardFields(property) {
+export function getPropertyCardFields(property, locale = 'en') {
   const title =
-    property.title && typeof property.title === 'object'
-      ? property.title.en || property.title.am
-      : property.title || 'Property Details';
+    getLocalizedField(property.title, locale) || 'Property Details';
 
   const address =
-    property.address && typeof property.address === 'object'
-      ? property.address.en || property.address.am
-      : property.address || property.location || 'Addis Ababa, Ethiopia';
+    getLocalizedField(property.address, locale) ||
+    property.location ||
+    'Addis Ababa, Ethiopia';
 
   const priceValue =
     property.price && typeof property.price === 'object'
@@ -26,15 +26,10 @@ export function getPropertyCardFields(property) {
       ? property.area.value
       : property.area;
 
-  const category =
-    property.category && typeof property.category === 'object'
-      ? property.category.en || property.category.am
-      : property.category;
+  const category = getLocalizedField(property.category, locale);
 
   const type =
-    property.type && typeof property.type === 'object'
-      ? property.type.en || property.type.am
-      : property.type || category;
+    getLocalizedField(property.type, locale) || category;
 
   const image =
     property.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';

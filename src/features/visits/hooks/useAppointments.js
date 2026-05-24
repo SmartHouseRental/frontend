@@ -133,9 +133,21 @@ export const useUpdateAppointmentStatus = () => {
   });
 };
 
+function patchAppointmentsInCache(queryClient, appointmentId, patch) {
+  queryClient.setQueriesData(
+    { queryKey: [...visitKeys.all, 'appointments'] },
+    (old) => {
+      if (!Array.isArray(old)) return old;
+      return old.map((apt) =>
+        apt.id === appointmentId ? { ...apt, ...patch } : apt,
+      );
+    },
+  );
+}
+
 export const useCancelAppointment = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id) => {
       try {
@@ -147,11 +159,22 @@ export const useCancelAppointment = () => {
         throw err;
       }
     },
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: [...visitKeys.all, 'appointments'] });
+      const snapshots = queryClient.getQueriesData({
+        queryKey: [...visitKeys.all, 'appointments'],
+      });
+      patchAppointmentsInCache(queryClient, id, { status: 'CANCELLED' });
+      return { snapshots };
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: visitKeys.appointments() });
+      queryClient.invalidateQueries({ queryKey: [...visitKeys.all, 'appointments'] });
       toast.success('Appointment Cancelled');
     },
-    onError: (error) => {
+    onError: (error, _id, context) => {
+      context?.snapshots?.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data);
+      });
       toast.error(getApiErrorMessage(error, 'Failed to cancel appointment'));
     },
   });

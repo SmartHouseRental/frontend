@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useLogin } from '../hooks/useLogin';
+import { getRenterLoginRedirect } from '../utils/renterRedirect';
 
 const loginSchema = z.object({
     email: z.string().email('Please enter a valid email address'),
@@ -43,8 +44,7 @@ export function LoginForm() {
                 } else if (userRole === 'owner') {
                     navigate('/owner');
                 } else {
-                    const from = location.state?.from || '/welcome';
-                    navigate(from);
+                    navigate(getRenterLoginRedirect(location.state));
                 }
             },
         });

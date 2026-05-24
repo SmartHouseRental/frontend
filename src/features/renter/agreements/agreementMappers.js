@@ -1,6 +1,5 @@
 import { AGREEMENT_STATUS_LABELS, PAYMENT_PURPOSE_LABELS, PAYMENT_STATUS_LABELS } from './constants';
-
-const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/400x300?text=No+Image';
+import { getPropertyImageUrl } from '@/lib/resolveImageUrl';
 
 export function getLocalizedStr(field) {
   if (!field) return '';
@@ -42,8 +41,7 @@ export function formatDateTime(dateStr) {
 }
 
 export function getPropertyImage(property) {
-  const img = property?.images?.[0];
-  return img || PLACEHOLDER_IMAGE;
+  return getPropertyImageUrl(property);
 }
 
 export function normalizePayment(payment) {

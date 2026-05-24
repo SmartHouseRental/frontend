@@ -4,10 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router';
 import HeartButton from '@/features/favorites/components/HeartButton';
 import { useProperties } from '@/features/property/hooks/useProperties';
+import { getPropertyCardFields } from '@/features/property/utils/propertyCardHelpers';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Loader2 } from 'lucide-react';
 
 export default function FeaturedListings() {
   const navigate = useNavigate();
+  const { locale, t } = useLanguage();
   const { data: propertiesData, isLoading, isError } = useProperties({
     status: 'available',
     limit: 3,
@@ -43,28 +46,29 @@ export default function FeaturedListings() {
       <div className="mx-auto max-w-7xl">
         <div className="mb-10 flex items-end justify-between">
           <div>
-            <h2 className="mb-2 text-3xl font-extrabold">Featured Family Homes</h2>
-            <p className="text-muted-foreground">Hand-picked residences for comfort and security</p>
+            <h2 className="mb-2 text-3xl font-extrabold">{t('featuredTitle')}</h2>
+            <p className="text-muted-foreground">{t('featuredSubtitle')}</p>
           </div>
           <Button
             variant="ghost"
             className="text-primary font-bold transition-all hover:translate-x-1"
             asChild
           >
-            <Link to="/explore">See all listings →</Link>
+            <Link to="/explore">{t('seeAllListings')}</Link>
           </Button>
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {listings.map((home) => {
-            const title = (home.title && typeof home.title === 'object') ? (home.title.en || home.title.am) : home.title;
-            const address = (home.address && typeof home.address === 'object') ? (home.address.en || home.address.am) : home.address;
-            const price = (home.price && typeof home.price === 'object') ? home.price.value : home.price;
-            const currency = (home.price && typeof home.price === 'object') ? (home.price.currency || 'ETB') : 'ETB';
-            const area = (home.area && typeof home.area === 'object') ? home.area.value : home.area;
-            const category = (home.category && typeof home.category === 'object') ? (home.category.en || home.category.am) : home.category;
-            const type = (home.type && typeof home.type === 'object') ? (home.type.en || home.type.am) : (home.type || category);
-            const image = home.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
+            const {
+              title,
+              address,
+              priceValue: price,
+              priceCurrency: currency,
+              areaValue: area,
+              type,
+              image,
+            } = getPropertyCardFields(home, locale);
 
             return (
               <Card
@@ -99,8 +103,12 @@ export default function FeaturedListings() {
                   <p className="text-muted-foreground mb-4 text-sm line-clamp-1">{address || home.location || 'Addis Ababa, Ethiopia'}</p>
 
                   <div className="text-muted-foreground flex gap-4 border-t pt-3 text-sm">
-                    <span>{home.bedrooms} Beds</span>
-                    <span>{home.bathrooms} Baths</span>
+                    <span>
+                      {home.bedrooms} {t('beds')}
+                    </span>
+                    <span>
+                      {home.bathrooms} {t('baths')}
+                    </span>
                     <span>{area} m²</span>
                   </div>
                 </CardContent>

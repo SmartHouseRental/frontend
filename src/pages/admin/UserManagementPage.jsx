@@ -1,3 +1,5 @@
+import { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -18,7 +20,6 @@ import {
   ShieldBan,
 } from 'lucide-react';
 import StatusBadge from '@/components/StatusBadge';
-import DataTablePagination from '@/components/DataTablePagination';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -68,18 +69,21 @@ function UserManagementPage() {
   };
 
   return (
-    <div className="relative flex min-w-0 flex-1 flex-col gap-6 overflow-hidden p-8">
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-2xl font-bold">User List Management</h2>
-          <p className="text-muted-foreground text-sm">Monitor and manage platform participants</p>
+          <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
+          <p className="text-gray-600 mt-1">Manage platform users, roles, and account status</p>
         </div>
-        <div className="flex items-center gap-4">
-          <button className="bg-primary flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-blue-800">
-            <Plus size={16} />
-            Add New User
-          </button>
-        </div>
+        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+          <Plus className="h-4 w-4 mr-2" />
+          Add User
+        </Button>
       </div>
 
       <Card className="flex h-20 shrink-0 flex-row items-center justify-between p-8 shadow-none">
@@ -135,7 +139,6 @@ function UserManagementPage() {
             </SelectContent>
           </Select>
         </div>
-      </Card>
 
       <div className="flex-1 overflow-auto pb-8">
         {isLoading ? (

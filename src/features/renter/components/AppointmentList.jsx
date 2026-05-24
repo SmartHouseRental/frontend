@@ -1,15 +1,16 @@
-import { Calendar as CalendarIcon, MapPin, Clock, XCircle, RotateCcw, MessageSquare, AlertCircle, Loader2 } from 'lucide-react';
+import { Calendar as CalendarIcon, MapPin, Clock, XCircle, RotateCcw, AlertCircle, Loader2 } from 'lucide-react';
+import SafeImage from '@/components/SafeImage';
+import { getPropertyImageUrl } from '@/lib/resolveImageUrl';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAppointments, useCancelAppointment } from '../../visits/hooks/useAppointments';
 
 export default function AppointmentList() {
-  const { data: appointments, isLoading, isError, error } = useAppointments();
+  const { data: appointments, isLoading, isError, error, refetch } = useAppointments();
   const cancelMutation = useCancelAppointment();
   
   const [cancellingApt, setCancellingApt] = useState(null);
@@ -41,7 +42,7 @@ export default function AppointmentList() {
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
         <p className="text-destructive font-medium">Failed to load appointments</p>
         <p className="text-muted-foreground text-sm">{error?.message || 'Please try again later'}</p>
-        <Button variant="outline" onClick={() => window.location.reload()}>Retry</Button>
+        <Button variant="outline" onClick={() => refetch()}>Retry</Button>
       </div>
     );
   }
@@ -86,14 +87,29 @@ export default function AppointmentList() {
     }
   };
 
-  const renderAppointmentCard = (apt) => {
-    const propertyImage = apt.property?.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
+  const isPastVisit = (apt) => {
+    if (!apt?.startsAt) return true;
+    const date = new Date(apt.startsAt);
+    return Number.isNaN(date.getTime()) || date <= new Date();
+  };
+
+  const isTerminalStatus = (status) =>
+    ['CANCELLED', 'REJECTED', 'DECLINED'].includes(String(status || '').toUpperCase());
+
+  const renderAppointmentCard = (apt, { showActions = true } = {}) => {
+    const propertyImage = getPropertyImageUrl(apt.property);
 
     return (
-      <Card key={apt.id} className="border-slate-200 hover:shadow-lg transition-all">
+      <Card key={apt.id} className="border-slate-200 hover:shadow-lg transition-all overflow-hidden">
         <div className="flex flex-col sm:flex-row p-4 sm:p-5 gap-5">
-          <div className="w-full sm:w-48 h-48 sm:h-auto overflow-hidden rounded-xl shrink-0">
-            <img src={propertyImage} alt={apt.propertyTitle} className="w-full h-full object-cover" />
+          <div className="w-full sm:w-48 shrink-0">
+            <div className="aspect-[4/3] w-full overflow-hidden rounded-xl">
+              <SafeImage
+                src={propertyImage}
+                alt={apt.propertyTitle}
+                className="h-full w-full object-cover"
+              />
+            </div>
           </div>
           <div className="flex-1 flex flex-col justify-between">
             <div className="flex justify-between items-start mb-2">
@@ -118,31 +134,33 @@ export default function AppointmentList() {
               </div>
             </div>
 
-            <div className="mt-6 sm:mt-auto pt-4 flex flex-wrap gap-3">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="flex-1 sm:flex-none gap-2 rounded-lg border-primary/20 text-primary hover:bg-primary/5"
-                onClick={() => handleReschedule(apt.propertyId)}
-              >
-                <RotateCcw className="h-4 w-4" />
-                Reschedule
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="flex-1 sm:flex-none gap-2 rounded-lg border-destructive/20 text-destructive hover:bg-destructive/5"
-                onClick={() => setCancellingApt(apt)}
-                disabled={cancelMutation.isPending}
-              >
-                {cancelMutation.isPending && cancellingApt?.id === apt.id ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <XCircle className="h-4 w-4" />
-                )}
-                Cancel Visit
-              </Button>
-            </div>
+            {showActions && !isPastVisit(apt) && !isTerminalStatus(apt.status) && (
+              <div className="mt-6 sm:mt-auto pt-4 flex flex-wrap gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 sm:flex-none gap-2 rounded-lg border-primary/20 text-primary hover:bg-primary/5"
+                  onClick={() => handleReschedule(apt.propertyId)}
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  Reschedule
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 sm:flex-none gap-2 rounded-lg border-destructive/20 text-destructive hover:bg-destructive/5"
+                  onClick={() => setCancellingApt(apt)}
+                  disabled={cancelMutation.isPending}
+                >
+                  {cancelMutation.isPending && cancellingApt?.id === apt.id ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <XCircle className="h-4 w-4" />
+                  )}
+                  Cancel Visit
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </Card>
@@ -179,7 +197,7 @@ export default function AppointmentList() {
               </Button>
             </Card>
           ) : (
-            upcoming.map(apt => renderAppointmentCard(apt))
+            upcoming.map((apt) => renderAppointmentCard(apt, { showActions: true }))
           )}
         </TabsContent>
         
@@ -189,7 +207,7 @@ export default function AppointmentList() {
               <p>No past visits found.</p>
             </div>
           ) : (
-            past.map(apt => renderAppointmentCard(apt))
+            past.map((apt) => renderAppointmentCard(apt, { showActions: false }))
           )}
         </TabsContent>
       </Tabs>

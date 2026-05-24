@@ -95,10 +95,11 @@ export default function RenterPaymentsList() {
       ? { limit: 50 }
       : { status: statusFilter, limit: 50 };
 
-  const { data, isLoading, isError, error, refetch } = useRenterPayments(queryParams);
+  const { data, isLoading, isFetching, isError, error, refetch } = useRenterPayments(queryParams);
   const payments = data?.items ?? [];
+  const isInitialLoad = isLoading && !data;
 
-  if (isLoading) {
+  if (isInitialLoad) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -106,7 +107,7 @@ export default function RenterPaymentsList() {
     );
   }
 
-  if (isError) {
+  if (isError && !data) {
     return (
       <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 text-center">
         <AlertCircle className="h-10 w-10 text-destructive" />
@@ -138,51 +139,60 @@ export default function RenterPaymentsList() {
         </Select>
       </div>
 
-      {payments.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
-          <CreditCard className="h-12 w-12 text-muted-foreground/50 mb-4" />
-          <h3 className="font-semibold text-lg">No payments yet</h3>
-          <p className="text-muted-foreground text-sm mt-1 max-w-sm">
-            Payments for your rental agreements will appear here after you accept an offer
-            and pay a deposit.
-          </p>
-        </div>
-      ) : (
-        <div className="grid gap-4">
-          {payments.map((payment) => (
-            <Card key={payment.id} className="border-slate-200">
-              <CardContent className="p-5">
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <p className="font-bold text-lg">{payment.propertyTitle}</p>
-                    <p className="text-sm text-muted-foreground mt-0.5">
-                      {payment.purposeLabel} · {payment.provider === 'chapa' ? 'Chapa' : 'Manual'}
-                    </p>
-                    <p className="text-2xl font-bold text-primary mt-2">
-                      {payment.displayAmount}
-                    </p>
-                    <div className="mt-2">
-                      <PaymentStatusBadge
-                        status={payment.status}
-                        label={payment.statusLabel}
-                      />
+      <div className="relative min-h-[120px]">
+        {isFetching && (
+          <div className="absolute right-0 top-0 z-10 flex items-center gap-2 text-xs text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin text-primary" />
+            <span className="sr-only">Updating list</span>
+          </div>
+        )}
+
+        {payments.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
+            <CreditCard className="h-12 w-12 text-muted-foreground/50 mb-4" />
+            <h3 className="font-semibold text-lg">No payments yet</h3>
+            <p className="text-muted-foreground text-sm mt-1 max-w-sm">
+              Payments for your rental agreements will appear here after you accept an offer
+              and pay a deposit.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {payments.map((payment) => (
+              <Card key={payment.id} className="border-slate-200">
+                <CardContent className="p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <p className="font-bold text-lg">{payment.propertyTitle}</p>
+                      <p className="text-sm text-muted-foreground mt-0.5">
+                        {payment.purposeLabel} · {payment.provider === 'chapa' ? 'Chapa' : 'Manual'}
+                      </p>
+                      <p className="text-2xl font-bold text-primary mt-2">
+                        {payment.displayAmount}
+                      </p>
+                      <div className="mt-2">
+                        <PaymentStatusBadge
+                          status={payment.status}
+                          label={payment.statusLabel}
+                        />
+                      </div>
+                      <ProofUploadRow payment={payment} />
                     </div>
-                    <ProofUploadRow payment={payment} />
+                    {payment.agreementId && (
+                      <Link to={`/renter/agreements/${payment.agreementId}`}>
+                        <Button variant="ghost" className="font-bold text-primary shrink-0">
+                          View agreement
+                          <ChevronRight className="h-4 w-4 ml-1" />
+                        </Button>
+                      </Link>
+                    )}
                   </div>
-                  {payment.agreementId && (
-                    <Link to={`/renter/agreements/${payment.agreementId}`}>
-                      <Button variant="ghost" className="font-bold text-primary shrink-0">
-                        View agreement
-                        <ChevronRight className="h-4 w-4 ml-1" />
-                      </Button>
-                    </Link>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

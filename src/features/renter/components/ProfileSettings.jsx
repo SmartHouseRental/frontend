@@ -4,7 +4,6 @@ import {
   Save,
   CheckCircle2,
   Lock,
-  ChevronDown,
   Loader2,
   Edit3,
   MapPin,
@@ -13,7 +12,11 @@ import {
   AlertCircle,
   Camera,
   Bell,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
+import SafeImage from '@/components/SafeImage';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,6 +39,31 @@ import {
   languageLabel,
 } from '../utils/profileMappers';
 import { getApiErrorMessage } from '../utils/apiErrors';
+
+function PasswordField({ label, name, value, onChange, show, onToggleShow }) {
+  return (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      <div className="relative">
+        <Input
+          type={show ? 'text' : 'password'}
+          name={name}
+          value={value}
+          onChange={onChange}
+          className="h-12 rounded-xl pr-11"
+        />
+        <button
+          type="button"
+          onClick={onToggleShow}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+          aria-label={show ? 'Hide password' : 'Show password'}
+        >
+          {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function ProfileErrorState({ message, onRetry }) {
   return (
@@ -95,7 +123,10 @@ export default function ProfileSettings() {
   const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
   const [isEditingLocation, setIsEditingLocation] = useState(false);
   const [isEditingPreferences, setIsEditingPreferences] = useState(false);
-  const [isPasswordExpanded, setIsPasswordExpanded] = useState(false);
+  const [settingsTab, setSettingsTab] = useState('general');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     if (!profile) return;
@@ -228,7 +259,9 @@ export default function ProfileSettings() {
         newPassword: passwordData.newPassword,
       });
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-      setIsPasswordExpanded(false);
+      setShowCurrentPassword(false);
+      setShowNewPassword(false);
+      setShowConfirmPassword(false);
     } catch {
       // toast handled in hook
     }
@@ -239,11 +272,31 @@ export default function ProfileSettings() {
   const isSavingPreferences =
     updateLanguageMutation.isPending || updateNotificationsMutation.isPending;
 
+  const handleSaveAvatarOnly = async () => {
+    if (!avatarFile) return;
+    try {
+      const fd = buildPersonalInfoFormData({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,
+        bio: formData.bio,
+        avatarFile,
+      });
+      await updateProfileMutation.mutateAsync(fd);
+      setAvatarFile(null);
+      if (avatarPreview) {
+        URL.revokeObjectURL(avatarPreview);
+        setAvatarPreview(null);
+      }
+    } catch {
+      /* toast in hook */
+    }
+  };
+
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64 gap-3">
+      <div className="flex justify-center items-center h-64">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">Loading profile...</p>
       </div>
     );
   }
@@ -279,37 +332,55 @@ export default function ProfileSettings() {
         <p className="text-muted-foreground mt-1">Manage your renter profile and settings.</p>
       </div>
 
+      <Tabs value={settingsTab} onValueChange={setSettingsTab} className="space-y-8">
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="general">General</TabsTrigger>
+          <TabsTrigger value="security">Security</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="general" className="mt-0">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="lg:col-span-1 space-y-6">
           <Card className="border-none shadow-sm bg-card text-center p-8">
             <div className="relative mx-auto w-32 h-32 mb-6">
               <div className="w-full h-full rounded-full bg-muted flex items-center justify-center border-4 border-background shadow-md overflow-hidden">
                 {displayImage ? (
-                  <img src={displayImage} alt="Profile" className="w-full h-full object-cover" />
+                  <SafeImage src={displayImage} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
                   <User className="h-12 w-12 text-muted-foreground" />
                 )}
               </div>
-              {isEditingPersonalInfo && (
-                <>
-                  <input
-                    ref={avatarInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/jpg"
-                    className="hidden"
-                    onChange={handleAvatarSelect}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => avatarInputRef.current?.click()}
-                    className="absolute bottom-0 right-0 flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors"
-                    title="Upload photo"
-                  >
-                    <Camera className="h-4 w-4" />
-                  </button>
-                </>
-              )}
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/jpg"
+                className="hidden"
+                onChange={handleAvatarSelect}
+              />
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                className="absolute bottom-0 right-0 flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors"
+                title="Change photo"
+              >
+                <Camera className="h-4 w-4" />
+              </button>
             </div>
+            {avatarFile && (
+              <Button
+                size="sm"
+                className="mb-4 rounded-xl w-full"
+                onClick={handleSaveAvatarOnly}
+                disabled={isSavingPersonal}
+              >
+                {isSavingPersonal ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <Save className="h-4 w-4 mr-2" />
+                )}
+                Save photo
+              </Button>
+            )}
             <h3 className="text-xl font-bold text-foreground">{displayName}</h3>
             <p className="text-sm text-muted-foreground font-medium mb-4">{profile.email}</p>
 
@@ -559,38 +630,45 @@ export default function ProfileSettings() {
             </CardHeader>
             <CardContent className="p-0 space-y-6">
               {!isEditingPreferences ? (
-                <>
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-border/60 bg-muted/20 p-5">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
                       Language
-                    </span>
-                    <span className="text-sm font-semibold">{languageLabel(formData.language)}</span>
+                    </p>
+                    <p className="text-base font-semibold">{languageLabel(formData.language)}</p>
                   </div>
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-2">
-                      Notifications
-                    </span>
-                    <ul className="text-sm space-y-1 text-muted-foreground">
+                  <div className="rounded-2xl border border-border/60 bg-muted/20 p-5 sm:col-span-1">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+                      <Bell className="h-3.5 w-3.5" />
+                      Email notifications
+                    </p>
+                    <div className="flex flex-wrap gap-2">
                       {NOTIFICATION_FIELDS.map(({ key, label }) => (
-                        <li key={key}>
-                          {label}:{' '}
-                          <span className="font-medium text-foreground">
-                            {notifications[key] ? 'On' : 'Off'}
-                          </span>
-                        </li>
+                        <span
+                          key={key}
+                          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                            notifications[key]
+                              ? 'bg-primary/10 text-primary border border-primary/20'
+                              : 'bg-muted text-muted-foreground border border-border/60'
+                          }`}
+                        >
+                          {label}
+                        </span>
                       ))}
-                    </ul>
+                    </div>
                   </div>
-                </>
+                </div>
               ) : (
-                <>
+                <div className="space-y-6 rounded-2xl border border-border/60 bg-muted/10 p-6">
                   <div className="max-w-xs space-y-2">
-                    <Label>Preferred language</Label>
+                    <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Preferred language
+                    </Label>
                     <select
                       name="language"
                       value={formData.language}
                       onChange={handleProfileChange}
-                      className="flex h-12 w-full rounded-xl border border-input bg-transparent px-3 text-sm"
+                      className="flex h-12 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-sm"
                     >
                       {LANGUAGE_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -599,117 +677,101 @@ export default function ProfileSettings() {
                       ))}
                     </select>
                   </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-sm font-semibold">
-                      <Bell className="h-4 w-4 text-muted-foreground" />
-                      Email notifications
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Bell className="h-4 w-4 text-primary" />
+                      <h4 className="text-sm font-bold">Email notifications</h4>
                     </div>
+                    <p className="text-xs text-muted-foreground -mt-2">
+                      Choose which updates you want to receive by email.
+                    </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {NOTIFICATION_FIELDS.map(({ key, label }) => (
                         <label
                           key={key}
-                          className="flex items-center gap-3 rounded-xl border border-border/60 px-4 py-3 cursor-pointer hover:bg-muted/30"
+                          className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-card px-4 py-3.5 cursor-pointer hover:border-primary/30 hover:bg-primary/5 transition-colors"
                         >
+                          <span className="text-sm font-medium">{label}</span>
                           <Checkbox
                             checked={notifications[key]}
                             onCheckedChange={(checked) =>
                               setNotifications((prev) => ({ ...prev, [key]: Boolean(checked) }))
                             }
                           />
-                          <span className="text-sm">{label}</span>
                         </label>
                       ))}
                     </div>
                   </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Security */}
-          <Card className="border-none shadow-sm bg-card p-8">
-            <CardHeader className="p-0 mb-8 flex flex-row items-center justify-between">
-              <CardTitle className="text-2xl font-bold">Security</CardTitle>
-              {isPasswordExpanded && (
-                <Button variant="ghost" size="icon" onClick={() => setIsPasswordExpanded(false)}>
-                  <ChevronDown className="h-5 w-5 rotate-90" />
-                </Button>
-              )}
-            </CardHeader>
-            <CardContent className="p-0">
-              {!isPasswordExpanded ? (
-                <div className="flex items-center justify-between p-5 bg-muted/40 rounded-2xl border border-dashed">
-                  <div className="flex items-center gap-3.5">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                      <Lock className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold">Password</h4>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        Min 8 characters with upper, lower, number, and special character
-                      </p>
-                    </div>
-                  </div>
-                  <Button variant="outline" size="icon" onClick={() => setIsPasswordExpanded(true)}>
-                    <Edit3 className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <div className="space-y-2 max-w-md">
-                    <Label>Current password</Label>
-                    <Input
-                      type="password"
-                      name="currentPassword"
-                      value={passwordData.currentPassword}
-                      onChange={handlePasswordChange}
-                      className="h-12 rounded-xl"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl">
-                    <div className="space-y-2">
-                      <Label>New password</Label>
-                      <Input
-                        type="password"
-                        name="newPassword"
-                        value={passwordData.newPassword}
-                        onChange={handlePasswordChange}
-                        className="h-12 rounded-xl"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Confirm new password</Label>
-                      <Input
-                        type="password"
-                        name="confirmPassword"
-                        value={passwordData.confirmPassword}
-                        onChange={handlePasswordChange}
-                        className="h-12 rounded-xl"
-                      />
-                    </div>
-                  </div>
-                  <Button
-                    onClick={handleSavePassword}
-                    disabled={
-                      changePasswordMutation.isPending ||
-                      !passwordData.currentPassword ||
-                      !passwordData.newPassword
-                    }
-                    className="rounded-xl h-12"
-                  >
-                    {changePasswordMutation.isPending ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                      <Save className="h-4 w-4 mr-2" />
-                    )}
-                    Save password
-                  </Button>
                 </div>
               )}
             </CardContent>
           </Card>
         </div>
       </div>
+        </TabsContent>
+
+        <TabsContent value="security" className="mt-0">
+          <Card className="border-none shadow-sm bg-card p-8 max-w-2xl">
+            <CardHeader className="p-0 mb-8">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  <Lock className="h-5 w-5" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl font-bold">Change password</CardTitle>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Min 8 characters with upper, lower, number, and special character
+                  </p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0 space-y-6">
+              <PasswordField
+                label="Current password"
+                name="currentPassword"
+                value={passwordData.currentPassword}
+                onChange={handlePasswordChange}
+                show={showCurrentPassword}
+                onToggleShow={() => setShowCurrentPassword((v) => !v)}
+              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <PasswordField
+                  label="New password"
+                  name="newPassword"
+                  value={passwordData.newPassword}
+                  onChange={handlePasswordChange}
+                  show={showNewPassword}
+                  onToggleShow={() => setShowNewPassword((v) => !v)}
+                />
+                <PasswordField
+                  label="Confirm new password"
+                  name="confirmPassword"
+                  value={passwordData.confirmPassword}
+                  onChange={handlePasswordChange}
+                  show={showConfirmPassword}
+                  onToggleShow={() => setShowConfirmPassword((v) => !v)}
+                />
+              </div>
+              <Button
+                onClick={handleSavePassword}
+                disabled={
+                  changePasswordMutation.isPending ||
+                  !passwordData.currentPassword ||
+                  !passwordData.newPassword
+                }
+                className="rounded-xl h-12"
+              >
+                {changePasswordMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4 mr-2" />
+                )}
+                Save password
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

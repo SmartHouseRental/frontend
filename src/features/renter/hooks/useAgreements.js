@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { agreementsApi } from '../agreements/api';
 import { paymentsApi } from '../payments/api';
@@ -38,6 +38,7 @@ export const useAgreements = (filters = {}) => {
       return extractAgreementList(response);
     },
     staleTime: 30 * 1000,
+    placeholderData: keepPreviousData,
   });
 };
 

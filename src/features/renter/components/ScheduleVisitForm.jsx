@@ -10,6 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useState, useMemo, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useBookAppointment, useAvailability } from '../../visits/hooks/useAppointments';
+import SafeImage from '@/components/SafeImage';
+import { getPropertyImageUrl } from '@/lib/resolveImageUrl';
 import {
   VISIT_TIME_SLOTS,
   slotToMinutes,
@@ -128,10 +130,11 @@ export default function ScheduleVisitForm({ property }) {
   const isDateUnavailable = (year, month, day) => {
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const dateObj = new Date(year, month, day);
+    dateObj.setHours(0, 0, 0, 0);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    if (dateObj < today) return true;
+    if (dateObj <= today) return true;
 
     return fullyBlockedDates.has(dateStr);
   };
@@ -415,9 +418,9 @@ export default function ScheduleVisitForm({ property }) {
         <div className="sticky top-24">
           <Card className="overflow-hidden border-none shadow-xl ring-1 ring-border/50">
             <div className="aspect-[4/3] w-full overflow-hidden">
-              <img 
-                src={property.image || property.images?.[0]} 
-                alt={propertyTitle} 
+              <SafeImage
+                src={getPropertyImageUrl(property)}
+                alt={propertyTitle}
                 className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
               />
             </div>

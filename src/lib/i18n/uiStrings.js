@@ -1,0 +1,76 @@
+/** UI copy for public shell (header, nearby section, common actions). */
+export const UI_STRINGS = {
+  en: {
+    home: 'Home',
+    explore: 'Explore',
+    saved: 'Saved',
+    messages: 'Messages',
+    about: 'About',
+    contact: 'Contact',
+    login: 'Login',
+    logout: 'Logout',
+    loggingOut: 'Logging out...',
+    nearMe: 'Near Me',
+    nearMeSubtitle: 'Available rentals within {radius} km of your current location',
+    findingLocation: 'Finding your location',
+    findingLocationDesc:
+      'Allow location access when prompted so we can show rentals near you.',
+    locationPermissionNeeded: 'Location permission needed',
+    locationUnavailable: 'Location unavailable',
+    tryAgain: 'Try again',
+    browseAllListings: 'Browse all listings',
+    refreshLocation: 'Refresh location',
+    failedNearby: 'Failed to load nearby homes',
+    noRentalsNearby: 'No rentals nearby',
+    noRentalsNearbyDesc:
+      'We could not find available properties within {radius} km of your location.',
+    exploreMoreAreas: 'Explore more areas',
+    retry: 'Retry',
+    featuredTitle: 'Featured Family Homes',
+    featuredSubtitle: 'Hand-picked residences for comfort and security',
+    seeAllListings: 'See all listings →',
+    beds: 'Beds',
+    baths: 'Baths',
+    perMonth: '/mo',
+  },
+  am: {
+    home: 'መነሻ',
+    explore: 'አስሱ',
+    saved: 'የተቀመጡ',
+    messages: 'መልዕክቶች',
+    about: 'ስለ እኛ',
+    contact: 'አግኙን',
+    login: 'ግባ',
+    logout: 'ውጣ',
+    loggingOut: 'በመውጣት ላይ...',
+    nearMe: 'በአቅራቢያዎ',
+    nearMeSubtitle: 'ከአሁኑ ቦታዎ በ{radius} ኪ.ሜ. ውስጥ የሚገኙ ቤቶች',
+    findingLocation: 'ቦታዎን በመፈለግ ላይ',
+    findingLocationDesc:
+      'በአቅራቢያዎ የሚገኙ ቤቶችን ለማሳየት ቦታ መድረስ ይፍቀዱ።',
+    locationPermissionNeeded: 'የቦታ ፍቃድ ያስፈልጋል',
+    locationUnavailable: 'ቦታ አልተገኘም',
+    tryAgain: 'እንደገና ይሞክሩ',
+    browseAllListings: 'ሁሉንም ዝርዝሮች ይመልከቱ',
+    refreshLocation: 'ቦታ አድስ',
+    failedNearby: 'በአቅራቢያ ያሉ ቤቶችን ማምጣት አልተሳካም',
+    noRentalsNearby: 'በአቅራቢያ ቤቶች የሉም',
+    noRentalsNearbyDesc:
+      'ከአሁኑ ቦታዎ በ{radius} ኪ.ሜ. ውስጥ የሚገኙ ቤቶች አልተገኙም።',
+    exploreMoreAreas: 'ተጨማሪ አካባቢዎችን ይመልከቱ',
+    retry: 'እንደገና',
+    featuredTitle: 'ተመራጭ የቤተሰብ ቤቶች',
+    featuredSubtitle: 'ለምቾትና ለደህንነት የተመረጡ ቤቶች',
+    seeAllListings: 'ሁሉንም ዝርዝሮች ይመልከቱ →',
+    beds: 'አልጋዎች',
+    baths: 'መታጠቢያዎች',
+    perMonth: '/ወር',
+  },
+};
+
+export function formatUiString(template, vars = {}) {
+  return Object.entries(vars).reduce(
+    (str, [key, value]) => str.replace(`{${key}}`, String(value)),
+    template,
+  );
+}
