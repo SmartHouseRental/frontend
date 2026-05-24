@@ -576,7 +576,7 @@ function App() {
 
           {/* <Route path="*" element={<NotFound />} /> */}
         </Routes>
-        <Toaster />
+        <Toaster position="top-right" />
       </BrowserRouter>
     </ThemeProvider>
   );
