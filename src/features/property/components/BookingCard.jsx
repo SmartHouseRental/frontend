@@ -63,6 +63,13 @@ export default function BookingCard({ property }) {
     navigate(`/renter/schedule-visit/${property.id}`);
   };
 
+  const scheduleProperty = property?.id
+    ? {
+        id: property.id,
+        title: getLocalizedText(property.title, 'en') || 'Property',
+      }
+    : null;
+
   return (
     <div className="sticky top-28">
       <Card className="relative overflow-hidden p-6 shadow-xl">
@@ -125,6 +132,12 @@ export default function BookingCard({ property }) {
         isOpen={isReviewModalOpen}
         onClose={() => setIsReviewModalOpen(false)}
         property={propertyData}
+      />
+
+      <ScheduleVisitModal
+        open={scheduleOpen}
+        property={scheduleProperty}
+        onClose={() => setScheduleOpen(false)}
       />
     </div>
   );

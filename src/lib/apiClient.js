@@ -20,5 +20,14 @@ apiClient.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-// Note: You can add a response interceptor here later if we implement a mechanism to intercept 401s
-// and seamlessly reload the accessToken using the refresh endpoint. For now, it leverages HTTP-Only cookies simply.
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error?.response?.status;
+    const message = error?.response?.data?.message;
+    if (status === 503 && typeof message === 'string') {
+      error.userMessage = message;
+    }
+    return Promise.reject(error);
+  }
+);

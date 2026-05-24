@@ -1,6 +1,5 @@
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
-import Overview from '@/pages/admin/OverviewPage';
 import { Outlet } from 'react-router';
 
 function AdminLayout() {
@@ -9,7 +8,7 @@ function AdminLayout() {
       <AdminSidebar />
       <main className="ml-72 flex-1">
         <AdminHeader />
-        {<Outlet />}
+        <Outlet />
       </main>
     </div>
   );

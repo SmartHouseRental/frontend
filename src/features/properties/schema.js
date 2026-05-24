@@ -1,0 +1,31 @@
+import { z } from 'zod';
+
+export const propertyFormSchema = z.object({
+  titleEn: z.string().min(1, 'Title (English) is required'),
+  titleAm: z.string().optional(),
+  descriptionEn: z.string().min(1, 'Description (English) is required'),
+  descriptionAm: z.string().optional(),
+  category: z.enum(['VILLA', 'APARTMENT', 'CONDO', 'STUDIO', 'HOUSE', 'PENTHOUSE'], {
+    required_error: 'Property category is required',
+  }),
+  categoryAm: z.string().optional(),
+  price: z.string().min(1, 'Price is required'),
+  currency: z.enum(['ETB', 'USD'], { required_error: 'Currency is required' }),
+  bedrooms: z.string().optional(),
+  bathrooms: z.string().optional(),
+  area: z.string().optional(),
+  areaUnit: z.enum(['m²', 'sq ft', 'km²'], { required_error: 'Area unit is required' }),
+  address: z.string().min(1, 'Address (English) is required'),
+  addressAm: z.string().optional(),
+  location: z.string().optional(),
+  amenities: z.array(z.string()).default([]),
+  furnishingType: z.enum(['Fully Furnished', 'Semi-Furnished', 'Unfurnished']).optional(),
+  leaseDuration: z.string().optional(),
+  depositAmount: z.string().optional(),
+  depositCurrency: z.enum(['ETB', 'USD']).optional(),
+  specialTerms: z.string().optional(),
+  specialTermsAm: z.string().optional(),
+  availableFrom: z.string().optional(),
+  images: z.array(z.any()).min(1, 'At least one image is required'),
+  videos: z.array(z.any()).optional(),
+});

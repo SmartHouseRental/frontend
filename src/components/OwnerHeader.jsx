@@ -33,6 +33,7 @@ function OwnerHeader() {
         'property-detail': 'Property Detail',
         appointments: 'Appointments',
         agreements: 'Agreements',
+        create: 'Create Agreement',
         'agreement-detail': 'Agreement Detail',
         messages: 'Messages',
         reviews: 'Reviews',
@@ -49,10 +50,16 @@ function OwnerHeader() {
     const breadcrumbs = [{ label: 'Owner Dashboard', to: '/owner' }];
     let cumulativePath = '/owner';
 
-    subSegments.forEach((segment) => {
+    subSegments.forEach((segment, index) => {
         cumulativePath += `/${segment}`;
-        const rawLabel = breadcrumbMap[segment];
-        const label = rawLabel || segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
+        const prev = subSegments[index - 1];
+        let label = breadcrumbMap[segment];
+        if (!label && prev === 'agreements' && segment !== 'create') {
+            label = 'Agreement details';
+        }
+        if (!label) {
+            label = segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
+        }
         breadcrumbs.push({ label, to: cumulativePath });
     });
 

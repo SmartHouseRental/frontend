@@ -5,6 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import PropertiesTab from './PropertiesTab';
 import ReportsTab from './ReportsTab';
+import { useParams } from 'react-router';
+import { useUser } from '@/features/user-managment/hooks/useUser';
 
 const triggerStyle =
   'text-primary/80 shadow-none border-0 pb-4 hover:text-primary w-fit flex-none border-b-none text-sm font-medium whitespace-nowrap transition-all data-[state=active]:text-primary data-[state=active]:border-none group-data-[variant=default]/tabs-list:data-[state=active]:shadow-none';
