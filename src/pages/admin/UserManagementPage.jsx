@@ -34,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import DataTablePagination from '@/components/DataTablePagination';
 
 function UserManagementPage() {
   const navigate = useNavigate();
@@ -72,7 +73,7 @@ function UserManagementPage() {
           <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
           <p className="mt-1 text-gray-600">Manage platform users, roles, and account status</p>
         </div>
-        <Button className="bg-blue-600 text-white hover:bg-blue-700">
+        <Button >
           <Plus className="mr-2 h-4 w-4" />
           Add User
         </Button>

@@ -123,6 +123,62 @@
     "toggleTheme": "ገጽታ ቀይር",
     "systemManager": "የስርዓት አስተዳዳሪ"
   },
+  "adminOverview": {
+    "title": "የዳሽቦርድ አጠቃላይ እይታ",
+    "subtitle": "የስርዓት የአሁን ጊዜ መለኪያዎች እና የአስተዳደር መሪ አካል።",
+    "updatedAt": "የተዘመነ {{time}}",
+    "notAvailable": "N/A",
+    "errorTitle": "አጠቃላይ እይታውን መጫን አልተቻለም",
+    "errorFallback": "የሆነ ችግኝ ተፈጥሯል",
+    "stats": {
+      "totalUsers": "ጠቅላላ ተጠቃሚዎች",
+      "activeListings": "ንቁ ዝርዝሮች",
+      "pendingVerifications": "በመጠባበቅ ላይ ያሉ ማረጋገጫዎች",
+      "actionNeeded": "እርምጃ ያስፈልጋል",
+      "activeAgreements": "ንቁ ስምምነቶች",
+      "totalReports": "ጠቅላላ ሪፖርቶች"
+    },
+    "chart": {
+      "title": "የተጠቃሚ እድገት",
+      "currentPeriod": "የአሁን ጊዜ",
+      "previousPeriod": "ያለፈው ጊዜ",
+      "monthly": "ወርሃዊ",
+      "weekly": "ሳምንታዊ",
+      "noData": "ለዚህ ጊዜ የእድገት መረጃ የለም።"
+    },
+    "activity": {
+      "title": "የቅርብ ጊዜ እንቅስቃሴ",
+      "viewAll": "ሁሉንም ይመልከቱ",
+      "empty": "በቅርብ ጊዜ ምንም እንቅስቃሴ የለም",
+      "emptyDescription": "እስካሁን የአስተዳደር እንቅስቃሴ አልተገኘም።"
+    },
+    "listingsByArea": {
+      "title": "ዝርዝሮች በአካባቢ",
+      "empty": "የአካባቢ መረጃ የለም"
+    },
+    "payment": {
+      "title": "የክፍያ ስኬት",
+      "collection": "መሰብሰብ"
+    },
+    "recentProperties": {
+      "title": "በቅርብ ጊዜ የተገቡ ንብረቶች",
+      "subtitle": "የመድረክ ማረጋገጫን የሚጠብቁ አዲስ ዝርዝሮችን ይገምግሙ።",
+      "viewQueue": "ሙሉ ተራ ይመልከቱ",
+      "preview": "ቅድመ እይታ",
+      "propertyName": "የንብረት ስም",
+      "owner": "ባለቤት",
+      "location": "አካባቢ",
+      "status": "ሁኔታ",
+      "dateSubmitted": "የቀረበበት ቀን",
+      "actions": "እርምጃዎች",
+      "idLabel": "መታወቂያ: {{id}}…",
+      "reviewDetails": "ዝርዝሮችን ይገምግሙ",
+      "viewDetails": "የንብረት ዝርዝሮችን ይመልከቱ",
+      "approveProperty": "ንብረቱን ያረጋግጡ",
+      "rejectProperty": "ንብረቱን ይቃወሙ",
+      "empty": "ለግምገማ የተጠበቁ ንብረቶች የሉም።"
+    }
+  },
   "landing": {
     "hero": {
       "title": "ተስማሚ የሆነ",

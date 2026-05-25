@@ -123,6 +123,62 @@
     "toggleTheme": "Toggle theme",
     "systemManager": "System Manager"
   },
+  "adminOverview": {
+    "title": "Dashboard Overview",
+    "subtitle": "Real-time platform metrics and system control center.",
+    "updatedAt": "Updated {{time}}",
+    "notAvailable": "N/A",
+    "errorTitle": "Failed to load overview",
+    "errorFallback": "Something went wrong",
+    "stats": {
+      "totalUsers": "Total Users",
+      "activeListings": "Active Listings",
+      "pendingVerifications": "Pending Verifications",
+      "actionNeeded": "Action Needed",
+      "activeAgreements": "Active Agreements",
+      "totalReports": "Total Reports"
+    },
+    "chart": {
+      "title": "User Growth",
+      "currentPeriod": "Current Period",
+      "previousPeriod": "Previous Period",
+      "monthly": "Monthly",
+      "weekly": "Weekly",
+      "noData": "No growth data for this period."
+    },
+    "activity": {
+      "title": "Recent Activity",
+      "viewAll": "View All",
+      "empty": "No recent activity",
+      "emptyDescription": "No admin activity was found yet."
+    },
+    "listingsByArea": {
+      "title": "Listings by Area",
+      "empty": "No area data"
+    },
+    "payment": {
+      "title": "Payment Success",
+      "collection": "Collection"
+    },
+    "recentProperties": {
+      "title": "Recently Submitted Properties",
+      "subtitle": "Review new listings awaiting platform approval.",
+      "viewQueue": "View Full Queue",
+      "preview": "Preview",
+      "propertyName": "Property Name",
+      "owner": "Owner",
+      "location": "Location",
+      "status": "Status",
+      "dateSubmitted": "Date Submitted",
+      "actions": "Actions",
+      "idLabel": "ID: {{id}}…",
+      "reviewDetails": "Review Details",
+      "viewDetails": "View Property Details",
+      "approveProperty": "Approve Property",
+      "rejectProperty": "Reject Property",
+      "empty": "No pending properties to review."
+    }
+  },
   "landing": {
     "hero": {
       "title": "Find Your Perfect",

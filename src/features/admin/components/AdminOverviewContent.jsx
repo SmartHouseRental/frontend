@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { useAdminOverview } from '../hooks/useAdminOverview';
 import {
     AreaChart,
@@ -111,7 +112,7 @@ function OverviewSkeleton() {
 }
 
 /* ───── custom tooltip component for Recharts ───── */
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label, t }) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-card border border-border rounded-xl p-3 shadow-lg text-xs">
@@ -119,12 +120,12 @@ const CustomTooltip = ({ active, payload, label }) => {
                 <div className="space-y-1">
                     <p className="flex items-center gap-2 text-primary font-semibold">
                         <span className="size-2 rounded-full bg-primary" />
-                        Current: <span className="text-foreground">{payload[0].value}</span>
+                        {t('adminOverview.chart.currentPeriod')}: <span className="text-foreground">{payload[0].value}</span>
                     </p>
                     {payload[1] && (
                         <p className="flex items-center gap-2 text-muted-foreground font-semibold">
                             <span className="size-2 rounded-full border border-dashed border-muted-foreground" />
-                            Previous: <span className="text-foreground">{payload[1].value}</span>
+                            {t('adminOverview.chart.previousPeriod')}: <span className="text-foreground">{payload[1].value}</span>
                         </p>
                     )}
                 </div>
@@ -135,7 +136,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 /* ───── User Growth Recharts chart ───── */
-function UserGrowthChart({ data, range, onRangeChange }) {
+function UserGrowthChart({ data, range, onRangeChange, t }) {
     if (!data) return null;
     const { labels = [], currentPeriod = [], previousPeriod = [] } = data;
 
@@ -149,15 +150,15 @@ function UserGrowthChart({ data, range, onRangeChange }) {
         <div className="shadow-soft rounded-2xl border border-border bg-card p-6 lg:col-span-2 flex flex-col justify-between">
             <div className="mb-6 flex items-center justify-between">
                 <div>
-                    <h4 className="text-lg font-bold text-foreground">User Growth</h4>
+                    <h4 className="text-lg font-bold text-foreground">{t('adminOverview.chart.title')}</h4>
                     <div className="mt-1 flex items-center gap-4">
                         <div className="flex items-center gap-1.5">
                             <span className="bg-primary size-2 rounded-full" />
-                            <span className="text-muted-foreground text-xs font-medium">Current Period</span>
+                            <span className="text-muted-foreground text-xs font-medium">{t('adminOverview.chart.currentPeriod')}</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <span className="size-2 rounded-full border border-dashed border-slate-400" />
-                            <span className="text-muted-foreground text-xs font-medium">Previous Period</span>
+                            <span className="text-muted-foreground text-xs font-medium">{t('adminOverview.chart.previousPeriod')}</span>
                         </div>
                     </div>
                 </div>
@@ -166,13 +167,13 @@ function UserGrowthChart({ data, range, onRangeChange }) {
                         onClick={() => onRangeChange('monthly')}
                         className={`rounded-md px-3 py-1.5 text-xs font-bold shadow-sm transition-all ${range === 'monthly' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                     >
-                        Monthly
+                        {t('adminOverview.chart.monthly')}
                     </button>
                     <button
                         onClick={() => onRangeChange('weekly')}
                         className={`rounded-md px-3 py-1.5 text-xs font-bold transition-all ${range === 'weekly' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                     >
-                        Weekly
+                        {t('adminOverview.chart.weekly')}
                     </button>
                 </div>
             </div>
@@ -205,7 +206,7 @@ function UserGrowthChart({ data, range, onRangeChange }) {
                             fontSize={11}
                             fontWeight="bold"
                         />
-                        <Tooltip content={<CustomTooltip />} />
+                        <Tooltip content={<CustomTooltip t={t} />} />
                         <Area
                             type="monotone"
                             dataKey="previous"
@@ -214,7 +215,7 @@ function UserGrowthChart({ data, range, onRangeChange }) {
                             strokeDasharray="5 5"
                             fill="none"
                             opacity={0.4}
-                            name="Previous Period"
+                            name={t('adminOverview.chart.previousPeriod')}
                         />
                         <Area
                             type="monotone"
@@ -223,7 +224,7 @@ function UserGrowthChart({ data, range, onRangeChange }) {
                             strokeWidth={3}
                             fillOpacity={1}
                             fill="url(#colorCurrent)"
-                            name="Current Period"
+                            name={t('adminOverview.chart.currentPeriod')}
                         />
                     </AreaChart>
                 </ResponsiveContainer>
@@ -235,6 +236,7 @@ function UserGrowthChart({ data, range, onRangeChange }) {
 /* ───── main component ───── */
 export default function AdminOverviewContent() {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [range, setRange] = useState('monthly');
     const { data: res, isLoading, isError, error } = useAdminOverview(range);
 
@@ -243,8 +245,8 @@ export default function AdminOverviewContent() {
         return (
             <div className="flex flex-col items-center justify-center gap-4 p-16 text-center">
                 <AlertCircle className="size-12 text-destructive" />
-                <h3 className="text-lg font-bold">Failed to load overview</h3>
-                <p className="text-muted-foreground text-sm">{error?.userMessage || error?.message || 'Something went wrong'}</p>
+                <h3 className="text-lg font-bold">{t('adminOverview.errorTitle')}</h3>
+                <p className="text-muted-foreground text-sm">{error?.userMessage || error?.message || t('adminOverview.errorFallback')}</p>
             </div>
         );
     }
@@ -256,7 +258,7 @@ export default function AdminOverviewContent() {
 
     const statCards = [
         {
-            label: 'Total Users',
+            label: t('adminOverview.stats.totalUsers'),
             value: stats?.totalUsers?.value,
             trend: stats?.totalUsers?.trendPercent,
             icon: Users,
@@ -265,7 +267,7 @@ export default function AdminOverviewContent() {
             iconColor: 'text-accent',
         },
         {
-            label: 'Active Listings',
+            label: t('adminOverview.stats.activeListings'),
             value: stats?.activeListings?.value,
             trend: stats?.activeListings?.trendPercent,
             icon: Home,
@@ -274,9 +276,9 @@ export default function AdminOverviewContent() {
             iconColor: 'text-accent',
         },
         {
-            label: 'Pending Verifications',
+            label: t('adminOverview.stats.pendingVerifications'),
             value: stats?.pendingVerifications?.value,
-            trendLabel: stats?.pendingVerifications?.actionNeeded ? 'Action Needed' : null,
+            trendLabel: stats?.pendingVerifications?.actionNeeded ? t('adminOverview.stats.actionNeeded') : null,
             icon: ClipboardCheck,
             borderColor: 'border-amber-400',
             iconBg: 'bg-amber-400/10',
@@ -284,7 +286,7 @@ export default function AdminOverviewContent() {
             clickPath: '/admin/pending-verifications',
         },
         {
-            label: 'Active Agreements',
+            label: t('adminOverview.stats.activeAgreements'),
             value: stats?.activeAgreements?.value,
             trend: stats?.activeAgreements?.trendPercent,
             icon: Handshake,
@@ -293,7 +295,7 @@ export default function AdminOverviewContent() {
             iconColor: 'text-accent',
         },
         {
-            label: 'Total Reports',
+            label: t('adminOverview.stats.totalReports'),
             value: stats?.totalReport?.value,
             trend: stats?.totalReport?.trendPercent,
             icon: AlertTriangle,
@@ -303,8 +305,12 @@ export default function AdminOverviewContent() {
         },
     ];
 
+    const formattedUpdatedTime = lastUpdated
+        ? new Date(lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        : '';
+
     const relativeUpdated = lastUpdated
-        ? `Updated ${new Date(lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+        ? t('adminOverview.updatedAt', { time: formattedUpdatedTime })
         : '';
 
     return (
@@ -312,9 +318,9 @@ export default function AdminOverviewContent() {
             {/* Header */}
             <div className="flex items-end justify-between">
                 <div>
-                    <h2 className="text-3xl font-black tracking-tight text-foreground">Dashboard Overview</h2>
+                    <h2 className="text-3xl font-black tracking-tight text-foreground">{t('c.title')}</h2>
                     <p className="text-muted-foreground mt-1 font-medium">
-                        Real-time platform metrics and system control center.
+                        {t('adminOverview.subtitle')}
                     </p>
                 </div>
                 <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm text-muted-foreground">
@@ -352,17 +358,17 @@ export default function AdminOverviewContent() {
 
             {/* Chart + Activity */}
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                <UserGrowthChart data={userGrowth} range={range} onRangeChange={setRange} />
+                <UserGrowthChart data={userGrowth} range={range} onRangeChange={setRange} t={t} />
 
                 {/* Recent Activity Feed */}
                 <div className="shadow-soft rounded-2xl border border-border bg-card p-6 flex flex-col">
                     <div className="mb-4 flex items-center justify-between">
-                        <h4 className="text-lg font-bold text-foreground">Recent Activity</h4>
+                        <h4 className="text-lg font-bold text-foreground">{t('adminOverview.activity.title')}</h4>
                         <button
                             onClick={() => navigate('/admin/audit-logs')}
                             className="text-primary text-xs font-bold hover:underline"
                         >
-                            View All
+                            {t('adminOverview.activity.viewAll')}
                         </button>
                     </div>
                     <div className="space-y-4 flex-1 overflow-y-auto">
@@ -384,7 +390,7 @@ export default function AdminOverviewContent() {
                                 );
                             })
                         ) : (
-                            <p className="text-muted-foreground text-sm text-center py-8">No recent activity</p>
+                            <p className="text-muted-foreground text-sm text-center py-8">{t('adminOverview.activity.empty')}</p>
                         )}
                     </div>
                 </div>
@@ -396,7 +402,7 @@ export default function AdminOverviewContent() {
                 <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
                     <div className="mb-4 flex items-center justify-between">
                         <h4 className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-                            Listings by Area
+                            {t('adminOverview.listingsByArea.title')}
                         </h4>
                     </div>
                     <div className="space-y-3">
@@ -413,7 +419,7 @@ export default function AdminOverviewContent() {
                                 </div>
                             ))
                         ) : (
-                            <p className="text-muted-foreground text-sm text-center py-4">No area data</p>
+                            <p className="text-muted-foreground text-sm text-center py-4">{t('adminOverview.listingsByArea.empty')}</p>
                         )}
                     </div>
                 </div>
@@ -438,7 +444,7 @@ export default function AdminOverviewContent() {
                     </div>
                     <div className="flex-1">
                         <h4 className="text-muted-foreground mb-2 text-xs font-bold tracking-wider uppercase">
-                            Payment Success
+                            {t('adminOverview.payment.title')}
                         </h4>
                         <div className="flex flex-col gap-1">
                             <p className="text-lg leading-tight font-bold">
@@ -446,7 +452,7 @@ export default function AdminOverviewContent() {
                             </p>
                             <p className="flex items-center gap-1 text-[10px] font-bold text-emerald-500">
                                 <CheckCircle2 size={12} />
-                                {paymentPerformance?.label || 'Collection'}
+                                {paymentPerformance?.label || t('adminOverview.payment.collection')}
                             </p>
                         </div>
                     </div>
@@ -457,29 +463,29 @@ export default function AdminOverviewContent() {
             <div className="shadow-soft overflow-hidden rounded-2xl border border-border bg-card">
                 <div className="flex items-center justify-between border-b border-border p-6">
                     <div>
-                        <h4 className="text-lg font-bold text-foreground">Recently Submitted Properties</h4>
+                        <h4 className="text-lg font-bold text-foreground">{t('adminOverview.recentProperties.title')}</h4>
                         <p className="text-muted-foreground text-sm">
-                            Review new listings awaiting platform approval.
+                            {t('adminOverview.recentProperties.subtitle')}
                         </p>
                     </div>
                     <button
                         onClick={() => navigate('/admin/properties')}
                         className="text-primary rounded-lg border border-border px-4 py-2 text-sm font-bold transition-colors hover:bg-muted"
                     >
-                        View Full Queue
+                        {t('adminOverview.recentProperties.viewQueue')}
                     </button>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-muted/30 text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
-                                <th className="px-6 py-4">Preview</th>
-                                <th className="px-6 py-4">Property Name</th>
-                                <th className="px-6 py-4">Owner</th>
-                                <th className="px-6 py-4">Location</th>
-                                <th className="px-6 py-4">Status</th>
-                                <th className="px-6 py-4">Date Submitted</th>
-                                <th className="px-6 py-4">Actions</th>
+                                <th className="px-6 py-4">{t('adminOverview.recentProperties.preview')}</th>
+                                <th className="px-6 py-4">{t('adminOverview.recentProperties.propertyName')}</th>
+                                <th className="px-6 py-4">{t('adminOverview.recentProperties.owner')}</th>
+                                <th className="px-6 py-4">{t('adminOverview.recentProperties.location')}</th>
+                                <th className="px-6 py-4">{t('adminOverview.recentProperties.status')}</th>
+                                <th className="px-6 py-4">{t('adminOverview.recentProperties.dateSubmitted')}</th>
+                                <th className="px-6 py-4">{t('adminOverview.recentProperties.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
@@ -498,7 +504,7 @@ export default function AdminOverviewContent() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <p className="text-sm font-bold">{property.name}</p>
-                                            <p className="text-muted-foreground text-xs">ID: {property.id?.slice(0, 12)}…</p>
+                                            <p className="text-muted-foreground text-xs">{t('adminOverview.recentProperties.idLabel', { id: property.id?.slice(0, 12) })}</p>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-2">
@@ -538,15 +544,15 @@ export default function AdminOverviewContent() {
                                                         }}
                                                     >
                                                         <Eye className="mr-2 h-4 w-4" />
-                                                        <span>Review Details</span>
+                                                        <span>{t('adminOverview.recentProperties.reviewDetails')}</span>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem className="cursor-pointer text-emerald-600 focus:text-emerald-600">
                                                         <CheckCircle2 className="mr-2 h-4 w-4" />
-                                                        <span>Approve Property</span>
+                                                        <span>{t('adminOverview.recentProperties.approveProperty')}</span>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
                                                         <XCircle className="mr-2 h-4 w-4" />
-                                                        <span>Reject Property</span>
+                                                        <span>{t('adminOverview.recentProperties.rejectProperty')}</span>
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
@@ -556,7 +562,7 @@ export default function AdminOverviewContent() {
                             ) : (
                                 <tr>
                                     <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground text-sm">
-                                        No pending properties to review.
+                                        {t('adminOverview.recentProperties.empty')}
                                     </td>
                                 </tr>
                             )}
