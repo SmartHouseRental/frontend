@@ -1,4 +1,5 @@
 import { Check, X, FileText, ExternalLink, ImageIcon, IdCard, Camera } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +18,7 @@ function isImageUrl(url) {
   return /\.(jpe?g|png|gif|webp|bmp)(\?|$)/i.test(url) || url.includes('/image');
 }
 
-function DocumentPreviewCard({ label, url, icon: Icon }) {
+function DocumentPreviewCard({ label, url, icon: Icon, t }) {
   const showImage = isImageUrl(url);
 
   return (
@@ -29,7 +30,7 @@ function DocumentPreviewCard({ label, url, icon: Icon }) {
           <div className="flex h-full flex-col items-center justify-center gap-2 text-primary/50">
             <Icon size={36} strokeWidth={1.25} />
             <span className="text-muted-foreground text-[10px] font-semibold uppercase tracking-wider">
-              Document
+              {t('adminUserDetail.verification.document')}
             </span>
           </div>
         )}
@@ -47,7 +48,7 @@ function DocumentPreviewCard({ label, url, icon: Icon }) {
         <Button variant="outline" size="sm" className="h-8 shrink-0 gap-1 text-xs" asChild>
           <a href={url} target="_blank" rel="noreferrer">
             <ExternalLink size={14} />
-            View
+            {t('adminUserDetail.verification.view')}
           </a>
         </Button>
       </CardContent>
@@ -56,14 +57,15 @@ function DocumentPreviewCard({ label, url, icon: Icon }) {
 }
 
 function VerficationTab({ user }) {
+  const { t } = useTranslation();
   const resolveVerification = useAdminResolveVerification();
   const docs = user?.verificationDocs || [];
 
   if (docs.length === 0) {
     return (
       <EmptyState
-        title="No verification documents"
-        description="This user has not submitted verification documents yet."
+        title={t('adminUserDetail.verification.emptyTitle')}
+        description={t('adminUserDetail.verification.emptyDescription')}
       />
     );
   }
@@ -72,11 +74,14 @@ function VerficationTab({ user }) {
     <div className="space-y-8">
       {docs.map((doc) => {
         const files = [
-          { key: 'front', label: 'National ID (Front)', url: doc.frontUrl, icon: IdCard },
-          { key: 'back', label: 'National ID (Back)', url: doc.backUrl, icon: IdCard },
-          { key: 'live', label: 'Live verification photo', url: doc.livePhotoUrl, icon: Camera },
+          { key: 'front', label: t('adminUserDetail.verification.labels.nationalIdFront'), url: doc.frontUrl, icon: IdCard },
+          { key: 'back', label: t('adminUserDetail.verification.labels.nationalIdBack'), url: doc.backUrl, icon: IdCard },
+          { key: 'live', label: t('adminUserDetail.verification.labels.livePhoto'), url: doc.livePhotoUrl, icon: Camera },
         ].filter((f) => f.url);
 
+        const statusLabel = t(`adminUserDetail.verification.statuses.${doc.status}`, {
+          defaultValue: (doc.status || 'pending').replace('_', ' '),
+        });
         const statusStyle =
           STATUS_STYLES[doc.status] || 'bg-muted text-muted-foreground border-border';
 
@@ -92,20 +97,19 @@ function VerficationTab({ user }) {
                 </div>
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <h4 className="text-primary font-bold">Verification submission</h4>
+                    <h4 className="text-primary font-bold">{t('adminUserDetail.verification.submission')}</h4>
                     <Badge variant="outline" className={`text-[10px] font-bold uppercase ${statusStyle}`}>
-                      {(doc.status || 'pending').replace('_', ' ')}
+                      {statusLabel}
                     </Badge>
                   </div>
                   <p className="text-muted-foreground mt-1 text-sm">
-                    Submitted{' '}
                     {doc.submittedAt
-                      ? new Date(doc.submittedAt).toLocaleString()
+                      ? t('adminUserDetail.verification.submitted', { date: new Date(doc.submittedAt).toLocaleString() })
                       : '—'}
                   </p>
                   {doc.note && (
                     <p className="text-muted-foreground mt-2 text-sm">
-                      <span className="font-medium text-foreground">Note:</span> {doc.note}
+                      <span className="font-medium text-foreground">{t('adminUserDetail.verification.note')}</span> {doc.note}
                     </p>
                   )}
                 </div>
@@ -115,20 +119,16 @@ function VerficationTab({ user }) {
                 <div className="flex shrink-0 gap-2">
                   <Button
                     size="sm"
-                    onClick={() =>
-                      resolveVerification.mutate({ id: doc.id, status: 'approved' })
-                    }
+                    onClick={() => resolveVerification.mutate({ id: doc.id, status: 'approved' })}
                   >
-                    <Check size={16} /> Approve
+                    <Check size={16} /> {t('adminUserDetail.verification.approve')}
                   </Button>
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() =>
-                      resolveVerification.mutate({ id: doc.id, status: 'rejected' })
-                    }
+                    onClick={() => resolveVerification.mutate({ id: doc.id, status: 'rejected' })}
                   >
-                    <X size={16} /> Reject
+                    <X size={16} /> {t('adminUserDetail.verification.reject')}
                   </Button>
                 </div>
               )}
@@ -137,18 +137,13 @@ function VerficationTab({ user }) {
             {files.length > 0 ? (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {files.map((file) => (
-                  <DocumentPreviewCard
-                    key={`${doc.id}-${file.key}`}
-                    label={file.label}
-                    url={file.url}
-                    icon={file.icon}
-                  />
+                  <DocumentPreviewCard key={`${doc.id}-${file.key}`} label={file.label} url={file.url} icon={file.icon} t={t} />
                 ))}
               </div>
             ) : (
               <div className="text-muted-foreground flex items-center gap-2 rounded-lg border border-dashed p-6 text-sm">
                 <ImageIcon size={18} />
-                No document files attached to this submission.
+                {t('adminUserDetail.verification.noFiles')}
               </div>
             )}
           </div>

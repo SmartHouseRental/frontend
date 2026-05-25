@@ -179,6 +179,762 @@
       "empty": "ለግምገማ የተጠበቁ ንብረቶች የሉም።"
     }
   },
+  "adminAnalytics": {
+    "title": "የመድረክ አስተዳደር",
+    "subtitle": "በስማርት ሀውስ ሬንታል መድረክ ላይ የተለያዩ መለኪያዎችን እና ግንዛቤዎችን ይመልከቱ።",
+    "errorTitle": "አስተዳደር መረጃዎችን መጫን አልተቻለም",
+    "errorFallback": "የሆነ ችግኝ ተፈጥሯል",
+    "cards": {
+      "totalUsers": "ጠቅላላ ተጠቃሚዎች",
+      "activeListings": "ንቁ ዝርዝሮች",
+      "appointments": "ቀጠሮዎች",
+      "messages": "መልዕክቶች",
+      "unreadNotifications": "ያልተነበቡ ማስታወቂያዎች",
+      "auditLogs": "የኦዲት መዝገቦች"
+    },
+    "breakdowns": {
+      "users": "ተከራዮች: {{renters}} • ባለቤቶች: {{owners}} • የተረጋገጡ ባለቤቶች: {{verifiedOwners}}",
+      "properties": "ዝግጁ: {{available}} • በመጠባበቅ ላይ: {{pending}} • ተከራይ ያለ: {{rented}}",
+      "appointments": "በመጠባበቅ ላይ: {{pending}} • ተቀባይነት ያላቸው: {{accepted}}",
+      "messages": "ውይይቶች: {{conversations}} • በዚህ ጊዜ የተጨመሩ: {{newMessagesInRange}}",
+      "notifications": "ጠቅላላ ማስታወቂያዎች: {{total}}",
+      "auditLogs": "በዚህ ጊዜ የተጨመሩ: {{newInRange}}"
+    },
+    "trendCharts": {
+      "title": "የእድገት አቀራረቦች",
+      "description": "የምዝገባ እና የንብረት አይነት መገለጫዎች በ{{endpoint}} ውስጥ አይመለሱም። የተጠቃሚ እድገት ሰሌዳን ለምርመራ ይጠቀሙ።",
+      "docs": "ለተጨማሪ የንጥረ ገጽ መስመሮች {{path}}ን ይመልከቱ።"
+    }
+  },
+  "adminAuditLogs": {
+    "title": "የኦዲት መዝገቦች",
+    "subtitle": "ሁሉንም የአስተዳደር እርምጃዎች እና ተጋላጭ የስርዓት ክስተቶችን ይከታተሉ።",
+    "exportLogs": "መዝገቦችን ወደ ውጭ ላክ",
+    "searchPlaceholder": "በአስተዳደር፣ በእርምጃ ወይም በኢንቲቲ ፈልግ...",
+    "filters": {
+      "actionTypePlaceholder": "የእርምጃ ዓይነት",
+      "severityPlaceholder": "ከባድነት",
+      "allActions": "ሁሉም እርምጃዎች",
+      "all": "ሁሉም"
+    },
+    "actionTypes": {
+      "userSuspended": "ተጠቃሚ ታግዷል",
+      "propertyApproved": "ንብረት ተረጋግጧል",
+      "propertyRejected": "ንብረት ተቃውሟል",
+      "reportResolved": "ሪፖርት ተፈትቷል",
+      "documentsVerified": "ሰነዶች ተረጋግጠዋል",
+      "agreementTerminated": "ውል ተቋርጧል"
+    },
+    "severities": {
+      "high": "ከፍተኛ",
+      "warning": "ማስጠንቀቂያ",
+      "normal": "መደበኛ"
+    },
+    "systemActor": "ስርዓት",
+    "noDetails": "ምንም ዝርዝሮች የሉም",
+    "errorTitle": "የኦዲት መዝገቦችን መጫን አልተቻለም",
+    "emptyTitle": "ምንም የኦዲት መዝገቦች አልተገኙም",
+    "emptyDescription": "ማጣሪያዎችን ያስተካክሉ።",
+    "table": {
+      "timestamp": "ጊዜ",
+      "admin": "አስተዳዳሪ",
+      "action": "እርምጃ",
+      "target": "ኢንቲቲ",
+      "details": "ዝርዝሮች",
+      "severity": "ከባድነት"
+    },
+    "pagination": {
+      "showing": "የሚታዩ",
+      "of": "ከ",
+      "itemLabel": "መዝገቦች"
+    }
+  },
+  "adminNotifications": {
+    "title": "ማስታወቂያዎች",
+    "subtitle": "የመድረክ ማስታወቂያዎችን ያስተዳድሩ እና ለተጠቃሚዎች ማሰራጫ ይላኩ።",
+    "recentNotifications": "በቅርብ ጊዜ የተላኩ ማስታወቂያዎች",
+    "markAllAsRead": "ሁሉንም እንደተነበቡ ምልክት ያድርጉ",
+    "errorTitle": "ማስታወቂያዎችን መጫን አልተቻለም",
+    "emptyTitle": "አሁን ምንም ማስታወቂያዎች የሉም",
+    "emptyDescription": "የመድረክ ማስታወቂያዎች እዚህ ይታያሉ።",
+    "audiences": {
+      "all": "ሁሉም ተጠቃሚዎች",
+      "renters": "ተከራዮች ብቻ",
+      "owners": "ባለቤቶች ብቻ",
+      "verifiedOwners": "የተረጋገጡ ባለቤቶች"
+    },
+    "broadcast": {
+      "title": "ማሰራጫ ላክ",
+      "description": "ለተጠቃሚዎች ሰፊ ማስታወቂያ ይላኩ",
+      "audienceLabel": "የታማኝ ቡድን",
+      "titleLabel": "የማስታወቂያ ርዕስ",
+      "messageLabel": "መልዕክት",
+      "placeholderAudience": "ታማኝ ቡድን ይምረጡ",
+      "titlePlaceholder": "ለምሳሌ፡ የመድረክ ጥገና ማስታወቂያ",
+      "messagePlaceholder": "የማሰራጫ መልዕክትዎን ጻፉ...",
+      "sendButton": "ማሰራጫ ላክ"
+    },
+    "stats": {
+      "title": "የማስታወቂያ ስታቲስቲክስ",
+      "unread": "ያልተነበቡ",
+      "today": "ዛሬ",
+      "thisWeek": "በዚህ ሳምንት",
+      "broadcastsSent": "የተላኩ ማሰራጫዎች"
+    }
+  },
+  "adminPendingVerifications": {
+    "title": "በመጠባበቅ ላይ ያሉ ማረጋገጫዎች",
+    "subtitle": "የባለቤት ሰነዶችን ግምገማ እና ማረጋገጫ ያስተዳድሩ።",
+    "awaitingReview": "{{count}} ለግምገማ በመጠባበቅ ላይ",
+    "summary": {
+      "pendingReview": "በመጠባበቅ ላይ ያለ",
+      "approvedThisWeek": "በዚህ ሳምንት የተረጋገጡ",
+      "rejectedThisWeek": "በዚህ ሳምንት የተቃወሙ"
+    },
+    "searchPlaceholder": "በስም፣ ኢሜይል ወይም መታወቂያ ፈልግ...",
+    "export": "ወደ ውጭ ላክ",
+    "errorTitle": "በመጠባበቅ ላይ ያሉ ማረጋገጫዎችን መጫን አልተቻለም",
+    "emptyTitle": "በመጠባበቅ ላይ ምንም ማረጋገጫዎች የሉም",
+    "emptyDescription": "ሁሉም ማቅረቦች ወቅታዊ ናቸው።",
+    "table": {
+      "owner": "ባለቤት",
+      "contact": "ግንኙነት",
+      "submitted": "የቀረበ",
+      "waiting": "በመጠባበቅ ላይ",
+      "documents": "ሰነዶች",
+      "actions": "እርምጃዎች"
+    },
+    "actions": {
+      "viewDocuments": "ሰነዶችን ይመልከቱ",
+      "viewProfile": "መገለጫ ይመልከቱ",
+      "approveAndVerify": "ያረጋግጡ እና ያረጋግጡ",
+      "rejectDocuments": "ሰነዶችን ይቃወሙ"
+    },
+    "days": "{{count}} ቀናት",
+    "pagination": {
+      "showing": "የሚታዩ",
+      "of": "ከ",
+      "itemLabel": "ባለቤቶች"
+    }
+  },
+  "adminReviews": {
+    "title": "ግምገማዎች",
+    "description": "በመድረክ ላይ ያሉ የተጠቃሚ ግምገማዎችን እና ደረጃዎችን ያስተዳድሩ።",
+    "totalReviews": "{{count}} ጠቅላላ ግምገማዎች",
+    "searchPlaceholder": "በግምገማ ሰጪ፣ በንብረት ወይም በአስተያየት ፈልግ...",
+    "filters": {
+      "status": "ሁኔታ",
+      "rating": "ደረጃ",
+      "type": "አይነት",
+      "all": "ሁሉም",
+      "allRatings": "ሁሉም ደረጃዎች",
+      "stars5": "5 ኮከቦች",
+      "stars4": "4+ ኮከቦች",
+      "stars3": "3+ ኮከቦች",
+      "stars2": "2+ ኮከቦች",
+      "stars1": "1 ኮከብ",
+      "allTypes": "ሁሉም አይነቶች",
+      "property": "ንብረት",
+      "owner": "ባለቤት"
+    },
+    "statuses": {
+      "published": "ታተመ",
+      "flagged": "ተላብሷል",
+      "removed": "ተወግዷል"
+    },
+    "table": {
+      "reviewer": "ግምገማ ሰጪ",
+      "target": "ኢንቲቲ",
+      "rating": "ደረጃ",
+      "comment": "አስተያየት",
+      "status": "ሁኔታ",
+      "date": "ቀን",
+      "actions": "እርምጃዎች"
+    },
+    "actions": {
+      "flagReview": "ግምገማ ምልክት ያድርጉ",
+      "removeReview": "ግምገማ ያስወግዱ"
+    },
+    "unknownReviewer": "ያልታወቀ",
+    "errorTitle": "ግምገማዎችን መጫን አልተቻለም",
+    "emptyTitle": "ምንም ግምገማዎች አልተገኙም",
+    "emptyDescription": "አሁን ያሉ ማጣሪያዎችን ያስተካክሉ።",
+    "pagination": {
+      "showing": "የሚታዩ",
+      "of": "ከ",
+      "itemLabel": "ግምገማዎች"
+    }
+  },
+  "adminSettings": {
+    "title": "የመድረክ ማሰናጃዎች",
+    "subtitle": "የመድረክ ባህሪ፣ የማረጋገጫ መመሪያዎች እና የኢሜይል ማሰናጃዎችን ያዋቅሩ።",
+    "buttons": {
+      "resetToDefaults": "ወደ መደበኛዎች ዳግም አስጀምር",
+      "saveChanges": "ለውጦችን አስቀምጥ"
+    },
+    "sections": {
+      "general": {
+        "title": "አጠቃላይ ማሰናጃዎች",
+        "description": "የመሰረታዊ የመድረክ ውቅር"
+      },
+      "verificationRules": {
+        "title": "የማረጋገጫ መመሪያዎች",
+        "description": "የባለቤት ማረጋገጫ የስራ ሂደት"
+      },
+      "emailConfiguration": {
+        "title": "የኢሜይል ውቅር",
+        "description": "SMTP እና የማስታወቂያ ኢሜይሎች"
+      },
+      "rateLimits": {
+        "title": "የጊዜ ገደቦች እና ደህንነት",
+        "description": "የAPI እና የማረጋገጫ ገደቦች"
+      }
+    },
+    "fields": {
+      "platformName": "የመድረክ ስም",
+      "supportEmail": "የድጋፍ ኢሜይል",
+      "defaultLanguage": "መደበኛ ቋንቋ",
+      "maxOwnerEdits": "ከፍተኛ የባለቤት ማሻሻያዎች በንብረት",
+      "requiredDocuments": "የሚያስፈልጉ ሰነዶች",
+      "smtpHost": "SMTP አስተናጋጅ",
+      "smtpPort": "SMTP ወደብ",
+      "tls": "TLS",
+      "fromEmail": "ከኢሜይል",
+      "otpExpiration": "የOTP ጊዜ አብቂያ (ደቂቃዎች)",
+      "maxOtpResendAttempts": "ከፍተኛ የOTP ድጋሚ ሙከራዎች",
+      "reviewDeletionWindow": "የግምገማ መሰረዣ መስኮት (ቀናት)",
+      "maxLoginAttempts": "ከፍተኛ የመግቢያ ሙከራዎች"
+    },
+    "languages": {
+      "english": "English",
+      "amharic": "Amharic (አማርኛ)"
+    },
+    "toggles": {
+      "maintenanceMode": "የጥገና ሁኔታ አንቃ",
+      "allowNewRegistrations": "አዲስ መመዝገብ ፍቀት ስጥ",
+      "requireOtp": "የኢሜይል OTP ማረጋገጫ አስፈልጋል",
+      "requireDocumentUpload": "ለባለቤቶች ሰነድ መጫን አስፈልጋል",
+      "autoApproveVerifiedOwners": "ከተረጋገጡ ባለቤቶች የተገኙ ንብረቶችን በራስ ሰር አረጋግጥ",
+      "sendEmailOnPropertyApproval": "በንብረት ማረጋገጫ ላይ ኢሜይል ላክ",
+      "sendEmailOnAgreementStatusChange": "በውል ሁኔታ ለውጥ ላይ ኢሜይል ላክ",
+      "enableIpRateLimiting": "IP-መሠረት የጊዜ ገደብ አንቃ",
+      "requireStrongPasswords": "ጠንካራ የይለፍ ቃል አስፈልጋል"
+    },
+    "documents": {
+      "nationalId": "ብሔራዊ መታወቂያ",
+      "businessLicense": "የንግድ ፈቃድ",
+      "propertyTitleDeed": "የንብረት መያዣ ሰነድ",
+      "taxCertificate": "የግብር የምስክር ወረቀት"
+    },
+    "options": {
+      "enabled": "ነቅቷል",
+      "disabled": "ተሰናክሏል"
+    }
+  },
+  "adminUsers": {
+    "title": "የተጠቃሚ አስተዳደር",
+    "subtitle": "የመድረክ ተጠቃሚዎችን፣ ሚናዎችን እና የመለያ ሁኔታን ያስተዳድሩ",
+    "addUser": "ተጠቃሚ ጨምር",
+    "searchPlaceholder": "ተጠቃሚዎችን በስም፣ ኢሜይል ወይም መታወቂያ ይፈልጉ...",
+    "filters": {
+      "role": "ሚና",
+      "status": "ሁኔታ",
+      "allRoles": "ሁሉም ሚናዎች",
+      "allStatuses": "ሁሉም ሁኔታዎች",
+      "renter": "ተከራይ",
+      "owner": "ባለቤት",
+      "admin": "አስተዳዳሪ",
+      "active": "ንቁ",
+      "suspended": "ታግዷል",
+      "pending": "በመጠባበቅ ላይ"
+    },
+    "roles": {
+      "renter": "ተከራይ",
+      "owner": "ባለቤት",
+      "admin": "አስተዳዳሪ"
+    },
+    "statuses": {
+      "active": "ንቁ",
+      "suspended": "ታግዷል",
+      "pending": "በመጠባበቅ ላይ"
+    },
+    "verificationStates": {
+      "verified": "ተረጋግጧል",
+      "pending": "በመጠባበቅ ላይ",
+      "rejected": "ተቃውሟል",
+      "resubmit": "እንደገና ያስገቡ"
+    },
+    "table": {
+      "avatar": "አቪታር",
+      "nameEmail": "ስም/ኢሜይል",
+      "role": "ሚና",
+      "verification": "ማረጋገጫ",
+      "status": "ሁኔታ",
+      "joinedDate": "የተቀላቀለበት ቀን",
+      "actions": "እርምጃዎች"
+    },
+    "actions": {
+      "viewProfile": "መገለጫ ይመልከቱ",
+      "verifyDocuments": "ሰነዶችን ያረጋግጡ",
+      "suspendUser": "ተጠቃሚውን ያግዱ",
+      "reactivateUser": "ተጠቃሚውን እንደገና አንቃ"
+    },
+    "errors": {
+      "failedToLoadUsers": "ተጠቃሚዎችን መጫን አልተቻለም"
+    },
+    "empty": {
+      "title": "ምንም ተጠቃሚዎች አልተገኙም",
+      "description": "ማጣሪያዎችዎን ወይም ፍለጋዎን ያስተካክሉ።"
+    },
+    "pagination": {
+      "showing": "የሚታዩ",
+      "of": "ከ",
+      "itemLabel": "ተጠቃሚዎች"
+    }
+  },
+  "adminUserDetail": {
+    "adminControlPanel": "የአስተዳደር መቆጣጠሪያ",
+    "account": "መለያ",
+    "email": "ኢሜይል",
+    "verified": "ተረጋግጧል",
+    "notVerified": "አልተረጋገጠም",
+    "verify": "ያረጋግጡ",
+    "unverify": "ማረጋገጫ አስወግድ",
+    "suspend": "አግድ",
+    "sendNotification": "ማሳወቂያ ላክ",
+    "roles": {
+      "renter": "ተከራይ",
+      "owner": "ባለቤት",
+      "admin": "አስተዳዳሪ"
+    },
+    "statuses": {
+      "active": "ንቁ",
+      "suspended": "ታግዷል",
+      "pending": "በመጠባበቅ ላይ"
+    },
+    "verificationStates": {
+      "verified": "ተረጋግጧል",
+      "pending": "በመጠባበቅ ላይ",
+      "rejected": "ተቃውሟል",
+      "resubmit": "እንደገና ያስገቡ"
+    },
+    "tabs": {
+      "overview": "አጠቃላይ እይታ",
+      "reports": "ሪፖርቶች",
+      "verificationDocuments": "የማረጋገጫ ሰነዶች",
+      "properties": "ንብረቶች"
+    },
+    "overview": {
+      "role": "ሚና",
+      "platformRole": "የመድረክ ሚና",
+      "account": "መለያ",
+      "memberSince": "አባል ከ{{date}}",
+      "verification": "ማረጋገጫ",
+      "emailVerified": "ኢሜይል ተረጋግጧል",
+      "emailNotVerified": "ኢሜይል አልተረጋገጠም",
+      "personalDetails": "የግል ዝርዝሮች",
+      "fullName": "ሙሉ ስም",
+      "emailAddress": "ኢሜይል አድራሻ",
+      "phoneNumber": "ስልክ ቁጥር",
+      "userId": "የተጠቃሚ መታወቂያ",
+      "registrationDate": "የመመዝገቢያ ቀን",
+      "lastUpdated": "መጨረሻ የተሻሻለበት ቀን"
+    },
+    "reports": {
+      "emptyTitle": "ምንም ሪፖርቶች የሉም",
+      "emptyDescription": "ይህ ተጠቃሚ በራሱ ወይም በላዩ ላይ ምንም ሪፖርት አልገባም።",
+      "defaultReport": "ሪፖርት"
+    },
+    "verification": {
+      "emptyTitle": "ምንም የማረጋገጫ ሰነዶች የሉም",
+      "emptyDescription": "ይህ ተጠቃሚ እስካሁን የማረጋገጫ ሰነዶች አልገባም።",
+      "submission": "የማረጋገጫ አቅርቦት",
+      "submitted": "የቀረበ {{date}}",
+      "note": "ማስታወሻ:",
+      "approve": "አረጋግጥ",
+      "reject": "አቃወም",
+      "view": "ይመልከቱ",
+      "document": "ሰነድ",
+      "noFiles": "ለዚህ አቅርቦት ምንም የሰነድ ፋይሎች አልተያዙም።",
+      "labels": {
+        "nationalIdFront": "የአማካኝ መታወቂያ (ፊት)",
+        "nationalIdBack": "የአማካኝ መታወቂያ (በስተጀርባ)",
+        "livePhoto": "የቀጥታ ማረጋገጫ ፎቶ"
+      },
+      "statuses": {
+        "pending": "በመጠባበቅ ላይ",
+        "under_review": "በግምገማ ላይ",
+        "approved": "ተረጋግጧል",
+        "rejected": "ተቃውሟል"
+      }
+    },
+    "properties": {
+      "emptyTitle": "ምንም ንብረቶች የሉም",
+      "emptyDescription": "ይህ ባለቤት በመገለጫው የሚዛመዱ ዝርዝሮች የሉም።",
+      "monthlyRent": "ወርሃዊ ኪራይ",
+      "edits": "አርትዎች {{current}}/{{total}}",
+      "untitled": "ርዕስ የሌለው",
+      "noAddress": "አድራሻ የለም"
+    }
+  },
+  "adminProperties": {
+    "title": "የንብረት አስተዳደር",
+    "subtitle": "የኪራይ ዝርዝሮችን ይመልከቱ፣ ያረጋግጡ እና ያስተዳድሩ።",
+    "statsError": "የንብረት ስታቲስቲክስን በዚህ ጊዜ ማንበብ አልተቻለም።",
+    "retry": "እንደገና ሞክር",
+    "summary": {
+      "available": "የሚገኝ",
+      "pendingReview": "በግምገማ ላይ",
+      "rented": "ተከራይ ያለው",
+      "totalListings": "ጠቅላላ ዝርዝሮች"
+    },
+    "searchPlaceholder": "በርዕስ፣ ባለቤት ወይም መታወቂያ ፈልግ",
+    "filters": {
+      "type": "ዓይነት",
+      "allTypes": "ሁሉም ዓይነቶች",
+      "status": "ሁኔታ",
+      "allStatuses": "ሁሉም ሁኔታዎች",
+      "filter": "ማጣሪያ"
+    },
+    "empty": {
+      "title": "ምንም ንብረቶች አልተገኙም",
+      "description": "አሁን ያሉት ማጣሪያዎች ምንም ዝርዝሮች አያመጡም።"
+    },
+    "noImage": "ምንም ምስል የለም",
+    "table": {
+      "property": "ንብረት",
+      "owner": "ባለቤት",
+      "type": "ዓይነት",
+      "price": "ዋጋ",
+      "status": "ሁኔታ",
+      "edits": "አርትዎች",
+      "actions": "እርምጃዎች"
+    },
+    "actions": {
+      "viewDetails": "ዝርዝሮችን ይመልከቱ",
+      "approve": "አረጋግጥ",
+      "reject": "አቃውም",
+      "softDelete": "ለጊዜው አስወግድ"
+    },
+    "notes": {
+      "rejectedByAdmin": "በአስተዳደር ተቃውሟል"
+    },
+    "errors": {
+      "failedLoadProperties": "ንብረቶችን መጫን አልተቻለም"
+    },
+    "fallbacks": {
+      "untitledProperty": "ርዕስ የሌለው ንብረት"
+    },
+    "pagination": {
+      "showing": "የሚታዩ",
+      "of": "ከ",
+      "itemLabel": "ንብረቶች"
+    },
+    "statuses": {
+      "AVAILABLE": "የሚገኝ",
+      "PENDING": "በግምገማ ላይ",
+      "RENTED": "ተከራይ ያለው",
+      "UNAVAILABLE": "ያልተገኘ",
+      "MAINTENANCE": "ጥገና",
+      "RESTRICTED": "የተገደበ"
+    },
+    "categoryOptions": {
+      "apartment": "አፓርታማ",
+      "villa": "ቪላ",
+      "condominium": "ኮንዶሚኒየም",
+      "service": "አገልግሎት",
+      "compound": "ኮምፓውንድ"
+    }
+  },
+  "adminPropertyDetail": {
+    "title": "የንብረት ዝርዝሮች",
+    "subtitle": "የአስተዳደር የዝርዝር ግምገማ",
+    "errors": {
+      "failedLoadPropertyDetails": "የንብረት ዝርዝሮችን መጫን አልተቻለም"
+    },
+    "gallery": {
+      "zoom": "አጉላ",
+      "previous": "ቀዳሚ",
+      "next": "ቀጣይ",
+      "thumbnailAlt": "አውርድ {{index}}",
+      "noImageAlt": "የንብረት ምስል"
+    },
+    "map": {
+      "loading": "ካርታ በመጫን ላይ…",
+      "unavailable": "የካርታ ቅድመ-እይታ አይገኝም — ለዚህ ዝርዝር መጋጠሚያዎች የሉም።"
+    },
+    "propertyInfo": {
+      "propertyFallback": "ንብረት",
+      "addressUnavailable": "አድራሻ የለም",
+      "monthlyRent": "ወርሃዊ ኪራይ",
+      "listed": "የተዘጋጀ {{date}}",
+      "views": "{{count}} ተያያዥ እይታዎች",
+      "reviews": "{{rating}} ({{count}} ግምገማዎች)",
+      "location": "አካባቢ",
+      "description": "መግለጫ",
+      "noDescription": "መግለጫ የለም",
+      "specifications": "መግለጫዎች",
+      "bedrooms": "መኝታ ቤቶች",
+      "bathrooms": "መታጠቢያ ቤቶች",
+      "listingId": "የዝርዝር መታወቂያ",
+      "viewsLabel": "እይታዎች",
+      "amenities": "መገልገያዎች",
+      "owner": "ባለቤት",
+      "recently": "በቅርቡ"
+    },
+    "reviews": {
+      "title": "ግምገማዎች ({{count}})",
+      "average": "{{rating}} አማካኝ",
+      "loading": "ግምገማዎችን በመጫን ላይ…",
+      "emptyTitle": "ግምገማዎች የሉም",
+      "emptyDescription": "ይህ ንብረት ምንም የታተመ ግምገማ የለውም።"
+    }
+  },
+  "adminAgreements": {
+    "title": "ውልዎች",
+    "subtitle": "በባለቤቶች እና ተከራዮች መካከል ያሉ የኪራይ ውልዎችን ያስተዳድሩ።",
+    "statsError": "የውል ማጠቃለያን በዚህ ጊዜ ማንበብ አልተቻለም።",
+    "retry": "እንደገና ሞክር",
+    "searchPlaceholder": "በመታወቂያ፣ በንብረት፣ በተከራይ ወይም በባለቤት ፈልግ",
+    "filters": {
+      "status": "ሁኔታ",
+      "payment": "ክፍያ",
+      "all": "ሁሉም",
+      "filter": "ማጣሪያ"
+    },
+    "summary": {
+      "active": "ንቁ",
+      "pending": "በመጠባበቅ ላይ",
+      "draft": "ረቂቅ",
+      "terminated": "ተቋርጧል"
+    },
+    "summaryDescriptions": {
+      "active": "የተጠናቀቁ ውልዎች",
+      "pending": "ተልኳል ወይም ክፍያ በመጠባበቅ ላይ",
+      "terminated": "ተጠናቀቁ ወይም ተሰርዟል"
+    },
+    "empty": {
+      "title": "ምንም ውልዎች አልተገኙም",
+      "description": "ሌላ ማጣሪያ ወይም ፍለጋ ይሞክሩ።"
+    },
+    "table": {
+      "id": "መታወቂያ",
+      "property": "ንብረት",
+      "parties": "ወገኖች",
+      "rent": "ኪራይ",
+      "duration": "ጊዜ",
+      "status": "ሁኔታ",
+      "payment": "ክፍያ",
+      "actions": "እርምጃዎች"
+    },
+    "actions": {
+      "viewAgreement": "ውልን ይመልከቱ",
+      "viewContract": "ውልን ይመልከቱ"
+    },
+    "payment": {
+      "confirmed": "ተረጋግጧል",
+      "proofUploaded": "ማስረጃ ተጭኗል",
+      "pending": "በመጠባበቅ ላይ"
+    },
+    "durationTo": "እስከ {{date}}",
+    "fallbacks": {
+      "unknownProperty": "ያልታወቀ ንብረት",
+      "renter": "ተከራይ",
+      "owner": "ባለቤት"
+    },
+    "errors": {
+      "failedLoadAgreements": "ውልዎችን መጫን አልተቻለም"
+    },
+    "pagination": {
+      "showing": "የሚታዩ",
+      "of": "ከ",
+      "itemLabel": "ውልዎች"
+    },
+    "statuses": {
+      "draft": "ረቂቅ",
+      "sent": "ተልኳል",
+      "payment_pending": "ክፍያ በመጠባበቅ ላይ",
+      "completed": "ተጠናቀቀ",
+      "rejected": "ተቃውሟል",
+      "cancelled": "ተሰርዟል",
+      "terminated": "ተቋርጧል",
+      "expired": "ጊዜው አልፎበታል"
+    }
+  },
+  "adminAgreementDetail": {
+    "title": "የውል ዝርዝሮች",
+    "propertyFallback": "ንብረት",
+    "propertyIdFallback": "ንብረት {{id}}",
+    "cardLabels": {
+      "renter": "ተከራይ",
+      "owner": "ባለቤት"
+    },
+    "fallbacks": {
+      "renter": "ተከራይ",
+      "owner": "ባለቤት"
+    },
+    "badges": {
+      "verifiedIdentity": "መለያ ተረጋግጧል",
+      "verifiedOwner": "ባለቤት ተረጋግጧል"
+    },
+    "linkedProperty": "የተገናኘ ንብረት",
+    "viewProperty": "ንብረት ይመልከቱ",
+    "coreLeaseTerms": "ዋና የኪራይ መመሪያዎች",
+    "monthlyRentLabel": "ወርሃዊ ኪራይ / Monthly Rent",
+    "statusLabel": "ሁኔታ",
+    "lifecycleStatus": "የዑደት ሁኔታ",
+    "leasePeriod": "የውል ጊዜ",
+    "currencyLabel": "ምንዛሬ: {{currency}}",
+    "updateStatus": {
+      "label": "ሁኔታ ያሻሽሉ",
+      "placeholder": "ሁኔታ ይምረጡ"
+    },
+    "errors": {
+      "failedLoadAgreementDetails": "የውል ዝርዝሮችን መጫን አልተቻለም"
+    },
+    "paymentPurposes": {
+      "security_deposit": "የደህንነት ተቀባይ",
+      "rent": "ኪራይ",
+      "maintenance": "ጥገና"
+    },
+    "paymentStatuses": {
+      "pending": "በመጠባበቅ ላይ",
+      "processing": "በማስኬድ ላይ",
+      "success": "ተሳክቷል",
+      "failed": "አልተሳካም",
+      "expired": "ጊዜው አልፎበታል"
+    },
+    "payments": {
+      "title": "የክፍያ ማጠቃለያ",
+      "description": "ከ{{endpoint}} ተዘርዝሯል",
+      "failedLoad": "የክፍያ ማጠቃለያን መጫን አልተቻለም",
+      "noSummary": "ምንም የክፍያ ማጠቃለያ የለም።",
+      "history": "የክፍያ ታሪክ",
+      "noPayments": "ለዚህ ውል ምንም የክፍያ መዝገቦች የሉም።",
+      "proof": "ማስረጃ",
+      "proofImageAlt": "የክፍያ ማስረጃ",
+      "view": "ይመልከቱ",
+      "created": "ተፈጥሯል {{date}}",
+      "paid": "ተከፍሏል {{date}}",
+      "ref": "ማጣቀሻ: {{ref}}",
+      "notAvailable": "—",
+      "failedPayments": "አንዳንድ የዚህ ውል ክፍያዎች አልተሳኩም።",
+      "paymentCount": "ክፍያዎች",
+      "totalPaid": "ጠቅላላ የተከፈለ",
+      "outstanding": "ያልተከፈለ",
+      "deposit": "ተቀባይ (ETB)",
+      "monthlyRent": "ወርሃዊ ኪራይ",
+      "agreementStatus": "የውል ሁኔታ",
+      "byPaymentStatus": "በክፍያ ሁኔታ",
+      "latestPayment": "የቅርብ ጊዜ ክፍያ"
+    },
+    "statuses": {
+      "draft": "ረቂቅ",
+      "sent": "ተልኳል",
+      "payment_pending": "ክፍያ በመጠባበቅ ላይ",
+      "completed": "ተጠናቀቀ",
+      "rejected": "ተቃውሟል",
+      "cancelled": "ተሰርዟል",
+      "terminated": "ተቋርጧል",
+      "expired": "ጊዜው አልፎበታል"
+    }
+  },
+  "adminReports": {
+    "title": "ሪፖርቶች",
+    "subtitle": "የመድረክ ሪፖርቶችን ይመልከቱ እና ያስተዳድሩ።",
+    "searchPlaceholder": "በመታወቂያ፣ በሪፖርት ሰጪ ወይም በአካል ፈልግ",
+    "filters": {
+      "status": "ሁኔታ",
+      "reason": "ምክንያት",
+      "allStatuses": "ሁሉም ሁኔታዎች",
+      "filter": "ማጣሪያ"
+    },
+    "reasonOptions": {
+      "all": "ሁሉም ምክንያቶች",
+      "fraud": "ማጭበርበር",
+      "falseAdvertising": "የውሸት ማስታወቂያ",
+      "inappropriateBehavior": "አስተያየት የሌለው",
+      "spam": "ስፓም",
+      "other": "ሌላ"
+    },
+    "empty": {
+      "title": "ምንም ሪፖርቶች አልተገኙም",
+      "description": "ማጣሪያዎችን ያስተካክሉ።"
+    },
+    "errors": {
+      "failedLoadReports": "ሪፖርቶችን መጫን አልተቻለም"
+    },
+    "table": {
+      "id": "መታወቂያ",
+      "reporter": "ሪፖርት ሰጪ",
+      "reportedUser": "የተረጋገጠ ተጠቃሚ",
+      "reason": "ምክንያት",
+      "status": "ሁኔታ",
+      "created": "ተፈጥሯል",
+      "actions": "እርምጃዎች"
+    },
+    "actions": {
+      "investigate": "ይመረምሩ",
+      "resolve": "ሪፖርት ይፍቱ",
+      "dismiss": "ሪፖርት ያስወግዱ"
+    },
+    "fallbacks": {
+      "unknownReporter": "ያልታወቀ ሪፖርት ሰጪ",
+      "targetType": "አካል"
+    },
+    "pagination": {
+      "showing": "የሚታዩ",
+      "of": "ከ",
+      "itemLabel": "ሪፖርቶች"
+    },
+    "statuses": {
+      "open": "ክፍት",
+      "in_review": "በግምገማ ላይ",
+      "resolved": "ተፈትቷል",
+      "dismissed": "ተሰርዟል"
+    }
+  },
+  "adminReportDetail": {
+    "title": "ሪፖርት #{{id}}",
+    "breadcrumb": {
+      "investigations": "ምርመራዎች",
+      "fraudReports": "የማጭበርበር ሪፖርቶች"
+    },
+    "filedOn": "የቀረበበት ቀን {{date}}",
+    "submittedOn": "የቀረበ {{date}}",
+    "errors": {
+      "failedLoadReportDetails": "የሪፖርት ዝርዝሮችን መጫን አልተቻለም"
+    },
+    "reporterLabel": "ሪፖርት ሰጪ",
+    "reporterUnknown": "ያልታወቀ ሪፖርት ሰጪ",
+    "reportedTarget": "የተረጋገጠ {{type}}",
+    "targetTypes": {
+      "property": "ንብረት",
+      "user": "ተጠቃሚ",
+      "agreement": "ውል",
+      "unknown": "አካል"
+    },
+    "category": {
+      "badge": "ማጭበርበር",
+      "fallback": "ሪፖርት"
+    },
+    "evidence": "ማስረጃ",
+    "evidenceImageAlt": "ማስረጃ {{index}}",
+    "riskAssessmentEmpty": "የሪፖርት አካል ላይ የአደጋ ግምገማ መስራት አልተቻለም።",
+    "updateStatus": {
+      "label": "የምርመራ ሁኔታ ያሻሽሉ"
+    },
+    "actions": {
+      "resolve": "ሪፖርት ይፍቱ",
+      "dismiss": "ሪፖርት ያስወግዱ"
+    },
+    "statuses": {
+      "open": "ክፍት",
+      "in_review": "በግምገማ ላይ",
+      "resolved": "ተፈትቷል",
+      "dismissed": "ተሰርዟል"
+    }
+  },
   "landing": {
     "hero": {
       "title": "ተስማሚ የሆነ",

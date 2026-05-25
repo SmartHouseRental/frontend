@@ -29,11 +29,9 @@ import {
   MoreVertical,
   Search,
   Eye,
-  CheckCircle2,
-  XCircle,
-  Handshake,
   FileText,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
 import { useAdminAgreements } from '@/features/admin/hooks/useAdmin';
@@ -48,6 +46,7 @@ import EmptyState from '@/components/EmptyState';
 import DataTablePagination from '@/components/DataTablePagination';
 
 function AgreementsPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
@@ -73,16 +72,24 @@ function AgreementsPage() {
   );
   const meta = data?.meta || { page: 1, limit: 20, total: 0, totalPages: 1 };
 
+  const translateAgreementStatus = (statusValue) =>
+    t(`adminAgreements.statuses.${statusValue}`, {
+      defaultValue: getAgreementStatusMeta(statusValue).label,
+    });
+
+  const translatePaymentLabel = (statusValue) =>
+    t(`adminAgreements.payment.${statusValue}`, {
+      defaultValue: statusValue === 'payment_pending' ? 'Pending' : 'Confirmed',
+    });
+
   const formatDate = (value) => new Date(value).toLocaleDateString();
 
   return (
     <div className="space-y-6 px-4 py-8">
       <div className="flex items-end justify-between">
         <div>
-          <h2 className="text-3xl font-semibold">Agreements</h2>
-          <p className="text-muted-foreground text-sm">
-            Manage rental agreements between owners and renters
-          </p>
+          <h2 className="text-3xl font-semibold">{t('adminAgreements.title')}</h2>
+          <p className="text-muted-foreground text-sm">{t('adminAgreements.subtitle')}</p>
         </div>
       </div>
 
@@ -90,34 +97,38 @@ function AgreementsPage() {
         <CardSkeleton count={4} />
       ) : statsError ? (
         <Card className="border-dashed p-4">
-          <p className="text-muted-foreground text-sm">Could not load agreement summary.</p>
+          <p className="text-muted-foreground text-sm">{t('adminAgreements.statsError')}</p>
           <Button variant="outline" size="sm" className="mt-2" onClick={() => refetchStats()}>
-            Retry
+            {t('adminAgreements.retry')}
           </Button>
         </Card>
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           <Card className="border-0 border-l-4 border-emerald-400 p-5">
             <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-              Active
+              {t('adminAgreements.summary.active')}
             </p>
             <p className="mt-1 text-2xl font-extrabold text-emerald-600">
               {agreementStats?.active?.toLocaleString() ?? 0}
             </p>
-            <p className="text-muted-foreground mt-1 text-[10px]">Completed agreements</p>
+            <p className="text-muted-foreground mt-1 text-[10px]">
+              {t('adminAgreements.summaryDescriptions.active')}
+            </p>
           </Card>
           <Card className="border-0 border-l-4 border-amber-400 p-5">
             <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-              Pending
+              {t('adminAgreements.summary.pending')}
             </p>
             <p className="mt-1 text-2xl font-extrabold text-amber-600">
               {agreementStats?.pending?.toLocaleString() ?? 0}
             </p>
-            <p className="text-muted-foreground mt-1 text-[10px]">Sent or awaiting payment</p>
+            <p className="text-muted-foreground mt-1 text-[10px]">
+              {t('adminAgreements.summaryDescriptions.pending')}
+            </p>
           </Card>
           <Card className="border-0 border-l-4 border-slate-300 p-5">
             <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-              Draft
+              {t('adminAgreements.summary.draft')}
             </p>
             <p className="mt-1 text-2xl font-extrabold text-slate-600">
               {agreementStats?.draft?.toLocaleString() ?? 0}
@@ -125,12 +136,14 @@ function AgreementsPage() {
           </Card>
           <Card className="border-0 border-l-4 border-rose-400 p-5">
             <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-              Terminated
+              {t('adminAgreements.summary.terminated')}
             </p>
             <p className="mt-1 text-2xl font-extrabold text-rose-600">
               {agreementStats?.terminated?.toLocaleString() ?? 0}
             </p>
-            <p className="text-muted-foreground mt-1 text-[10px]">Ended or cancelled</p>
+            <p className="text-muted-foreground mt-1 text-[10px]">
+              {t('adminAgreements.summaryDescriptions.terminated')}
+            </p>
           </Card>
         </div>
       )}
@@ -141,7 +154,7 @@ function AgreementsPage() {
             <Search size={18} />
           </span>
           <Input
-            placeholder="Search by ID, property, renter, or owner..."
+            placeholder={t('adminAgreements.searchPlaceholder')}
             type="text"
             className="pl-10"
             value={search}
@@ -154,36 +167,40 @@ function AgreementsPage() {
         <div className="flex items-center gap-3">
           <Select value={status} onValueChange={setStatus}>
             <SelectTrigger className="w-36">
-              <SelectValue placeholder="Status" />
+              <SelectValue placeholder={t('adminAgreements.filters.status')} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="sent">Sent</SelectItem>
-                <SelectItem value="payment_pending">Payment Pending</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
-                <SelectItem value="terminated">Terminated</SelectItem>
-                <SelectItem value="expired">Expired</SelectItem>
+                <SelectItem value="all">{t('adminAgreements.filters.all')}</SelectItem>
+                <SelectItem value="draft">{translateAgreementStatus('draft')}</SelectItem>
+                <SelectItem value="sent">{translateAgreementStatus('sent')}</SelectItem>
+                <SelectItem value="payment_pending">
+                  {translateAgreementStatus('payment_pending')}
+                </SelectItem>
+                <SelectItem value="completed">{translateAgreementStatus('completed')}</SelectItem>
+                <SelectItem value="rejected">{translateAgreementStatus('rejected')}</SelectItem>
+                <SelectItem value="cancelled">{translateAgreementStatus('cancelled')}</SelectItem>
+                <SelectItem value="terminated">{translateAgreementStatus('terminated')}</SelectItem>
+                <SelectItem value="expired">{translateAgreementStatus('expired')}</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
           <Select>
             <SelectTrigger className="w-40">
-              <SelectValue placeholder="Payment" />
+              <SelectValue placeholder={t('adminAgreements.filters.payment')} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="confirmed">Confirmed</SelectItem>
-                <SelectItem value="proof_uploaded">Proof Uploaded</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="all">{t('adminAgreements.filters.all')}</SelectItem>
+                <SelectItem value="confirmed">{t('adminAgreements.payment.confirmed')}</SelectItem>
+                <SelectItem value="proof_uploaded">
+                  {t('adminAgreements.payment.proofUploaded')}
+                </SelectItem>
+                <SelectItem value="pending">{t('adminAgreements.payment.pending')}</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" aria-label={t('adminAgreements.filters.filter')}>
             <Filter size={16} />
           </Button>
         </div>
@@ -192,101 +209,112 @@ function AgreementsPage() {
       {isLoading ? (
         <TableSkeleton rows={6} columns={8} />
       ) : isError ? (
-        <ErrorState title="Failed to load agreements" onRetry={refetch} />
+        <ErrorState title={t('adminAgreements.errors.failedLoadAgreements')} onRetry={refetch} />
       ) : agreements.length === 0 ? (
-        <EmptyState title="No agreements found" description="Try another filter or search." />
-      ) : (
-      <Card className="gap-0 overflow-hidden p-0">
-        <Table className="w-full min-w-full border-collapse text-left">
-          <TableHeader className="bg-muted/30 w-full">
-            <TableRow>
-              <TableHead className="px-6 py-4">ID</TableHead>
-              <TableHead className="px-6 py-4">Property</TableHead>
-              <TableHead className="px-6 py-4">Parties</TableHead>
-              <TableHead className="px-6 py-4">Rent</TableHead>
-              <TableHead className="px-6 py-4">Duration</TableHead>
-              <TableHead className="px-6 py-4">Status</TableHead>
-              <TableHead className="px-6 py-4">Payment</TableHead>
-              <TableHead className="px-4 py-4">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {agreements.map((agreement) => {
-              const sState = getAgreementStatusMeta(agreement.status);
-              return (
-                <TableRow
-                  key={agreement.id}
-                  className="cursor-pointer transition-colors hover:bg-muted/20"
-                  onClick={() => navigate(`/admin/agreements/${agreement.id}`)}
-                >
-                  <TableCell className="px-6 py-4 text-sm font-bold">#{agreement.id}</TableCell>
-                  <TableCell className="px-6 py-4">
-                    <p className="text-sm font-semibold">
-                      {getPropertyTitle(agreement.propertyId)}
-                    </p>
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    <p className="text-xs">
-                      <span className="font-semibold">{getUserName(agreement.renterId, 'Renter')}</span>
-                      <span className="text-muted-foreground"> → </span>
-                      <span className="font-semibold">{getUserName(agreement.ownerId, 'Owner')}</span>
-                    </p>
-                  </TableCell>
-                  <TableCell className="px-6 py-4 text-sm font-bold">{agreement.monthlyRent} ETB</TableCell>
-                  <TableCell className="px-6 py-4">
-                    <p className="text-xs">{formatDate(agreement.startDate)}</p>
-                    <p className="text-muted-foreground text-[10px]">to {formatDate(agreement.endDate)}</p>
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    <span
-                      className={`rounded-full px-2.5 py-1 text-[10px] font-bold whitespace-nowrap uppercase ${sState.style}`}
-                    >
-                      {sState.label}
-                    </span>
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    <span
-                      className="bg-slate-100 text-slate-600 rounded-full px-2.5 py-1 text-[10px] font-bold whitespace-nowrap uppercase"
-                    >
-                      {agreement.status === 'payment_pending' ? 'Pending' : 'Confirmed'}
-                    </span>
-                  </TableCell>
-                  <TableCell className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          className="cursor-pointer"
-                          onClick={() => navigate(`/admin/agreements/${agreement.id}`)}
-                        >
-                          <Eye className="mr-2 h-4 w-4" />
-                          <span>View Agreement</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer">
-                          <FileText className="mr-2 h-4 w-4" />
-                          <span>View Contract</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-        <DataTablePagination
-          currentPage={meta.page || 1}
-          totalPages={meta.totalPages || 1}
-          totalItems={meta.total || 0}
-          itemsPerPage={meta.limit || 20}
-          itemLabel="agreements"
-          onPageChange={setPage}
+        <EmptyState
+          title={t('adminAgreements.empty.title')}
+          description={t('adminAgreements.empty.description')}
         />
-      </Card>
+      ) : (
+        <Card className="gap-0 overflow-hidden p-0">
+          <Table className="w-full min-w-full border-collapse text-left">
+            <TableHeader className="bg-muted/30 w-full">
+              <TableRow>
+                <TableHead className="px-6 py-4">{t('adminAgreements.table.id')}</TableHead>
+                <TableHead className="px-6 py-4">{t('adminAgreements.table.property')}</TableHead>
+                <TableHead className="px-6 py-4">{t('adminAgreements.table.parties')}</TableHead>
+                <TableHead className="px-6 py-4">{t('adminAgreements.table.rent')}</TableHead>
+                <TableHead className="px-6 py-4">{t('adminAgreements.table.duration')}</TableHead>
+                <TableHead className="px-6 py-4">{t('adminAgreements.table.status')}</TableHead>
+                <TableHead className="px-6 py-4">{t('adminAgreements.table.payment')}</TableHead>
+                <TableHead className="px-4 py-4">{t('adminAgreements.table.actions')}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {agreements.map((agreement) => {
+                const sState = getAgreementStatusMeta(agreement.status);
+                return (
+                  <TableRow
+                    key={agreement.id}
+                    className="cursor-pointer transition-colors hover:bg-muted/20"
+                    onClick={() => navigate(`/admin/agreements/${agreement.id}`)}
+                  >
+                    <TableCell className="px-6 py-4 text-sm font-bold">#{agreement.id}</TableCell>
+                    <TableCell className="px-6 py-4">
+                      <p className="text-sm font-semibold">
+                        {getPropertyTitle(agreement.propertyId, t('adminAgreements.fallbacks.unknownProperty'))}
+                      </p>
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <p className="text-xs">
+                        <span className="font-semibold">
+                          {getUserName(agreement.renterId, t('adminAgreements.fallbacks.renter'))}
+                        </span>
+                        <span className="text-muted-foreground"> → </span>
+                        <span className="font-semibold">
+                          {getUserName(agreement.ownerId, t('adminAgreements.fallbacks.owner'))}
+                        </span>
+                      </p>
+                    </TableCell>
+                    <TableCell className="px-6 py-4 text-sm font-bold">
+                      {agreement.monthlyRent} ETB
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <p className="text-xs">{formatDate(agreement.startDate)}</p>
+                      <p className="text-muted-foreground text-[10px]">
+                        {t('adminAgreements.durationTo', { date: formatDate(agreement.endDate) })}
+                      </p>
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-[10px] font-bold whitespace-nowrap uppercase ${sState.style}`}
+                      >
+                        {translateAgreementStatus(agreement.status)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <span className="bg-slate-100 text-slate-600 rounded-full px-2.5 py-1 text-[10px] font-bold whitespace-nowrap uppercase">
+                        {translatePaymentLabel(agreement.status === 'payment_pending' ? 'pending' : 'confirmed')}
+                      </span>
+                    </TableCell>
+                    <TableCell className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            className="cursor-pointer"
+                            onClick={() => navigate(`/admin/agreements/${agreement.id}`)}
+                          >
+                            <Eye className="mr-2 h-4 w-4" />
+                            <span>{t('adminAgreements.actions.viewAgreement')}</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="cursor-pointer">
+                            <FileText className="mr-2 h-4 w-4" />
+                            <span>{t('adminAgreements.actions.viewContract')}</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+          <DataTablePagination
+            currentPage={meta.page || 1}
+            totalPages={meta.totalPages || 1}
+            totalItems={meta.total || 0}
+            itemsPerPage={meta.limit || 20}
+            itemLabel={t('adminAgreements.pagination.itemLabel')}
+            showingLabel={t('adminAgreements.pagination.showing')}
+            ofLabel={t('adminAgreements.pagination.of')}
+            onPageChange={setPage}
+          />
+        </Card>
       )}
     </div>
   );

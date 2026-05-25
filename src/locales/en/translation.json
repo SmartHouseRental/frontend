@@ -179,6 +179,762 @@
       "empty": "No pending properties to review."
     }
   },
+  "adminAnalytics": {
+    "title": "Platform Analytics",
+    "subtitle": "Comprehensive statistics and insights across the Smart House Rental platform.",
+    "errorTitle": "Failed to load analytics",
+    "errorFallback": "Something went wrong",
+    "cards": {
+      "totalUsers": "Total Users",
+      "activeListings": "Active Listings",
+      "appointments": "Appointments",
+      "messages": "Messages",
+      "unreadNotifications": "Unread Notifications",
+      "auditLogs": "Audit Logs"
+    },
+    "breakdowns": {
+      "users": "Renters: {{renters}} • Owners: {{owners}} • Verified Owners: {{verifiedOwners}}",
+      "properties": "Available: {{available}} • Pending: {{pending}} • Rented: {{rented}}",
+      "appointments": "Pending: {{pending}} • Accepted: {{accepted}}",
+      "messages": "Conversations: {{conversations}} • New In Range: {{newMessagesInRange}}",
+      "notifications": "Total notifications: {{total}}",
+      "auditLogs": "New in range: {{newInRange}}"
+    },
+    "trendCharts": {
+      "title": "Trend charts",
+      "description": "Registration and property-type breakdown charts are not returned by {{endpoint}}. Use the Dashboard User Growth chart for registration trends.",
+      "docs": "See {{path}} for optional dedicated chart endpoints."
+    }
+  },
+  "adminAuditLogs": {
+    "title": "Audit Logs",
+    "subtitle": "Track all administrative actions and sensitive system events.",
+    "exportLogs": "Export Logs",
+    "searchPlaceholder": "Search by admin, action, or target...",
+    "filters": {
+      "actionTypePlaceholder": "Action Type",
+      "severityPlaceholder": "Severity",
+      "allActions": "All Actions",
+      "all": "All"
+    },
+    "actionTypes": {
+      "userSuspended": "User Suspended",
+      "propertyApproved": "Property Approved",
+      "propertyRejected": "Property Rejected",
+      "reportResolved": "Report Resolved",
+      "documentsVerified": "Documents Verified",
+      "agreementTerminated": "Agreement Terminated"
+    },
+    "severities": {
+      "high": "High",
+      "warning": "Warning",
+      "normal": "Normal"
+    },
+    "systemActor": "System",
+    "noDetails": "No details",
+    "errorTitle": "Failed to load audit logs",
+    "emptyTitle": "No audit logs found",
+    "emptyDescription": "Try changing search filters.",
+    "table": {
+      "timestamp": "Timestamp",
+      "admin": "Admin",
+      "action": "Action",
+      "target": "Target",
+      "details": "Details",
+      "severity": "Severity"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemLabel": "entries"
+    }
+  },
+  "adminNotifications": {
+    "title": "Notifications",
+    "subtitle": "Manage platform notifications and send broadcasts to users.",
+    "recentNotifications": "Recent Notifications",
+    "markAllAsRead": "Mark All as Read",
+    "errorTitle": "Failed to load notifications",
+    "emptyTitle": "No notifications yet",
+    "emptyDescription": "Recent platform notifications will appear here.",
+    "audiences": {
+      "all": "All Users",
+      "renters": "Renters Only",
+      "owners": "Owners Only",
+      "verifiedOwners": "Verified Owners"
+    },
+    "broadcast": {
+      "title": "Send Broadcast",
+      "description": "Notify users platform-wide",
+      "audienceLabel": "Target Audience",
+      "titleLabel": "Notification Title",
+      "messageLabel": "Message",
+      "placeholderAudience": "Select audience",
+      "titlePlaceholder": "e.g. Platform Maintenance Notice",
+      "messagePlaceholder": "Write your broadcast message...",
+      "sendButton": "Send Broadcast"
+    },
+    "stats": {
+      "title": "Notification Stats",
+      "unread": "Unread",
+      "today": "Today",
+      "thisWeek": "This Week",
+      "broadcastsSent": "Broadcasts Sent"
+    }
+  },
+  "adminPendingVerifications": {
+    "title": "Pending Verifications",
+    "subtitle": "Review and approve owner document submissions for platform access.",
+    "awaitingReview": "{{count}} Awaiting Review",
+    "summary": {
+      "pendingReview": "Pending Review",
+      "approvedThisWeek": "Approved This Week",
+      "rejectedThisWeek": "Rejected This Week"
+    },
+    "searchPlaceholder": "Search by name, email, or ID...",
+    "export": "Export",
+    "errorTitle": "Failed to load pending verifications",
+    "emptyTitle": "No pending verifications",
+    "emptyDescription": "All submissions are up to date.",
+    "table": {
+      "owner": "Owner",
+      "contact": "Contact",
+      "submitted": "Submitted",
+      "waiting": "Waiting",
+      "documents": "Documents",
+      "actions": "Actions"
+    },
+    "actions": {
+      "viewDocuments": "View Documents",
+      "viewProfile": "View Profile",
+      "approveAndVerify": "Approve & Verify",
+      "rejectDocuments": "Reject Documents"
+    },
+    "days": "{{count}} days",
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemLabel": "owners"
+    }
+  },
+  "adminReviews": {
+    "title": "Reviews",
+    "description": "Moderate user reviews and ratings across the platform.",
+    "totalReviews": "{{count}} total reviews",
+    "searchPlaceholder": "Search by reviewer, property, or comment...",
+    "filters": {
+      "status": "Status",
+      "rating": "Rating",
+      "type": "Type",
+      "all": "All",
+      "allRatings": "All Ratings",
+      "stars5": "5 Stars",
+      "stars4": "4+ Stars",
+      "stars3": "3+ Stars",
+      "stars2": "2+ Stars",
+      "stars1": "1 Star",
+      "allTypes": "All Types",
+      "property": "Property",
+      "owner": "Owner"
+    },
+    "statuses": {
+      "published": "Published",
+      "flagged": "Flagged",
+      "removed": "Removed"
+    },
+    "table": {
+      "reviewer": "Reviewer",
+      "target": "Target",
+      "rating": "Rating",
+      "comment": "Comment",
+      "status": "Status",
+      "date": "Date",
+      "actions": "Actions"
+    },
+    "actions": {
+      "flagReview": "Flag Review",
+      "removeReview": "Remove Review"
+    },
+    "unknownReviewer": "Unknown",
+    "errorTitle": "Failed to load reviews",
+    "emptyTitle": "No reviews found",
+    "emptyDescription": "Try changing current filters.",
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemLabel": "reviews"
+    }
+  },
+  "adminSettings": {
+    "title": "Platform Settings",
+    "subtitle": "Configure platform behavior, verification rules, and email settings.",
+    "buttons": {
+      "resetToDefaults": "Reset to Defaults",
+      "saveChanges": "Save Changes"
+    },
+    "sections": {
+      "general": {
+        "title": "General Settings",
+        "description": "Core platform configuration"
+      },
+      "verificationRules": {
+        "title": "Verification Rules",
+        "description": "Owner verification workflow"
+      },
+      "emailConfiguration": {
+        "title": "Email Configuration",
+        "description": "SMTP and notification emails"
+      },
+      "rateLimits": {
+        "title": "Rate Limits & Security",
+        "description": "API and authentication limits"
+      }
+    },
+    "fields": {
+      "platformName": "Platform Name",
+      "supportEmail": "Support Email",
+      "defaultLanguage": "Default Language",
+      "maxOwnerEdits": "Max Owner Edits Per Property",
+      "requiredDocuments": "Required Documents",
+      "smtpHost": "SMTP Host",
+      "smtpPort": "SMTP Port",
+      "tls": "TLS",
+      "fromEmail": "From Email",
+      "otpExpiration": "OTP Expiration (minutes)",
+      "maxOtpResendAttempts": "Max OTP Resend Attempts",
+      "reviewDeletionWindow": "Review Deletion Window (days)",
+      "maxLoginAttempts": "Max Login Attempts"
+    },
+    "languages": {
+      "english": "English",
+      "amharic": "Amharic (አማርኛ)"
+    },
+    "toggles": {
+      "maintenanceMode": "Enable maintenance mode",
+      "allowNewRegistrations": "Allow new registrations",
+      "requireOtp": "Require email OTP verification",
+      "requireDocumentUpload": "Require document upload for owners",
+      "autoApproveVerifiedOwners": "Auto-approve properties from verified owners",
+      "sendEmailOnPropertyApproval": "Send email on property approval",
+      "sendEmailOnAgreementStatusChange": "Send email on agreement status change",
+      "enableIpRateLimiting": "Enable IP-based rate limiting",
+      "requireStrongPasswords": "Require strong passwords"
+    },
+    "documents": {
+      "nationalId": "National ID",
+      "businessLicense": "Business License",
+      "propertyTitleDeed": "Property Title Deed",
+      "taxCertificate": "Tax Certificate"
+    },
+    "options": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    }
+  },
+  "adminUsers": {
+    "title": "User Management",
+    "subtitle": "Manage platform users, roles, and account status",
+    "addUser": "Add User",
+    "searchPlaceholder": "Search users by name, email, or ID...",
+    "filters": {
+      "role": "Role",
+      "status": "Status",
+      "allRoles": "All Roles",
+      "allStatuses": "All Statuses",
+      "renter": "Renter",
+      "owner": "Owner",
+      "admin": "Admin",
+      "active": "Active",
+      "suspended": "Suspended",
+      "pending": "Pending"
+    },
+    "roles": {
+      "renter": "Renter",
+      "owner": "Owner",
+      "admin": "Admin"
+    },
+    "statuses": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "pending": "Pending"
+    },
+    "verificationStates": {
+      "verified": "Verified",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "resubmit": "Resubmit"
+    },
+    "table": {
+      "avatar": "Avatar",
+      "nameEmail": "Name/Email",
+      "role": "Role",
+      "verification": "Verification",
+      "status": "Status",
+      "joinedDate": "Joined Date",
+      "actions": "Actions"
+    },
+    "actions": {
+      "viewProfile": "View Profile",
+      "verifyDocuments": "Verify Documents",
+      "suspendUser": "Suspend User",
+      "reactivateUser": "Reactivate User"
+    },
+    "errors": {
+      "failedToLoadUsers": "Failed to load users"
+    },
+    "empty": {
+      "title": "No users found",
+      "description": "Try adjusting filters or search."
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemLabel": "users"
+    }
+  },
+  "adminUserDetail": {
+    "adminControlPanel": "Admin Control Panel",
+    "account": "Account",
+    "email": "Email",
+    "verified": "Verified",
+    "notVerified": "Not Verified",
+    "verify": "Verify",
+    "unverify": "Unverify",
+    "suspend": "Suspend",
+    "sendNotification": "Send Notification",
+    "roles": {
+      "renter": "Renter",
+      "owner": "Owner",
+      "admin": "Admin"
+    },
+    "statuses": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "pending": "Pending"
+    },
+    "verificationStates": {
+      "verified": "Verified",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "resubmit": "Resubmit"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "reports": "Reports",
+      "verificationDocuments": "Verification Documents",
+      "properties": "Properties"
+    },
+    "overview": {
+      "role": "Role",
+      "platformRole": "Platform role",
+      "account": "Account",
+      "memberSince": "Member since {{date}}",
+      "verification": "Verification",
+      "emailVerified": "Email verified",
+      "emailNotVerified": "Email not verified",
+      "personalDetails": "Personal Details",
+      "fullName": "Full Name",
+      "emailAddress": "Email Address",
+      "phoneNumber": "Phone Number",
+      "userId": "User ID",
+      "registrationDate": "Registration Date",
+      "lastUpdated": "Last Updated"
+    },
+    "reports": {
+      "emptyTitle": "No reports",
+      "emptyDescription": "No reports filed by or against this user.",
+      "defaultReport": "Report"
+    },
+    "verification": {
+      "emptyTitle": "No verification documents",
+      "emptyDescription": "This user has not submitted verification documents yet.",
+      "submission": "Verification submission",
+      "submitted": "Submitted {{date}}",
+      "note": "Note:",
+      "approve": "Approve",
+      "reject": "Reject",
+      "view": "View",
+      "document": "Document",
+      "noFiles": "No document files attached to this submission.",
+      "labels": {
+        "nationalIdFront": "National ID (Front)",
+        "nationalIdBack": "National ID (Back)",
+        "livePhoto": "Live verification photo"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "under_review": "Under Review",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      }
+    },
+    "properties": {
+      "emptyTitle": "No properties",
+      "emptyDescription": "This owner has no listings matching their profile.",
+      "monthlyRent": "Monthly rent",
+      "edits": "Edits {{current}}/{{total}}",
+      "untitled": "Untitled",
+      "noAddress": "No address"
+    }
+  },
+  "adminProperties": {
+    "title": "Property Management",
+    "subtitle": "Review, approve, and manage rental listings.",
+    "statsError": "Could not load property statistics right now.",
+    "retry": "Retry",
+    "summary": {
+      "available": "Available",
+      "pendingReview": "Pending review",
+      "rented": "Rented",
+      "totalListings": "Total listings"
+    },
+    "searchPlaceholder": "Search by title, owner, or ID",
+    "filters": {
+      "type": "Type",
+      "allTypes": "All types",
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "filter": "Filter"
+    },
+    "empty": {
+      "title": "No properties found",
+      "description": "No listings match the current filters."
+    },
+    "noImage": "NO IMAGE",
+    "table": {
+      "property": "Property",
+      "owner": "Owner",
+      "type": "Type",
+      "price": "Price",
+      "status": "Status",
+      "edits": "Edits",
+      "actions": "Actions"
+    },
+    "actions": {
+      "viewDetails": "View details",
+      "approve": "Approve",
+      "reject": "Reject",
+      "softDelete": "Soft delete"
+    },
+    "notes": {
+      "rejectedByAdmin": "Rejected by admin"
+    },
+    "errors": {
+      "failedLoadProperties": "Failed to load properties"
+    },
+    "fallbacks": {
+      "untitledProperty": "Untitled property"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemLabel": "properties"
+    },
+    "statuses": {
+      "AVAILABLE": "Available",
+      "PENDING": "Pending review",
+      "RENTED": "Rented",
+      "UNAVAILABLE": "Unavailable",
+      "MAINTENANCE": "Maintenance",
+      "RESTRICTED": "Restricted"
+    },
+    "categoryOptions": {
+      "apartment": "Apartment",
+      "villa": "Villa",
+      "condominium": "Condominium",
+      "service": "Service",
+      "compound": "Compound"
+    }
+  },
+  "adminPropertyDetail": {
+    "title": "Property Details",
+    "subtitle": "Admin listing review",
+    "errors": {
+      "failedLoadPropertyDetails": "Failed to load property details"
+    },
+    "gallery": {
+      "zoom": "Zoom",
+      "previous": "Previous",
+      "next": "Next",
+      "thumbnailAlt": "Thumbnail {{index}}",
+      "noImageAlt": "Property image"
+    },
+    "map": {
+      "loading": "Loading map…",
+      "unavailable": "Map preview unavailable — no coordinates on this listing."
+    },
+    "propertyInfo": {
+      "propertyFallback": "Property",
+      "addressUnavailable": "Address not available",
+      "monthlyRent": "Monthly rent",
+      "listed": "Listed {{date}}",
+      "views": "{{count}} views",
+      "reviews": "{{rating}} ({{count}} reviews)",
+      "location": "Location",
+      "description": "Description",
+      "noDescription": "No description available",
+      "specifications": "Specifications",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "listingId": "Listing ID",
+      "viewsLabel": "Views",
+      "amenities": "Amenities",
+      "owner": "Owner",
+      "recently": "Recently"
+    },
+    "reviews": {
+      "title": "Reviews ({{count}})",
+      "average": "{{rating}} avg",
+      "loading": "Loading reviews…",
+      "emptyTitle": "No reviews yet",
+      "emptyDescription": "This property has no published reviews."
+    }
+  },
+  "adminAgreements": {
+    "title": "Agreements",
+    "subtitle": "Manage rental agreements between owners and renters",
+    "statsError": "Could not load agreement summary.",
+    "retry": "Retry",
+    "searchPlaceholder": "Search by ID, property, renter, or owner...",
+    "filters": {
+      "status": "Status",
+      "payment": "Payment",
+      "all": "All",
+      "filter": "Filter"
+    },
+    "summary": {
+      "active": "Active",
+      "pending": "Pending",
+      "draft": "Draft",
+      "terminated": "Terminated"
+    },
+    "summaryDescriptions": {
+      "active": "Completed agreements",
+      "pending": "Sent or awaiting payment",
+      "terminated": "Ended or cancelled"
+    },
+    "empty": {
+      "title": "No agreements found",
+      "description": "Try another filter or search."
+    },
+    "table": {
+      "id": "ID",
+      "property": "Property",
+      "parties": "Parties",
+      "rent": "Rent",
+      "duration": "Duration",
+      "status": "Status",
+      "payment": "Payment",
+      "actions": "Actions"
+    },
+    "actions": {
+      "viewAgreement": "View Agreement",
+      "viewContract": "View Contract"
+    },
+    "payment": {
+      "confirmed": "Confirmed",
+      "proofUploaded": "Proof Uploaded",
+      "pending": "Pending"
+    },
+    "durationTo": "to {{date}}",
+    "fallbacks": {
+      "unknownProperty": "Unknown property",
+      "renter": "Renter",
+      "owner": "Owner"
+    },
+    "errors": {
+      "failedLoadAgreements": "Failed to load agreements"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemLabel": "agreements"
+    },
+    "statuses": {
+      "draft": "Draft",
+      "sent": "Sent",
+      "payment_pending": "Payment Pending",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled",
+      "terminated": "Terminated",
+      "expired": "Expired"
+    }
+  },
+  "adminAgreementDetail": {
+    "title": "Agreement Details",
+    "propertyFallback": "Property",
+    "propertyIdFallback": "Property {{id}}",
+    "cardLabels": {
+      "renter": "Renter / ተከራይ",
+      "owner": "Owner / አከራይ"
+    },
+    "fallbacks": {
+      "renter": "Renter",
+      "owner": "Owner"
+    },
+    "badges": {
+      "verifiedIdentity": "Verified Identity",
+      "verifiedOwner": "Verified Owner"
+    },
+    "linkedProperty": "Linked Property",
+    "viewProperty": "View property",
+    "coreLeaseTerms": "Core Lease Terms",
+    "monthlyRentLabel": "Monthly Rent / ወርሃዊ ኪራይ",
+    "statusLabel": "Status",
+    "lifecycleStatus": "Current lifecycle status",
+    "leasePeriod": "Lease period",
+    "currencyLabel": "Currency: {{currency}}",
+    "updateStatus": {
+      "label": "Update status",
+      "placeholder": "Select status"
+    },
+    "errors": {
+      "failedLoadAgreementDetails": "Failed to load agreement details"
+    },
+    "paymentPurposes": {
+      "security_deposit": "Security deposit",
+      "rent": "Rent",
+      "maintenance": "Maintenance"
+    },
+    "paymentStatuses": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "success": "Success",
+      "failed": "Failed",
+      "expired": "Expired"
+    },
+    "payments": {
+      "title": "Payment summary",
+      "description": "Aggregated from {{endpoint}}",
+      "failedLoad": "Failed to load payment summary",
+      "noSummary": "No payment summary available.",
+      "history": "Payment history",
+      "noPayments": "No payment records for this agreement yet.",
+      "proof": "Proof",
+      "proofImageAlt": "Payment proof",
+      "view": "View",
+      "created": "Created {{date}}",
+      "paid": "Paid {{date}}",
+      "ref": "Ref: {{ref}}",
+      "notAvailable": "—",
+      "failedPayments": "One or more payments on this agreement have failed.",
+      "paymentCount": "Payments",
+      "totalPaid": "Total paid",
+      "outstanding": "Outstanding",
+      "deposit": "Deposit (ETB)",
+      "monthlyRent": "Monthly rent",
+      "agreementStatus": "Agreement status",
+      "byPaymentStatus": "By payment status",
+      "latestPayment": "Latest payment"
+    },
+    "statuses": {
+      "draft": "Draft",
+      "sent": "Sent",
+      "payment_pending": "Payment Pending",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled",
+      "terminated": "Terminated",
+      "expired": "Expired"
+    }
+  },
+  "adminReports": {
+    "title": "Reports",
+    "subtitle": "Review and manage platform reports",
+    "searchPlaceholder": "Search by ID, reporter, or target...",
+    "filters": {
+      "status": "Status",
+      "reason": "Reason",
+      "allStatuses": "All statuses",
+      "filter": "Filter"
+    },
+    "reasonOptions": {
+      "all": "All reasons",
+      "fraud": "Fraud",
+      "falseAdvertising": "False Advertising",
+      "inappropriateBehavior": "Inappropriate",
+      "spam": "Spam",
+      "other": "Other"
+    },
+    "empty": {
+      "title": "No reports found",
+      "description": "Try adjusting filters."
+    },
+    "errors": {
+      "failedLoadReports": "Failed to load reports"
+    },
+    "table": {
+      "id": "ID",
+      "reporter": "Reporter",
+      "reportedUser": "Reported User",
+      "reason": "Reason",
+      "status": "Status",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "actions": {
+      "investigate": "Investigate",
+      "resolve": "Resolve Report",
+      "dismiss": "Dismiss Report"
+    },
+    "fallbacks": {
+      "unknownReporter": "Unknown Reporter",
+      "targetType": "target"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemLabel": "reports"
+    },
+    "statuses": {
+      "open": "Open",
+      "in_review": "In Review",
+      "resolved": "Resolved",
+      "dismissed": "Dismissed"
+    }
+  },
+  "adminReportDetail": {
+    "title": "Report #{{id}}",
+    "breadcrumb": {
+      "investigations": "Investigations",
+      "fraudReports": "Fraud Reports"
+    },
+    "filedOn": "Filed on {{date}}",
+    "submittedOn": "Submitted {{date}}",
+    "errors": {
+      "failedLoadReportDetails": "Failed to load report details"
+    },
+    "reporterLabel": "Reporter",
+    "reporterUnknown": "Unknown reporter",
+    "reportedTarget": "Reported {{type}}",
+    "targetTypes": {
+      "property": "property",
+      "user": "user",
+      "agreement": "agreement",
+      "unknown": "target"
+    },
+    "category": {
+      "badge": "FRAUD",
+      "fallback": "Report"
+    },
+    "evidence": "Evidence",
+    "evidenceImageAlt": "Evidence {{index}}",
+    "riskAssessmentEmpty": "Risk assessment could not be computed for this report subject.",
+    "updateStatus": {
+      "label": "Update Investigation Status"
+    },
+    "actions": {
+      "resolve": "Resolve Report",
+      "dismiss": "Dismiss Report"
+    },
+    "statuses": {
+      "open": "Open",
+      "in_review": "In Review",
+      "resolved": "Resolved",
+      "dismissed": "Dismissed"
+    }
+  },
   "landing": {
     "hero": {
       "title": "Find Your Perfect",

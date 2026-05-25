@@ -1,48 +1,23 @@
-'use client';
-
 import {
-  ZoomIn,
-  Home,
-  Bed,
-  Wifi,
-  Hotel,
-  Cctv,
-  Map,
-  WashingMachine,
-  HousePlug,
-  ParkingSquare,
-  ShowerHead,
-  MapPin,
   CheckCircle,
-  ChevronRight,
-  ChevronLeft,
-  MessageSquare,
-  Send,
-  ThumbsUp,
-  Star,
-  Calendar,
-  Clock,
-  AlertTriangle,
-  ArrowRight,
-  Printer,
-  Gavel,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Gavel,
+  ArrowRight,
   X,
-  UserX,
-  Flag,
   Image as LucideImage,
-  FileText,
-  Info,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import { useParams } from 'react-router';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
-import { useNavigate } from 'react-router';
-import { useParams } from 'react-router';
 import {
   useAdminReport,
   useAdminReportRiskAssessment,
@@ -55,12 +30,18 @@ import { useAdminReportTarget } from '@/features/admin/hooks/useAdminLookupMaps'
 import RiskAssessmentCard from '@/features/admin/components/RiskAssessmentCard';
 
 export default function ReportDetailPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams();
   const { data: report, isLoading, isError, refetch } = useAdminReport(id);
   const riskQuery = useAdminReportRiskAssessment(id);
   const updateStatus = useAdminUpdateReportStatus();
   const target = useAdminReportTarget(report);
+
+  const translateReportStatus = (statusValue) =>
+    t(`adminReportDetail.statuses.${statusValue}`, {
+      defaultValue: getReportStatusMeta(statusValue).label,
+    });
 
   if (isLoading) {
     return (
@@ -73,7 +54,10 @@ export default function ReportDetailPage() {
   if (isError || !report) {
     return (
       <main className="mx-auto max-w-[1440px] p-6">
-        <ErrorState title="Failed to load report details" onRetry={refetch} />
+        <ErrorState
+          title={t('adminReportDetail.errors.failedLoadReportDetails')}
+          onRetry={refetch}
+        />
       </main>
     );
   }
@@ -82,25 +66,28 @@ export default function ReportDetailPage() {
   const createdAt = new Date(report.createdAt).toLocaleString();
   const reporterName = report.reportedBy
     ? formatPersonName(report.reportedBy)
-    : 'Unknown reporter';
+    : t('adminReportDetail.reporterUnknown');
+  const targetTypeLabel = t(`adminReportDetail.targetTypes.${report.targetType || 'unknown'}`, {
+    defaultValue: report.targetType || t('adminReportDetail.targetTypes.unknown'),
+  });
 
   return (
     <main className="mx-auto max-w-[1440px] px-6 py-6">
-      {/* Breadcrumb */}
       <div className="text-muted-foreground mb-6 flex items-center gap-2 text-sm font-medium">
         <button
           onClick={() => navigate('/admin/reports')}
           className="hover:text-foreground transition-colors"
         >
-          Investigations
+          {t('adminReportDetail.breadcrumb.investigations')}
         </button>
         <ChevronRight className="h-3.5 w-3.5" />
-        <span className="hover:text-foreground transition-colors">Fraud Reports</span>
+        <span className="hover:text-foreground transition-colors">
+          {t('adminReportDetail.breadcrumb.fraudReports')}
+        </span>
         <ChevronRight className="h-3.5 w-3.5" />
         <span className="text-foreground font-semibold">#{report.id}</span>
       </div>
 
-      {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
@@ -111,41 +98,47 @@ export default function ReportDetailPage() {
           </button>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-slate-900">Report #{report.id}</h1>
-              <Badge className={`${statusMeta.style} hover:brightness-95`}>{statusMeta.label}</Badge>
+              <h1 className="text-2xl font-bold text-slate-900">
+                {t('adminReportDetail.title', { id: report.id })}
+              </h1>
+              <Badge className={`${statusMeta.style} hover:brightness-95`}>
+                {translateReportStatus(report.status)}
+              </Badge>
             </div>
-            <p className="mt-1 text-slate-500">Filed on {createdAt}</p>
+            <p className="mt-1 text-slate-500">
+              {t('adminReportDetail.filedOn', { date: createdAt })}
+            </p>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
-        {/* Main content - left side */}
         <div className="space-y-6 lg:col-span-8">
-          {/* Report Header */}
           <Card>
             <CardContent className="pt-6">
               <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-center">
                 <div>
                   <div className="mb-2 flex flex-wrap items-center gap-3">
-                    <h2 className="text-2xl font-bold tracking-tight">Report #{report.id}</h2>
+                    <h2 className="text-2xl font-bold tracking-tight">
+                      {t('adminReportDetail.title', { id: report.id })}
+                    </h2>
 
                     <Badge
                       variant="outline"
                       className="gap-1 border-yellow-200 bg-yellow-50 text-yellow-800"
                     >
                       <Clock className="h-3.5 w-3.5" />
-                      {statusMeta.label}
+                      {translateReportStatus(report.status)}
                     </Badge>
-
                   </div>
 
-                  <p className="text-muted-foreground text-sm">Submitted {createdAt}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {t('adminReportDetail.submittedOn', { date: createdAt })}
+                  </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {/* Reporter */}
                 <Card
                   className="hover:border-primary/50 cursor-pointer transition-colors"
                   onClick={() => report.reportedBy?.id && navigate(`/admin/users/${report.reportedBy.id}`)}
@@ -155,7 +148,9 @@ export default function ReportDetailPage() {
                       <AvatarFallback>{reporterName[0]?.toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                      <p className="text-muted-foreground text-xs font-medium uppercase">Reporter</p>
+                      <p className="text-muted-foreground text-xs font-medium uppercase">
+                        {t('adminReportDetail.reporterLabel')}
+                      </p>
                       <p className="font-semibold">{reporterName}</p>
                       <p className="text-muted-foreground mt-1 text-xs">{report.reportedBy?.email}</p>
                     </div>
@@ -170,8 +165,8 @@ export default function ReportDetailPage() {
                   >
                     <CardContent className="flex items-center gap-4 p-5">
                       <div className="flex-1">
-                        <p className="text-xs font-medium text-red-600 uppercase capitalize">
-                          Reported {report.targetType}
+                        <p className="text-xs font-medium text-red-600 uppercase">
+                          {t('adminReportDetail.reportedTarget', { type: targetTypeLabel })}
                         </p>
                         <p className="font-semibold">{target.label}</p>
                         {target.sublabel && (
@@ -186,7 +181,6 @@ export default function ReportDetailPage() {
             </CardContent>
           </Card>
 
-          {/* Tabs Section */}
           <Card className="overflow-hidden">
             <CardContent className="mt-0 border-0 p-0 focus-visible:ring-0">
               <div className="space-y-8 p-8">
@@ -195,9 +189,12 @@ export default function ReportDetailPage() {
                     variant="destructive"
                     className="flex items-center gap-2 px-4 py-1.5 text-sm font-black uppercase"
                   >
-                    <Gavel className="h-5 w-5" /> FRAUD
+                    <Gavel className="h-5 w-5" />
+                    {t('adminReportDetail.category.badge')}
                   </Badge>
-                  <h3 className="text-xl font-bold capitalize">{report.category || 'Report'}</h3>
+                  <h3 className="text-xl font-bold capitalize">
+                    {report.category || t('adminReportDetail.category.fallback')}
+                  </h3>
                 </div>
 
                 <div className="prose text-foreground max-w-none">
@@ -207,7 +204,8 @@ export default function ReportDetailPage() {
                 {Array.isArray(report.images) && report.images.length > 0 && (
                   <div>
                     <h4 className="mb-4 flex items-center gap-2 text-base font-semibold">
-                      <LucideImage className="text-primary h-5 w-5" /> Evidence
+                      <LucideImage className="text-primary h-5 w-5" />
+                      {t('adminReportDetail.evidence')}
                     </h4>
                     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                       {report.images.map((url, idx) => (
@@ -218,7 +216,11 @@ export default function ReportDetailPage() {
                           rel="noreferrer"
                           className="block overflow-hidden rounded-lg border"
                         >
-                          <img src={url} alt={`Evidence ${idx + 1}`} className="aspect-square w-full object-cover" />
+                          <img
+                            src={url}
+                            alt={t('adminReportDetail.evidenceImageAlt', { index: idx + 1 })}
+                            className="aspect-square w-full object-cover"
+                          />
                         </a>
                       ))}
                     </div>
@@ -235,14 +237,14 @@ export default function ReportDetailPage() {
             isLoading={riskQuery.isLoading}
             isError={riskQuery.isError}
             refetch={riskQuery.refetch}
-            emptyMessage="Risk assessment could not be computed for this report subject."
+            emptyMessage={t('adminReportDetail.riskAssessmentEmpty')}
           />
 
           <Card>
             <CardContent className="space-y-6 pt-6">
               <div>
                 <label className="text-muted-foreground mb-2 block text-xs font-medium uppercase">
-                  Update Investigation Status
+                  {t('adminReportDetail.updateStatus.label')}
                 </label>
                 <div className="relative">
                   <select
@@ -253,26 +255,32 @@ export default function ReportDetailPage() {
                     }
                     disabled={updateStatus.isPending}
                   >
-                    <option value="open">Open</option>
-                    <option value="in_review">In Review</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dismissed">Dismissed</option>
+                    <option value="open">{translateReportStatus('open')}</option>
+                    <option value="in_review">{translateReportStatus('in_review')}</option>
+                    <option value="resolved">{translateReportStatus('resolved')}</option>
+                    <option value="dismissed">{translateReportStatus('dismissed')}</option>
                   </select>
                   <ChevronDown className="text-muted-foreground pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2" />
                 </div>
               </div>
 
               <div className="space-y-3">
-                <Button className="w-full gap-2" onClick={() => updateStatus.mutate({ id: report.id, status: 'resolved' })}>
+                <Button
+                  className="w-full gap-2"
+                  onClick={() => updateStatus.mutate({ id: report.id, status: 'resolved' })}
+                >
                   <CheckCircle className="h-4 w-4" />
-                  Resolve Report
+                  {t('adminReportDetail.actions.resolve')}
                 </Button>
-                <Button variant="outline" className="w-full gap-2" onClick={() => updateStatus.mutate({ id: report.id, status: 'dismissed' })}>
+                <Button
+                  variant="outline"
+                  className="w-full gap-2"
+                  onClick={() => updateStatus.mutate({ id: report.id, status: 'dismissed' })}
+                >
                   <X className="h-4 w-4" />
-                  Dismiss Report
+                  {t('adminReportDetail.actions.dismiss')}
                 </Button>
               </div>
-
             </CardContent>
           </Card>
         </div>

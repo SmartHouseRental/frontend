@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -38,6 +39,7 @@ import DataTablePagination from '@/components/DataTablePagination';
 
 function UserManagementPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [role, setRole] = useState('all');
@@ -70,12 +72,12 @@ function UserManagementPage() {
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-          <p className="mt-1 text-gray-600">Manage platform users, roles, and account status</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('adminUsers.title')}</h1>
+          <p className="mt-1 text-gray-600">{t('adminUsers.subtitle')}</p>
         </div>
-        <Button >
+        <Button>
           <Plus className="mr-2 h-4 w-4" />
-          Add User
+          {t('adminUsers.addUser')}
         </Button>
       </div>
 
@@ -85,7 +87,7 @@ function UserManagementPage() {
             <Search />
           </span>
           <Input
-            placeholder="Search users by name, email, or ID..."
+            placeholder={t('adminUsers.searchPlaceholder')}
             type="text"
             className="relative pl-10"
             value={search}
@@ -105,13 +107,13 @@ function UserManagementPage() {
             }}
           >
             <SelectTrigger className="w-36">
-              <SelectValue placeholder="Role" />
+              <SelectValue placeholder={t('adminUsers.filters.role')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Roles</SelectItem>
-              <SelectItem value="renter">Renter</SelectItem>
-              <SelectItem value="owner">Owner</SelectItem>
-              <SelectItem value="admin">Admin</SelectItem>
+              <SelectItem value="all">{t('adminUsers.filters.allRoles')}</SelectItem>
+              <SelectItem value="renter">{t('adminUsers.filters.renter')}</SelectItem>
+              <SelectItem value="owner">{t('adminUsers.filters.owner')}</SelectItem>
+              <SelectItem value="admin">{t('adminUsers.filters.admin')}</SelectItem>
             </SelectContent>
           </Select>
           <Select
@@ -122,13 +124,13 @@ function UserManagementPage() {
             }}
           >
             <SelectTrigger className="w-40">
-              <SelectValue placeholder="Status" />
+              <SelectValue placeholder={t('adminUsers.filters.status')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="suspended">Suspended</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="all">{t('adminUsers.filters.allStatuses')}</SelectItem>
+              <SelectItem value="active">{t('adminUsers.filters.active')}</SelectItem>
+              <SelectItem value="suspended">{t('adminUsers.filters.suspended')}</SelectItem>
+              <SelectItem value="pending">{t('adminUsers.filters.pending')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -137,21 +139,21 @@ function UserManagementPage() {
         {isLoading ? (
           <TableSkeleton rows={6} columns={8} />
         ) : isError ? (
-          <ErrorState title="Failed to load users" onRetry={refetch} />
+          <ErrorState title={t('adminUsers.errors.failedToLoadUsers')} onRetry={refetch} />
         ) : users.length === 0 ? (
-          <EmptyState title="No users found" description="Try adjusting filters or search." />
+          <EmptyState title={t('adminUsers.empty.title')} description={t('adminUsers.empty.description')} />
         ) : (
           <Card className="gap-0 overflow-hidden p-0">
             <Table className="w-full min-w-full border-collapse text-left">
               <TableHeader className="bg-muted/30 w-full">
                 <TableRow>
-                  <TableHead className="px-6 py-4">Avatar</TableHead>
-                  <TableHead className="px-6 py-4">Name/Email</TableHead>
-                  <TableHead className="px-6 py-4">Role</TableHead>
-                  <TableHead className="px-6 py-4">Verification</TableHead>
-                  <TableHead className="px-6 py-4">Status</TableHead>
-                  <TableHead className="px-6 py-4">Joined Date</TableHead>
-                  <TableHead className="px-4 py-4">Actions</TableHead>
+                  <TableHead className="px-6 py-4">{t('adminUsers.table.avatar')}</TableHead>
+                  <TableHead className="px-6 py-4">{t('adminUsers.table.nameEmail')}</TableHead>
+                  <TableHead className="px-6 py-4">{t('adminUsers.table.role')}</TableHead>
+                  <TableHead className="px-6 py-4">{t('adminUsers.table.verification')}</TableHead>
+                  <TableHead className="px-6 py-4">{t('adminUsers.table.status')}</TableHead>
+                  <TableHead className="px-6 py-4">{t('adminUsers.table.joinedDate')}</TableHead>
+                  <TableHead className="px-4 py-4">{t('adminUsers.table.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -160,6 +162,14 @@ function UserManagementPage() {
                   const sState = getUserStatusMeta(user.status);
                   const fullName =
                     `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email;
+                  const roleLabel = t(`adminUsers.roles.${user.role}`, { defaultValue: user.role });
+                  const verificationLabel = t(`adminUsers.verificationStates.${user.verificationState}`, {
+                    defaultValue: vState.label,
+                  });
+                  const statusLabel = t(`adminUsers.statuses.${user.status}`, {
+                    defaultValue: sState.label,
+                  });
+
                   return (
                     <TableRow
                       key={user.id}
@@ -189,20 +199,20 @@ function UserManagementPage() {
                       </TableCell>
                       <TableCell className="px-6 py-4">
                         <span className="bg-primary/10 text-primary rounded-md px-2 py-1 text-xs font-semibold capitalize">
-                          {user.role}
+                          {roleLabel}
                         </span>
                       </TableCell>
                       <TableCell className="px-6 py-4">
                         <StatusBadge
-                          status={vState.label}
-                          statusMap={{ [vState.label]: vState.style }}
+                          status={verificationLabel}
+                          statusMap={{ [verificationLabel]: vState.style }}
                         />
                       </TableCell>
                       <TableCell className="px-6 py-4">
                         <span
                           className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${sState.style}`}
                         >
-                          {sState.label}
+                          {statusLabel}
                         </span>
                       </TableCell>
                       <TableCell className="text-muted-foreground px-6 py-4 text-sm">
@@ -221,12 +231,12 @@ function UserManagementPage() {
                               onClick={() => navigate(`/admin/users/${user.id}`)}
                             >
                               <Eye className="mr-2 h-4 w-4" />
-                              <span>View Profile</span>
+                              <span>{t('adminUsers.actions.viewProfile')}</span>
                             </DropdownMenuItem>
                             {user.role === 'owner' && user.verificationState === 'pending' && (
                               <DropdownMenuItem className="cursor-pointer text-emerald-600 focus:text-emerald-600">
                                 <ShieldCheck className="mr-2 h-4 w-4" />
-                                <span>Verify Documents</span>
+                                <span>{t('adminUsers.actions.verifyDocuments')}</span>
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
@@ -236,7 +246,7 @@ function UserManagementPage() {
                                 onClick={() => handleStatusChange(user.id, 'suspended')}
                               >
                                 <ShieldBan className="mr-2 h-4 w-4" />
-                                <span>Suspend User</span>
+                                <span>{t('adminUsers.actions.suspendUser')}</span>
                               </DropdownMenuItem>
                             ) : (
                               <DropdownMenuItem
@@ -244,7 +254,7 @@ function UserManagementPage() {
                                 onClick={() => handleStatusChange(user.id, 'active')}
                               >
                                 <ShieldCheck className="mr-2 h-4 w-4" />
-                                <span>Reactivate User</span>
+                                <span>{t('adminUsers.actions.reactivateUser')}</span>
                               </DropdownMenuItem>
                             )}
                           </DropdownMenuContent>
@@ -261,7 +271,9 @@ function UserManagementPage() {
               totalPages={meta.totalPages || 1}
               totalItems={meta.total || 0}
               itemsPerPage={meta.limit || 20}
-              itemLabel="users"
+              itemLabel={t('adminUsers.pagination.itemLabel')}
+              showingLabel={t('adminUsers.pagination.showing')}
+              ofLabel={t('adminUsers.pagination.of')}
               onPageChange={setPage}
             />
           </Card>

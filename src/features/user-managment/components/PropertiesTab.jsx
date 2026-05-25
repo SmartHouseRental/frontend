@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Bed, Bath, Eye, Home, MapPin } from 'lucide-react';
 import { useAdminProperties } from '@/features/admin/hooks/useAdmin';
 import { getAdminListItems } from '@/features/admin/adminSanitize';
@@ -15,6 +16,7 @@ import TableSkeleton from '@/components/TableSkeleton';
 
 function PropertiesTab({ user }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const searchTerm = user?.first_name || user?.email || '';
   const { data, isLoading } = useAdminProperties({
     page: 1,
@@ -30,8 +32,8 @@ function PropertiesTab({ user }) {
   if (properties.length === 0) {
     return (
       <EmptyState
-        title="No properties"
-        description="This owner has no listings matching their profile."
+        title={t('adminUserDetail.properties.emptyTitle')}
+        description={t('adminUserDetail.properties.emptyDescription')}
       />
     );
   }
@@ -40,14 +42,13 @@ function PropertiesTab({ user }) {
     <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
       {properties.map((property) => {
         const statusMeta = getPropertyStatusMeta(property.status);
-        const title = formatLocalizedText(property.title, 'Untitled');
+        const title = formatLocalizedText(property.title, t('adminUserDetail.properties.untitled'));
         const address = formatLocalizedText(
           property.address || property.location,
-          'No address'
+          t('adminUserDetail.properties.noAddress')
         );
         const price = formatPropertyPrice(property.price, '—');
-        const category =
-          property.categoryType || formatPropertyCategory(property.category);
+        const category = property.categoryType || formatPropertyCategory(property.category);
         const image = property.images?.[0];
 
         return (
@@ -107,7 +108,7 @@ function PropertiesTab({ user }) {
               <div className="border-border/60 flex items-center justify-between border-t pt-3">
                 <div>
                   <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-wider">
-                    Monthly rent
+                    {t('adminUserDetail.properties.monthlyRent')}
                   </p>
                   <p className="text-primary text-lg font-extrabold">{price}</p>
                 </div>
@@ -117,7 +118,7 @@ function PropertiesTab({ user }) {
                     {property.viewCount ?? 0}
                   </span>
                   <span className="rounded bg-muted px-1.5 py-0.5 font-bold">
-                    Edits {property.editCount ?? 0}/1
+                    {t('adminUserDetail.properties.edits', { current: property.editCount ?? 0, total: 1 })}
                   </span>
                 </div>
               </div>
