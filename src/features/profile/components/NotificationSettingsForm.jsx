@@ -1,21 +1,29 @@
-import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import { Bell, Globe, Loader2 } from 'lucide-react';
 import { useUpdateNotifications } from '../hooks/useUpdateNotifications';
 import { useUpdateLanguage } from '../hooks/useUpdateLanguage';
 
-const notifSettings = [
-    { key: 'appointments', label: 'New appointment requests', desc: 'Get notified when a renter requests a property viewing' },
-    { key: 'agreements', label: 'Agreement updates', desc: 'Notifications for new, signed, or terminated agreements' },
-    { key: 'payments', label: 'Payment confirmations', desc: 'Alert when payment proof is uploaded or confirmed' },
-    { key: 'reviews', label: 'New reviews', desc: 'Get notified when a renter leaves a review' },
-    { key: 'reports', label: 'Reports & complaints', desc: 'Alerts for reports filed against you or your properties' },
-    { key: 'system', label: 'System announcements', desc: 'Platform updates and new features' },
-];
-
 export function NotificationSettingsForm({ profile }) {
+    const { t } = useTranslation();
     const updateNotificationsMutation = useUpdateNotifications();
     const updateLanguageMutation = useUpdateLanguage();
+
+    const notifSettings = [
+        { key: 'appointments', labelKey: 'appointments', descKey: 'appointmentsDesc' },
+        { key: 'agreements', labelKey: 'agreements', descKey: 'agreementsDesc' },
+        { key: 'payments', labelKey: 'payments', descKey: 'paymentsDesc' },
+        { key: 'reviews', labelKey: 'reviews', descKey: 'reviewsDesc' },
+        { key: 'reports', labelKey: 'reports', descKey: 'reportsDesc' },
+        { key: 'system', labelKey: 'system', descKey: 'systemDesc' },
+    ];
+
+    const languageOptions = [
+        { value: 'en', labelKey: 'english' },
+        { value: 'am', labelKey: 'amharic' },
+        { value: 'or', labelKey: 'oromo' },
+        { value: 'ti', labelKey: 'tigrinya' },
+    ];
 
     const handleToggle = (key) => {
         const currentPrefs = profile?.notificationPreferences || {};
@@ -32,7 +40,7 @@ export function NotificationSettingsForm({ profile }) {
             <Card>
                 <CardContent className="space-y-1 pt-6">
                     <h3 className="text-foreground mb-4 flex items-center gap-2 font-bold">
-                        <Bell size={16} /> Notification Preferences
+                        <Bell size={16} /> {t('owner.profile.notificationSettings.title')}
                         {updateNotificationsMutation.isPending && <Loader2 size={14} className="animate-spin ml-2" />}
                     </h3>
                     {notifSettings.map((pref) => {
@@ -40,8 +48,8 @@ export function NotificationSettingsForm({ profile }) {
                         return (
                             <div key={pref.key} className="hover:bg-muted/30 flex items-center justify-between rounded-lg px-2 py-3 transition-colors">
                                 <div>
-                                    <p className="text-foreground text-sm font-semibold">{pref.label}</p>
-                                    <p className="text-muted-foreground text-xs">{pref.desc}</p>
+                                    <p className="text-foreground text-sm font-semibold">{t(`owner.profile.notificationSettings.items.${pref.labelKey}`)}</p>
+                                    <p className="text-muted-foreground text-xs">{t(`owner.profile.notificationSettings.items.${pref.descKey}`)}</p>
                                 </div>
                                 <button
                                     onClick={() => handleToggle(pref.key)}
@@ -58,22 +66,23 @@ export function NotificationSettingsForm({ profile }) {
             <Card>
                 <CardContent className="space-y-4 pt-6">
                     <h3 className="text-foreground flex items-center gap-2 font-bold">
-                        <Globe size={16} /> Language
+                        <Globe size={16} /> {t('owner.profile.notificationSettings.languageTitle')}
                         {updateLanguageMutation.isPending && <Loader2 size={14} className="animate-spin ml-2" />}
                     </h3>
                     <div>
                         <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-                            Preferred Language
+                            {t('owner.profile.notificationSettings.languageLabel')}
                         </label>
                         <select
                             value={profile?.language || 'en'}
                             onChange={handleLanguageChange}
                             className="border-border bg-background focus:ring-primary/20 mt-1.5 h-10 w-full rounded-lg border px-3 text-sm outline-none focus:ring-2 md:w-64"
                         >
-                            <option value="en">English</option>
-                            <option value="am">Amharic</option>
-                            <option value="or">Afaan Oromo</option>
-                            <option value="ti">Tigrinya</option>
+                            {languageOptions.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {t(`owner.profile.notificationSettings.languageOptions.${option.labelKey}`)}
+                                </option>
+                            ))}
                         </select>
                     </div>
                 </CardContent>

@@ -34,6 +34,7 @@ import ErrorState from '@/components/ErrorState';
 import { SchemaWarningBanner } from '@/components/SchemaWarningBanner';
 import { getApiErrorMessage, isSchemaSyncError } from '@/lib/apiErrors';
 import { useOwnerOverview } from '../hooks/useOwnerOverview';
+import { useTranslation } from 'react-i18next';
 
 const OwnerRevenueChart = lazy(() =>
   import('./OwnerRevenueChart').then((m) => ({ default: m.OwnerRevenueChart }))
@@ -93,6 +94,7 @@ function formatCurrency(amount, currency = 'ETB') {
 }
 
 export function OwnerOverviewContent() {
+  const { t, i18n } = useTranslation();
   const [chartPeriod, setChartPeriod] = useState('monthly');
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -134,33 +136,37 @@ export function OwnerOverviewContent() {
 
   const quickActions = [
     {
-      label: 'Add New Property',
-      desc: 'List a new rental property',
+      label: t('owner.overview.quickActions.addProperty.title'),
+      desc: t('owner.overview.quickActions.addProperty.desc'),
       icon: Plus,
       color: 'primary',
       to: 'properties',
       isAddProperty: true,
     },
     {
-      label: 'View Appointments',
-      desc: `${quickActionsMeta?.pendingAppointments ?? 0} pending confirmation${quickActionsMeta?.pendingAppointments === 1 ? '' : 's'}`,
+      label: t('owner.overview.quickActions.appointments.title'),
+      desc: t('owner.overview.quickActions.appointments.desc', {
+        count: quickActionsMeta?.pendingAppointments ?? 0,
+      }),
       icon: CalendarDays,
       color: 'amber-500',
       to: 'appointments',
     },
     {
-      label: 'Manage Agreements',
+      label: t('owner.overview.quickActions.agreements.title'),
       desc:
         (quickActionsMeta?.pendingAgreements ?? 0) > 0
-          ? 'Review pending contracts'
-          : 'View rental agreements',
+          ? t('owner.overview.quickActions.agreements.descPending')
+          : t('owner.overview.quickActions.agreements.descDefault'),
       icon: Handshake,
       color: 'blue-500',
       to: 'agreements',
     },
     {
-      label: 'Notifications',
-      desc: `${quickActionsMeta?.unreadNotifications ?? 0} unread alert${quickActionsMeta?.unreadNotifications === 1 ? '' : 's'}`,
+      label: t('owner.overview.quickActions.notifications.title'),
+      desc: t('owner.overview.quickActions.notifications.desc', {
+        count: quickActionsMeta?.unreadNotifications ?? 0,
+      }),
       icon: Bell,
       color: 'rose-500',
       to: 'notifications',
@@ -170,40 +176,40 @@ export function OwnerOverviewContent() {
   const kpiData = kpis
     ? [
         {
-          label: 'Active Listings',
+          label: t('owner.overview.kpis.activeListings'),
           value: String(kpis.activeListings),
           icon: Building2,
           color: 'primary',
           borderColor: 'border-primary',
         },
         {
-          label: 'Total Views',
+          label: t('owner.overview.kpis.totalViews'),
           value: kpis.totalViews.toLocaleString(),
           icon: Eye,
           color: 'blue-500',
           borderColor: 'border-blue-400',
         },
         {
-          label: 'Appointments',
+          label: t('owner.overview.kpis.appointments'),
           value: String(kpis.pendingAppointments),
-          sub: 'Pending',
+          sub: t('owner.overview.kpis.pending'),
           icon: CalendarDays,
           color: 'amber-500',
           borderColor: 'border-amber-400',
         },
         {
-          label: 'Pending Agreements',
+          label: t('owner.overview.kpis.pendingAgreements'),
           value: String(kpis.pendingAgreements),
-          change: kpis.pendingAgreements > 0 ? 'Action Needed' : undefined,
+          change: kpis.pendingAgreements > 0 ? t('owner.overview.kpis.actionNeeded') : undefined,
           changeType: kpis.pendingAgreements > 0 ? 'alert' : undefined,
           icon: FileText,
           color: 'rose-500',
           borderColor: 'border-rose-400',
         },
         {
-          label: 'Revenue',
+          label: t('owner.overview.kpis.revenue'),
           value: formatCurrency(kpis.revenueThisMonth, kpis.revenueCurrency),
-          sub: 'This month',
+          sub: t('owner.overview.kpis.thisMonth'),
           icon: DollarSign,
           color: 'emerald-500',
           borderColor: 'border-emerald-400',
@@ -226,14 +232,18 @@ export function OwnerOverviewContent() {
   }
 
   if (isError || !overview) {
-    const errMsg = getApiErrorMessage(error, 'Failed to load dashboard.');
+    const errMsg = getApiErrorMessage(error, t('owner.overview.errors.failedLoadDashboard'));
     return (
       <div className="flex h-screen items-center justify-center p-8">
         <ErrorState
-          title={isSchemaSyncError(error) ? 'Dashboard temporarily unavailable' : 'Could not load dashboard'}
+          title={
+            isSchemaSyncError(error)
+              ? t('owner.overview.errors.temporarilyUnavailable')
+              : t('owner.overview.errors.couldNotLoad')
+          }
           message={
             isSchemaSyncError(error)
-              ? 'The server needs the latest backend deployment. Other pages may work with limited data until then.'
+              ? t('owner.overview.errors.schemaSync')
               : errMsg
           }
           onRetry={() => refetch()}
@@ -251,23 +261,25 @@ export function OwnerOverviewContent() {
       </div>
 
       {overviewPartial && (
-        <SchemaWarningBanner message="Some dashboard sections could not be loaded (agreements or payments may be updating). Figures shown may be incomplete." />
+        <SchemaWarningBanner message={t('owner.overview.partialWarning')} />
       )}
 
       <div className="flex items-end justify-between">
         <div>
           <h2 className="text-foreground text-3xl font-black tracking-tight">
-            Welcome back, {profile?.firstName || 'Owner'} 👋
+            {t('owner.overview.welcome', {
+              name: profile?.firstName || t('owner.overview.ownerFallback'),
+            })}
           </h2>
           <p className="text-muted-foreground mt-1 font-medium">
-            Here&apos;s what&apos;s happening with your properties today.
+            {t('owner.overview.subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-3">
           <div className="border-border bg-card text-muted-foreground hidden items-center gap-2 rounded-lg border px-4 py-2 text-sm lg:flex">
             <Clock size={14} />
             <span>
-              {new Date().toLocaleDateString('en-US', {
+              {new Date().toLocaleDateString(i18n.resolvedLanguage || i18n.language || undefined, {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -276,7 +288,7 @@ export function OwnerOverviewContent() {
             </span>
           </div>
           <Button onClick={handleAddProperty} className="gap-2 shadow-sm">
-            <Plus size={16} /> Add Property
+            <Plus size={16} /> {t('owner.overview.addProperty')}
           </Button>
         </div>
       </div>
@@ -359,11 +371,15 @@ export function OwnerOverviewContent() {
         <div className="border-border bg-card rounded-2xl border p-6 shadow-sm lg:col-span-2">
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <h4 className="text-foreground text-lg font-bold">Revenue Overview</h4>
+              <h4 className="text-foreground text-lg font-bold">
+                {t('owner.overview.revenue.title')}
+              </h4>
               <div className="mt-1 flex items-center gap-4">
                 <div className="flex items-center gap-1.5">
                   <span className="bg-primary size-2 rounded-full"></span>
-                  <span className="text-muted-foreground text-xs font-medium">This Period</span>
+                  <span className="text-muted-foreground text-xs font-medium">
+                    {t('owner.overview.revenue.thisPeriod')}
+                  </span>
                 </div>
               </div>
             </div>
@@ -375,7 +391,7 @@ export function OwnerOverviewContent() {
                   onClick={() => setChartPeriod(p)}
                   className={`rounded-md px-3 py-1.5 text-xs font-bold capitalize transition-all ${chartPeriod === p ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  {p}
+                  {t(`owner.overview.periods.${p}`)}
                 </button>
               ))}
             </div>
@@ -396,24 +412,32 @@ export function OwnerOverviewContent() {
           </div>
           <div className="border-border mt-6 grid grid-cols-3 gap-4 border-t pt-4">
             <div>
-              <p className="text-muted-foreground text-xs font-medium">Total Revenue</p>
+              <p className="text-muted-foreground text-xs font-medium">
+                {t('owner.overview.revenue.totalRevenue')}
+              </p>
               <p className="text-foreground mt-0.5 text-lg font-black">
                 {formatCurrency(revenue?.totalThisMonth ?? 0, revenue?.currency)}
               </p>
             </div>
             <div>
-              <p className="text-muted-foreground text-xs font-medium">Avg per Property</p>
+              <p className="text-muted-foreground text-xs font-medium">
+                {t('owner.overview.revenue.avgPerProperty')}
+              </p>
               <p className="text-foreground mt-0.5 text-lg font-black">
                 {formatCurrency(revenue?.avgPerProperty ?? 0, revenue?.currency)}
               </p>
             </div>
             <div>
-              <p className="text-muted-foreground text-xs font-medium">Pending Payments</p>
+              <p className="text-muted-foreground text-xs font-medium">
+                {t('owner.overview.revenue.pendingPayments')}
+              </p>
               <p className="mt-0.5 text-lg font-black text-amber-600">
                 {formatCurrency(revenue?.pendingAmount ?? 0, revenue?.currency)}
               </p>
               <p className="text-muted-foreground mt-0.5 text-xs">
-                {revenue?.pendingCount ?? 0} awaiting confirmation
+                {t('owner.overview.revenue.awaitingConfirmation', {
+                  count: revenue?.pendingCount ?? 0,
+                })}
               </p>
             </div>
           </div>
@@ -421,14 +445,16 @@ export function OwnerOverviewContent() {
 
         <div className="border-border bg-card flex flex-col rounded-2xl border p-6 shadow-sm">
           <div className="mb-5 flex items-center justify-between">
-            <h4 className="text-foreground text-lg font-bold">Recent Activity</h4>
+            <h4 className="text-foreground text-lg font-bold">{t('owner.overview.activity.title')}</h4>
             <Link to="/owner/notifications" className="text-primary text-xs font-bold hover:underline">
-              View All
+              {t('owner.overview.viewAll')}
             </Link>
           </div>
           <div className="flex-1 space-y-4 overflow-y-auto">
             {visibleActivities.length === 0 ? (
-              <p className="text-muted-foreground py-4 text-center text-sm">No recent activity</p>
+              <p className="text-muted-foreground py-4 text-center text-sm">
+                {t('owner.overview.activity.empty')}
+              </p>
             ) : (
               visibleActivities.map((a) => {
                 const Icon = a.icon;
@@ -458,12 +484,16 @@ export function OwnerOverviewContent() {
       <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
         <div className="border-border flex items-center justify-between border-b p-6">
           <div>
-            <h4 className="text-foreground text-lg font-bold">Top Performing Properties</h4>
-            <p className="text-muted-foreground text-sm">Your most viewed listings</p>
+            <h4 className="text-foreground text-lg font-bold">
+              {t('owner.overview.topProperties.title')}
+            </h4>
+            <p className="text-muted-foreground text-sm">
+              {t('owner.overview.topProperties.subtitle')}
+            </p>
           </div>
           <Link to="/owner/properties">
             <Button variant="outline" className="gap-1 text-sm font-bold">
-              View All <ArrowRight size={14} />
+              {t('owner.overview.viewAll')} <ArrowRight size={14} />
             </Button>
           </Link>
         </div>
@@ -471,19 +501,31 @@ export function OwnerOverviewContent() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-muted/30 text-muted-foreground text-[11px] font-bold tracking-widest uppercase">
-                <th className="px-6 py-3.5 text-left">Property</th>
-                <th className="px-6 py-3.5 text-left">Views</th>
-                <th className="px-6 py-3.5 text-left">Inquiries</th>
-                <th className="px-6 py-3.5 text-left">Status</th>
-                <th className="px-6 py-3.5 text-left">Rent / Month</th>
-                <th className="border-border/50 w-20 border-l px-6 py-3.5 text-center">Actions</th>
+                <th className="px-6 py-3.5 text-left">
+                  {t('owner.overview.topProperties.table.property')}
+                </th>
+                <th className="px-6 py-3.5 text-left">
+                  {t('owner.overview.topProperties.table.views')}
+                </th>
+                <th className="px-6 py-3.5 text-left">
+                  {t('owner.overview.topProperties.table.inquiries')}
+                </th>
+                <th className="px-6 py-3.5 text-left">
+                  {t('owner.overview.topProperties.table.status')}
+                </th>
+                <th className="px-6 py-3.5 text-left">
+                  {t('owner.overview.topProperties.table.rent')}
+                </th>
+                <th className="border-border/50 w-20 border-l px-6 py-3.5 text-center">
+                  {t('owner.overview.topProperties.table.actions')}
+                </th>
               </tr>
             </thead>
             <tbody className="divide-border divide-y">
               {topProperties.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="text-muted-foreground px-6 py-8 text-center text-sm">
-                    No properties yet. Add your first listing to get started.
+                    {t('owner.overview.topProperties.empty')}
                   </td>
                 </tr>
               ) : (
@@ -537,7 +579,7 @@ export function OwnerOverviewContent() {
                               to={`/owner/properties/${p.id}`}
                               className="flex cursor-pointer items-center gap-2"
                             >
-                              <Eye size={14} /> View Details
+                              <Eye size={14} /> {t('owner.overview.topProperties.viewDetails')}
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
@@ -545,7 +587,7 @@ export function OwnerOverviewContent() {
                               to="/owner/analytics"
                               className="flex cursor-pointer items-center gap-2"
                             >
-                              <BarChart3 size={14} /> View Analytics
+                              <BarChart3 size={14} /> {t('owner.overview.topProperties.viewAnalytics')}
                             </Link>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -567,23 +609,20 @@ export function OwnerOverviewContent() {
                 <ShieldAlert size={32} className="text-amber-500" />
               </div>
               <div className="space-y-2 text-center">
-                <h3 className="text-foreground text-xl font-extrabold">Verification Required</h3>
+                <h3 className="text-foreground text-xl font-extrabold">
+                  {t('owner.addProperty.verificationRequired')}
+                </h3>
                 <p className="text-muted-foreground text-sm">
                   {hasDocuments ? (
                     <>
-                      Your documents are currently{' '}
                       {docStatus === 'under_review'
-                        ? 'under review'
+                        ? t('owner.addProperty.docStatusUnderReview')
                         : docStatus === 'rejected'
-                          ? 'rejected'
-                          : 'being processed'}
-                      . You will be able to list properties once your verification is approved.
+                          ? t('owner.addProperty.docStatusRejected')
+                          : t('owner.addProperty.docStatusProcessed')}
                     </>
                   ) : (
-                    <>
-                      You need to upload verification documents before you can list properties on
-                      the platform.
-                    </>
+                    <>{t('owner.addProperty.needUpload')}</>
                   )}
                 </p>
               </div>
@@ -595,7 +634,9 @@ export function OwnerOverviewContent() {
                   }}
                   className="w-full"
                 >
-                  {hasDocuments ? 'View Verification Status' : 'Upload Documents'}{' '}
+                  {hasDocuments
+                    ? t('owner.addProperty.viewVerificationStatus')
+                    : t('owner.addProperty.uploadDocuments')}{' '}
                   <ArrowRight size={16} className="ml-2" />
                 </Button>
                 <Button
@@ -603,7 +644,7 @@ export function OwnerOverviewContent() {
                   onClick={() => setShowVerificationModal(false)}
                   className="w-full"
                 >
-                  Cancel
+                  {t('owner.overview.cancel')}
                 </Button>
               </div>
             </CardContent>

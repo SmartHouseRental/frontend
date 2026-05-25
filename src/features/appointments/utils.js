@@ -14,27 +14,27 @@ export const STATUS_STYLES = {
   CANCELLED: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
 };
 
-export function formatAppointmentDateTime(startsAt, endsAt) {
+export function formatAppointmentDateTime(startsAt, endsAt, locale = 'en-US') {
   const start = new Date(startsAt);
   const end = new Date(endsAt);
-  const date = start.toLocaleDateString('en-US', {
+  const date = start.toLocaleDateString(locale, {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
     year: 'numeric',
   });
-  const time = `${start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} – ${end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+  const time = `${start.toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' })} – ${end.toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' })}`;
   return { date, time, start, end };
 }
 
-export function getRenterDisplayName(renter) {
-  if (!renter) return 'Unknown renter';
+export function getRenterDisplayName(renter, labels = {}) {
+  if (!renter) return labels.unknownRenter ?? 'Unknown renter';
   const name = [renter.first_name, renter.last_name].filter(Boolean).join(' ');
-  return name || renter.email || 'Renter';
+  return name || renter.email || (labels.renter ?? 'Renter');
 }
 
-export function getRenterInitials(renter) {
-  const name = getRenterDisplayName(renter);
+export function getRenterInitials(renter, labels = {}) {
+  const name = getRenterDisplayName(renter, labels);
   const parts = name.split(' ').filter(Boolean);
   if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
   return name.slice(0, 2).toUpperCase();
@@ -47,15 +47,15 @@ export function getPropertyImage(property, lang = 'en') {
   return typeof first === 'string' ? first : first?.url ?? null;
 }
 
-export function normalizeAppointment(raw, lang = 'en') {
-  const { date, time } = formatAppointmentDateTime(raw.startsAt, raw.endsAt);
+export function normalizeAppointment(raw, lang = 'en', locale = 'en-US', labels = {}) {
+  const { date, time } = formatAppointmentDateTime(raw.startsAt, raw.endsAt, locale);
   return {
     ...raw,
-    renterName: getRenterDisplayName(raw.renter),
-    renterInitials: getRenterInitials(raw.renter),
+    renterName: getRenterDisplayName(raw.renter, labels),
+    renterInitials: getRenterInitials(raw.renter, labels),
     renterEmail: raw.renter?.email ?? '',
     renterPhone: raw.renter?.phone ?? '',
-    propertyTitle: getLocalizedText(raw.property?.title, lang) || 'Property',
+    propertyTitle: getLocalizedText(raw.property?.title, lang) || (labels.property ?? 'Property'),
     propertyAddress: getLocalizedText(raw.property?.address, lang) || '',
     propertyImage: getPropertyImage(raw.property, lang),
     displayDate: date,

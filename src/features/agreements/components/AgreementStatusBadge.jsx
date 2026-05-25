@@ -1,12 +1,20 @@
 import StatusBadge from '@/components/StatusBadge';
 import { AGREEMENT_STATUS_STYLES, getAgreementStatusLabel } from '../utils';
+import { useTranslation } from 'react-i18next';
 
 export function AgreementStatusBadge({ agreement, className = '' }) {
-  const label = getAgreementStatusLabel(agreement);
+  const { t } = useTranslation();
   const statusKey = agreement?.status;
+  const label = statusKey
+    ? t(`owner.agreements.statuses.${statusKey}`, {
+        defaultValue: getAgreementStatusLabel(agreement),
+      })
+    : getAgreementStatusLabel(agreement);
   const styleMap = Object.fromEntries(
     Object.entries(AGREEMENT_STATUS_STYLES).map(([key, cls]) => [
-      getAgreementStatusLabel({ status: key }),
+      t(`owner.agreements.statuses.${key}`, {
+        defaultValue: getAgreementStatusLabel({ status: key }),
+      }),
       cls,
     ])
   );

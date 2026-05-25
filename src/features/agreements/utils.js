@@ -98,15 +98,15 @@ export function formatCurrency(amount, currency = 'ETB') {
   return `${n.toLocaleString()} ${currency}`;
 }
 
-export function formatDateRange(startDate, endDate) {
+export function formatDateRange(startDate, endDate, locale = 'en-US') {
   if (!startDate || !endDate) return '—';
   const opts = { month: 'short', day: 'numeric', year: 'numeric' };
-  return `${new Date(startDate).toLocaleDateString('en-US', opts)} – ${new Date(endDate).toLocaleDateString('en-US', opts)}`;
+  return `${new Date(startDate).toLocaleDateString(locale, opts)} – ${new Date(endDate).toLocaleDateString(locale, opts)}`;
 }
 
-export function formatShortDate(date) {
+export function formatShortDate(date, locale = 'en-US') {
   if (!date) return '—';
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString(locale, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',

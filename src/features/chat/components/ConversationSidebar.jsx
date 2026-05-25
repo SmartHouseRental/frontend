@@ -1,4 +1,5 @@
 import { Search, Building2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 
 export default function ConversationSidebar({
@@ -9,6 +10,8 @@ export default function ConversationSidebar({
   onSelectConversation,
   className = '',
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className={`flex flex-col h-full bg-card ${className}`}>
       {/* Search Input */}
@@ -17,7 +20,7 @@ export default function ConversationSidebar({
           <Search size={14} className="absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground" />
           <Input
             className="pl-9 h-9 text-sm"
-            placeholder="Search conversations..."
+            placeholder={t('chat.searchConversations')}
             value={searchQuery}
             onChange={(e) => onSearchQueryChange(e.target.value)}
           />
@@ -28,7 +31,7 @@ export default function ConversationSidebar({
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         {conversations.length === 0 ? (
           <div className="p-8 text-center">
-            <p className="text-sm text-muted-foreground">No conversations found</p>
+            <p className="text-sm text-muted-foreground">{t('chat.noConversationsFound')}</p>
           </div>
         ) : (
           conversations.map((c) => (

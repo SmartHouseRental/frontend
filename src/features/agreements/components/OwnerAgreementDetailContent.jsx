@@ -51,6 +51,7 @@ import {
   toDatetimeLocalValue,
   datetimeLocalToIso,
 } from '../utils';
+import { useTranslation } from 'react-i18next';
 
 const STATUS_STEPS = [
   { key: 'draft', label: 'Draft', icon: FileText },
@@ -68,9 +69,11 @@ function stepIndexForStatus(status) {
 }
 
 export function OwnerAgreementDetailContent() {
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [showTerminateConfirm, setShowTerminateConfirm] = useState(false);
+  const locale = i18n.resolvedLanguage || i18n.language || 'en-US';
 
   const { data: detailResponse, isLoading, isError, error, refetch } = useAgreementDetail(id);
   const { data: paymentsResponse, isError: paymentsError, error: paymentsErr } = useAgreementPayments(id);
@@ -82,7 +85,7 @@ export function OwnerAgreementDetailContent() {
   const payments = useMemo(() => unwrapAgreementPayments(paymentsResponse), [paymentsResponse]);
   const depositPayment = findSecurityDepositPayment(payments);
 
-  const terms = agreement ? getTermsFromAgreement(agreement) : null;
+  const terms = agreement ? getTermsFromAgreement(agreement, locale) : null;
   const image = agreement ? getPropertyImage(agreement.property ?? agreement) : null;
   const currentStep = agreement ? stepIndexForStatus(agreement.status) : 0;
   const isTerminal = ['rejected', 'cancelled', 'expired', 'terminated'].includes(agreement?.status);
@@ -96,12 +99,16 @@ export function OwnerAgreementDetailContent() {
   }
 
   if (isError || !agreement) {
-    const errMsg = getApiErrorMessage(error, 'Agreement not found.');
+    const errMsg = getApiErrorMessage(error, t('owner.agreementDetail.errors.notFound'));
     return (
       <div className="p-8">
         <ErrorState
-          title={isSchemaSyncError(error) ? 'Agreements unavailable' : 'Agreement not found'}
-          message={isSchemaSyncError(error) ? errMsg : errMsg}
+          title={
+            isSchemaSyncError(error)
+              ? t('owner.agreementDetail.errors.unavailable')
+              : t('owner.agreementDetail.errors.notFound')
+          }
+          message={errMsg}
           onRetry={() => refetch()}
         />
       </div>
@@ -111,6 +118,22 @@ export function OwnerAgreementDetailContent() {
   const canSend = agreement.status === 'draft';
   const canCancel = ['draft', 'sent', 'payment_pending'].includes(agreement.status);
   const canTerminate = agreement.status === 'completed';
+  const agreementStatusLabel = agreement.status
+    ? t(`owner.agreements.statuses.${agreement.status}`, {
+        defaultValue: getAgreementStatusLabel(agreement),
+      })
+    : getAgreementStatusLabel(agreement);
+  const paymentStatusMap = Object.fromEntries(
+    Object.entries(PAYMENT_STATUS_LABELS).map(([key, label]) => [
+      t(`owner.agreementDetail.payment.statuses.${key}`, { defaultValue: label }),
+      PAYMENT_STATUS_STYLES[key],
+    ])
+  );
+  const renterName = getRenterDisplayName(agreement.renter);
+  const displayRenterName =
+    renterName === 'Unknown renter' || renterName === 'Renter'
+      ? t('owner.agreementDetail.renter.fallback')
+      : renterName;
 
   const handleSend = () => {
     const offerExpiresAt = agreement.offerExpiresAt
@@ -122,8 +145,8 @@ export function OwnerAgreementDetailContent() {
   return (
     <div className="scrollbar-hide h-screen space-y-6 overflow-y-auto p-8">
       <PageHeader
-        title={terms?.title || 'Agreement'}
-        description={`${getRenterDisplayName(agreement.renter)} · ${formatDateRange(agreement.startDate, agreement.endDate)}`}
+        title={terms?.title || t('owner.agreementDetail.fallbackTitle')}
+        description={`${displayRenterName} · ${formatDateRange(agreement.startDate, agreement.endDate, locale)}`}
         backLink="/owner/agreements"
       >
         <AgreementStatusBadge agreement={agreement} />
@@ -138,13 +161,13 @@ export function OwnerAgreementDetailContent() {
             ) : (
               <Send size={14} />
             )}
-            Send offer
+            {t('owner.agreementDetail.actions.sendOffer')}
           </Button>
         )}
         {canSend && (
           <Button variant="outline" className="gap-2" asChild>
             <Link to={`/owner/agreements/${id}/edit`}>
-              <Pencil size={14} /> Edit draft
+              <Pencil size={14} /> {t('owner.agreementDetail.actions.editDraft')}
             </Link>
           </Button>
         )}
@@ -154,7 +177,7 @@ export function OwnerAgreementDetailContent() {
             className="gap-2 text-destructive border-destructive/30"
             onClick={() => setShowCancelConfirm(true)}
           >
-            <XCircle size={14} /> Cancel
+            <XCircle size={14} /> {t('owner.agreementDetail.actions.cancel')}
           </Button>
         )}
         {showCancelConfirm && (
@@ -170,10 +193,10 @@ export function OwnerAgreementDetailContent() {
                 )
               }
             >
-              Confirm cancel
+              {t('owner.agreementDetail.actions.confirmCancel')}
             </Button>
             <Button variant="ghost" size="sm" onClick={() => setShowCancelConfirm(false)}>
-              Back
+              {t('owner.agreementDetail.actions.back')}
             </Button>
           </div>
         )}
@@ -183,7 +206,7 @@ export function OwnerAgreementDetailContent() {
             className="gap-2 text-destructive"
             onClick={() => setShowTerminateConfirm(true)}
           >
-            Terminate
+            {t('owner.agreementDetail.actions.terminate')}
           </Button>
         )}
         {showTerminateConfirm && (
@@ -199,10 +222,10 @@ export function OwnerAgreementDetailContent() {
                 )
               }
             >
-              Confirm terminate
+              {t('owner.agreementDetail.actions.confirmTerminate')}
             </Button>
             <Button variant="ghost" size="sm" onClick={() => setShowTerminateConfirm(false)}>
-              Back
+              {t('owner.agreementDetail.actions.back')}
             </Button>
           </div>
         )}
@@ -214,7 +237,7 @@ export function OwnerAgreementDetailContent() {
             <AlertCircle className="mt-0.5 shrink-0 text-amber-600" size={18} />
             <div>
               <p className="text-sm font-semibold text-amber-900">
-                Agreement {getAgreementStatusLabel(agreement)}
+                {t('owner.agreementDetail.statusBanner', { status: agreementStatusLabel })}
               </p>
               {agreement.cancellationReason && (
                 <p className="mt-1 text-xs text-amber-800">{agreement.cancellationReason}</p>
@@ -228,7 +251,7 @@ export function OwnerAgreementDetailContent() {
         <Card>
           <CardContent className="pt-6">
             <h3 className="mb-4 flex items-center gap-2 text-sm font-bold">
-              <Shield size={16} /> Progress
+              <Shield size={16} /> {t('owner.agreementDetail.progress')}
             </h3>
             <div className="flex flex-wrap items-start justify-between gap-4">
               {STATUS_STEPS.map((step, i) => {
@@ -248,7 +271,7 @@ export function OwnerAgreementDetailContent() {
                       {done ? <CheckCircle2 size={18} /> : <Icon size={18} />}
                     </div>
                     <p className={`mt-2 text-[11px] font-bold ${active ? 'text-primary' : ''}`}>
-                      {step.label}
+                      {t(`owner.agreementDetail.steps.${step.key}`, { defaultValue: step.label })}
                     </p>
                   </div>
                 );
@@ -269,11 +292,13 @@ export function OwnerAgreementDetailContent() {
           <Card>
             <CardContent className="space-y-4 pt-6">
               <h3 className="flex items-center gap-2 font-bold">
-                <FileText size={16} /> Terms snapshot
+                <FileText size={16} /> {t('owner.agreementDetail.terms.title')}
               </h3>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <p className="text-xs font-medium uppercase text-muted-foreground">Property</p>
+                  <p className="text-xs font-medium uppercase text-muted-foreground">
+                    {t('owner.agreementDetail.terms.property')}
+                  </p>
                   <p className="mt-1 text-sm font-bold">{terms?.title || '—'}</p>
                   {terms?.address && (
                     <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
@@ -282,35 +307,44 @@ export function OwnerAgreementDetailContent() {
                   )}
                 </div>
                 <div>
-                  <p className="text-xs font-medium uppercase text-muted-foreground">Monthly rent</p>
+                  <p className="text-xs font-medium uppercase text-muted-foreground">
+                    {t('owner.agreementDetail.terms.monthlyRent')}
+                  </p>
                   <p className="mt-1 text-sm font-bold text-primary">
                     {formatCurrency(terms?.monthlyRent, terms?.currency)}
                   </p>
                 </div>
                 <div>
                   <p className="text-xs font-medium uppercase text-muted-foreground">
-                    Security deposit (ETB)
+                    {t('owner.agreementDetail.terms.securityDeposit')}
                   </p>
                   <p className="mt-1 text-sm font-bold">{getDepositDisplay(agreement)}</p>
                   {agreement.fxRate != null && agreement.fxRate !== 1 && (
                     <p className="text-[10px] text-muted-foreground">
-                      FX rate: {agreement.fxRate} at {formatShortDate(agreement.fxRateAt)}
+                      {t('owner.agreementDetail.terms.fxRate', {
+                        rate: agreement.fxRate,
+                        date: formatShortDate(agreement.fxRateAt, locale),
+                      })}
                     </p>
                   )}
                 </div>
                 <div>
-                  <p className="text-xs font-medium uppercase text-muted-foreground">Lease period</p>
+                  <p className="text-xs font-medium uppercase text-muted-foreground">
+                    {t('owner.agreementDetail.terms.leasePeriod')}
+                  </p>
                   <p className="mt-1 flex items-center gap-1 text-sm font-bold">
                     <Calendar size={12} />
-                    {formatDateRange(agreement.startDate, agreement.endDate)}
+                    {formatDateRange(agreement.startDate, agreement.endDate, locale)}
                   </p>
                 </div>
                 {agreement.offerExpiresAt && (
                   <div>
-                    <p className="text-xs font-medium uppercase text-muted-foreground">Offer expires</p>
+                    <p className="text-xs font-medium uppercase text-muted-foreground">
+                      {t('owner.agreementDetail.terms.offerExpires')}
+                    </p>
                     <p className="mt-1 flex items-center gap-1 text-sm">
                       <Clock size={12} />
-                      {formatShortDate(agreement.offerExpiresAt)}
+                      {formatShortDate(agreement.offerExpiresAt, locale)}
                     </p>
                   </div>
                 )}
@@ -318,10 +352,12 @@ export function OwnerAgreementDetailContent() {
 
               {terms?.conditions && (
                 <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
-                  <p className="text-xs font-bold uppercase text-muted-foreground">Conditions</p>
+                  <p className="text-xs font-bold uppercase text-muted-foreground">
+                    {t('owner.agreementDetail.terms.conditions')}
+                  </p>
                   <div>
                     <Badge variant="outline" className="mb-1 text-[10px]">
-                      English
+                      {t('owner.agreementDetail.languages.english')}
                     </Badge>
                     <p className="text-sm leading-relaxed">
                       {getLocalizedText(agreement.termsSnapshot?.leaseTerms?.conditions, 'en') ||
@@ -331,7 +367,7 @@ export function OwnerAgreementDetailContent() {
                   {agreement.termsSnapshot?.leaseTerms?.conditions?.am && (
                     <div>
                       <Badge variant="outline" className="mb-1 text-[10px]">
-                        አማርኛ
+                        {t('owner.agreementDetail.languages.amharic')}
                       </Badge>
                       <p className="text-sm leading-relaxed">
                         {getLocalizedText(agreement.termsSnapshot?.leaseTerms?.conditions, 'am')}
@@ -343,7 +379,9 @@ export function OwnerAgreementDetailContent() {
 
               {agreement.ownerMessage && (
                 <div className="rounded-lg bg-primary/5 border border-primary/10 p-3">
-                  <p className="text-xs font-medium text-muted-foreground">Your message</p>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {t('owner.agreementDetail.terms.yourMessage')}
+                  </p>
                   <p className="text-sm mt-1">{agreement.ownerMessage}</p>
                 </div>
               )}
@@ -353,17 +391,17 @@ export function OwnerAgreementDetailContent() {
           <Card>
             <CardContent className="space-y-4 pt-6">
               <h3 className="flex items-center gap-2 font-bold">
-                <DollarSign size={16} /> Security deposit payment
+                <DollarSign size={16} /> {t('owner.agreementDetail.payment.title')}
               </h3>
               {paymentsError ? (
                 <p className="text-sm text-amber-700">
-                  {getApiErrorMessage(paymentsErr, 'Payment details could not be loaded.')}
+                  {getApiErrorMessage(paymentsErr, t('owner.agreementDetail.payment.failedLoad'))}
                 </p>
               ) : !depositPayment ? (
                 <p className="text-sm text-muted-foreground">
                   {agreement.status === 'payment_pending'
-                    ? 'Waiting for the renter to pay via Chapa.'
-                    : 'No deposit payment initiated yet.'}
+                    ? t('owner.agreementDetail.payment.waitingForRenter')
+                    : t('owner.agreementDetail.payment.notInitiated')}
                 </p>
               ) : (
                 <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
@@ -376,24 +414,25 @@ export function OwnerAgreementDetailContent() {
                     </p>
                   </div>
                   <StatusBadge
-                    status={PAYMENT_STATUS_LABELS[depositPayment.status] || depositPayment.status}
-                    statusMap={Object.fromEntries(
-                      Object.entries(PAYMENT_STATUS_LABELS).map(([k, label]) => [
-                        label,
-                        PAYMENT_STATUS_STYLES[k],
-                      ])
-                    )}
+                    status={t(`owner.agreementDetail.payment.statuses.${depositPayment.status}`, {
+                      defaultValue: PAYMENT_STATUS_LABELS[depositPayment.status] || depositPayment.status,
+                    })}
+                    statusMap={paymentStatusMap}
                   />
                   {depositPayment.paidAt && (
                     <p className="w-full text-xs text-muted-foreground">
-                      Paid {formatShortDate(depositPayment.paidAt)}
+                      {t('owner.agreementDetail.payment.paidAt', {
+                        date: formatShortDate(depositPayment.paidAt, locale),
+                      })}
                     </p>
                   )}
                 </div>
               )}
               {payments.length > 1 && (
                 <p className="text-xs text-muted-foreground">
-                  + {payments.length - 1} other payment record(s) on file
+                  {t('owner.agreementDetail.payment.otherRecords', {
+                    count: payments.length - 1,
+                  })}
                 </p>
               )}
             </CardContent>
@@ -404,14 +443,14 @@ export function OwnerAgreementDetailContent() {
           <Card>
             <CardContent className="space-y-4 pt-6">
               <h3 className="flex items-center gap-2 font-bold text-sm">
-                <User size={16} /> Renter
+                <User size={16} /> {t('owner.agreementDetail.renter.title')}
               </h3>
               <div className="flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
                   {getRenterInitials(agreement.renter)}
                 </div>
                 <div>
-                  <p className="font-bold">{getRenterDisplayName(agreement.renter)}</p>
+                  <p className="font-bold">{displayRenterName}</p>
                   {agreement.renter?.email && (
                     <p className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Mail size={10} /> {agreement.renter.email}
@@ -425,35 +464,37 @@ export function OwnerAgreementDetailContent() {
                 </div>
               </div>
               <Button variant="outline" className="w-full" asChild>
-                <Link to="/owner/messages">Message renter</Link>
+                <Link to="/owner/messages">{t('owner.agreementDetail.renter.message')}</Link>
               </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardContent className="space-y-2 pt-6 text-sm">
-              <h3 className="font-bold text-sm mb-3">Timeline</h3>
+              <h3 className="font-bold text-sm mb-3">{t('owner.agreementDetail.timeline.title')}</h3>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Created</span>
-                <span className="font-medium">{formatShortDate(agreement.createdAt)}</span>
+                <span className="text-muted-foreground">{t('owner.agreementDetail.timeline.created')}</span>
+                <span className="font-medium">{formatShortDate(agreement.createdAt, locale)}</span>
               </div>
               {agreement.sentAt && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Sent</span>
-                  <span className="font-medium">{formatShortDate(agreement.sentAt)}</span>
+                  <span className="text-muted-foreground">{t('owner.agreementDetail.timeline.sent')}</span>
+                  <span className="font-medium">{formatShortDate(agreement.sentAt, locale)}</span>
                 </div>
               )}
               {agreement.renterRespondedAt && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Renter responded</span>
-                  <span className="font-medium">{formatShortDate(agreement.renterRespondedAt)}</span>
+                  <span className="text-muted-foreground">
+                    {t('owner.agreementDetail.timeline.renterResponded')}
+                  </span>
+                  <span className="font-medium">{formatShortDate(agreement.renterRespondedAt, locale)}</span>
                 </div>
               )}
               {agreement.activatedAt && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Activated</span>
+                  <span className="text-muted-foreground">{t('owner.agreementDetail.timeline.activated')}</span>
                   <span className="font-medium text-emerald-600">
-                    {formatShortDate(agreement.activatedAt)}
+                    {formatShortDate(agreement.activatedAt, locale)}
                   </span>
                 </div>
               )}

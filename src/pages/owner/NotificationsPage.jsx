@@ -9,6 +9,7 @@ import {
   useMarkAllNotificationsRead,
 } from '@/features/notifications/hooks/useMarkNotificationRead';
 import { getNotificationErrorMessage } from '@/features/notifications/utils/apiErrors';
+import { useTranslation } from 'react-i18next';
 
 const HIDDEN_STORAGE_KEY = 'shr_owner_hidden_notifications';
 
@@ -33,6 +34,8 @@ function NotificationsPage() {
   const { data: notifications = [], isLoading, isError, error, refetch } = useNotifications();
   const markAsReadMutation = useMarkNotificationRead();
   const markAllMutation = useMarkAllNotificationsRead();
+  const { t } = useTranslation();
+  const pageTitle = t('owner.notifications.title');
 
   const [hiddenIds, setHiddenIds] = useState(loadHiddenIds);
 
@@ -78,14 +81,14 @@ function NotificationsPage() {
       });
     } else {
       hideNotification(id);
-      toast.success('Notification hidden from view');
+      toast.success(t('owner.notifications.toastHidden'));
     }
   };
 
   const handleClearAll = () => {
     const readIds = visibleNotifications.filter((n) => n.read).map((n) => n.id);
     if (readIds.length === 0) {
-      toast.info('No read notifications to clear');
+      toast.info(t('owner.notifications.toastNoReadClear'));
       return;
     }
     setHiddenIds((prev) => {
@@ -94,14 +97,14 @@ function NotificationsPage() {
       saveHiddenIds(next);
       return next;
     });
-    toast.success('Read notifications cleared from view');
+    toast.success(t('owner.notifications.toastCleared'));
   };
 
   if (isLoading) {
     return (
       <div className="h-[60vh] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-muted-foreground text-sm font-medium">Loading notifications...</p>
+        <p className="text-muted-foreground text-sm font-medium">{t('owner.notifications.loading')}</p>
       </div>
     );
   }
@@ -112,12 +115,12 @@ function NotificationsPage() {
         <div className="bg-destructive/10 rounded-full p-4">
           <AlertCircle className="h-10 w-10 text-destructive" />
         </div>
-        <p className="text-destructive font-semibold">Failed to load notifications</p>
+        <p className="text-destructive font-semibold">{t('owner.notifications.failed')}</p>
         <p className="text-sm text-muted-foreground max-w-md">
-          {getNotificationErrorMessage(error, 'Unable to load your notifications.')}
+          {getNotificationErrorMessage(error, t('owner.notifications.unableToLoad'))}
         </p>
         <Button variant="outline" onClick={() => refetch()}>
-          Try again
+          {t('owner.notifications.tryAgain')}
         </Button>
       </div>
     );
@@ -133,7 +136,8 @@ function NotificationsPage() {
       onClearAll={handleClearAll}
       isMarkingAll={markAllMutation.isPending}
       isMarkingOne={markAsReadMutation.isPending}
-      subtitle="Stay updated on your property activities."
+      title={pageTitle}
+      subtitle={t('owner.notifications.subtitle')}
     />
   );
 }

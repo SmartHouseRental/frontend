@@ -1,22 +1,34 @@
 import { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Camera, Shield, Save, Loader2, Clock, EyeOff, XCircle, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { Camera, Save, Loader2, Clock, EyeOff, XCircle, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { useUpdateProfile } from '../hooks/useUpdateProfile';
 import { getImageUrl } from '@/lib/utils';
 
-const personalInfoSchema = z.object({
-    fullName: z.string().min(2, 'Name must be at least 2 characters').max(100),
-    phone: z.string().optional(),
-    location: z.string().max(200).optional(),
-    bio: z.string().max(500).optional(),
-});
-
 export function PersonalInfoForm({ profile }) {
+    const { t } = useTranslation();
+
+    const personalInfoSchema = z.object({
+        fullName: z
+            .string()
+            .min(2, t('owner.profile.personalInfoForm.validation.fullNameMin'))
+            .max(100, t('owner.profile.personalInfoForm.validation.fullNameMax')),
+        phone: z.string().optional(),
+        location: z
+            .string()
+            .max(200, t('owner.profile.personalInfoForm.validation.locationMax'))
+            .optional(),
+        bio: z
+            .string()
+            .max(500, t('owner.profile.personalInfoForm.validation.bioMax'))
+            .optional(),
+    });
+
     const currentFullName = profile?.firstName && profile?.lastName
         ? `${profile.firstName} ${profile.lastName}`
         : (profile?.firstName || profile?.lastName || '');
@@ -36,7 +48,7 @@ export function PersonalInfoForm({ profile }) {
     const [previewImage, setPreviewImage] = useState(
         profile?.image
             ? getImageUrl(profile.image)
-            : "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&auto=format&fit=crop"
+            : 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&auto=format&fit=crop'
     );
     const [selectedFile, setSelectedFile] = useState(null);
 
@@ -59,13 +71,20 @@ export function PersonalInfoForm({ profile }) {
         const file = e.target.files[0];
         if (file) {
             if (file.size > 5 * 1024 * 1024) {
-                alert('File size must be under 5MB');
+                alert(t('owner.profile.personalInfoForm.fileSizeWarning'));
                 return;
             }
             setSelectedFile(file);
             setPreviewImage(URL.createObjectURL(file));
         }
     };
+
+    const verificationState = profile?.verificationState;
+    const verificationLabel = profile?.isVerified
+        ? t('owner.profile.personalInfoForm.verifiedOwner')
+        : verificationState
+            ? t(`owner.profile.personalInfoForm.verificationStates.${verificationState}`, { defaultValue: verificationState })
+            : t('owner.profile.personalInfoForm.notVerified');
 
     return (
         <Card>
@@ -92,64 +111,66 @@ export function PersonalInfoForm({ profile }) {
                             />
                         </div>
                         <div>
-                            <h3 className="text-foreground text-lg font-bold">{currentFullName || 'Your Name'}</h3>
+                            <h3 className="text-foreground text-lg font-bold">{currentFullName || t('owner.profile.personalInfoForm.defaultName')}</h3>
                             <p className="text-muted-foreground text-sm">{profile?.email}</p>
-                            {profile?.isVerified ? (
-                                <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-emerald-500">
-                                    <CheckCircle2 size={12} /> Verified Owner
-                                </p>
-                            ) : profile?.verificationState ? (
-                                <p className={`mt-1 flex items-center gap-1 text-xs font-semibold ${
-                                    profile.verificationState === 'pending' ? 'text-amber-500' :
-                                    profile.verificationState === 'rejected' ? 'text-red-500' :
-                                    profile.verificationState === 'resubmit' ? 'text-orange-500' :
-                                    'text-muted-foreground'
-                                }`}>
-                                    {profile.verificationState === 'pending' && <Clock size={12} />}
-                                    {profile.verificationState === 'rejected' && <XCircle size={12} />}
-                                    {profile.verificationState === 'resubmit' && <RefreshCw size={12} />}
-                                    {profile.verificationState === 'under_review' && <EyeOff size={12} />}
-                                    {profile.verificationState.charAt(0).toUpperCase() + profile.verificationState.slice(1)}
-                                </p>
-                            ) : (
-                                <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-muted-foreground">
-                                    <Clock size={12} /> Not Verified
-                                </p>
-                            )}
+                            <p
+                                className={`mt-1 flex items-center gap-1 text-xs font-semibold ${
+                                    profile?.isVerified
+                                        ? 'text-emerald-500'
+                                        : verificationState === 'pending'
+                                            ? 'text-amber-500'
+                                            : verificationState === 'rejected'
+                                                ? 'text-red-500'
+                                                : verificationState === 'resubmit'
+                                                    ? 'text-orange-500'
+                                                    : 'text-muted-foreground'
+                                }`}
+                            >
+                                {profile?.isVerified && <CheckCircle2 size={12} />}
+                                {!profile?.isVerified && verificationState === 'pending' && <Clock size={12} />}
+                                {!profile?.isVerified && verificationState === 'rejected' && <XCircle size={12} />}
+                                {!profile?.isVerified && verificationState === 'resubmit' && <RefreshCw size={12} />}
+                                {!profile?.isVerified && verificationState === 'under_review' && <EyeOff size={12} />}
+                                {verificationLabel}
+                            </p>
                         </div>
                     </div>
                     <div className="bg-border h-px"></div>
                     <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                         <div>
                             <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-                                Full Name
+                                {t('owner.profile.personalInfoForm.labels.fullName')}
                             </label>
                             <Input className="mt-1.5" {...register('fullName')} />
                             {errors.fullName && <p className="text-rose-500 text-xs mt-1">{errors.fullName.message}</p>}
                         </div>
                         <div>
                             <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-                                Email
+                                {t('owner.profile.personalInfoForm.labels.email')}
                             </label>
                             <Input className="mt-1.5 bg-muted/50 cursor-not-allowed" value={profile?.email || ''} disabled />
                         </div>
                         <div>
                             <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-                                Phone
+                                {t('owner.profile.personalInfoForm.labels.phone')}
                             </label>
-                            <Input className="mt-1.5" {...register('phone')} placeholder="+1234567890" />
+                            <Input
+                                className="mt-1.5"
+                                {...register('phone')}
+                                placeholder={t('owner.profile.personalInfoForm.placeholders.phone')}
+                            />
                             {errors.phone && <p className="text-rose-500 text-xs mt-1">{errors.phone.message}</p>}
                         </div>
                         <div>
                             <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-                                Location
+                                {t('owner.profile.personalInfoForm.labels.location')}
                             </label>
                             <Input className="mt-1.5" {...register('location')} />
                             {errors.location && <p className="text-rose-500 text-xs mt-1">{errors.location.message}</p>}
                         </div>
                         <div className="md:col-span-2">
                             <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-                                Bio
+                                {t('owner.profile.personalInfoForm.labels.bio')}
                             </label>
                             <textarea
                                 className="border-border bg-background focus:ring-primary/20 mt-1.5 h-24 w-full resize-none rounded-lg border p-3 text-sm outline-none focus:ring-2"
@@ -162,11 +183,11 @@ export function PersonalInfoForm({ profile }) {
                         <Button className="gap-2" type="submit" disabled={updateProfileMutation.isPending}>
                             {updateProfileMutation.isPending ? (
                                 <>
-                                    <Loader2 size={14} className="animate-spin" /> Saving...
+                                    <Loader2 size={14} className="animate-spin" /> {t('owner.profile.personalInfoForm.saving')}
                                 </>
                             ) : (
                                 <>
-                                    <Save size={14} /> Save Changes
+                                    <Save size={14} /> {t('owner.profile.personalInfoForm.saveChanges')}
                                 </>
                             )}
                         </Button>

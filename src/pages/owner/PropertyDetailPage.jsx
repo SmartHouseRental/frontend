@@ -9,6 +9,7 @@ import { ArrowLeft, Edit, Eye, Star, MapPin, Bed, Bath, Maximize, Calendar, Doll
 import { usePropertyDetail } from '@/features/properties/hooks/usePropertyDetail';
 import { getLocalizedText } from '@/lib/utils/i18n';
 import { PropertyAppointmentsSection } from '@/features/appointments/components/PropertyAppointmentsSection';
+import { useTranslation } from 'react-i18next';
 
 const statusColors = {
     AVAILABLE: 'bg-emerald-100 text-emerald-700',
@@ -23,6 +24,7 @@ function PropertyDetailPage() {
     const [selectedImage, setSelectedImage] = useState(0);
     const [isFavorited, setIsFavorited] = useState(false);
     const [copied, setCopied] = useState(false);
+    const { t } = useTranslation();
 
     const property = propertyData?.data;
     const preferredLanguage = 'en';
@@ -45,7 +47,7 @@ function PropertyDetailPage() {
     if (error || !property) {
         return (
             <div className="flex items-center justify-center h-screen">
-                <p className="text-muted-foreground">Failed to load property details</p>
+                <p className="text-muted-foreground">{t('owner.propertyDetail.failed')}</p>
             </div>
         );
     }
@@ -67,11 +69,11 @@ function PropertyDetailPage() {
                 </div>
                 <div className="flex items-center gap-2">
                     <Badge className={`${statusColors[property.status] || 'bg-slate-100 text-slate-600'} border-0 uppercase text-xs font-bold`}>{property.status}</Badge>
-                    <div className="flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1 text-xs font-medium">
+                    <div className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-medium">
                         {(property.editCount || 0) >= 1 ? (
-                            <><Lock size={11} className="text-rose-500" /> <span className="text-rose-500">No edits left</span></>
+                            <><Lock size={11} className="text-rose-500" /> <span className="text-rose-500">{t('owner.propertyDetail.noEdits')}</span></>
                         ) : (
-                            <><CheckCircle2 size={11} className="text-emerald-500" /> <span className="text-emerald-600">1 edit left</span></>
+                            <><CheckCircle2 size={11} className="text-emerald-500" /> <span className="text-emerald-600">{t('owner.propertyDetail.editsLeft', { count: 1 })}</span></>
                         )}
                     </div>
                     <Button variant="outline" size="icon" className={`h-9 w-9 ${isFavorited ? 'text-rose-500' : ''}`} onClick={() => setIsFavorited(!isFavorited)}>
@@ -81,17 +83,17 @@ function PropertyDetailPage() {
                         {copied ? <CheckCircle2 size={16} className="text-emerald-500" /> : <Share2 size={16} />}
                     </Button>
                     <Link to={`/owner/properties/edit/${property.id}`}>
-                        <Button variant="outline" className="gap-2"><Edit size={14} /> Edit</Button>
+                        <Button variant="outline" className="gap-2"><Edit size={14} /> {t('owner.myProperties.menu.editProperty')}</Button>
                     </Link>
                 </div>
             </div>
 
             <Tabs defaultValue="details" className="w-full">
                 <TabsList className="bg-muted/50">
-                    <TabsTrigger value="details">Details</TabsTrigger>
-                    <TabsTrigger value="media">Media ({images.length})</TabsTrigger>
-                    <TabsTrigger value="stats">Performance</TabsTrigger>
-                    <TabsTrigger value="appointments">Appointments</TabsTrigger>
+                    <TabsTrigger value="details">{t('owner.propertyDetail.tabs.details')}</TabsTrigger>
+                    <TabsTrigger value="media">{t('owner.propertyDetail.tabs.media', { count: images.length })}</TabsTrigger>
+                    <TabsTrigger value="stats">{t('owner.propertyDetail.tabs.stats')}</TabsTrigger>
+                    <TabsTrigger value="appointments">{t('owner.propertyDetail.tabs.appointments')}</TabsTrigger>
                 </TabsList>
 
                 {/* Details Tab */}
@@ -118,7 +120,7 @@ function PropertyDetailPage() {
                                 </>
                             ) : (
                                 <div className="h-80 rounded-2xl bg-muted flex items-center justify-center">
-                                    <p className="text-muted-foreground">No images available</p>
+                                    <p className="text-muted-foreground">{t('owner.propertyDetail.noImages')}</p>
                                 </div>
                             )}
                         </div>
@@ -128,15 +130,15 @@ function PropertyDetailPage() {
                             <Card>
                                 <CardContent className="space-y-4">
                                     <div>
-                                        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Monthly Rent</p>
+                                        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{t('owner.propertyDetail.monthlyRent')}</p>
                                         <p className="text-2xl font-black text-primary mt-1">{property.price?.value || '-'} {property.price?.currency || 'ETB'}</p>
                                     </div>
                                     <div className="h-px bg-border"></div>
                                     <div className="grid grid-cols-3 gap-4">
                                         {[
-                                            { icon: Bed, value: property.bedrooms || '-', label: 'Bedrooms' },
-                                            { icon: Bath, value: property.bathrooms || '-', label: 'Bathrooms' },
-                                            { icon: Maximize, value: `${property.area?.value || '-'}${property.area?.unit || 'm²'}`, label: 'Area' },
+                                            { icon: Bed, value: property.bedrooms || '-', label: t('owner.propertyDetail.bedrooms') },
+                                            { icon: Bath, value: property.bathrooms || '-', label: t('owner.propertyDetail.bathrooms') },
+                                            { icon: Maximize, value: `${property.area?.value || '-'}${property.area?.unit || 'm²'}`, label: t('owner.propertyDetail.area') },
                                         ].map(({ icon: Icon, value, label }) => (
                                             <div key={label} className="text-center">
                                                 <Icon size={18} className="mx-auto text-muted-foreground" />
@@ -149,18 +151,20 @@ function PropertyDetailPage() {
                                     <div className="flex items-center gap-2">
                                         <Star size={16} className="text-amber-400 fill-amber-400" />
                                         <span className="font-bold">{property.rating || '4.8'}</span>
-                                        <Link to="/owner/reviews" className="text-xs text-primary hover:underline">({property.reviewsCount || 24} reviews)</Link>
+                                        <Link to="/owner/reviews" className="text-xs text-primary hover:underline">
+                                            {t('owner.propertyDetail.reviewsCount', { count: property.reviewsCount || 24 })}
+                                        </Link>
                                     </div>
                                 </CardContent>
                             </Card>
 
                             <Card>
                                 <CardContent className="space-y-3">
-                                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Quick Stats</p>
+                                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{t('owner.propertyDetail.quickStats')}</p>
                                     {[
-                                        { icon: Eye, label: 'Total Views', value: (property.viewCount || 0).toLocaleString(), color: '' },
-                                        { icon: Calendar, label: 'Appointments', value: property.appointmentsCount || '0', color: '' },
-                                        { icon: DollarSign, label: 'Revenue', value: property.revenue || '0 ETB', color: 'text-primary' },
+                                        { icon: Eye, label: t('owner.propertyDetail.totalViews'), value: (property.viewCount || 0).toLocaleString(), color: '' },
+                                        { icon: Calendar, label: t('owner.appointments.title'), value: property.appointmentsCount || '0', color: '' },
+                                        { icon: DollarSign, label: t('owner.propertyDetail.revenue'), value: property.revenue || '0 ETB', color: 'text-primary' },
                                     ].map(({ icon: Icon, label, value, color }) => (
                                         <div key={label} className="flex items-center justify-between">
                                             <span className="text-sm text-muted-foreground flex items-center gap-2"><Icon size={14} /> {label}</span>
@@ -175,9 +179,9 @@ function PropertyDetailPage() {
                     {/* Description */}
                     <Card>
                         <CardContent>
-                            <h3 className="font-bold text-foreground mb-2">Description</h3>
+                            <h3 className="font-bold text-foreground mb-2">{t('owner.propertyDetail.description')}</h3>
                             <p className="text-sm text-muted-foreground leading-relaxed">
-                                {getLocalizedText(property.description, preferredLanguage) || 'No description available.'}
+                                {getLocalizedText(property.description, preferredLanguage) || t('owner.propertyDetail.noDescription')}
                             </p>
                             <div className="flex flex-wrap gap-2 mt-4">
                                 {(property.amenities || []).map((tag, index) => (
@@ -191,8 +195,8 @@ function PropertyDetailPage() {
                 {/* Media Tab */}
                 <TabsContent value="media" className="space-y-6 mt-6">
                     <div className="flex items-center justify-between">
-                        <h3 className="font-bold text-foreground">Property Photos ({images.length})</h3>
-                        <Button variant="outline" className="gap-2"><Upload size={14} /> Upload Photos</Button>
+                        <h3 className="font-bold text-foreground">{t('owner.propertyDetail.propertyPhotos', { count: images.length })}</h3>
+                        <Button variant="outline" className="gap-2"><Upload size={14} /> {t('owner.propertyDetail.uploadPhotos')}</Button>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {images.map((img, i) => (
@@ -204,13 +208,13 @@ function PropertyDetailPage() {
                                     </button>
                                 </div>
                                 {i === selectedImage && (
-                                    <div className="absolute top-2 left-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">Cover</div>
+                                    <div className="absolute top-2 left-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">{t('owner.propertyDetail.cover')}</div>
                                 )}
                             </div>
                         ))}
                         <button className="h-48 rounded-xl border-2 border-dashed border-border flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/3 transition-all">
                             <Upload size={24} />
-                            <span className="text-xs font-medium">Add Photo</span>
+                            <span className="text-xs font-medium">{t('owner.propertyDetail.addPhoto')}</span>
                         </button>
                     </div>
                 </TabsContent>
@@ -223,9 +227,9 @@ function PropertyDetailPage() {
                 <TabsContent value="stats" className="space-y-6 mt-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {[
-                            { label: 'Views This Month', value: (property.viewCount || 0).toLocaleString(), change: '+23%', up: true },
-                            { label: 'Inquiry Rate', value: property.inquiryRate || '12.4%', change: '+5%', up: true },
-                            { label: 'Avg. Time on Page', value: property.avgTimeOnPage || '3m 42s', change: '', up: false },
+                            { label: t('owner.propertyDetail.statsCard.viewsThisMonth'), value: (property.viewCount || 0).toLocaleString(), change: '+23%', up: true },
+                            { label: t('owner.propertyDetail.statsCard.inquiryRate'), value: property.inquiryRate || '12.4%', change: '+5%', up: true },
+                            { label: t('owner.propertyDetail.statsCard.avgTimeOnPage'), value: property.avgTimeOnPage || '3m 42s', change: '', up: false },
                         ].map((s) => (
                             <Card key={s.label}>
                                 <CardContent>
@@ -246,7 +250,7 @@ function PropertyDetailPage() {
                     </div>
 
                     <div className="rounded-2xl border border-border bg-card p-6">
-                        <h4 className="font-bold text-foreground mb-4">Views Over Time</h4>
+                        <h4 className="font-bold text-foreground mb-4">{t('owner.propertyDetail.viewsOverTime')}</h4>
                         <div className="h-48">
                             <svg className="h-full w-full" preserveAspectRatio="none" viewBox="0 0 1000 200">
                                 <defs>
@@ -263,7 +267,7 @@ function PropertyDetailPage() {
                             </svg>
                         </div>
                         <div className="flex justify-between px-2 mt-2 text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-                            <span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span>
+                            <span>{t('owner.propertyDetail.weeks.week1')}</span><span>{t('owner.propertyDetail.weeks.week2')}</span><span>{t('owner.propertyDetail.weeks.week3')}</span><span>{t('owner.propertyDetail.weeks.week4')}</span>
                         </div>
                     </div>
                 </TabsContent>

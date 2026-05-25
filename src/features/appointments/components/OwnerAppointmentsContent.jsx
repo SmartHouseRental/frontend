@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -52,10 +53,21 @@ const STATUS_ICONS = {
 };
 
 export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
+  const { t, i18n } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedId, setSelectedId] = useState(null);
   const [noteInputs, setNoteInputs] = useState({});
   const [confirmAction, setConfirmAction] = useState(null);
+  const language = (i18n.resolvedLanguage || i18n.language || 'en').split('-')[0];
+  const dateLocale = language === 'am' ? 'am-ET' : 'en-US';
+  const fallbackLabels = useMemo(
+    () => ({
+      property: t('owner.appointments.fallbacks.property'),
+      unknownRenter: t('owner.appointments.fallbacks.unknownRenter'),
+      renter: t('owner.appointments.fallbacks.renter'),
+    }),
+    [language, t]
+  );
 
   const queryParams = useMemo(() => {
     const params = {};
@@ -69,8 +81,17 @@ export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
   const updateNoteMutation = useUpdateAppointmentNote();
 
   const appointments = useMemo(
-    () => unwrapAppointments(data).map((a) => normalizeAppointment(a)),
-    [data]
+    () =>
+      unwrapAppointments(data).map((a) => {
+        const appointment = normalizeAppointment(a, language, dateLocale, fallbackLabels);
+        return {
+          ...appointment,
+          statusLabel: t(`owner.appointments.statuses.${appointment.status}`, {
+            defaultValue: appointment.statusLabel,
+          }),
+        };
+      }),
+    [data, dateLocale, fallbackLabels, language, t]
   );
 
   const selected = appointments.find((a) => a.id === selectedId) ?? null;
@@ -173,7 +194,7 @@ export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
                     disabled={isUpdating}
                     onClick={() => setConfirmAction({ id: apt.id, action: 'accept' })}
                   >
-                    <CheckCircle2 size={12} /> Approve
+                    <CheckCircle2 size={12} /> {t('owner.appointments.actions.approve')}
                   </Button>
                   <Button
                     size="sm"
@@ -182,7 +203,7 @@ export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
                     disabled={isUpdating}
                     onClick={() => setConfirmAction({ id: apt.id, action: 'reject' })}
                   >
-                    <XCircle size={12} /> Reject
+                    <XCircle size={12} /> {t('owner.appointments.actions.reject')}
                   </Button>
                 </div>
               )}
@@ -190,7 +211,9 @@ export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
                 <div className="flex animate-in items-center gap-2 fade-in-0 duration-200">
                   <span className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
                     <AlertCircle size={12} />
-                    {confirmAction.action === 'accept' ? 'Approve?' : 'Reject?'}
+                    {confirmAction.action === 'accept'
+                      ? t('owner.appointments.confirm.approveQuestion')
+                      : t('owner.appointments.confirm.rejectQuestion')}
                   </span>
                   <Button
                     size="sm"
@@ -204,7 +227,7 @@ export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
                       )
                     }
                   >
-                    Yes
+                    {t('owner.appointments.confirm.yes')}
                   </Button>
                   <Button
                     size="sm"
@@ -212,29 +235,34 @@ export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
                     className="h-7 text-xs"
                     onClick={() => setConfirmAction(null)}
                   >
-                    No
+                    {t('owner.appointments.confirm.no')}
                   </Button>
                 </div>
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    aria-label={t('owner.appointments.actions.openMenu')}
+                  >
                     <MoreVertical size={16} />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem onClick={() => setSelectedId(apt.id)}>
-                    View details
+                    {t('owner.appointments.actions.viewDetails')}
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to={`/owner/properties/${apt.propertyId}`} className="flex gap-2">
-                      <Building2 size={14} /> View property
+                      <Building2 size={14} /> {t('owner.appointments.actions.viewProperty')}
                     </Link>
                   </DropdownMenuItem>
                   {apt.renterEmail && (
                     <DropdownMenuItem asChild>
                       <a href={`mailto:${apt.renterEmail}`} className="flex gap-2">
-                        <Mail size={14} /> Email renter
+                        <Mail size={14} /> {t('owner.appointments.actions.emailRenter')}
                       </a>
                     </DropdownMenuItem>
                   )}
@@ -245,19 +273,19 @@ export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
                         className="text-emerald-600"
                         onClick={() => handleStatus(apt.id, 'ACCEPTED')}
                       >
-                        Approve
+                        {t('owner.appointments.actions.approve')}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="text-destructive"
                         onClick={() => handleStatus(apt.id, 'REJECTED')}
                       >
-                        Reject
+                        {t('owner.appointments.actions.reject')}
                       </DropdownMenuItem>
                     </>
                   )}
                   {(apt.status === 'PENDING' || apt.status === 'ACCEPTED') && (
                     <DropdownMenuItem onClick={() => handleStatus(apt.id, 'CANCELLED')}>
-                      Cancel
+                      {t('owner.appointments.actions.cancel')}
                     </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>
@@ -267,6 +295,11 @@ export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
                 size="icon"
                 className="hidden h-8 w-8 md:flex"
                 onClick={() => setSelectedId(isExpanded ? null : apt.id)}
+                aria-label={
+                  isExpanded
+                    ? t('owner.appointments.actions.collapse')
+                    : t('owner.appointments.actions.expand')
+                }
               >
                 <ChevronRight
                   size={16}
@@ -300,7 +333,7 @@ export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
                     setNoteInputs((prev) => ({ ...prev, [apt.id]: e.target.value }))
                   }
                   onKeyDown={(e) => e.key === 'Enter' && handleSaveNote(apt.id)}
-                  placeholder="Add owner note..."
+                  placeholder={t('owner.appointments.actions.addOwnerNote')}
                   className="border-border bg-background h-9 flex-1 rounded-lg border px-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
                 />
                 <Button
@@ -309,7 +342,7 @@ export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
                   disabled={!noteInputs[apt.id]?.trim() || updateNoteMutation.isPending}
                   onClick={() => handleSaveNote(apt.id)}
                 >
-                  Save
+                  {t('owner.appointments.actions.save')}
                 </Button>
               </div>
             </div>
@@ -331,9 +364,11 @@ export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
     return (
       <Card className="border-dashed">
         <CardContent className="space-y-3 py-10 text-center">
-          <p className="text-muted-foreground text-sm">Failed to load appointments.</p>
+          <p className="text-muted-foreground text-sm">
+            {t('owner.appointments.errors.failedLoad')}
+          </p>
           <Button variant="outline" size="sm" onClick={() => refetch()}>
-            Try again
+            {t('owner.appointments.errors.tryAgain')}
           </Button>
         </CardContent>
       </Card>
@@ -346,14 +381,38 @@ export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
         <>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {[
-              { label: 'Total', value: stats.total, icon: CalendarDays, accent: 'text-primary' },
-              { label: 'Pending', value: stats.pending, icon: Clock, accent: 'text-amber-600' },
-              { label: 'Confirmed', value: stats.confirmed, icon: CheckCircle2, accent: 'text-emerald-600' },
-              { label: 'Rejected', value: stats.rejected, icon: XCircle, accent: 'text-rose-600' },
+              {
+                key: 'total',
+                label: t('owner.appointments.stats.total'),
+                value: stats.total,
+                icon: CalendarDays,
+                accent: 'text-primary',
+              },
+              {
+                key: 'pending',
+                label: t('owner.appointments.stats.pending'),
+                value: stats.pending,
+                icon: Clock,
+                accent: 'text-amber-600',
+              },
+              {
+                key: 'confirmed',
+                label: t('owner.appointments.stats.confirmed'),
+                value: stats.confirmed,
+                icon: CheckCircle2,
+                accent: 'text-emerald-600',
+              },
+              {
+                key: 'rejected',
+                label: t('owner.appointments.stats.rejected'),
+                value: stats.rejected,
+                icon: XCircle,
+                accent: 'text-rose-600',
+              },
             ].map((s) => {
               const Icon = s.icon;
               return (
-                <Card key={s.label} className="border-0">
+                <Card key={s.key} className="border-0">
                   <CardContent className="flex items-center gap-3 pt-6">
                     <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-lg">
                       <Icon size={18} className={s.accent} />
@@ -372,14 +431,24 @@ export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
             <Filter size={16} className="text-muted-foreground" />
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-44">
-                <SelectValue placeholder="Filter status" />
+                <SelectValue placeholder={t('owner.appointments.filters.status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All statuses</SelectItem>
-                <SelectItem value="PENDING">Pending</SelectItem>
-                <SelectItem value="ACCEPTED">Confirmed</SelectItem>
-                <SelectItem value="REJECTED">Rejected</SelectItem>
-                <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                <SelectItem value="all">
+                  {t('owner.appointments.filters.allStatuses')}
+                </SelectItem>
+                <SelectItem value="PENDING">
+                  {t('owner.appointments.statuses.PENDING')}
+                </SelectItem>
+                <SelectItem value="ACCEPTED">
+                  {t('owner.appointments.statuses.ACCEPTED')}
+                </SelectItem>
+                <SelectItem value="REJECTED">
+                  {t('owner.appointments.statuses.REJECTED')}
+                </SelectItem>
+                <SelectItem value="CANCELLED">
+                  {t('owner.appointments.statuses.CANCELLED')}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -388,27 +457,33 @@ export function OwnerAppointmentsContent({ propertyIdFilter = null }) {
 
       <Tabs defaultValue="upcoming" className="w-full">
         <TabsList className="bg-muted/50">
-          <TabsTrigger value="upcoming">Upcoming ({upcoming.length})</TabsTrigger>
-          <TabsTrigger value="past">Past ({past.length})</TabsTrigger>
-          <TabsTrigger value="all">All ({appointments.length})</TabsTrigger>
+          <TabsTrigger value="upcoming">
+            {t('owner.appointments.tabs.upcoming', { count: upcoming.length })}
+          </TabsTrigger>
+          <TabsTrigger value="past">
+            {t('owner.appointments.tabs.past', { count: past.length })}
+          </TabsTrigger>
+          <TabsTrigger value="all">
+            {t('owner.appointments.tabs.all', { count: appointments.length })}
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="upcoming" className="mt-4 space-y-3">
           {upcoming.length === 0 ? (
-            <EmptyState message="No upcoming appointments" />
+            <EmptyState message={t('owner.appointments.empty.upcoming')} />
           ) : (
             upcoming.map((apt) => <AppointmentCard key={apt.id} apt={apt} />)
           )}
         </TabsContent>
         <TabsContent value="past" className="mt-4 space-y-3">
           {past.length === 0 ? (
-            <EmptyState message="No past appointments" />
+            <EmptyState message={t('owner.appointments.empty.past')} />
           ) : (
             past.map((apt) => <AppointmentCard key={apt.id} apt={apt} />)
           )}
         </TabsContent>
         <TabsContent value="all" className="mt-4 space-y-3">
           {appointments.length === 0 ? (
-            <EmptyState message="No appointments yet" />
+            <EmptyState message={t('owner.appointments.empty.all')} />
           ) : (
             appointments.map((apt) => <AppointmentCard key={apt.id} apt={apt} />)
           )}

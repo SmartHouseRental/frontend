@@ -23,6 +23,7 @@ import VerificationBanner from '@/components/VerificationBanner';
 import { useOwnerVerificationState } from '@/features/owner/hooks/useOwnerVerificationState';
 import { useNavigate } from 'react-router';
 import { getLocalizedText } from '@/lib/utils/i18n';
+import { useTranslation } from 'react-i18next';
 
 const statusColors = {
     AVAILABLE: 'bg-emerald-100 text-emerald-700',
@@ -37,6 +38,7 @@ function MyPropertiesPage() {
     const { verificationState, isVerified, hasDocuments, docStatus, preferredLanguage } =
         useOwnerVerificationState();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
@@ -103,19 +105,19 @@ function MyPropertiesPage() {
 
             <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                 <div>
-                    <h1 className="text-3xl font-extrabold tracking-tight text-foreground">My Properties</h1>
-                    <p className="text-muted-foreground mt-1">Manage and track all your rental listings.</p>
+                    <h1 className="text-3xl font-extrabold tracking-tight text-foreground">{t('owner.myProperties.title')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('owner.myProperties.subtitle')}</p>
                 </div>
-                <Button onClick={handleAddProperty} className="gap-2 shadow-sm"><Plus size={16} /> Add Property</Button>
+                <Button onClick={handleAddProperty} className="gap-2 shadow-sm"><Plus size={16} /> {t('owner.myProperties.addProperty')}</Button>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
                 {[
-                    { label: 'Total Properties', value: stats.total, icon: Building2, color: 'bg-primary/10 text-primary', change: '+2 this month' },
-                    { label: 'Available', value: stats.available, icon: Home, color: 'bg-emerald-500/10 text-emerald-500' },
-                    { label: 'Rented', value: stats.rented, icon: BedDouble, color: 'bg-blue-500/10 text-blue-500' },
-                    { label: 'Total Views', value: stats.totalViews.toLocaleString(), icon: TrendingUp, color: 'bg-amber-500/10 text-amber-500', change: '+24% vs last month' },
+                    { label: t('owner.myProperties.stats.totalProperties'), value: stats.total, icon: Building2, color: 'bg-primary/10 text-primary', change: t('owner.myProperties.stats.thisMonth') },
+                    { label: t('owner.myProperties.stats.available'), value: stats.available, icon: Home, color: 'bg-emerald-500/10 text-emerald-500' },
+                    { label: t('owner.myProperties.stats.rented'), value: stats.rented, icon: BedDouble, color: 'bg-blue-500/10 text-blue-500' },
+                    { label: t('owner.myProperties.stats.totalViews'), value: stats.totalViews.toLocaleString(), icon: TrendingUp, color: 'bg-amber-500/10 text-amber-500', change: t('owner.myProperties.stats.vsLastMonth') },
                 ].map((s) => {
                     const Icon = s.icon;
                     return (
@@ -141,33 +143,33 @@ function MyPropertiesPage() {
                     <Search size={16} className="absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground" />
                     <Input
                         className="pl-10"
-                        placeholder="Search by name, location, or ID..."
+                        placeholder={t('owner.myProperties.filters.searchPlaceholder')}
                         value={searchQuery}
                         onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                     />
                 </div>
                 <div className="flex items-center gap-3">
                     <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
-                        <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
+                        <SelectTrigger className="w-36"><SelectValue placeholder={t('owner.myProperties.filters.status')} /></SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="all">All Statuses</SelectItem>
-                                <SelectItem value="available">Available</SelectItem>
-                                <SelectItem value="rented">Rented</SelectItem>
-                                <SelectItem value="maintenance">Maintenance</SelectItem>
+                                <SelectItem value="all">{t('owner.myProperties.filters.allStatuses')}</SelectItem>
+                                <SelectItem value="available">{t('owner.myProperties.filters.available')}</SelectItem>
+                                <SelectItem value="rented">{t('owner.myProperties.filters.rented')}</SelectItem>
+                                <SelectItem value="maintenance">{t('owner.myProperties.filters.maintenance')}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
                     <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v); setCurrentPage(1); }}>
-                        <SelectTrigger className="w-36"><SelectValue placeholder="Type" /></SelectTrigger>
+                        <SelectTrigger className="w-36"><SelectValue placeholder={t('owner.myProperties.filters.type')} /></SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="all">All Types</SelectItem>
-                                <SelectItem value="villa">Villa</SelectItem>
-                                <SelectItem value="apartment">Apartment</SelectItem>
-                                <SelectItem value="house">House</SelectItem>
-                                <SelectItem value="studio">Studio</SelectItem>
-                                <SelectItem value="penthouse">Penthouse</SelectItem>
+                                <SelectItem value="all">{t('owner.myProperties.filters.allTypes')}</SelectItem>
+                                <SelectItem value="villa">{t('owner.myProperties.filters.villa')}</SelectItem>
+                                <SelectItem value="apartment">{t('owner.myProperties.filters.apartment')}</SelectItem>
+                                <SelectItem value="house">{t('owner.myProperties.filters.house')}</SelectItem>
+                                <SelectItem value="studio">{t('owner.myProperties.filters.studio')}</SelectItem>
+                                <SelectItem value="penthouse">{t('owner.myProperties.filters.penthouse')}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -182,12 +184,16 @@ function MyPropertiesPage() {
             {searchQuery || statusFilter !== 'all' || typeFilter !== 'all' ? (
                 <div className="flex items-center justify-between">
                     <p className="text-sm text-muted-foreground">
-                        <span className="font-bold text-foreground">{filtered.length}</span> {filtered.length === 1 ? 'property' : 'properties'} found
-                        {searchQuery && <span> for "<span className="font-medium text-foreground">{searchQuery}</span>"</span>}
+                        {filtered.length === 1 ? (
+                            t('owner.myProperties.resultFound', { count: filtered.length })
+                        ) : (
+                            t('owner.myProperties.resultsFound', { count: filtered.length })
+                        )}
+                        {searchQuery && t('owner.myProperties.forQuery', { query: searchQuery })}
                     </p>
                     {(searchQuery || statusFilter !== 'all' || typeFilter !== 'all') && (
                         <Button variant="ghost" size="sm" className="text-xs" onClick={() => { setSearchQuery(''); setStatusFilter('all'); setTypeFilter('all'); setCurrentPage(1); }}>
-                            Clear Filters
+                            {t('owner.myProperties.clearFilters')}
                         </Button>
                     )}
                 </div>
@@ -199,19 +205,19 @@ function MyPropertiesPage() {
                     <Table className="w-full min-w-full text-left">
                         <TableHeader className="bg-muted/30">
                             <TableRow>
-                                <TableHead className="px-6 py-4">Property</TableHead>
-                                <TableHead className="px-6 py-4">Type</TableHead>
-                                <TableHead className="px-6 py-4">Rent</TableHead>
-                                <TableHead className="px-6 py-4">Status</TableHead>
-                                <TableHead className="px-6 py-4">Views</TableHead>
-                                <TableHead className="px-6 py-4">Actions</TableHead>
+                                <TableHead className="px-6 py-4">{t('owner.myProperties.table.property')}</TableHead>
+                                <TableHead className="px-6 py-4">{t('owner.myProperties.table.type')}</TableHead>
+                                <TableHead className="px-6 py-4">{t('owner.myProperties.table.rent')}</TableHead>
+                                <TableHead className="px-6 py-4">{t('owner.myProperties.table.status')}</TableHead>
+                                <TableHead className="px-6 py-4">{t('owner.myProperties.table.views')}</TableHead>
+                                <TableHead className="px-6 py-4">{t('owner.myProperties.table.actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {paginated.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
-                                        No properties match your filters
+                                        {t('owner.myProperties.noProperties')}
                                     </TableCell>
                                 </TableRow>
                             ) : (
@@ -223,7 +229,7 @@ function MyPropertiesPage() {
                                                 <div>
                                                     <p className="text-sm font-bold text-foreground hover:text-primary transition-colors">{getLocalizedText(p.title, preferredLanguage)}</p>
                                                     <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin size={10} /> {getLocalizedText(p.address, preferredLanguage)}</p>
-                                                    <p className="text-[10px] text-muted-foreground">{p.bedrooms} bed • {p.bathrooms} bath • {p.area?.value} {p.area?.unit || 'm²'}</p>
+                                                    <p className="text-[10px] text-muted-foreground">{p.bedrooms} {t('owner.myProperties.beds')} • {p.bathrooms} {t('owner.myProperties.baths')} • {p.area?.value} {p.area?.unit || 'm²'}</p>
                                                 </div>
                                             </Link>
                                         </TableCell>
@@ -245,19 +251,19 @@ function MyPropertiesPage() {
                                                 <DropdownMenuContent align="end" className="w-36">
                                                     <DropdownMenuItem asChild>
                                                         <Link to={`/owner/properties/${p.id}`} className="flex items-center gap-2 cursor-pointer">
-                                                            <Eye size={14} /> View Details
+                                                            <Eye size={14} /> {t('owner.myProperties.menu.viewDetails')}
                                                         </Link>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem asChild>
                                                         <Link to={`/owner/properties/edit/${p.id}`} className="flex items-center gap-2 cursor-pointer">
-                                                            <Edit size={14} /> Edit Property
+                                                            <Edit size={14} /> {t('owner.myProperties.menu.editProperty')}
                                                         </Link>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem
                                                         className="gap-2 cursor-pointer text-destructive focus:text-destructive"
                                                         onClick={() => setDeleteConfirm(p.id)}
                                                     >
-                                                        <Trash2 size={14} /> Delete
+                                                        <Trash2 size={14} /> {t('owner.myProperties.menu.delete')}
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
@@ -266,12 +272,12 @@ function MyPropertiesPage() {
                                                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm animate-in fade-in duration-200">
                                                     <Card className="w-80 shadow-xl border-destructive/20">
                                                         <CardHeader className="pb-2">
-                                                            <h4 className="text-sm font-bold text-foreground">Confirm Delete</h4>
-                                                            <p className="text-xs text-muted-foreground mt-1">Are you sure you want to delete "{getLocalizedText(p.title, preferredLanguage)}"? This action cannot be undone.</p>
+                                                            <h4 className="text-sm font-bold text-foreground">{t('owner.myProperties.confirmDelete.title')}</h4>
+                                                            <p className="text-xs text-muted-foreground mt-1">{t('owner.myProperties.confirmDelete.desc', { title: getLocalizedText(p.title, preferredLanguage) })}</p>
                                                         </CardHeader>
                                                         <CardContent className="flex justify-end gap-2 pt-2">
-                                                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold" onClick={() => setDeleteConfirm(null)}>Cancel</Button>
-                                                            <Button variant="destructive" size="sm" className="h-8 text-xs font-bold" onClick={() => handleDelete(p.id)}>Yes, Delete</Button>
+                                                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold" onClick={() => setDeleteConfirm(null)}>{t('owner.myProperties.confirmDelete.cancel')}</Button>
+                                                            <Button variant="destructive" size="sm" className="h-8 text-xs font-bold" onClick={() => handleDelete(p.id)}>{t('owner.myProperties.confirmDelete.confirm')}</Button>
                                                         </CardContent>
                                                     </Card>
                                                 </div>
@@ -285,7 +291,11 @@ function MyPropertiesPage() {
                     {totalPages > 1 && (
                         <div className="flex items-center justify-between border-t border-border bg-muted/20 px-6 py-4">
                             <p className="text-muted-foreground text-xs font-medium">
-                                Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length}
+                                {t('owner.myProperties.showing', {
+                                    start: (currentPage - 1) * itemsPerPage + 1,
+                                    end: Math.min(currentPage * itemsPerPage, filtered.length),
+                                    total: filtered.length
+                                })}
                             </p>
                             <div className="flex items-center gap-2">
                                 <button className="rounded-lg border border-border p-2 text-muted-foreground disabled:opacity-50 hover:bg-card" disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>
@@ -308,7 +318,7 @@ function MyPropertiesPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {paginated.length === 0 ? (
                         <div className="col-span-full text-center py-12">
-                            <p className="text-muted-foreground">No properties match your filters</p>
+                            <p className="text-muted-foreground">{t('owner.myProperties.noProperties')}</p>
                         </div>
                     ) : (
                         paginated.map((p) => (
@@ -327,15 +337,15 @@ function MyPropertiesPage() {
                                         <span className="text-xs text-muted-foreground flex items-center gap-1"><Eye size={12} /> {(p.viewCount || 0).toLocaleString()}</span>
                                     </div>
                                     <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
-                                        <span>{p.bedrooms} Beds</span>
+                                        <span>{p.bedrooms} {t('owner.myProperties.beds')}</span>
                                         <span className="text-border">•</span>
-                                        <span>{p.bathrooms} Baths</span>
+                                        <span>{p.bathrooms} {t('owner.myProperties.baths')}</span>
                                         <span className="text-border">•</span>
                                         <span>{p.area?.value} {p.area?.unit || 'm²'}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <Link to={`/owner/properties/${p.id}`} className="flex-1">
-                                            <Button variant="outline" className="w-full gap-1 text-xs h-8"><Eye size={12} /> View</Button>
+                                            <Button variant="outline" className="w-full gap-1 text-xs h-8"><Eye size={12} /> {t('owner.myProperties.view')}</Button>
                                         </Link>
                                         <Link to={`/owner/properties/edit/${p.id}`}>
                                             <Button variant="outline" size="icon" className="h-8 w-8"><Edit size={12} /></Button>
@@ -358,16 +368,15 @@ function MyPropertiesPage() {
                                 <ShieldAlert size={32} className="text-amber-500" />
                             </div>
                             <div className="text-center space-y-2">
-                                <h3 className="text-foreground text-xl font-extrabold">Verification Required</h3>
+                                <h3 className="text-foreground text-xl font-extrabold">{t('owner.addProperty.verificationRequired')}</h3>
                                 <p className="text-muted-foreground text-sm">
                                     {hasDocuments ? (
                                         <>
-                                            Your documents are currently {docStatus === 'under_review' ? 'under review' : docStatus === 'rejected' ? 'rejected' : 'being processed'}.
-                                            You will be able to list properties once your verification is approved.
+                                            {docStatus === 'under_review' ? t('owner.addProperty.docStatusUnderReview') : docStatus === 'rejected' ? t('owner.addProperty.docStatusRejected') : t('owner.addProperty.docStatusProcessed')}
                                         </>
                                     ) : (
                                         <>
-                                            You need to upload verification documents before you can list properties on the platform.
+                                            {t('owner.addProperty.needUpload')}
                                         </>
                                     )}
                                 </p>
@@ -380,14 +389,14 @@ function MyPropertiesPage() {
                                     }}
                                     className="w-full"
                                 >
-                                    {hasDocuments ? 'View Verification Status' : 'Upload Documents'} <ArrowRight size={16} className="ml-2" />
+                                    {hasDocuments ? t('owner.addProperty.viewVerificationStatus') : t('owner.addProperty.uploadDocuments')} <ArrowRight size={16} className="ml-2" />
                                 </Button>
                                 <Button
                                     variant="outline"
                                     onClick={() => setShowVerificationModal(false)}
                                     className="w-full"
                                 >
-                                    Cancel
+                                    {t('owner.myProperties.cancel')}
                                 </Button>
                             </div>
                         </CardContent>

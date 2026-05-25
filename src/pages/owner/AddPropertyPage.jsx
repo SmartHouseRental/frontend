@@ -7,10 +7,12 @@ import { useOwnerVerificationState } from '@/features/owner/hooks/useOwnerVerifi
 import { useNavigate } from 'react-router';
 import PageHeader from '@/components/PageHeader';
 import { PropertyForm } from '@/features/properties/components/PropertyForm';
+import { useTranslation } from 'react-i18next';
 
 function AddPropertyPage() {
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { t } = useTranslation();
   
   const { verificationState, isVerified, hasDocuments, docStatus } = useOwnerVerificationState();
   const navigate = useNavigate();
@@ -37,20 +39,19 @@ function AddPropertyPage() {
           <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100">
             <CheckCircle2 size={40} className="text-emerald-500" />
           </div>
-          <h2 className="text-foreground text-2xl font-extrabold">Property Listed Successfully!</h2>
+          <h2 className="text-foreground text-2xl font-extrabold">{t('owner.addProperty.successTitle')}</h2>
           <p className="text-muted-foreground mt-2 max-w-md text-center">
-            Your property has been submitted. As a verified owner, your listing is automatically
-            approved and now live.
+            {t('owner.addProperty.successDesc')}
           </p>
           <div className="mt-8 flex items-center gap-3">
             <Button
               variant="outline"
               onClick={() => setIsSubmitted(false)}
             >
-              Add Another Property
+              {t('owner.addProperty.addAnother')}
             </Button>
             <Button onClick={() => navigate('/owner/properties')}>
-              View My Properties
+              {t('owner.addProperty.viewMyProperties')}
             </Button>
           </div>
         </div>
@@ -68,16 +69,15 @@ function AddPropertyPage() {
               <ShieldAlert size={32} className="text-amber-500" />
             </div>
             <div className="text-center space-y-2">
-              <h3 className="text-foreground text-xl font-extrabold">Verification Required</h3>
+              <h3 className="text-foreground text-xl font-extrabold">{t('owner.addProperty.verificationRequired')}</h3>
               <p className="text-muted-foreground text-sm">
                 {hasDocuments ? (
                   <>
-                    Your documents are currently {docStatus === 'under_review' ? 'under review' : docStatus === 'rejected' ? 'rejected' : 'being processed'}. 
-                    You will be able to list properties once your verification is approved.
+                    {docStatus === 'under_review' ? t('owner.addProperty.docStatusUnderReview') : docStatus === 'rejected' ? t('owner.addProperty.docStatusRejected') : t('owner.addProperty.docStatusProcessed')}
                   </>
                 ) : (
                   <>
-                    You need to upload verification documents before you can list properties on the platform.
+                    {t('owner.addProperty.needUpload')}
                   </>
                 )}
               </p>
@@ -90,7 +90,7 @@ function AddPropertyPage() {
                 }}
                 className="w-full"
               >
-                {hasDocuments ? 'View Verification Status' : 'Upload Documents'} <ArrowRight size={16} className="ml-2" />
+                {hasDocuments ? t('owner.addProperty.viewVerificationStatus') : t('owner.addProperty.uploadDocuments')} <ArrowRight size={16} className="ml-2" />
               </Button>
               <Button
                 variant="outline"
@@ -100,7 +100,7 @@ function AddPropertyPage() {
                 }}
                 className="w-full"
               >
-                Go to Dashboard
+                {t('owner.addProperty.goToDashboard')}
               </Button>
             </div>
           </CardContent>
@@ -113,8 +113,8 @@ function AddPropertyPage() {
     <div className="scrollbar-hide h-screen space-y-6 overflow-y-auto p-8">
       <VerificationBanner verificationState={verificationState} />
       <PageHeader
-        title="Add New Property"
-        description="List a new rental property on the platform."
+        title={t('owner.addProperty.addNewProperty')}
+        description={t('owner.addProperty.listNewProperty')}
         backLink="/owner/properties"
       />
       <PropertyForm onSuccess={handleSuccess} onCancel={handleCancel} />

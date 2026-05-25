@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Shield, Upload, CheckCircle2, AlertCircle, Loader2, X, ExternalLink, ZoomIn, Clock, EyeOff, RefreshCw, XCircle } from 'lucide-react';
@@ -45,8 +46,8 @@ function DocModal({ url, title, onClose }) {
     );
 }
 
-
 export function VerificationForm({ profile }) {
+    const { t } = useTranslation();
     const { data: documentData, isLoading: docsLoading } = useDocuments();
     const uploadDocumentsMutation = useUploadDocuments();
 
@@ -54,7 +55,6 @@ export function VerificationForm({ profile }) {
     const [previews, setPreviews] = useState({});
     const [modalConfig, setModalConfig] = useState(null);
 
-    // Create refs for multiple inputs
     const nationalIdFrontRef = useRef(null);
     const nationalIdBackRef = useRef(null);
     const ownerPhotoRef = useRef(null);
@@ -64,16 +64,16 @@ export function VerificationForm({ profile }) {
         if (!file) return;
 
         if (file.size > 5 * 1024 * 1024) {
-            alert('File size must be under 5MB');
+            alert(t('owner.profile.verificationForm.fileSizeWarning'));
             return;
         }
 
-        setSelectedFiles(prev => ({ ...prev, [type]: file }));
+        setSelectedFiles((prev) => ({ ...prev, [type]: file }));
 
         const previewUrl = URL.createObjectURL(file);
-        setPreviews(prev => ({ ...prev, [type]: previewUrl }));
+        setPreviews((prev) => ({ ...prev, [type]: previewUrl }));
 
-        e.target.value = null; // Reset input
+        e.target.value = null;
     };
 
     const handleBundleUpload = () => {
@@ -85,55 +85,54 @@ export function VerificationForm({ profile }) {
             onSuccess: () => {
                 setSelectedFiles({});
                 setPreviews({});
-            }
+            },
         });
     };
 
     useEffect(() => {
         return () => {
-            Object.values(previews).forEach(url => URL.revokeObjectURL(url));
+            Object.values(previews).forEach((url) => URL.revokeObjectURL(url));
         };
     }, [previews]);
 
-    // Helper to find document status in response
     const getDocInfo = (docType) => {
         const uploadedDocs = documentData?.data?.uploadedFiles || [];
-        return uploadedDocs.find(d => d.documentType === docType);
+        return uploadedDocs.find((doc) => doc.documentType === docType);
     };
 
+    const currentDocStatus = documentData?.data?.status || documentData?.data?.overallStatus;
+    const normalizedDocStatus = currentDocStatus === 'verified' ? 'approved' : currentDocStatus;
+    const hasDocuments = documentData?.data && (documentData?.data?.uploadedFiles?.length > 0 || normalizedDocStatus);
+    const isVerified = normalizedDocStatus === 'approved' || profile?.isVerified;
+    const canUpload = !isVerified && (normalizedDocStatus === 'pending' || normalizedDocStatus === 'resubmit' || normalizedDocStatus === 'rejected' || !normalizedDocStatus);
     const isMissingFiles = Object.keys(selectedFiles).length < 3;
 
-    const docStatus = documentData?.data?.status || documentData?.data?.overallStatus;
-    const hasDocuments = documentData?.data && (documentData?.data?.uploadedFiles?.length > 0 || docStatus);
-    
-    // Status badge configuration
     const statusConfig = {
-        pending: { label: 'Pending Review', icon: <Clock size={16} />, color: 'bg-amber-100 text-amber-700 border-amber-200' },
-        under_review: { label: 'Under Review', icon: <EyeOff size={16} />, color: 'bg-blue-100 text-blue-700 border-blue-200' },
-        approved: { label: 'Approved', icon: <CheckCircle2 size={16} />, color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
-        rejected: { label: 'Rejected', icon: <XCircle size={16} />, color: 'bg-red-100 text-red-700 border-red-200' },
-        resubmit: { label: 'Resubmit Required', icon: <RefreshCw size={16} />, color: 'bg-orange-100 text-orange-700 border-orange-200' },
+        pending: { key: 'pending', icon: <Clock size={16} />, color: 'bg-amber-100 text-amber-700 border-amber-200' },
+        under_review: { key: 'underReview', icon: <EyeOff size={16} />, color: 'bg-blue-100 text-blue-700 border-blue-200' },
+        approved: { key: 'approved', icon: <CheckCircle2 size={16} />, color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
+        rejected: { key: 'rejected', icon: <XCircle size={16} />, color: 'bg-red-100 text-red-700 border-red-200' },
+        resubmit: { key: 'resubmit', icon: <RefreshCw size={16} />, color: 'bg-orange-100 text-orange-700 border-orange-200' },
     };
-    
-    const currentStatus = statusConfig[docStatus] || statusConfig.pending;
-    
+
+    const currentStatus = statusConfig[normalizedDocStatus] || statusConfig.pending;
+
     const steps = [
-        { label: 'Email Verified', status: profile?.emailVerified ? 'complete' : 'pending' },
+        { key: 'emailVerified', status: profile?.emailVerified ? 'complete' : 'pending' },
+        { key: 'documentsUploaded', status: hasDocuments ? 'complete' : 'pending' },
         {
-            label: 'Documents Uploaded',
-            status: hasDocuments ? 'complete' : 'pending'
+            key: 'adminReview',
+            status: !hasDocuments
+                ? 'pending'
+                : normalizedDocStatus === 'pending' || normalizedDocStatus === 'under_review'
+                    ? 'current'
+                    : normalizedDocStatus === 'approved' || normalizedDocStatus === 'rejected' || normalizedDocStatus === 'resubmit'
+                        ? 'complete'
+                        : 'pending',
         },
-        { 
-            label: 'Admin Review', 
-            status: !hasDocuments ? 'pending' : 
-                   docStatus === 'pending' ? 'current' :
-                   docStatus === 'under_review' ? 'current' :
-                   docStatus === 'approved' || docStatus === 'rejected' || docStatus === 'resubmit' ? 'complete' : 'pending'
-        },
-        { 
-            label: 'Verified Owner', 
-            status: docStatus === 'approved' || profile?.isVerified ? 'complete' : 
-                   docStatus === 'rejected' || docStatus === 'resubmit' ? 'error' : 'pending'
+        {
+            key: 'verifiedOwner',
+            status: isVerified ? 'complete' : normalizedDocStatus === 'rejected' || normalizedDocStatus === 'resubmit' ? 'error' : 'pending',
         },
     ];
 
@@ -149,28 +148,23 @@ export function VerificationForm({ profile }) {
             <Card>
                 <CardContent className="space-y-4 pt-6">
                     <h3 className="text-foreground flex items-center gap-2 font-bold">
-                        <Shield size={16} /> Verification Status
+                        <Shield size={16} /> {t('owner.profile.verificationForm.title')}
                     </h3>
-                    
-                    {/* Current Status Badge */}
+
                     {hasDocuments && (
                         <div className={`flex items-center gap-3 rounded-lg border p-4 ${currentStatus.color}`}>
                             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/50">
                                 {currentStatus.icon}
                             </div>
                             <div className="flex-1">
-                                <p className="text-sm font-bold">{currentStatus.label}</p>
+                                <p className="text-sm font-bold">{t(`owner.profile.verificationForm.statusLabels.${currentStatus.key}`)}</p>
                                 <p className="text-muted-foreground text-xs">
-                                    {docStatus === 'pending' && 'Your documents are waiting for admin review'}
-                                    {docStatus === 'under_review' && 'An admin is currently reviewing your documents'}
-                                    {docStatus === 'approved' && 'Your documents have been approved'}
-                                    {docStatus === 'rejected' && 'Your documents were rejected'}
-                                    {docStatus === 'resubmit' && 'Please resubmit your documents with corrections'}
+                                    {t(`owner.profile.verificationForm.statusDescriptions.${normalizedDocStatus || 'pending'}`)}
                                 </p>
                             </div>
                         </div>
                     )}
-                    
+
                     <div className="flex items-center gap-0">
                         {steps.map((step, i, arr) => (
                             <div key={i} className="flex flex-1 items-center last:flex-none">
@@ -190,7 +184,7 @@ export function VerificationForm({ profile }) {
                                     <p
                                         className={`mt-1.5 max-w-16 text-[10px] font-semibold ${step.status === 'current' ? 'text-primary' : step.status === 'complete' ? 'text-emerald-600' : step.status === 'error' ? 'text-red-600' : 'text-muted-foreground'}`}
                                     >
-                                        {step.label}
+                                        {t(`owner.profile.verificationForm.steps.${step.key}`)}
                                     </p>
                                 </div>
                                 {i < arr.length - 1 && (
@@ -208,11 +202,11 @@ export function VerificationForm({ profile }) {
                 <CardContent className="space-y-5 pt-6">
                     <div className="flex justify-between items-center">
                         <h3 className="text-foreground flex items-center gap-2 font-bold">
-                            <Shield size={16} /> Verification Documents
+                            <Shield size={16} /> {t('owner.profile.verificationForm.documentsTitle')}
                         </h3>
                         {uploadDocumentsMutation.isPending && (
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <Loader2 className="animate-spin" size={14} /> Uploading...
+                                <Loader2 className="animate-spin" size={14} /> {t('owner.profile.verificationForm.uploading')}
                             </div>
                         )}
                         {!uploadDocumentsMutation.isPending && (
@@ -222,32 +216,31 @@ export function VerificationForm({ profile }) {
                                 size="sm"
                                 className="font-bold"
                             >
-                                Submit All Documents
+                                {t('owner.profile.verificationForm.submitAllDocuments')}
                             </Button>
                         )}
                     </div>
                     <p className="text-muted-foreground text-sm">
-                        Upload all three documents simultaneously to verify your identity and property ownership.
+                        {t('owner.profile.verificationForm.description')}
                     </p>
 
-                    {/* Admin Note Display - Only show for rejected or resubmit */}
-                    {(docStatus === 'rejected' || docStatus === 'resubmit') && documentData?.data?.note && (
+                    {(normalizedDocStatus === 'rejected' || normalizedDocStatus === 'resubmit') && documentData?.data?.note && (
                         <div className="rounded-lg border border-red-200 bg-red-50/50 p-4">
                             <div className="flex items-start gap-3">
                                 <AlertCircle size={16} className="text-red-600 mt-0.5" />
                                 <div className="flex-1">
                                     <p className="text-red-700 text-xs font-bold uppercase tracking-wider">
-                                        Admin Note
+                                        {t('owner.profile.verificationForm.adminNote')}
                                     </p>
                                     <p className="text-foreground mt-1 text-sm">
                                         {documentData.data.note}
                                     </p>
                                     {documentData.data.reviewedAt && (
                                         <p className="text-muted-foreground mt-2 text-[10px]">
-                                            Reviewed on {new Date(documentData.data.reviewedAt).toLocaleDateString('en-US', { 
-                                                month: 'long', 
-                                                day: 'numeric', 
-                                                year: 'numeric' 
+                                            {t('owner.profile.verificationForm.reviewedOn')} {new Date(documentData.data.reviewedAt).toLocaleDateString('en-US', {
+                                                month: 'long',
+                                                day: 'numeric',
+                                                year: 'numeric',
                                             })}
                                         </p>
                                     )}
@@ -263,48 +256,48 @@ export function VerificationForm({ profile }) {
                             {
                                 type: 'nationalIdFront',
                                 docType: 'NATIONAL_ID_FRONT',
-                                label: 'National ID - Front',
-                                description: 'Government-issued photo ID',
-                                ref: nationalIdFrontRef
+                                labelKey: 'nationalIdFront',
+                                descriptionKey: 'nationalIdFrontDescription',
+                                ref: nationalIdFrontRef,
                             },
                             {
                                 type: 'nationalIdBack',
                                 docType: 'NATIONAL_ID_BACK',
-                                label: 'National ID - Back',
-                                description: 'Back side of ID or Valid business license',
-                                ref: nationalIdBackRef
+                                labelKey: 'nationalIdBack',
+                                descriptionKey: 'nationalIdBackDescription',
+                                ref: nationalIdBackRef,
                             },
                             {
                                 type: 'ownerPhoto',
                                 docType: 'OWNER_PHOTO',
-                                label: 'Your Photo',
-                                description: 'Proof of you own the ID',
-                                ref: ownerPhotoRef
+                                labelKey: 'ownerPhoto',
+                                descriptionKey: 'ownerPhotoDescription',
+                                ref: ownerPhotoRef,
                             },
                         ].map((config, i) => {
                             const doc = getDocInfo(config.docType);
-                            const docStatus = documentData?.data?.status || documentData?.data?.overallStatus;
-                            const isVerified = docStatus === 'approved' || docStatus === 'verified';
-                            const canUpload = !isVerified && (docStatus === 'pending' || docStatus === 'resubmit' || docStatus === 'rejected' || !docStatus);
+                            const docReady = Boolean(doc || selectedFiles[config.type]);
+                            const docStatus = normalizedDocStatus;
+                            const isDocumentVerified = docStatus === 'approved';
 
                             return (
                                 <div
                                     key={i}
-                                    className={`rounded-xl border p-4 transition-all ${isVerified ? 'border-emerald-200 bg-emerald-50/30' : (doc ? 'border-primary/20 bg-primary/5' : 'border-amber-200 bg-amber-50/30')}`}
+                                    className={`rounded-xl border p-4 transition-all ${isDocumentVerified ? 'border-emerald-200 bg-emerald-50/30' : docReady ? 'border-primary/20 bg-primary/5' : 'border-amber-200 bg-amber-50/30'}`}
                                 >
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            {isVerified ? (
+                                            {isDocumentVerified ? (
                                                 <CheckCircle2 size={18} className="text-emerald-500" />
-                                            ) : (doc || selectedFiles[config.type]) ? (
+                                            ) : docReady ? (
                                                 <CheckCircle2 size={18} className="text-primary" />
                                             ) : (
                                                 <AlertCircle size={18} className="text-amber-500" />
                                             )}
                                             <div>
-                                                <p className="text-foreground text-sm font-bold">{config.label}</p>
-                                                <p className="text-muted-foreground mt-0.5 text-xs">{config.description}</p>
-                                                {(doc || selectedFiles[config.type]) && (
+                                                <p className="text-foreground text-sm font-bold">{t(`owner.profile.verificationForm.docs.${config.labelKey}`)}</p>
+                                                <p className="text-muted-foreground mt-0.5 text-xs">{t(`owner.profile.verificationForm.docs.${config.descriptionKey}`)}</p>
+                                                {docReady && (
                                                     <p className="text-muted-foreground/70 mt-0.5 text-[10px]">
                                                         📎 {selectedFiles[config.type]?.name || doc?.file}
                                                     </p>
@@ -313,12 +306,13 @@ export function VerificationForm({ profile }) {
                                         </div>
                                         <div className="flex items-center gap-3">
                                             <span
-                                                className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${isVerified ? 'bg-emerald-100 text-emerald-700'
-                                                    : (doc || selectedFiles[config.type]) ? 'bg-primary/20 text-primary'
-                                                        : 'bg-amber-100 text-amber-700'
-                                                    }`}
+                                                className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${isDocumentVerified ? 'bg-emerald-100 text-emerald-700' : docReady ? 'bg-primary/20 text-primary' : 'bg-amber-100 text-amber-700'}`}
                                             >
-                                                {isVerified ? 'Verified' : (doc || selectedFiles[config.type]) ? 'Selected' : 'Pending'}
+                                                {isDocumentVerified
+                                                    ? t('owner.profile.verificationForm.badges.verified')
+                                                    : docReady
+                                                        ? t('owner.profile.verificationForm.badges.selected')
+                                                        : t('owner.profile.verificationForm.badges.pending')}
                                             </span>
                                             <label className="cursor-pointer">
                                                 <Button
@@ -327,7 +321,7 @@ export function VerificationForm({ profile }) {
                                                     className="pointer-events-none h-7 gap-1 text-xs"
                                                     disabled={!canUpload}
                                                 >
-                                                    <Upload size={12} /> {(doc || selectedFiles[config.type]) ? 'Replace' : 'Upload'}
+                                                    <Upload size={12} /> {docReady ? t('owner.profile.verificationForm.actions.replace') : t('owner.profile.verificationForm.actions.upload')}
                                                 </Button>
                                                 <input
                                                     type="file"
@@ -341,20 +335,19 @@ export function VerificationForm({ profile }) {
                                         </div>
                                     </div>
 
-                                    {/* Preview Section */}
                                     {(previews[config.type] || doc?.url) && (
                                         <div
                                             className="mt-4 h-32 w-full rounded-lg overflow-hidden border border-primary/10 relative group cursor-pointer"
-                                            onClick={() => setModalConfig({ url: previews[config.type] || getImageUrl(doc?.url), title: config.label })}
+                                            onClick={() => setModalConfig({ url: previews[config.type] || getImageUrl(doc?.url), title: t(`owner.profile.verificationForm.docs.${config.labelKey}`) })}
                                         >
                                             <img
                                                 src={previews[config.type] || getImageUrl(doc?.url)}
-                                                alt={`${config.label} Preview`}
+                                                alt={t(`owner.profile.verificationForm.docs.${config.labelKey}`)}
                                                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                             />
                                             <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                                                 <div className="flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-xs font-bold text-zinc-800">
-                                                    <ZoomIn size={14} /> View Full Size
+                                                    <ZoomIn size={14} /> {t('owner.profile.verificationForm.actions.viewFullSize')}
                                                 </div>
                                             </div>
                                         </div>
@@ -366,9 +359,9 @@ export function VerificationForm({ profile }) {
                                             onClick={() => config.ref.current?.click()}
                                         >
                                             <Upload size={16} />
-                                            <span className="text-xs font-medium">Click to upload</span>
+                                            <span className="text-xs font-medium">{t('owner.profile.verificationForm.actions.clickToUpload')}</span>
                                             <span className="text-muted-foreground/60 text-[10px]">
-                                                PDF, JPG, PNG up to 5MB
+                                                {t('owner.profile.verificationForm.actions.fileHint')}
                                             </span>
                                         </div>
                                     )}

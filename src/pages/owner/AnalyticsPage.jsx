@@ -9,6 +9,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 const topProperties = [
     { name: 'Penthouse Suite CMC', views: 1560, bookingRate: 45, revenue: '360K ETB' },
@@ -21,6 +22,7 @@ const topProperties = [
 function AnalyticsPage() {
     const [period, setPeriod] = useState('monthly');
     const [hoveredBar, setHoveredBar] = useState(null);
+    const { t } = useTranslation();
 
     const periods = ['monthly', 'weekly', 'yearly'];
 
@@ -37,11 +39,11 @@ function AnalyticsPage() {
         <div className="scrollbar-hide h-screen overflow-y-auto p-8 space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Analytics & Insights</h1>
-                    <p className="text-muted-foreground mt-1">Track performance and trends across your properties.</p>
+                    <h1 className="text-3xl font-extrabold tracking-tight text-foreground">{t('owner.analytics.title')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('owner.analytics.subtitle')}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="gap-2"><Download size={14} /> Export</Button>
+                    <Button variant="outline" className="gap-2"><Download size={14} /> {t('owner.analytics.export')}</Button>
                     <div className="flex gap-0.5 bg-muted rounded-lg p-0.5">
                         {periods.map((p) => (
                             <button
@@ -49,7 +51,7 @@ function AnalyticsPage() {
                                 onClick={() => setPeriod(p)}
                                 className={`rounded-md px-3 py-1.5 text-xs font-bold capitalize transition-all ${period === p ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
                             >
-                                {p}
+                                {t(`owner.analytics.periods.${p}`)}
                             </button>
                         ))}
                     </div>
@@ -59,14 +61,14 @@ function AnalyticsPage() {
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                 {[
-                    { label: 'Total Views', value: '12,847', change: '+24%', up: true, icon: Eye, bg: 'bg-blue-500/10', text: 'text-blue-500' },
-                    { label: 'Booking Rate', value: '67.3%', change: '+8%', up: true, icon: Percent, bg: 'bg-emerald-500/10', text: 'text-emerald-500' },
-                    { label: 'Revenue', value: '1.47M ETB', change: '+15%', up: true, icon: DollarSign, bg: 'bg-primary/10', text: 'text-primary' },
-                    { label: 'Occupancy Rate', value: '83.3%', change: '-3%', up: false, icon: Building2, bg: 'bg-amber-500/10', text: 'text-amber-500' },
+                    { label: t('owner.analytics.kpi.totalViews'), key: 'totalViews', value: '12,847', change: '+24%', up: true, icon: Eye, bg: 'bg-blue-500/10', text: 'text-blue-500' },
+                    { label: t('owner.analytics.kpi.bookingRate'), key: 'bookingRate', value: '67.3%', change: '+8%', up: true, icon: Percent, bg: 'bg-emerald-500/10', text: 'text-emerald-500' },
+                    { label: t('owner.analytics.kpi.revenue'), key: 'revenue', value: '1.47M ETB', change: '+15%', up: true, icon: DollarSign, bg: 'bg-primary/10', text: 'text-primary' },
+                    { label: t('owner.analytics.kpi.occupancyRate'), key: 'occupancyRate', value: '83.3%', change: '-3%', up: false, icon: Building2, bg: 'bg-amber-500/10', text: 'text-amber-500' },
                 ].map((kpi) => {
                     const Icon = kpi.icon;
                     return (
-                        <Card key={kpi.label} className="border-0 hover:shadow-lg transition-all duration-300 group cursor-pointer">
+                        <Card key={kpi.key} className="border-0 hover:shadow-lg transition-all duration-300 group cursor-pointer">
                             <CardContent>
                                 <div className="flex items-center justify-between">
                                     <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${kpi.bg} group-hover:scale-110 transition-transform`}>
@@ -89,8 +91,8 @@ function AnalyticsPage() {
                 {/* Views Over Time */}
                 <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-6">
-                        <h4 className="font-bold text-foreground flex items-center gap-2"><Eye size={16} /> Views Over Time</h4>
-                        <span className="text-xs text-emerald-500 font-bold flex items-center gap-0.5"><ArrowUpRight size={12} /> +24% vs last period</span>
+                        <h4 className="font-bold text-foreground flex items-center gap-2"><Eye size={16} /> {t('owner.analytics.viewsOverTime')}</h4>
+                        <span className="text-xs text-emerald-500 font-bold flex items-center gap-0.5"><ArrowUpRight size={12} /> {t('owner.analytics.vsLastPeriod')}</span>
                     </div>
                     <div className="h-48">
                         <svg className="h-full w-full" preserveAspectRatio="none" viewBox="0 0 1000 200">
@@ -115,8 +117,8 @@ function AnalyticsPage() {
                 {/* Revenue Trends */}
                 <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-6">
-                        <h4 className="font-bold text-foreground flex items-center gap-2"><DollarSign size={16} /> Revenue Trends</h4>
-                        <span className="text-xs text-emerald-500 font-bold flex items-center gap-0.5"><ArrowUpRight size={12} /> +15% growth</span>
+                        <h4 className="font-bold text-foreground flex items-center gap-2"><DollarSign size={16} /> {t('owner.analytics.revenueTrends')}</h4>
+                        <span className="text-xs text-emerald-500 font-bold flex items-center gap-0.5"><ArrowUpRight size={12} /> {t('owner.analytics.growth')}</span>
                     </div>
                     <div className="h-48 relative">
                         <svg className="h-full w-full" preserveAspectRatio="none" viewBox="0 0 600 200">
@@ -146,17 +148,17 @@ function AnalyticsPage() {
             {/* Top Properties Table */}
             <Card className="overflow-hidden shadow-sm">
                 <CardContent>
-                    <h4 className="font-bold text-foreground flex items-center gap-2 mb-4"><BarChart3 size={16} /> Top Performing Properties</h4>
+                    <h4 className="font-bold text-foreground flex items-center gap-2 mb-4"><BarChart3 size={16} /> {t('owner.analytics.topPerforming')}</h4>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
                                 <tr className="text-[11px] font-bold tracking-widest text-muted-foreground uppercase border-b border-border">
-                                    <th className="pb-3 pr-4">#</th>
-                                    <th className="pb-3 pr-4 text-left">Property</th>
-                                    <th className="pb-3 pr-4 text-left">Views</th>
-                                    <th className="pb-3 pr-4 text-left">Booking Rate</th>
-                                    <th className="pb-3 text-left">Revenue</th>
-                                    <th className="pb-3 pr-4 text-center w-20">Actions</th>
+                                    <th className="pb-3 pr-4">{t('owner.analytics.table.num')}</th>
+                                    <th className="pb-3 pr-4 text-left">{t('owner.analytics.table.property')}</th>
+                                    <th className="pb-3 pr-4 text-left">{t('owner.analytics.table.views')}</th>
+                                    <th className="pb-3 pr-4 text-left">{t('owner.analytics.table.bookingRate')}</th>
+                                    <th className="pb-3 text-left">{t('owner.analytics.table.revenue')}</th>
+                                    <th className="pb-3 pr-4 text-center w-20">{t('owner.analytics.table.actions')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -186,11 +188,11 @@ function AnalyticsPage() {
                                                 <DropdownMenuContent align="end" className="w-40">
                                                     <DropdownMenuItem asChild>
                                                         <Link to="/owner/properties" className="flex items-center gap-2 cursor-pointer text-sm">
-                                                            <Eye size={14} /> View Details
+                                                            <Eye size={14} /> {t('owner.analytics.menu.viewDetails')}
                                                         </Link>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem className="gap-2 cursor-pointer text-sm">
-                                                        <TrendingUp size={14} /> Detailed Stats
+                                                        <TrendingUp size={14} /> {t('owner.analytics.menu.detailedStats')}
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>

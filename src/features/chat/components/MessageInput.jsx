@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Paperclip, Image, Send, X, FileText } from 'lucide-react';
 
@@ -6,8 +7,9 @@ export default function MessageInput({
   newMessage,
   onNewMessageChange,
   onSend,
-  placeholder = 'Type your message...',
+  placeholder,
 }) {
+  const { t } = useTranslation();
   const [attachedFile, setAttachedFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
   const fileInputRef = useRef(null);
@@ -37,6 +39,8 @@ export default function MessageInput({
       fileInputRef.current.click();
     }
   };
+
+  const resolvedPlaceholder = placeholder || t('chat.typeMessage');
 
   const handleSendClick = () => {
     if (!newMessage.trim() && !attachedFile) return;
@@ -103,7 +107,7 @@ export default function MessageInput({
             variant="ghost"
             size="icon"
             className="h-9 w-9 text-muted-foreground hover:text-foreground shrink-0"
-            title="Attach file"
+            title={t('chat.attachFile')}
             onClick={triggerFileSelect}
           >
             <Paperclip size={16} />
@@ -113,7 +117,7 @@ export default function MessageInput({
             variant="ghost"
             size="icon"
             className="h-9 w-9 text-muted-foreground hover:text-foreground shrink-0"
-            title="Upload image"
+            title={t('chat.uploadImage')}
             onClick={triggerFileSelect}
           >
             <Image size={16} />
@@ -125,7 +129,7 @@ export default function MessageInput({
           value={newMessage}
           onChange={(e) => onNewMessageChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
           className="flex-1 h-10 rounded-xl border border-border bg-muted/30 px-4 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/20 focus:border-primary/50 text-foreground placeholder:text-muted-foreground/60"
         />
         

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -36,12 +37,26 @@ export default function NotificationsView({
   onClearAll,
   isMarkingAll = false,
   isMarkingOne = false,
-  subtitle = 'Stay updated on your rental activities.',
+  title,
+  subtitle,
 }) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('all');
 
+  const resolvedTitle = title || t('owner.notifications.title');
+  const resolvedSubtitle = subtitle || t('owner.notifications.subtitle');
+
+  const tabLabels = {
+    all: t('owner.notifications.tabs.all'),
+    appointment: t('owner.notifications.tabs.appointment'),
+    agreement: t('owner.notifications.tabs.agreement'),
+    payment: t('owner.notifications.tabs.payment'),
+    message: t('owner.notifications.tabs.message'),
+    system: t('owner.notifications.tabs.system'),
+  };
+
   const visibleTabs = NOTIFICATION_TABS.filter(
-    (t) => t.value === 'all' || notifications.some((n) => n.category === t.value),
+    (tab) => tab.value === 'all' || notifications.some((n) => n.category === tab.value),
   );
   const tabs = visibleTabs.length > 1 ? visibleTabs : NOTIFICATION_TABS;
 
@@ -82,7 +97,7 @@ export default function NotificationsView({
               variant="ghost"
               size="icon"
               className="h-7 w-7 text-muted-foreground hover:text-primary"
-              title="Mark as read"
+              title={t('owner.notifications.markAsRead')}
               disabled={isMarkingOne}
               onClick={() => onToggleRead(n.id)}
             >
@@ -99,7 +114,7 @@ export default function NotificationsView({
               size="icon"
               className="h-7 w-7 text-muted-foreground hover:text-destructive"
               onClick={() => onDismiss(n.id)}
-              title={n.read ? 'Hide from view' : 'Mark read and hide'}
+              title={n.read ? t('owner.notifications.hideFromView') : t('owner.notifications.markReadAndHide')}
             >
               <X size={12} />
             </Button>
@@ -113,8 +128,8 @@ export default function NotificationsView({
     <div className="scrollbar-hide h-screen overflow-y-auto p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Notifications</h1>
-          <p className="text-muted-foreground mt-1">{subtitle}</p>
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">{resolvedTitle}</h1>
+          <p className="text-muted-foreground mt-1">{resolvedSubtitle}</p>
         </div>
         <div className="flex items-center gap-2">
           {unreadCount > 0 && onMarkAllRead && (
@@ -129,12 +144,12 @@ export default function NotificationsView({
               ) : (
                 <CheckCheck size={14} />
               )}
-              Mark all read
+              {t('owner.notifications.markAllRead')}
             </Button>
           )}
           {notifications.some((n) => n.read) && onClearAll && (
             <Button variant="ghost" className="gap-2 text-sm text-muted-foreground" onClick={onClearAll}>
-              <Trash2 size={14} /> Clear read
+              <Trash2 size={14} /> {t('owner.notifications.clearRead')}
             </Button>
           )}
         </div>
@@ -150,8 +165,7 @@ export default function NotificationsView({
               </span>
             </div>
             <p className="text-sm font-medium text-foreground">
-              You have <span className="font-bold text-primary">{unreadCount} unread</span>{' '}
-              notification{unreadCount > 1 ? 's' : ''}
+              {t('owner.notifications.youHaveUnread', { count: unreadCount })}
             </p>
           </CardContent>
         </Card>
@@ -159,13 +173,13 @@ export default function NotificationsView({
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="bg-muted/50 flex-wrap h-auto p-1">
-          {tabs.map((t) => {
-            const filtered = filterByCategory(notifications, t.value);
+          {tabs.map((tab) => {
+            const filtered = filterByCategory(notifications, tab.value);
             const unreadInTab = filtered.filter((n) => !n.read).length;
 
             return (
-              <TabsTrigger key={t.value} value={t.value}>
-                {t.label}
+              <TabsTrigger key={tab.value} value={tab.value}>
+                {tabLabels[tab.value]}
                 {unreadInTab > 0 && (
                   <span className="ml-1.5 rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-bold text-primary-foreground">
                     {unreadInTab}
@@ -176,17 +190,21 @@ export default function NotificationsView({
           })}
         </TabsList>
 
-        {tabs.map((t) => {
-          const filtered = filterByCategory(notifications, t.value);
+        {tabs.map((tab) => {
+          const filtered = filterByCategory(notifications, tab.value);
 
           return (
-            <TabsContent key={t.value} value={t.value} className="mt-4">
+            <TabsContent key={tab.value} value={tab.value} className="mt-4">
               <Card className="gap-0 p-0 overflow-hidden">
                 {filtered.length === 0 ? (
                   <div className="p-12 text-center">
                     <Bell size={32} className="mx-auto text-muted-foreground/30 mb-3" />
                     <p className="text-sm text-muted-foreground">
-                      {t.value === 'all' ? 'No notifications yet' : `No ${t.label.toLowerCase()} notifications`}
+                      {tab.value === 'all'
+                        ? t('owner.notifications.noNotificationsYet')
+                        : t('owner.notifications.noCategoryNotifications', {
+                            category: tabLabels[tab.value],
+                          })}
                     </p>
                   </div>
                 ) : (
