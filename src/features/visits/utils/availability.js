@@ -50,6 +50,7 @@ function intervalsOverlap(startA, endA, startB, endB) {
 export function computeBusySlotMap(busySlots = [], timeSlots = VISIT_TIME_SLOTS) {
   const unavailableTimesPerDate = {};
   const fullyBlockedDates = new Set();
+  const datesSeen = new Set();
 
   if (!busySlots.length) {
     return { unavailableTimesPerDate, fullyBlockedDates, busyDates: datesSeen };
@@ -62,7 +63,6 @@ export function computeBusySlotMap(busySlots = [], timeSlots = VISIT_TIME_SLOTS)
     }))
     .filter((b) => !Number.isNaN(b.start.getTime()) && !Number.isNaN(b.end.getTime()));
 
-  const datesSeen = new Set();
 
   busyIntervals.forEach(({ start, end }) => {
     const cursor = new Date(start);

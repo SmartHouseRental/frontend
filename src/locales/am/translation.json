@@ -1632,6 +1632,18 @@
       "idLabel": "የንብረት መታወቂያ: #{{id}}"
     },
     "notifications": {
+      "title": "ማሳወቂያዎች",
+      "subtitle": "በንብረትዎ እንቅስቃሴዎች ላይ ወቅታዊ መረጃ ያግኙ።",
+      "youHaveUnread": "{{count}} ያልተነበበ ማሳወቂያ አለዎት",
+      "youHaveUnread_one": "{{count}} ያልተነበበ ማሳወቂያ አለዎት",
+      "youHaveUnread_other": "{{count}} ያልተነበቡ ማሳወቂያዎች አለዎት",
+      "noNotificationsYet": "እስካሁን ምንም ማሳወቂያዎች የሉም",
+      "noCategoryNotifications": "ምንም {{category}} ማሳወቂያዎች የሉም",
+      "markAllRead": "ሁሉንም እንደተነበቡ ምልክት አድርግ",
+      "clearRead": "የተነበቡትን አጽዳ",
+      "markAsRead": "እንደተነበበ ምልክት አድርግ",
+      "hideFromView": "ከእይታ ደብቅ",
+      "markReadAndHide": "ተነብቦ ይደበቅ",
       "toastHidden": "ማሳወቂያው ከእይታ ተደብቋል",
       "toastNoReadClear": "የሚጸዳ የተነበበ ማሳወቂያ የለም",
       "toastCleared": "የተነበቡ ማሳወቂያዎች ከእይታ ተጠርገዋል",
@@ -1639,7 +1651,14 @@
       "failed": "ማሳወቂያዎችን መጫን አልተሳካም",
       "unableToLoad": "ማሳወቂያዎችዎን መጫን አልተቻለም።",
       "tryAgain": "እንደገና ይሞክሩ",
-      "subtitle": "በንብረትዎ እንቅስቃሴዎች ላይ ወቅታዊ መረጃ ያግኙ።"
+      "tabs": {
+        "all": "ሁሉም",
+        "appointment": "ቀጠሮዎች",
+        "agreement": "ስምምነቶች",
+        "payment": "ክፍያዎች",
+        "message": "መልዕክቶች",
+        "system": "ስርዓት"
+      }
     },
     "profile": {
       "failed": "መገለጫ መጫን አልተሳካም",

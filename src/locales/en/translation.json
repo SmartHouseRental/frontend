@@ -192,7 +192,27 @@
     "urgentReport": "Urgent Report",
     "fraudReportFiled": "A new fraud report has been filed.",
     "toggleTheme": "Toggle theme",
-    "systemManager": "System Manager"
+    "systemManager": "System Manager",
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "You have {{count}} unread notifications",
+      "youHaveUnread": "You have {{count}} unread notifications",
+      "noNotificationsYet": "No notifications yet",
+      "noCategoryNotifications": "No {{category}} notifications",
+      "markAllRead": "Mark all as read",
+      "clearRead": "Clear read",
+      "markAsRead": "Mark as read",
+      "hideFromView": "Hide from view",
+      "markReadAndHide": "Mark read and hide",
+      "tabs": {
+        "all": "All",
+        "appointment": "Appointments",
+        "agreement": "Agreements",
+        "payment": "Payments",
+        "message": "Messages",
+        "system": "System"
+      }
+    }
   },
   "adminOverview": {
     "title": "Dashboard Overview",
@@ -1632,6 +1652,18 @@
       "idLabel": "Property ID: #{{id}}"
     },
     "notifications": {
+      "title": "Notifications",
+      "subtitle": "Stay updated on your property activities.",
+      "youHaveUnread": "You have {{count}} unread notification",
+      "youHaveUnread_one": "You have {{count}} unread notification",
+      "youHaveUnread_other": "You have {{count}} unread notifications",
+      "noNotificationsYet": "No notifications yet",
+      "noCategoryNotifications": "No {{category}} notifications",
+      "markAllRead": "Mark all as read",
+      "clearRead": "Clear read",
+      "markAsRead": "Mark as read",
+      "hideFromView": "Hide from view",
+      "markReadAndHide": "Mark read and hide",
       "toastHidden": "Notification hidden from view",
       "toastNoReadClear": "No read notifications to clear",
       "toastCleared": "Read notifications cleared from view",
@@ -1639,7 +1671,14 @@
       "failed": "Failed to load notifications",
       "unableToLoad": "Unable to load your notifications.",
       "tryAgain": "Try again",
-      "subtitle": "Stay updated on your property activities."
+      "tabs": {
+        "all": "All",
+        "appointment": "Appointments",
+        "agreement": "Agreements",
+        "payment": "Payments",
+        "message": "Messages",
+        "system": "System"
+      }
     },
     "profile": {
       "failed": "Failed to load profile",
