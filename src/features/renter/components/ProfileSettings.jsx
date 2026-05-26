@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   User,
   Save,
@@ -34,13 +35,11 @@ import {
   profileFromApi,
   buildPersonalInfoFormData,
   buildLocationFormData,
-  LANGUAGE_OPTIONS,
   NOTIFICATION_FIELDS,
-  languageLabel,
 } from '../utils/profileMappers';
 import { getApiErrorMessage } from '../utils/apiErrors';
 
-function PasswordField({ label, name, value, onChange, show, onToggleShow }) {
+function PasswordField({ label, name, value, onChange, show, onToggleShow, t }) {
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
@@ -56,7 +55,7 @@ function PasswordField({ label, name, value, onChange, show, onToggleShow }) {
           type="button"
           onClick={onToggleShow}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
-          aria-label={show ? 'Hide password' : 'Show password'}
+          aria-label={show ? t('renter.profile.security.hidePassword') : t('renter.profile.security.showPassword')}
         >
           {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </button>
@@ -65,17 +64,17 @@ function PasswordField({ label, name, value, onChange, show, onToggleShow }) {
   );
 }
 
-function ProfileErrorState({ message, onRetry }) {
+function ProfileErrorState({ message, onRetry, t }) {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center px-6">
       <div className="bg-destructive/10 rounded-full p-4">
         <AlertCircle className="h-10 w-10 text-destructive" />
       </div>
-      <p className="text-destructive font-medium">Failed to load profile</p>
+      <p className="text-destructive font-medium">{t('renter.profile.errors.failedLoad')}</p>
       <p className="text-sm text-muted-foreground max-w-md">{message}</p>
       {onRetry && (
         <Button variant="outline" onClick={onRetry}>
-          Try again
+          {t('renter.profile.errors.tryAgain')}
         </Button>
       )}
     </div>
@@ -83,6 +82,7 @@ function ProfileErrorState({ message, onRetry }) {
 }
 
 export default function ProfileSettings() {
+  const { t } = useTranslation();
   const { data: profileData, isLoading, isError, error, refetch } = useProfile();
   const updateProfileMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
@@ -169,11 +169,11 @@ export default function ProfileSettings() {
 
     const allowed = ['image/jpeg', 'image/png', 'image/jpg'];
     if (!allowed.includes(file.type)) {
-      toast.error('Avatar must be a JPEG or PNG image');
+      toast.error(t('renter.profile.toast.avatarType'));
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('Avatar must be 5 MB or smaller');
+      toast.error(t('renter.profile.toast.avatarSize'));
       return;
     }
 
@@ -202,7 +202,7 @@ export default function ProfileSettings() {
   const handleSavePersonalInfo = async () => {
     const fullName = `${formData.firstName} ${formData.lastName}`.trim();
     if (fullName.length < 2) {
-      toast.error('Please enter your first and last name (at least 2 characters total).');
+      toast.error(t('renter.profile.toast.nameHint'));
       return;
     }
 
@@ -249,7 +249,7 @@ export default function ProfileSettings() {
 
   const handleSavePassword = async () => {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast.error('New password and confirm password do not match');
+      toast.error(t('renter.profile.toast.passwordMismatch'));
       return;
     }
 
@@ -304,8 +304,9 @@ export default function ProfileSettings() {
   if (isError) {
     return (
       <ProfileErrorState
-        message={getApiErrorMessage(error, 'Unable to load your profile.')}
+        message={getApiErrorMessage(error, t('renter.profile.errors.unableToLoad'))}
         onRetry={() => refetch()}
+        t={t}
       />
     );
   }
@@ -313,8 +314,9 @@ export default function ProfileSettings() {
   if (!profile) {
     return (
       <ProfileErrorState
-        message="Profile data was empty. Please try again."
+        message={t('renter.profile.errors.profileEmpty')}
         onRetry={() => refetch()}
+        t={t}
       />
     );
   }
@@ -323,19 +325,19 @@ export default function ProfileSettings() {
   const displayName =
     formData.firstName || formData.lastName
       ? `${formData.firstName} ${formData.lastName}`.trim()
-      : 'Renter';
+      : t('renter.profile.defaultName');
 
   return (
     <div className="space-y-8 pb-12">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Account Settings</h1>
-        <p className="text-muted-foreground mt-1">Manage your renter profile and settings.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('renter.profile.title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('renter.profile.subtitle')}</p>
       </div>
 
       <Tabs value={settingsTab} onValueChange={setSettingsTab} className="space-y-8">
         <TabsList className="grid w-full max-w-md grid-cols-2">
-          <TabsTrigger value="general">General</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
+          <TabsTrigger value="general">{t('renter.profile.tabs.general')}</TabsTrigger>
+          <TabsTrigger value="security">{t('renter.profile.tabs.security')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="mt-0">
@@ -361,7 +363,7 @@ export default function ProfileSettings() {
                 type="button"
                 onClick={() => avatarInputRef.current?.click()}
                 className="absolute bottom-0 right-0 flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors"
-                title="Change photo"
+                title={t('renter.profile.changePhoto')}
               >
                 <Camera className="h-4 w-4" />
               </button>
@@ -378,7 +380,7 @@ export default function ProfileSettings() {
                 ) : (
                   <Save className="h-4 w-4 mr-2" />
                 )}
-                Save photo
+                {t('renter.profile.savePhoto')}
               </Button>
             )}
             <h3 className="text-xl font-bold text-foreground">{displayName}</h3>
@@ -387,11 +389,11 @@ export default function ProfileSettings() {
             {profile.emailVerified ? (
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
                 <CheckCircle2 className="h-3.5 w-3.5" />
-                <span>Email Verified</span>
+                <span>{t('renter.profile.emailVerified')}</span>
               </div>
             ) : (
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-muted text-muted-foreground border">
-                <span>Email Unverified</span>
+                <span>{t('renter.profile.emailUnverified')}</span>
               </div>
             )}
           </Card>
@@ -401,7 +403,7 @@ export default function ProfileSettings() {
           {/* Personal Information */}
           <Card className="border-none shadow-sm bg-card p-8">
             <CardHeader className="p-0 mb-8 flex flex-row items-center justify-between">
-              <CardTitle className="text-2xl font-bold">Personal Information</CardTitle>
+              <CardTitle className="text-2xl font-bold">{t('renter.profile.personalInfo.title')}</CardTitle>
               {!isEditingPersonalInfo ? (
                 <Button
                   variant="ghost"
@@ -421,7 +423,7 @@ export default function ProfileSettings() {
                       resetPersonalForm();
                       setIsEditingPersonalInfo(false);
                     }}
-                    title="Cancel"
+                    title={t('renter.profile.personalInfo.cancel')}
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -431,7 +433,7 @@ export default function ProfileSettings() {
                     onClick={handleSavePersonalInfo}
                     disabled={isSavingPersonal}
                     className="border"
-                    title="Save"
+                    title={t('renter.profile.personalInfo.save')}
                   >
                     {isSavingPersonal ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -447,28 +449,28 @@ export default function ProfileSettings() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
-                      First Name
+                      {t('renter.profile.personalInfo.firstName')}
                     </span>
                     <span className="text-sm font-semibold">{formData.firstName || '—'}</span>
                   </div>
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
-                      Last Name
+                      {t('renter.profile.personalInfo.lastName')}
                     </span>
                     <span className="text-sm font-semibold">{formData.lastName || '—'}</span>
                   </div>
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
-                      Phone
+                      {t('renter.profile.personalInfo.phone')}
                     </span>
                     <span className="text-sm font-semibold">{formData.phone || '—'}</span>
                   </div>
                   <div className="md:col-span-2">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
-                      Bio
+                      {t('renter.profile.personalInfo.bio')}
                     </span>
                     <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                      {formData.bio || 'No bio written yet.'}
+                      {formData.bio || t('renter.profile.personalInfo.noBio')}
                     </p>
                   </div>
                 </div>
@@ -476,7 +478,7 @@ export default function ProfileSettings() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label>First Name</Label>
+                      <Label>{t('renter.profile.personalInfo.firstName')}</Label>
                       <Input
                         name="firstName"
                         value={formData.firstName}
@@ -485,7 +487,7 @@ export default function ProfileSettings() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Last Name</Label>
+                      <Label>{t('renter.profile.personalInfo.lastName')}</Label>
                       <Input
                         name="lastName"
                         value={formData.lastName}
@@ -494,7 +496,7 @@ export default function ProfileSettings() {
                       />
                     </div>
                     <div className="space-y-2 md:col-span-2">
-                      <Label>Phone</Label>
+                      <Label>{t('renter.profile.personalInfo.phone')}</Label>
                       <Input
                         name="phone"
                         value={formData.phone}
@@ -503,11 +505,11 @@ export default function ProfileSettings() {
                         className="h-12 rounded-xl"
                       />
                       <p className="text-xs text-muted-foreground">
-                        Use international format, e.g. +251911223344
+                        {t('renter.profile.personalInfo.phoneHint')}
                       </p>
                     </div>
                     <div className="space-y-2 md:col-span-2">
-                      <Label>Bio</Label>
+                      <Label>{t('renter.profile.personalInfo.bio')}</Label>
                       <textarea
                         name="bio"
                         value={formData.bio}
@@ -528,7 +530,7 @@ export default function ProfileSettings() {
             <CardHeader className="p-0 mb-8 flex flex-row items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <MapPin className="h-5 w-5 text-muted-foreground" />
-                <CardTitle className="text-2xl font-bold">Address & Location</CardTitle>
+                <CardTitle className="text-2xl font-bold">{t('renter.profile.location.title')}</CardTitle>
               </div>
               {!isEditingLocation ? (
                 <Button variant="ghost" size="icon" onClick={() => setIsEditingLocation(true)} className="border">
@@ -565,16 +567,16 @@ export default function ProfileSettings() {
             <CardContent className="p-0">
               {!isEditingLocation ? (
                 <span className="text-sm font-semibold">
-                  {formData.location || 'No location set yet.'}
+                  {formData.location || t('renter.profile.location.noLocation')}
                 </span>
               ) : (
                 <div className="max-w-md space-y-2">
-                  <Label>Location / Address</Label>
+                  <Label>{t('renter.profile.location.label')}</Label>
                   <Input
                     name="location"
                     value={formData.location}
                     onChange={handleProfileChange}
-                    placeholder="e.g. Bole, Addis Ababa"
+                    placeholder={t('renter.profile.location.placeholder')}
                     className="h-12 rounded-xl"
                     maxLength={200}
                   />
@@ -588,7 +590,7 @@ export default function ProfileSettings() {
             <CardHeader className="p-0 mb-8 flex flex-row items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <Globe className="h-5 w-5 text-muted-foreground" />
-                <CardTitle className="text-2xl font-bold">Preferences</CardTitle>
+                <CardTitle className="text-2xl font-bold">{t('renter.profile.preferences.title')}</CardTitle>
               </div>
               {!isEditingPreferences ? (
                 <Button
@@ -633,14 +635,14 @@ export default function ProfileSettings() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="rounded-2xl border border-border/60 bg-muted/20 p-5">
                     <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
-                      Language
+                      {t('renter.profile.preferences.language')}
                     </p>
-                    <p className="text-base font-semibold">{languageLabel(formData.language)}</p>
+                    <p className="text-base font-semibold">{t(`renter.profile.preferences.languageOptions.${formData.language}`)}</p>
                   </div>
                   <div className="rounded-2xl border border-border/60 bg-muted/20 p-5 sm:col-span-1">
                     <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
                       <Bell className="h-3.5 w-3.5" />
-                      Email notifications
+                      {t('renter.profile.preferences.emailNotifications')}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {NOTIFICATION_FIELDS.map(({ key, label }) => (
@@ -652,7 +654,7 @@ export default function ProfileSettings() {
                               : 'bg-muted text-muted-foreground border border-border/60'
                           }`}
                         >
-                          {label}
+                          {t(`renter.profile.preferences.options.${key}`)}
                         </span>
                       ))}
                     </div>
@@ -662,7 +664,7 @@ export default function ProfileSettings() {
                 <div className="space-y-6 rounded-2xl border border-border/60 bg-muted/10 p-6">
                   <div className="max-w-xs space-y-2">
                     <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                      Preferred language
+                      {t('renter.profile.preferences.preferredLanguage')}
                     </Label>
                     <select
                       name="language"
@@ -670,9 +672,9 @@ export default function ProfileSettings() {
                       onChange={handleProfileChange}
                       className="flex h-12 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-sm"
                     >
-                      {LANGUAGE_OPTIONS.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
+                      {['en', 'am', 'or', 'ti'].map((value) => (
+                        <option key={value} value={value}>
+                          {t(`renter.profile.preferences.languageOptions.${value}`)}
                         </option>
                       ))}
                     </select>
@@ -680,10 +682,10 @@ export default function ProfileSettings() {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
                       <Bell className="h-4 w-4 text-primary" />
-                      <h4 className="text-sm font-bold">Email notifications</h4>
+                      <h4 className="text-sm font-bold">{t('renter.profile.preferences.emailNotifications')}</h4>
                     </div>
                     <p className="text-xs text-muted-foreground -mt-2">
-                      Choose which updates you want to receive by email.
+                      {t('renter.profile.preferences.chooseUpdates')}
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {NOTIFICATION_FIELDS.map(({ key, label }) => (
@@ -691,7 +693,7 @@ export default function ProfileSettings() {
                           key={key}
                           className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-card px-4 py-3.5 cursor-pointer hover:border-primary/30 hover:bg-primary/5 transition-colors"
                         >
-                          <span className="text-sm font-medium">{label}</span>
+                          <span className="text-sm font-medium">{t(`renter.profile.preferences.options.${key}`)}</span>
                           <Checkbox
                             checked={notifications[key]}
                             onCheckedChange={(checked) =>
@@ -718,38 +720,41 @@ export default function ProfileSettings() {
                   <Lock className="h-5 w-5" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl font-bold">Change password</CardTitle>
+                  <CardTitle className="text-2xl font-bold">{t('renter.profile.security.title')}</CardTitle>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Min 8 characters with upper, lower, number, and special character
+                    {t('renter.profile.security.description')}
                   </p>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="p-0 space-y-6">
               <PasswordField
-                label="Current password"
+                label={t('renter.profile.security.currentPassword')}
                 name="currentPassword"
                 value={passwordData.currentPassword}
                 onChange={handlePasswordChange}
                 show={showCurrentPassword}
                 onToggleShow={() => setShowCurrentPassword((v) => !v)}
+                t={t}
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <PasswordField
-                  label="New password"
+                  label={t('renter.profile.security.newPassword')}
                   name="newPassword"
                   value={passwordData.newPassword}
                   onChange={handlePasswordChange}
                   show={showNewPassword}
                   onToggleShow={() => setShowNewPassword((v) => !v)}
+                  t={t}
                 />
                 <PasswordField
-                  label="Confirm new password"
+                  label={t('renter.profile.security.confirmPassword')}
                   name="confirmPassword"
                   value={passwordData.confirmPassword}
                   onChange={handlePasswordChange}
                   show={showConfirmPassword}
                   onToggleShow={() => setShowConfirmPassword((v) => !v)}
+                  t={t}
                 />
               </div>
               <Button
@@ -766,7 +771,7 @@ export default function ProfileSettings() {
                 ) : (
                   <Save className="h-4 w-4 mr-2" />
                 )}
-                Save password
+                {t('renter.profile.security.savePassword')}
               </Button>
             </CardContent>
           </Card>

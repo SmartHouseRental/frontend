@@ -7,9 +7,11 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { useAppointments, useCancelAppointment } from '../../visits/hooks/useAppointments';
 
 export default function AppointmentList() {
+  const { t } = useTranslation();
   const { data: appointments, isLoading, isError, error, refetch } = useAppointments();
   const cancelMutation = useCancelAppointment();
   
@@ -40,9 +42,9 @@ export default function AppointmentList() {
   if (isError) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
-        <p className="text-destructive font-medium">Failed to load appointments</p>
-        <p className="text-muted-foreground text-sm">{error?.message || 'Please try again later'}</p>
-        <Button variant="outline" onClick={() => refetch()}>Retry</Button>
+        <p className="text-destructive font-medium">{t('renter.appointments.errors.failedLoad')}</p>
+        <p className="text-muted-foreground text-sm">{error?.message || t('renter.appointments.errors.tryAgain')}</p>
+        <Button variant="outline" onClick={() => refetch()}>{t('renter.appointments.errors.tryAgain')}</Button>
       </div>
     );
   }
@@ -60,30 +62,30 @@ export default function AppointmentList() {
   }) || [];
 
   const formatDate = (dateStr) => {
-    if (!dateStr) return 'N/A';
+    if (!dateStr) return t('renter.appointments.labels.na');
     const d = new Date(dateStr);
-    return isNaN(d.getTime()) ? 'N/A' : d.toLocaleDateString();
+    return isNaN(d.getTime()) ? t('renter.appointments.labels.na') : d.toLocaleDateString();
   };
 
   const formatTime = (dateStr) => {
-    if (!dateStr) return 'N/A';
+    if (!dateStr) return t('renter.appointments.labels.na');
     const d = new Date(dateStr);
-    return isNaN(d.getTime()) ? 'N/A' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return isNaN(d.getTime()) ? t('renter.appointments.labels.na') : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   const getStatusBadge = (status) => {
     switch (status?.toUpperCase()) {
       case 'ACCEPTED':
       case 'CONFIRMED':
-        return <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold">Confirmed</Badge>;
+        return <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold">{t('renter.appointments.statuses.confirmed')}</Badge>;
       case 'REJECTED':
       case 'DECLINED':
-        return <Badge className="bg-destructive hover:bg-destructive/95 text-white font-semibold">Declined</Badge>;
+        return <Badge className="bg-destructive hover:bg-destructive/95 text-white font-semibold">{t('renter.appointments.statuses.declined')}</Badge>;
       case 'CANCELLED':
-        return <Badge className="bg-rose-500 hover:bg-rose-600 text-white font-semibold">Cancelled</Badge>;
+        return <Badge className="bg-rose-500 hover:bg-rose-600 text-white font-semibold">{t('renter.appointments.statuses.cancelled')}</Badge>;
       case 'PENDING':
       default:
-        return <Badge className="bg-amber-500 hover:bg-amber-600 text-white font-semibold">Pending</Badge>;
+        return <Badge className="bg-amber-500 hover:bg-amber-600 text-white font-semibold">{t('renter.appointments.statuses.pending')}</Badge>;
     }
   };
 
@@ -143,7 +145,7 @@ export default function AppointmentList() {
                   onClick={() => handleReschedule(apt.propertyId)}
                 >
                   <RotateCcw className="h-4 w-4" />
-                  Reschedule
+                  {t('renter.appointments.actions.reschedule')}
                 </Button>
                 <Button
                   variant="outline"
@@ -157,7 +159,7 @@ export default function AppointmentList() {
                   ) : (
                     <XCircle className="h-4 w-4" />
                   )}
-                  Cancel Visit
+                  {t('renter.appointments.actions.cancelVisit')}
                 </Button>
               </div>
             )}
@@ -171,29 +173,29 @@ export default function AppointmentList() {
     <div className="space-y-8 relative">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">My Appointments</h1>
-          <p className="text-muted-foreground mt-1">Schedule and manage your property viewings.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('renter.appointments.title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('renter.appointments.subtitle')}</p>
         </div>
       </div>
 
       <Tabs defaultValue="upcoming" className="w-full">
         <TabsList className="bg-slate-100/80 p-1 rounded-xl mb-6">
-          <TabsTrigger value="upcoming" className="rounded-lg px-6 data-[state=active]:bg-white">Upcoming</TabsTrigger>
-          <TabsTrigger value="past" className="rounded-lg px-6 data-[state=active]:bg-white">Past Visits</TabsTrigger>
+          <TabsTrigger value="upcoming" className="rounded-lg px-6 data-[state=active]:bg-white">{t('renter.appointments.tabs.upcoming')}</TabsTrigger>
+          <TabsTrigger value="past" className="rounded-lg px-6 data-[state=active]:bg-white">{t('renter.appointments.tabs.past')}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="upcoming" className="space-y-4">
           {upcoming.length === 0 ? (
             <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed">
               <CalendarIcon className="h-12 w-12 text-muted-foreground/30 mb-4" />
-              <h3 className="text-xl font-semibold">No upcoming visits</h3>
-              <p className="text-muted-foreground mt-2">You haven't scheduled any property visits yet.</p>
+              <h3 className="text-xl font-semibold">{t('renter.appointments.empty.upcoming')}</h3>
+              <p className="text-muted-foreground mt-2">{t('renter.appointments.empty.description')}</p>
               <Button 
                 variant="outline" 
                 className="mt-6 rounded-xl"
                 onClick={() => navigate('/explore')}
               >
-                Browse Properties
+                {t('renter.appointments.actions.browseProperties')}
               </Button>
             </Card>
           ) : (
@@ -204,7 +206,7 @@ export default function AppointmentList() {
         <TabsContent value="past" className="space-y-4">
           {past.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              <p>No past visits found.</p>
+              <p>{t('renter.appointments.empty.past')}</p>
             </div>
           ) : (
             past.map((apt) => renderAppointmentCard(apt, { showActions: false }))
@@ -219,12 +221,12 @@ export default function AppointmentList() {
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-4 text-destructive">
                 <AlertCircle className="h-6 w-6" />
-                <h3 className="text-xl font-bold">Cancel Visit</h3>
+                <h3 className="text-xl font-bold">{t('renter.appointments.modal.title')}</h3>
               </div>
               <p className="text-muted-foreground mb-6">
-                Are you sure you want to cancel your visit to <span className="font-semibold text-foreground">
-                  {cancellingApt.propertyTitle || "this property"}
-                </span>? 
+                {t('renter.appointments.modal.description', {
+                  property: cancellingApt.propertyTitle || t('renter.appointments.modal.propertyFallback'),
+                })}
               </p>
 
               <div className="flex gap-3">
@@ -234,7 +236,7 @@ export default function AppointmentList() {
                   onClick={() => setCancellingApt(null)}
                   disabled={cancelMutation.isPending}
                 >
-                  Go Back
+                  {t('renter.appointments.actions.goBack')}
                 </Button>
                 <Button 
                   className="flex-1 bg-destructive hover:bg-destructive/90 rounded-xl"
@@ -242,7 +244,7 @@ export default function AppointmentList() {
                   disabled={cancelMutation.isPending}
                 >
                   {cancelMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                  Confirm Cancellation
+                  {t('renter.appointments.actions.confirmCancellation')}
                 </Button>
               </div>
             </CardContent>

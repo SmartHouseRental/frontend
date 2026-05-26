@@ -39,20 +39,22 @@ export default function NotificationsView({
   isMarkingOne = false,
   title,
   subtitle,
+  translationNamespace = 'owner',
 }) {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('all');
 
-  const resolvedTitle = title || t('owner.notifications.title');
-  const resolvedSubtitle = subtitle || t('owner.notifications.subtitle');
+  const notificationsKey = `${translationNamespace}.notifications`;
+  const resolvedTitle = title || t(`${notificationsKey}.title`);
+  const resolvedSubtitle = subtitle || t(`${notificationsKey}.subtitle`);
 
   const tabLabels = {
-    all: t('owner.notifications.tabs.all'),
-    appointment: t('owner.notifications.tabs.appointment'),
-    agreement: t('owner.notifications.tabs.agreement'),
-    payment: t('owner.notifications.tabs.payment'),
-    message: t('owner.notifications.tabs.message'),
-    system: t('owner.notifications.tabs.system'),
+    all: t(`${notificationsKey}.tabs.all`),
+    appointment: t(`${notificationsKey}.tabs.appointment`),
+    agreement: t(`${notificationsKey}.tabs.agreement`),
+    payment: t(`${notificationsKey}.tabs.payment`),
+    message: t(`${notificationsKey}.tabs.message`),
+    system: t(`${notificationsKey}.tabs.system`),
   };
 
   const visibleTabs = NOTIFICATION_TABS.filter(
@@ -97,7 +99,7 @@ export default function NotificationsView({
               variant="ghost"
               size="icon"
               className="h-7 w-7 text-muted-foreground hover:text-primary"
-              title={t('owner.notifications.markAsRead')}
+              title={t(`${notificationsKey}.markAsRead`)}
               disabled={isMarkingOne}
               onClick={() => onToggleRead(n.id)}
             >
@@ -114,7 +116,7 @@ export default function NotificationsView({
               size="icon"
               className="h-7 w-7 text-muted-foreground hover:text-destructive"
               onClick={() => onDismiss(n.id)}
-              title={n.read ? t('owner.notifications.hideFromView') : t('owner.notifications.markReadAndHide')}
+              title={n.read ? t(`${notificationsKey}.hideFromView`) : t(`${notificationsKey}.markReadAndHide`)}
             >
               <X size={12} />
             </Button>
@@ -144,12 +146,12 @@ export default function NotificationsView({
               ) : (
                 <CheckCheck size={14} />
               )}
-              {t('owner.notifications.markAllRead')}
+              {t(`${notificationsKey}.markAllRead`)}
             </Button>
           )}
           {notifications.some((n) => n.read) && onClearAll && (
             <Button variant="ghost" className="gap-2 text-sm text-muted-foreground" onClick={onClearAll}>
-              <Trash2 size={14} /> {t('owner.notifications.clearRead')}
+              <Trash2 size={14} /> {t(`${notificationsKey}.clearRead`)}
             </Button>
           )}
         </div>
@@ -165,7 +167,7 @@ export default function NotificationsView({
               </span>
             </div>
             <p className="text-sm font-medium text-foreground">
-              {t('owner.notifications.youHaveUnread', { count: unreadCount })}
+              {t(`${notificationsKey}.youHaveUnread`, { count: unreadCount })}
             </p>
           </CardContent>
         </Card>
@@ -201,8 +203,8 @@ export default function NotificationsView({
                     <Bell size={32} className="mx-auto text-muted-foreground/30 mb-3" />
                     <p className="text-sm text-muted-foreground">
                       {tab.value === 'all'
-                        ? t('owner.notifications.noNotificationsYet')
-                        : t('owner.notifications.noCategoryNotifications', {
+                        ? t(`${notificationsKey}.noNotificationsYet`)
+                        : t(`${notificationsKey}.noCategoryNotifications`, {
                             category: tabLabels[tab.value],
                           })}
                     </p>

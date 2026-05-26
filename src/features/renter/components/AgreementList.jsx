@@ -5,11 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SafeImage from '@/components/SafeImage';
+import { useTranslation } from 'react-i18next';
 import { useAgreements } from '../hooks/useAgreements';
 import { AgreementStatusBadge } from '../agreements/statusBadge';
 import { AGREEMENT_FILTER_TABS } from '../agreements/constants';
 
 export default function AgreementList() {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
 
   const queryParams =
@@ -18,6 +20,18 @@ export default function AgreementList() {
   const { data, isLoading, isFetching, isError, error, refetch } = useAgreements(queryParams);
   const agreements = data?.items ?? [];
   const isInitialLoad = isLoading && !data;
+
+  const agreementFilterTabs = AGREEMENT_FILTER_TABS.map((tab) => ({
+    ...tab,
+    label: t(`renter.agreements.statuses.${tab.value}`, {
+      defaultValue: tab.label,
+    }),
+  }));
+
+  const getAgreementStatusLabel = (status) =>
+    t(`renter.agreements.statuses.${status}`, {
+      defaultValue: status,
+    });
 
   if (isInitialLoad) {
     return (
@@ -31,12 +45,14 @@ export default function AgreementList() {
     return (
       <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 text-center">
         <AlertCircle className="h-10 w-10 text-destructive" />
-        <p className="text-destructive font-medium">Failed to load agreements</p>
+        <p className="text-destructive font-medium">
+          {t('renter.agreements.errors.failedLoad')}
+        </p>
         <p className="text-muted-foreground text-sm max-w-md">
-          {error?.response?.data?.message || error?.message || 'Please try again.'}
+          {error?.response?.data?.message || error?.message || t('renter.agreements.errors.tryAgain')}
         </p>
         <Button variant="outline" onClick={() => refetch()}>
-          Retry
+          {t('renter.agreements.errors.tryAgain')}
         </Button>
       </div>
     );
@@ -46,7 +62,7 @@ export default function AgreementList() {
     <div className="space-y-6">
       <Tabs value={statusFilter} onValueChange={setStatusFilter}>
         <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/50 p-1">
-          {AGREEMENT_FILTER_TABS.map((tab) => (
+          {agreementFilterTabs.map((tab) => (
             <TabsTrigger
               key={tab.value}
               value={tab.value}
@@ -62,18 +78,18 @@ export default function AgreementList() {
         {isFetching && (
           <div className="absolute right-0 top-0 z-10 flex items-center gap-2 text-xs text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin text-primary" />
-            <span className="sr-only">Updating list</span>
+            <span className="sr-only">{t('renter.payments.actions.updating')}</span>
           </div>
         )}
 
         {agreements.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
             <FileText className="h-12 w-12 text-muted-foreground/50 mb-4" />
-            <h3 className="font-semibold text-lg">No agreements found</h3>
+            <h3 className="font-semibold text-lg">{t('renter.agreements.empty.title')}</h3>
             <p className="text-muted-foreground text-sm mt-1 max-w-sm">
               {statusFilter === 'all'
-                ? 'When a property owner sends you a rental offer, it will appear here.'
-                : 'No agreements match this filter.'}
+                ? t('renter.agreements.empty.all')
+                : t('renter.agreements.empty.filtered')}
             </p>
           </div>
         ) : (
@@ -94,7 +110,7 @@ export default function AgreementList() {
                       <div className="absolute top-3 left-3">
                         <AgreementStatusBadge
                           status={agreement.status}
-                          label={agreement.statusLabel}
+                          label={getAgreementStatusLabel(agreement.status)}
                         />
                       </div>
                     </div>
@@ -115,7 +131,7 @@ export default function AgreementList() {
                             {agreement.monthlyRentFormatted}
                           </p>
                           <p className="text-[10px] text-muted-foreground font-bold uppercase">
-                            per month
+                            {t('renter.agreements.labels.perMonth')}
                           </p>
                         </div>
                       </div>
@@ -123,13 +139,13 @@ export default function AgreementList() {
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 py-4 border-y border-slate-100">
                         <div className="space-y-1">
                           <p className="text-[10px] font-bold text-muted-foreground uppercase">
-                            Owner
+                            {t('renter.agreements.labels.owner')}
                           </p>
                           <span className="text-sm font-semibold">{agreement.ownerName}</span>
                         </div>
                         <div className="space-y-1">
                           <p className="text-[10px] font-bold text-muted-foreground uppercase">
-                            Lease start
+                            {t('renter.agreements.labels.leaseStart')}
                           </p>
                           <span className="text-sm font-semibold">
                             {agreement.startDateFormatted}
@@ -138,7 +154,7 @@ export default function AgreementList() {
                         {agreement.depositFormatted !== '—' && (
                           <div className="space-y-1">
                             <p className="text-[10px] font-bold text-muted-foreground uppercase">
-                              Deposit
+                              {t('renter.agreements.labels.deposit')}
                             </p>
                             <span className="text-sm font-semibold">
                               {agreement.depositFormatted}
@@ -151,7 +167,7 @@ export default function AgreementList() {
                     <div className="flex items-center justify-end mt-4">
                       <Link to={`/renter/agreements/${agreement.id}`}>
                         <Button variant="ghost" className="font-bold text-primary">
-                          View details
+                          {t('renter.agreements.labels.viewDetails')}
                           <ChevronRight className="h-4 w-4 ml-1" />
                         </Button>
                       </Link>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams, useNavigate } from 'react-router';
 import { Loader2, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { useVerifyChapaPayment } from '@/features/renter/hooks/useAgreements';
 import { toast } from 'sonner';
 
 export default function AgreementPaymentReturnPage() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const txRef = searchParams.get('tx_ref') || searchParams.get('txRef') || '';
@@ -37,14 +39,14 @@ export default function AgreementPaymentReturnPage() {
 
         if (payment?.status === 'success' || agreement?.status === 'completed') {
           setPhase('success');
-          toast.success('Security deposit paid successfully. Your lease is now active.');
+          toast.success(t('renter.paymentReturn.successDescription'));
         } else if (data?.failed || urlStatus === 'failed' || payment?.status === 'failed') {
           setPhase('failed');
         } else if (data?.pending || payment?.status === 'pending' || payment?.status === 'processing') {
           setPhase('pending');
         } else if (urlStatus === 'success') {
           setPhase('success');
-          toast.success('Payment received. Your agreement may take a moment to update.');
+          toast.success(t('renter.paymentReturn.successDescription'));
         } else {
           setPhase('pending');
         }
@@ -75,9 +77,9 @@ export default function AgreementPaymentReturnPage() {
           {phase === 'verifying' && (
             <>
               <Loader2 className="h-14 w-14 animate-spin text-primary mx-auto" />
-              <h1 className="text-xl font-bold">Confirming your payment</h1>
+              <h1 className="text-xl font-bold">{t('renter.paymentReturn.verifyingTitle')}</h1>
               <p className="text-muted-foreground text-sm">
-                Please wait while we verify your transaction with Chapa…
+                {t('renter.paymentReturn.verifyingDescription')}
               </p>
             </>
           )}
@@ -85,12 +87,12 @@ export default function AgreementPaymentReturnPage() {
           {phase === 'success' && (
             <>
               <CheckCircle2 className="h-14 w-14 text-emerald-500 mx-auto" />
-              <h1 className="text-xl font-bold text-emerald-900">Payment successful</h1>
+              <h1 className="text-xl font-bold text-emerald-900">{t('renter.paymentReturn.successTitle')}</h1>
               <p className="text-muted-foreground text-sm">
-                Your security deposit has been received and your rental agreement is active.
+                {t('renter.paymentReturn.successDescription')}
               </p>
               <Button className="w-full font-bold" onClick={() => navigate(detailPath)}>
-                View agreement
+                {t('renter.paymentReturn.viewAgreement')}
               </Button>
             </>
           )}
@@ -98,13 +100,12 @@ export default function AgreementPaymentReturnPage() {
           {phase === 'pending' && (
             <>
               <AlertCircle className="h-14 w-14 text-amber-500 mx-auto" />
-              <h1 className="text-xl font-bold">Payment processing</h1>
+              <h1 className="text-xl font-bold">{t('renter.paymentReturn.pendingTitle')}</h1>
               <p className="text-muted-foreground text-sm">
-                Your payment is still being confirmed. Check your agreement in a few minutes
-                or contact support if this persists.
+                {t('renter.paymentReturn.pendingDescription')}
               </p>
               <Button className="w-full font-bold" onClick={() => navigate(detailPath)}>
-                View agreement
+                {t('renter.paymentReturn.viewAgreement')}
               </Button>
             </>
           )}
@@ -112,17 +113,15 @@ export default function AgreementPaymentReturnPage() {
           {phase === 'failed' && (
             <>
               <XCircle className="h-14 w-14 text-destructive mx-auto" />
-              <h1 className="text-xl font-bold text-destructive">Payment not completed</h1>
+              <h1 className="text-xl font-bold text-destructive">{t('renter.paymentReturn.failedTitle')}</h1>
               <p className="text-muted-foreground text-sm">
-                {txRef
-                  ? 'We could not confirm your payment. You can try paying the deposit again from your agreement.'
-                  : 'No transaction reference was provided.'}
+                {txRef ? t('renter.paymentReturn.failedDescription') : t('renter.paymentReturn.failedMissingRef')}
               </p>
               <Button
                 className="w-full font-bold"
                 onClick={() => navigate(agreementId ? detailPath : '/renter/agreements')}
               >
-                {agreementId ? 'Back to agreement' : 'My agreements'}
+                {agreementId ? t('renter.paymentReturn.backToAgreement') : t('renter.paymentReturn.myAgreements')}
               </Button>
             </>
           )}
@@ -130,12 +129,12 @@ export default function AgreementPaymentReturnPage() {
           {phase === 'error' && !txRef && (
             <>
               <XCircle className="h-14 w-14 text-destructive mx-auto" />
-              <h1 className="text-xl font-bold">Invalid return link</h1>
+              <h1 className="text-xl font-bold">{t('renter.paymentReturn.invalidTitle')}</h1>
               <p className="text-muted-foreground text-sm">
-                Missing payment reference. Return to your agreements to continue.
+                {t('renter.paymentReturn.invalidDescription')}
               </p>
               <Link to="/renter/agreements">
-                <Button className="w-full font-bold mt-4">My agreements</Button>
+                <Button className="w-full font-bold mt-4">{t('renter.paymentReturn.myAgreements')}</Button>
               </Link>
             </>
           )}
@@ -145,7 +144,7 @@ export default function AgreementPaymentReturnPage() {
               to="/renter/agreements"
               className="text-sm text-muted-foreground hover:text-primary inline-block"
             >
-              All agreements
+              {t('renter.paymentReturn.allAgreements')}
             </Link>
           )}
         </CardContent>

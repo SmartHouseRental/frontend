@@ -1,10 +1,12 @@
 import { useParams, useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import ScheduleVisitForm from '@/features/renter/components/ScheduleVisitForm';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useProperty } from '@/features/property/hooks/useProperty';
 
 export default function ScheduleVisitPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: property, isLoading, isError } = useProperty(id);
@@ -20,13 +22,13 @@ export default function ScheduleVisitPage() {
   if (isError || !property) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <p className="text-destructive font-medium">Property not found</p>
-        <Button variant="outline" onClick={() => navigate('/explore')}>Browse Properties</Button>
+        <p className="text-destructive font-medium">{t('renter.scheduleVisit.propertyFallback')}</p>
+        <Button variant="outline" onClick={() => navigate('/explore')}>{t('renter.scheduleVisit.browseProperties')}</Button>
       </div>
     );
   }
 
-  const propertyTitle = (property.title && typeof property.title === 'object') ? (property.title.en || property.title.am) : (property.title || "Property Details");
+  const propertyTitle = (property.title && typeof property.title === 'object') ? (property.title.en || property.title.am) : (property.title || t('renter.scheduleVisit.propertyFallback'));
 
   return (
     <div className="container mx-auto max-w-4xl py-8 px-4">
@@ -36,14 +38,14 @@ export default function ScheduleVisitPage() {
         onClick={() => navigate(-1)}
       >
         <ChevronLeft className="h-4 w-4" />
-        Back to {propertyTitle}
+        {t('renter.scheduleVisit.backTo', { property: propertyTitle })}
       </Button>
 
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Schedule a Visit</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('renter.scheduleVisit.title')}</h1>
           <p className="text-muted-foreground mt-2">
-            Choose a convenient time to view <span className="font-semibold text-foreground">{propertyTitle}</span> and meet the owner.
+            {t('renter.scheduleVisit.description', { property: propertyTitle })}
           </p>
         </div>
 
