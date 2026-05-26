@@ -1417,7 +1417,75 @@
       "renter": {
         "title": "ተከራይ",
         "fallback": "ተከራይ",
-        "message": "ለተከራዩ መልዕክት ላክ"
+        "message": "ለተከራዩ መልዕክት ላክ",
+        "appointments": {
+          "title": "ቀጠሮዎች",
+          "subtitle": "የንብረት ጉብኝት ጥያቄዎችን እና የጊዜ ሰሌዳዎን ያስተዳድሩ።",
+          "stats": {
+            "total": "ጠቅላላ",
+            "pending": "በመጠባበቅ ላይ",
+            "confirmed": "ተረጋግጧል",
+            "rejected": "ውድቅ ተደርጓል"
+          },
+          "statuses": {
+            "PENDING": "በመጠባበቅ ላይ",
+            "ACCEPTED": "ተረጋግጧል",
+            "REJECTED": "ውድቅ ተደርጓል",
+            "CANCELLED": "ተሰርዟል"
+          },
+          "filters": {
+            "status": "ሁኔታ አጣራ",
+            "allStatuses": "ሁሉም ሁኔታዎች"
+          },
+          "tabs": {
+            "upcoming": "መጪ ({{count}})",
+            "past": "ያለፉ ({{count}})",
+            "all": "ሁሉም ({{count}})"
+          },
+          "empty": {
+            "upcoming": "መጪ ቀጠሮዎች የሉም",
+            "past": "ያለፉ ቀጠሮዎች የሉም",
+            "all": "እስካሁን ቀጠሮዎች የሉም"
+          },
+          "actions": {
+            "approve": "አጽድቅ",
+            "reject": "ውድቅ አድርግ",
+            "viewDetails": "ዝርዝሮችን ይመልከቱ",
+            "viewProperty": "ንብረትን ይመልከቱ",
+            "emailRenter": "ተከራዩን ኢሜይል ያድርጉ",
+            "cancel": "ሰርዝ",
+            "addOwnerNote": "የባለቤት ማስታወሻ ጨምር...",
+            "save": "አስቀምጥ",
+            "openMenu": "የቀጠሮ ምናሌ ክፈት",
+            "expand": "ቀጠሮን ዘርጋ",
+            "collapse": "ቀጠሮን ሰብስብ"
+          },
+          "confirm": {
+            "approveQuestion": "አጽድቅ?",
+            "rejectQuestion": "ውድቅ አድርግ?",
+            "yes": "አዎ",
+            "no": "አይ"
+          },
+          "errors": {
+            "failedLoad": "ቀጠሮዎችን መጫን አልተሳካም።",
+            "tryAgain": "እንደገና ይሞክሩ"
+          },
+          "detail": {
+            "close": "ዝጋ",
+            "title": "የቀጠሮ ዝርዝሮች",
+            "property": "ንብረት",
+            "schedule": "የጊዜ ሰሌዳ",
+            "renter": "ተከራይ",
+            "messageFromRenter": "ከተከራዩ የመጣ መልዕክት",
+            "createLeaseAgreement": "የኪራይ ስምምነት ፍጠር",
+            "cancelAppointment": "ቀጠሮን ሰርዝ"
+          },
+          "fallbacks": {
+            "property": "ንብረት",
+            "unknownRenter": "ያልታወቀ ተከራይ",
+            "renter": "ተከራይ"
+          }
+        }
       },
       "timeline": {
         "title": "የጊዜ መስመር",
@@ -1790,6 +1858,338 @@
       "sendReply": "ምላሽ ላክ",
       "replied": "ምላሽ ተሰጥቷል",
       "reply": "ምላሽ ይስጡ"
+    }
+  },
+  "renter": {
+    "appointments": {
+      "title": "የእኔ ቀጠሮዎች",
+      "subtitle": "የንብረት ጉብኝት ቀጠሮዎችዎን እዚህ ይከታተሉ እና ያስተዳድሩ።",
+      "errors": {
+        "failedLoad": "ቀጠሮዎችን መጫን አልተሳካም።",
+        "tryAgain": "እንደገና ይሞክሩ"
+      },
+      "labels": {
+        "na": "N/A"
+      },
+      "statuses": {
+        "confirmed": "ተረጋግጧል",
+        "declined": "ተቀባይነት ያጣ",
+        "cancelled": "ተሰርዟል",
+        "pending": "በመጠባበቅ ላይ"
+      },
+      "actions": {
+        "reschedule": "ቀጠሮ ቀይር",
+        "cancelVisit": "ቀጠሮ ሰርዝ",
+        "browseProperties": "ቤቶችን ያስሱ",
+        "goBack": "ተመለስ",
+        "confirmCancellation": "መሰረዙን አረጋግጥ"
+      },
+      "tabs": {
+        "upcoming": "የሚመጡ",
+        "past": "ያለፉ"
+      },
+      "empty": {
+        "upcoming": "የሚመጡ ቀጠሮዎች የሉም",
+        "description": "የሚወዱትን ቤት ለመፈለግ ቤቶችን ያስሱ እና ቀጠሮ ይያዙ።",
+        "past": "ያለፉ ቀጠሮዎች አልተገኙም"
+      },
+      "modal": {
+        "title": "ቀጠሮ ሰርዝ",
+        "description": "በ{{property}} ላይ የያዙትን የጉብኝት ቀጠሮ ለመሰረዝ እርግጠኛ ነዎት? ይህ እርምጃ ሊመለስ አይችልም።",
+        "propertyFallback": "ይህ ንብረት"
+      }
+    },
+    "paymentReturn": {
+      "verifyingTitle": "ክፍያ በመረጋገጥ ላይ...",
+      "verifyingDescription": "እባክዎ ግብይትዎን ከቻፓ ጋር ስናረጋግጥ ትንሽ ይጠብቁ።",
+      "successTitle": "ክፍያ ተጠናቋል!",
+      "successDescription": "የኪራይ ዋስትና ክፍያዎ በተሳካ ሁኔታ ተጠናቋል። የኪራይ ስምምነትዎ አሁን ንቁ ሆኗል።",
+      "viewAgreement": "ስምምነት ይመልከቱ",
+      "pendingTitle": "ክፍያ በመጠባበቅ ላይ",
+      "pendingDescription": "የግብይትዎ ሁኔታ አሁንም በመካሄድ ላይ ነው። በቅርቡ ይዘምናል።",
+      "failedTitle": "ክፍያ አልተሳካም",
+      "failedDescription": "የእርስዎ ግብይት ሊከናወን አልቻለም። እባክዎ እንደገና ይሞክሩ ወይም ድጋፍ ሰጪዎችን ያግኙ።",
+      "failedMissingRef": "ትክክለኛ ያልሆነ የግብይት ቁጥር። እባክዎ የክፍያ ታሪክዎን ያረጋግጡ።",
+      "backToAgreement": "ወደ ስምምነት ተመለስ",
+      "myAgreements": "የእኔ ስምምነቶች",
+      "invalidTitle": "ትክክለኛ ያልሆነ መለያ",
+      "invalidDescription": "በተመለሰው ዩአርኤል ውስጥ ምንም የግብይት መለያ አልቀረበም።",
+      "allAgreements": "ወደ ሁሉም ስምምነቶች ተመለስ"
+    },
+    "agreements": {
+      "title": "የእኔ ስምምነቶች",
+      "subtitle": "የቀረቡ የኪራይ ቅናሾችን ይገምግሙ፣ የዋስትና ክፍያዎችን ያስተዳድሩ እና ንቁ ውሎችን ይመልከቱ።",
+      "tabs": {
+        "agreements": "የኪራይ ስምምነቶች",
+        "payments": "የክፍያ ታሪክ"
+      },
+      "statuses": {
+        "all": "ሁሉም",
+        "draft": "ረቂቅ",
+        "sent": "ቅናሽ ደርሷል",
+        "payment_pending": "ክፍያ በመጠባበቅ ላይ",
+        "completed": "ንቁ",
+        "rejected": "የተቃወመ",
+        "cancelled": "የተሰረዘ",
+        "terminated": "የተቋረጠ",
+        "expired": "ጊዜው ያለፈበት"
+      },
+      "errors": {
+        "failedLoad": "ስምምነቶችን መጫን አልተሳካም።",
+        "tryAgain": "እንደገና ይሞክሩ"
+      },
+      "empty": {
+        "title": "ምንም ስምምነቶች የሉም",
+        "all": "እስካሁን ምንም የኪራይ ስምምነት አልተመዘገበም።",
+        "filtered": "ከተመረጠው ሁኔታ ጋር የሚዛመድ ምንም ስምምነት የለም።"
+      },
+      "labels": {
+        "perMonth": "/ ወር",
+        "owner": "ባለቤት",
+        "leaseStart": "የመጀመሪያ ቀን",
+        "deposit": "የኪራይ ዋስትና (ETB)",
+        "viewDetails": "ዝርዝሮችን ይመልከቱ"
+      }
+    },
+    "payments": {
+      "filterPlaceholder": "በሁኔታ ያጣሩ",
+      "statuses": {
+        "all": "ሁሉም ሁኔታዎች",
+        "pending": "በመጠባበቅ ላይ",
+        "processing": "በመካሄድ ላይ",
+        "success": "የተከፈለ",
+        "failed": "አልተሳካም",
+        "expired": "ጊዜው ያለፈበት"
+      },
+      "providers": {
+        "manual": "በባንክ ማስተላለፍ",
+        "chapa": "ቻፓ (በካርድ/በቴሌብር)"
+      },
+      "errors": {
+        "failedLoad": "ክፍያዎችን መጫን አልተሳካም።",
+        "tryAgain": "እንደገና ይሞክሩ"
+      },
+      "actions": {
+        "updating": "በማዘመን ላይ...",
+        "viewAgreement": "ስምምነት ይመልከቱ",
+        "uploadProof": "የክፍያ ማረጋገጫ ይጫኑ"
+      },
+      "empty": {
+        "title": "ምንም ክፍያዎች የሉም",
+        "description": "ግብይቶች ሲከናወኑ የእርስዎ የክፍያ ታሪክ እዚህ ይታያል።"
+      },
+      "proof": {
+        "invalidType": "እባክዎ ምስል (JPG/PNG) ወይም ፒዲኤፍ (PDF) ፋይል ይጫኑ።",
+        "tooLarge": "የፋይል መጠን ከ5MB በታች መሆን አለበት።"
+      }
+    },
+    "agreementDetail": {
+      "actions": {
+        "leaseActiveTitle": "የኪራይ ስምምነት ንቁ ነው",
+        "leaseActiveDescription": "እንኳን ደስ አለዎት! የኪራይ ስምምነትዎ በ{{date}} ንቁ ሆኗል።",
+        "title": "የሚያስፈልግ እርምጃ",
+        "offerExpired": "ይህ የኪራይ ቅናሽ ጊዜው አልፎበታል።",
+        "acceptOffer": "ቅናሹን ተቀበል እና ቀጥል",
+        "decline": "ቅናሹን ውድቅ አድርግ",
+        "declineOfferQuestion": "ይህን ቅናሽ ውድቅ ማድረግ ይፈልጋሉ?",
+        "optionalReason": "ቅናሹን ውድቅ ያደረጉበትን ምክንያት ማብራራት ይችላሉ (ለምሳሌ፡ ኪራዩ ውድ ነው)...",
+        "back": "ተመለስ",
+        "confirmDecline": "ውድቅ ማድረጉን አረጋግጥ",
+        "payDepositHelp": "ስምምነቱን ለማጠናቀቅ እባክዎ የ{{amount}} የኪራይ ዋስትና ክፍያ ይፈጽሙ።",
+        "paySecurityDeposit": "የኪራይ ዋስትና ክፈል",
+        "cancelAgreement": "ቅናሹን ሰርዝ",
+        "cancelAgreementQuestion": "ይህን ቅናሽ መሰረዝ ይፈልጋሉ?",
+        "optionalReasonShort": "ምክንያቱን በአጭሩ ያብራሩ...",
+        "confirmCancel": "መሰረዙን አረጋግጥ",
+        "offerExpires": "የቅናሽ ጊዜ ያበቃል፡ {{date}}",
+        "noPayments": "እስካሁን ምንም ክፍያ አልተመዘገበም።"
+      },
+      "statusBanner": "ስምምነት {{status}}",
+      "errors": {
+        "failedLoad": "የስምምነት ዝርዝሮችን መጫን አልተሳካም።",
+        "retry": "እንደገና ይሞክሩ",
+        "backToAgreements": "ወደ ስምምነቶች ተመለስ"
+      },
+      "leaseTerms": "የኪራይ ውል ውሎች",
+      "monthlyRent": "ወርሃዊ ኪራይ",
+      "securityDeposit": "የኪራይ ዋስትና",
+      "start": "መጀመሪያ",
+      "end": "مጨረሻ",
+      "leaseTermsNote": "መደበኛ የተከራይ መመሪያዎች እና ውሎች ተፈጻሚ ይሆናሉ።",
+      "messageFromOwner": "ከባለቤቱ የተላከ መልዕክት",
+      "payments": "ክፍያዎች",
+      "propertyOwner": "የንብረት ባለቤት",
+      "ownerHost": "አከራይ / አስተናጋጅ",
+      "timeline": "የጊዜ መስመር",
+      "sentLabel": "የተላከበት ቀን",
+      "responseLabel": "ምላሽ የተሰጠበት ቀን",
+      "activatedLabel": "የነቃበት ቀን"
+    },
+    "scheduleVisit": {
+      "propertyFallback": "የንብረት ዝርዝር",
+      "propertyTypeFallback": "የንብረት አይነት",
+      "browseProperties": "ቤቶችን ያስሱ",
+      "backTo": "ወደ {{property}} ተመለስ",
+      "title": "የጉብኝት ቀጠሮ ይያዙ",
+      "description": "{{property}}ን ለመጎብኘት የሚመችዎትን የቀጥታ ወይም የቪዲዮ ጉብኝት ሰዓት ይምረጡ።",
+      "selectDate": "ቀን ይምረጡ",
+      "selectTime": "የጉብኝት ሰዓት ይምረጡ",
+      "startTime": "የመጀመሪያ ሰዓት",
+      "endTime": "የማቂያ ሰዓት",
+      "noEndTimes": "እባክዎ መጀመሪያ መነሻ ሰዓት ይምረጡ",
+      "noEndTimesAvailable": "ምንም መዝጊያ ሰዓት አይገኝም",
+      "visitRange": "የተመረጠው የጉብኝት ሰዓት፡ ከ{{start}} እስከ {{end}}",
+      "notesForOwner": "ለባለቤቱ የሚተውት ማስታወሻ (አማራጭ)",
+      "rescheduleReason": "የቀጠሮ ለውጥ ምክንያት",
+      "reschedulePlaceholder": "ቀጠሮውን የቀየሩበትን ምክንያት ያብራሩ...",
+      "placeholder": "ራስዎን ያስተዋውቁ እና ለጉብኝቱ ልዩ ፍላጎቶች ካሉዎት እዚህ ይግለጹ...",
+      "scheduling": "ቀጠሮ በመያዝ ላይ...",
+      "confirmScheduling": "ቀጠሮ መያዙን አረጋግጥ",
+      "info": "ባለቤቱ ጥያቄዎን ይደርሰዋል፣ ቀጠሮው ሲረጋገጥም ማሳወቂያ ይደርስዎታል።",
+      "beds": "አልጋዎች",
+      "baths": "መታጠቢያዎች",
+      "owner": "ባለቤት",
+      "propertyOwnerFallback": "የንብረት ባለቤት",
+      "visitPolicyTitle": "የጉብኝት ቀጠሮ መመሪያ",
+      "visitPolicy": "ቀጠሮ ከመጀመሩ 2 ሰዓት በፊት መሰረዝ ወይም መቀየር ይቻላል። እባክዎ የአከራዩን ሰዓት ያክብሩ።",
+      "availability": {
+        "loadError": "የአከራዩን ክፍት ጊዜ ማረጋገጥ አልተቻለም። እባክዎ እንደገና ይሞክሩ።"
+      },
+      "fieldErrors": {
+        "date": "እባክዎ ቀን ይምረጡ",
+        "time": "እባክዎ መጀመሪያ ሰዓት ይምረጡ",
+        "endTime": "እባክዎ ማቂያ ሰዓት ይምረጡ"
+      }
+    },
+    "notifications": {
+      "toastHidden": "ማሳወቂያው ከዕይታ ተደብቋል",
+      "toastNoReadClear": "የሚጸዳ የተነበበ ማሳወቂያ የለም",
+      "toastCleared": "የተነበቡ ማሳወቂያዎች ተወግደዋል",
+      "loading": "ማሳወቂያዎችን በመጫን ላይ...",
+      "failed": "ማሳወቂያዎችን መጫን አልተሳካም",
+      "unableToLoad": "የእርስዎን ማሳወቂያዎች መጫን አልተቻለም።",
+      "tryAgain": "እንደገና ይሞክሩ",
+      "title": "የእኔ ማሳወቂያዎች",
+      "subtitle": "ስለ ኪራይ ቅናሾች፣ ጉብኝቶች እና ክፍያዎች መረጃዎችን እዚህ ይከታተሉ።",
+      "tabs": {
+        "all": "ሁሉም",
+        "appointment": "ጉብኝቶች",
+        "agreement": "ውሎች",
+        "payment": "ክፍያዎች",
+        "message": "መልዕክቶች",
+        "system": "ስርዓት"
+      },
+      "markAsRead": "እንደተነበበ ምልክት አድርግ",
+      "hideFromView": "ማሳወቂያ ደብቅ",
+      "markReadAndHide": "አንብበህ ደብቅ",
+      "markAllRead": "ሁሉንም እንደተነበበ ምልክት አድርግ",
+      "clearRead": "የተነበቡትን አጽዳ",
+      "youHaveUnread": "እስካሁን ያልተነበበ {{count}} ማሳወቂያ አለዎት",
+      "youHaveUnread_plural": "እስካሁን ያልተነበቡ {{count}} ማሳወቂያዎች አሉዎት",
+      "noNotificationsYet": "እስካሁን ምንም ማሳወቂያ የለም",
+      "noCategoryNotifications": "በ{{category}} ውስጥ አዲስ ማሳወቂያዎች የሉም"
+    },
+    "profile": {
+      "title": "መገለጫ እና ቅንብሮች",
+      "subtitle": "የተከራይ መገለጫዎን፣ ደህንነትዎን እና የስርዓት ቅንብሮችን ያስተዳድሩ።",
+      "errors": {
+        "failedLoad": "መገለጫ መጫን አልተሳካም።",
+        "tryAgain": "እንደገና ይሞክሩ",
+        "unableToLoad": "የመገለጫ ዝርዝሮችን መጫን አልተቻለም።",
+        "profileEmpty": "የተከራይ መገለጫ መረጃ ባዶ ነው።"
+      },
+      "toast": {
+        "avatarType": "JPEG እና PNG ምስሎች ብቻ ይፈቀዳሉ።",
+        "avatarSize": "የምስሉ መጠን ከ5MB በታች መሆን አለበት።",
+        "nameHint": "ስም ቢያንስ ባለ 2 ፊደል መሆን አለበት።",
+        "passwordMismatch": "አዲሱ የይለፍ ቃላት አይዛመዱም።"
+      },
+      "defaultName": "ተከራይ ተጠቃሚ",
+      "tabs": {
+        "general": "አጠቃላይ ቅንብሮች",
+        "security": "ደህንነት ቅንብሮች"
+      },
+      "changePhoto": "ፎቶ ቀይር",
+      "savePhoto": "ፎቶ አስቀምጥ",
+      "emailVerified": "ኢሜይል ተረጋግጧል",
+      "emailUnverified": "ኢሜይል አልተረጋገጠም",
+      "personalInfo": {
+        "title": "የግል መረጃ",
+        "cancel": "ሰርዝ",
+        "save": "ለውጦችን አስቀምጥ",
+        "firstName": "የመጀመሪያ ስም",
+        "lastName": "የአባት ስም",
+        "phone": "ስልክ ቁጥር",
+        "bio": "ስለ እኔ",
+        "noBio": "እስካሁን ምንም መግለጫ አልተጻፈም።",
+        "phoneHint": "ስልክ ቁጥርዎን በአለም አቀፍ ፎርማት ያስገቡ (ለምሳሌ፡ +251...)"
+      },
+      "location": {
+        "title": "አሁኑ ያለሁበት ቦታ",
+        "noLocation": "ምንም ቦታ አልተመረጠም",
+        "label": "ከተማ / ሰፈር",
+        "placeholder": "ለምሳሌ፡ ቦሌ፣ አዲስ አበባ"
+      },
+      "preferences": {
+        "title": "የስርዓት ምርጫዎች",
+        "language": "የመተግበሪያው ቋንቋ",
+        "languageOptions": {
+          "en": "English",
+          "am": "አማርኛ",
+          "or": "Afaan Oromoo",
+          "ti": "ትግርኛ"
+        },
+        "emailNotifications": "የኢሜይል ማሳወቂያዎች",
+        "preferredLanguage": "የተመረጠ የመተግበሪያ ቋንቋ",
+        "chooseUpdates": "የኢሜይል ማንቂያዎችን መቀበል የሚፈልጉባቸውን ክስተቶች ይምረጡ፡",
+        "options": {
+          "appointments": "የጉብኝት ቀጠሮ ዝመናዎች",
+          "agreements": "የኪራይ ስምምነት ዝመናዎች",
+          "payments": "የክፍያ ደረሰኞች",
+          "reviews": "የግምገማ ማሳወቂያዎች",
+          "reports": "የስርዓት ደህንነት ሪፖርቶች",
+          "system": "የመድረክ ጥገና ማስታወቂያዎች"
+        }
+      },
+      "security": {
+        "title": "የይለፍ ቃል ቀይር",
+        "description": "ጠንካራ የይለፍ ቃል በመጠቀም የመለያዎን ደህንነት ይጠብቁ።",
+        "currentPassword": "የአሁኑ የይለፍ ቃል",
+        "newPassword": "አዲስ የይለፍ ቃል",
+        "confirmPassword": "አዲሱን የይለፍ ቃል ያረጋግጡ",
+        "savePassword": "የይለፍ ቃል አሻሽል",
+        "hidePassword": "ይለፍ ቃል ደብቅ",
+        "showPassword": "ይለፍ ቃል አሳይ"
+      }
+    },
+    "reviews": {
+      "title": "የእኔ ግምገማዎች",
+      "subtitle": "ለጎበኟቸው ቤቶች የሰጡትን አስተያየት እዚህ ያስተዳድሩ።",
+      "empty": "እስካሁን ምንም የቤት ግምገማ አልሰጡም።",
+      "actions": {
+        "editReview": "አስተያየት አርትዕ",
+        "deleteReview": "አስተያየት ሰርዝ"
+      },
+      "modal": {
+        "editTitle": "ግምገማዎን ያርሙ",
+        "rating": "የእርስዎ ደረጃ",
+        "feedback": "የግምገማ አስተያየት",
+        "placeholder": "ስለዚህ ቤት ያለዎትን እውነተኛ አስተያየት እዚህ ይጻፉ...",
+        "cancel": "ሰርዝ",
+        "saving": "በማስቀመጥ ላይ...",
+        "saveChanges": "ለውጦችን አስቀምጥ",
+        "deleteTitle": "ግምገማ ሰርዝ?",
+        "deleteDescription": "ይህ ግምገማ ከቤቱ ገጽ ላይ በቋሚነት ይሰረዛል።",
+        "deletePrompt": "በ{{property}} ላይ የሰጡትን ግምገማ ለመሰረዝ እርግጠኛ ነዎት?",
+        "deleteInfo": "ይህ እርምጃ ሊመለስ አይችልም።",
+        "keepReview": "ይቆይ",
+        "deleting": "በመሰረዝ ላይ...",
+        "deleteReview": "አዎ፣ ሰርዝ"
+      },
+      "errors": {
+        "failedLoad": "ግምገማዎችን መጫን አልተሳካም።",
+        "tryAgain": "እንደገና ይሞክሩ"
+      }
     }
   }
 }

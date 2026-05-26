@@ -1417,7 +1417,75 @@
       "renter": {
         "title": "Renter",
         "fallback": "Renter",
-        "message": "Message renter"
+        "message": "Message renter",
+        "appointments": {
+          "title": "Appointments",
+          "subtitle": "Manage property visit requests and your schedule.",
+          "stats": {
+            "total": "Total",
+            "pending": "Pending",
+            "confirmed": "Confirmed",
+            "rejected": "Rejected"
+          },
+          "statuses": {
+            "PENDING": "Pending",
+            "ACCEPTED": "Confirmed",
+            "REJECTED": "Rejected",
+            "CANCELLED": "Cancelled"
+          },
+          "filters": {
+            "status": "Filter status",
+            "allStatuses": "All statuses"
+          },
+          "tabs": {
+            "upcoming": "Upcoming ({{count}})",
+            "past": "Past ({{count}})",
+            "all": "All ({{count}})"
+          },
+          "empty": {
+            "upcoming": "No upcoming appointments",
+            "past": "No past appointments",
+            "all": "No appointments yet"
+          },
+          "actions": {
+            "approve": "Approve",
+            "reject": "Reject",
+            "viewDetails": "View details",
+            "viewProperty": "View property",
+            "emailRenter": "Email renter",
+            "cancel": "Cancel",
+            "addOwnerNote": "Add owner note...",
+            "save": "Save",
+            "openMenu": "Open appointment menu",
+            "expand": "Expand appointment",
+            "collapse": "Collapse appointment"
+          },
+          "confirm": {
+            "approveQuestion": "Approve?",
+            "rejectQuestion": "Reject?",
+            "yes": "Yes",
+            "no": "No"
+          },
+          "errors": {
+            "failedLoad": "Failed to load appointments.",
+            "tryAgain": "Try again"
+          },
+          "detail": {
+            "close": "Close",
+            "title": "Appointment details",
+            "property": "Property",
+            "schedule": "Schedule",
+            "renter": "Renter",
+            "messageFromRenter": "Message from renter",
+            "createLeaseAgreement": "Create lease agreement",
+            "cancelAppointment": "Cancel appointment"
+          },
+          "fallbacks": {
+            "property": "Property",
+            "unknownRenter": "Unknown renter",
+            "renter": "Renter"
+          }
+        }
       },
       "timeline": {
         "title": "Timeline",
@@ -1790,6 +1858,338 @@
       "sendReply": "Send Reply",
       "replied": "Replied",
       "reply": "Reply"
+    }
+  },
+  "renter": {
+    "appointments": {
+      "title": "My Appointments",
+      "subtitle": "Track and manage your scheduled property visits.",
+      "errors": {
+        "failedLoad": "Failed to load appointments.",
+        "tryAgain": "Try again"
+      },
+      "labels": {
+        "na": "N/A"
+      },
+      "statuses": {
+        "confirmed": "Confirmed",
+        "declined": "Declined",
+        "cancelled": "Cancelled",
+        "pending": "Pending"
+      },
+      "actions": {
+        "reschedule": "Reschedule",
+        "cancelVisit": "Cancel Visit",
+        "browseProperties": "Browse Properties",
+        "goBack": "Go Back",
+        "confirmCancellation": "Confirm Cancellation"
+      },
+      "tabs": {
+        "upcoming": "Upcoming",
+        "past": "Past"
+      },
+      "empty": {
+        "upcoming": "No upcoming appointments",
+        "description": "Explore homes and schedule visits to find your perfect place.",
+        "past": "No past appointments found"
+      },
+      "modal": {
+        "title": "Cancel Visit",
+        "description": "Are you sure you want to cancel your scheduled visit for {{property}}? This action cannot be undone.",
+        "propertyFallback": "this property"
+      }
+    },
+    "paymentReturn": {
+      "verifyingTitle": "Verifying Payment...",
+      "verifyingDescription": "Please wait while we verify your transaction status with Chapa.",
+      "successTitle": "Payment Successful!",
+      "successDescription": "Your security deposit has been processed successfully. Your lease agreement is now active.",
+      "viewAgreement": "View Agreement",
+      "pendingTitle": "Payment Pending",
+      "pendingDescription": "Your transaction status is still being processed. It will be updated shortly.",
+      "failedTitle": "Payment Failed",
+      "failedDescription": "Your transaction could not be processed. Please try again or contact support.",
+      "failedMissingRef": "Invalid transaction reference. Please check your payment history.",
+      "backToAgreement": "Back to Agreement",
+      "myAgreements": "My Agreements",
+      "invalidTitle": "Invalid Reference",
+      "invalidDescription": "No transaction reference was provided in the return URL.",
+      "allAgreements": "Back to all agreements"
+    },
+    "agreements": {
+      "title": "My Agreements",
+      "subtitle": "Review offers, manage security deposits, and view active leases.",
+      "tabs": {
+        "agreements": "Lease Agreements",
+        "payments": "Payment History"
+      },
+      "statuses": {
+        "all": "All",
+        "draft": "Draft",
+        "sent": "Offer Received",
+        "payment_pending": "Payment Pending",
+        "completed": "Active",
+        "rejected": "Declined",
+        "cancelled": "Cancelled",
+        "terminated": "Terminated",
+        "expired": "Expired"
+      },
+      "errors": {
+        "failedLoad": "Failed to load agreements.",
+        "tryAgain": "Try again"
+      },
+      "empty": {
+        "title": "No agreements yet",
+        "all": "You do not have any lease agreements on file.",
+        "filtered": "No lease agreements match the selected status."
+      },
+      "labels": {
+        "perMonth": "/ month",
+        "owner": "Owner",
+        "leaseStart": "Start Date",
+        "deposit": "Security Deposit (ETB)",
+        "viewDetails": "View Details"
+      }
+    },
+    "payments": {
+      "filterPlaceholder": "Filter by status",
+      "statuses": {
+        "all": "All Statuses",
+        "pending": "Pending",
+        "processing": "Processing",
+        "success": "Paid",
+        "failed": "Failed",
+        "expired": "Expired"
+      },
+      "providers": {
+        "manual": "Bank Transfer",
+        "chapa": "Chapa (Card/Telebirr)"
+      },
+      "errors": {
+        "failedLoad": "Failed to load payments.",
+        "tryAgain": "Try again"
+      },
+      "actions": {
+        "updating": "Updating...",
+        "viewAgreement": "View Agreement",
+        "uploadProof": "Upload Proof"
+      },
+      "empty": {
+        "title": "No payments yet",
+        "description": "Your payment history will appear here once transactions are recorded."
+      },
+      "proof": {
+        "invalidType": "Please upload an image (JPG/PNG) or PDF file.",
+        "tooLarge": "File size must be under 5MB."
+      }
+    },
+    "agreementDetail": {
+      "actions": {
+        "leaseActiveTitle": "Lease Agreement Active",
+        "leaseActiveDescription": "Congratulations! Your lease agreement became active on{{date}}.",
+        "title": "Required Action",
+        "offerExpired": "This offer has expired.",
+        "acceptOffer": "Accept Offer & Proceed",
+        "decline": "Decline Offer",
+        "declineOfferQuestion": "Decline this offer?",
+        "optionalReason": "Optionally explain why you are declining (e.g. rent is too high)...",
+        "back": "Back",
+        "confirmDecline": "Confirm Decline",
+        "payDepositHelp": "To complete the agreement, please pay the security deposit of {{amount}}.",
+        "paySecurityDeposit": "Pay Security Deposit",
+        "cancelAgreement": "Cancel Offer",
+        "cancelAgreementQuestion": "Cancel this offer?",
+        "optionalReasonShort": "Optionally explain why...",
+        "confirmCancel": "Confirm Cancel",
+        "offerExpires": "Offer expires: {{date}}",
+        "noPayments": "No payments recorded yet."
+      },
+      "statusBanner": "Agreement {{status}}",
+      "errors": {
+        "failedLoad": "Failed to load agreement details.",
+        "retry": "Retry",
+        "backToAgreements": "Back to Agreements"
+      },
+      "leaseTerms": "Lease Terms",
+      "monthlyRent": "Monthly Rent",
+      "securityDeposit": "Security Deposit",
+      "start": "Start",
+      "end": "End",
+      "leaseTermsNote": "Standard tenant guidelines and terms apply.",
+      "messageFromOwner": "Message from Owner",
+      "payments": "Payments",
+      "propertyOwner": "Property Owner",
+      "ownerHost": "Owner / Host",
+      "timeline": "Timeline",
+      "sentLabel": "Sent Date",
+      "responseLabel": "Response Date",
+      "activatedLabel": "Activation Date"
+    },
+    "scheduleVisit": {
+      "propertyFallback": "Property Details",
+      "propertyTypeFallback": "Property Type",
+      "browseProperties": "Browse Properties",
+      "backTo": "Back to {{property}}",
+      "title": "Schedule a Visit",
+      "description": "Book a convenient physical or virtual tour slot to view {{property}}.",
+      "selectDate": "Select Date",
+      "selectTime": "Select Time Slot",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "noEndTimes": "Select a start time first",
+      "noEndTimesAvailable": "No end time slots available",
+      "visitRange": "Visit range selected: {{start}} to {{end}}",
+      "notesForOwner": "Notes for the owner (optional)",
+      "rescheduleReason": "Reason for rescheduling",
+      "reschedulePlaceholder": "Explain why you are rescheduling your visit...",
+      "placeholder": "Introduce yourself and suggest any specific preferences for your visit...",
+      "scheduling": "Scheduling slot...",
+      "confirmScheduling": "Confirm Visit Booking",
+      "info": "The owner will receive your request and notify you once confirmed.",
+      "beds": "Beds",
+      "baths": "Baths",
+      "owner": "Owner",
+      "propertyOwnerFallback": "Property Owner",
+      "visitPolicyTitle": "Visit Booking Policy",
+      "visitPolicy": "Visits can be cancelled or rescheduled up to 2 hours before the start time. Please respect the owner's availability.",
+      "availability": {
+        "loadError": "Could not check availability. Please try again."
+      },
+      "fieldErrors": {
+        "date": "Please select a date",
+        "time": "Please select a start time",
+        "endTime": "Please select an end time"
+      }
+    },
+    "notifications": {
+      "toastHidden": "Notification hidden from view",
+      "toastNoReadClear": "No read notifications to clear",
+      "toastCleared": "Read notifications cleared from view",
+      "loading": "Loading notifications...",
+      "failed": "Failed to load notifications",
+      "unableToLoad": "Unable to load your notifications.",
+      "tryAgain": "Try again",
+      "title": "My Notifications",
+      "subtitle": "Stay updated on your lease offers, visits, and payments.",
+      "tabs": {
+        "all": "All",
+        "appointment": "Visits",
+        "agreement": "Leases",
+        "payment": "Payments",
+        "message": "Messages",
+        "system": "System"
+      },
+      "markAsRead": "Mark as read",
+      "hideFromView": "Hide notification",
+      "markReadAndHide": "Mark read and hide",
+      "markAllRead": "Mark all as read",
+      "clearRead": "Clear read",
+      "youHaveUnread": "You have {{count}} unread notification",
+      "youHaveUnread_plural": "You have {{count}} unread notifications",
+      "noNotificationsYet": "No notifications yet",
+      "noCategoryNotifications": "No new notifications in {{category}}"
+    },
+    "profile": {
+      "title": "Profile & Settings",
+      "subtitle": "Manage your renter profile, security, and options.",
+      "errors": {
+        "failedLoad": "Failed to load profile.",
+        "tryAgain": "Try again",
+        "unableToLoad": "Unable to load your profile details.",
+        "profileEmpty": "Renter profile data is empty."
+      },
+      "toast": {
+        "avatarType": "Only JPEG and PNG images are allowed.",
+        "avatarSize": "Image size must be under 5MB.",
+        "nameHint": "Name must be at least 2 characters.",
+        "passwordMismatch": "New passwords do not match."
+      },
+      "defaultName": "Renter User",
+      "tabs": {
+        "general": "General Settings",
+        "security": "Security Settings"
+      },
+      "changePhoto": "Change photo",
+      "savePhoto": "Save Photo",
+      "emailVerified": "Email Verified",
+      "emailUnverified": "Email Unverified",
+      "personalInfo": {
+        "title": "Personal Information",
+        "cancel": "Cancel",
+        "save": "Save Changes",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "phone": "Phone Number",
+        "bio": "Bio / About Me",
+        "noBio": "No bio entered yet.",
+        "phoneHint": "Enter phone in international format (e.g. +251...)"
+      },
+      "location": {
+        "title": "My Location",
+        "noLocation": "No location set",
+        "label": "City / Neighborhood",
+        "placeholder": "e.g. Bole, Addis Ababa"
+      },
+      "preferences": {
+        "title": "System Preferences",
+        "language": "Interface Language",
+        "languageOptions": {
+          "en": "English",
+          "am": "አማርኛ (Amharic)",
+          "or": "Afaan Oromoo",
+          "ti": "ትግርኛ (Tigrinya)"
+        },
+        "emailNotifications": "Email Notification Updates",
+        "preferredLanguage": "Preferred Interface Language",
+        "chooseUpdates": "Choose which events you want to receive email alerts for:",
+        "options": {
+          "appointments": "Visit Booking Updates",
+          "agreements": "Lease Agreement Activity",
+          "payments": "Payment Receipts",
+          "reviews": "Review Notifications",
+          "reports": "System Security Reports",
+          "system": "Platform Maintenance Announcements"
+        }
+      },
+      "security": {
+        "title": "Change Password",
+        "description": "Ensure your account is secure by using a strong password.",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm New Password",
+        "savePassword": "Update Password",
+        "hidePassword": "Hide password",
+        "showPassword": "Show password"
+      }
+    },
+    "reviews": {
+      "title": "My Reviews",
+      "subtitle": "View and manage feedback you have left for properties.",
+      "empty": "You have not submitted any property reviews yet.",
+      "actions": {
+        "editReview": "Edit review",
+        "deleteReview": "Delete review"
+      },
+      "modal": {
+        "editTitle": "Edit Your Review",
+        "rating": "Your Rating",
+        "feedback": "Review Feedback",
+        "placeholder": "Write your honest feedback about this home...",
+        "cancel": "Cancel",
+        "saving": "Saving changes...",
+        "saveChanges": "Save Changes",
+        "deleteTitle": "Delete Review?",
+        "deleteDescription": "This review will be permanently deleted from the property page.",
+        "deletePrompt": "Are you sure you want to delete your review for {{property}}?",
+        "deleteInfo": "This action cannot be undone.",
+        "keepReview": "Keep Review",
+        "deleting": "Deleting...",
+        "deleteReview": "Yes, Delete"
+      },
+      "errors": {
+        "failedLoad": "Failed to load reviews.",
+        "tryAgain": "Try again"
+      }
     }
   }
 }
