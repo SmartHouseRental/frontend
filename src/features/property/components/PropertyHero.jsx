@@ -29,7 +29,7 @@ export default function PropertyHero({ property }) {
         <div>
 
           <div className="text-sm text-muted-foreground mb-2">
-            Addis Ababa › {property?.category || t('property')} › {property?.title || t('propertyHero.propertyDetailsFallback')}
+            {t('propertyDetailsComponents.addisAbaba')} › {property?.category || t('property')} › {property?.title || t('propertyHero.propertyDetailsFallback')}
           </div>
 
           <h2 className="text-3xl font-extrabold">
@@ -39,7 +39,7 @@ export default function PropertyHero({ property }) {
           <div className="flex items-center gap-2 mt-2 text-muted-foreground">
             <MapPin className="w-4 h-4" />
             <span className="text-sm">
-              {property?.address || "Addis Ababa"}
+              {property?.address || t('propertyDetailsComponents.addisAbaba')}
             </span>
           </div>
 

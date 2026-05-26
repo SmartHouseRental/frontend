@@ -57,7 +57,9 @@
     "ratingsReviewsTitle": "Ratings & Reviews",
     "amenitiesTitle": "Amenities",
     "reviewCount": "{{count}} reviews",
-    "copiedLinkMessage": "Property link copied to clipboard!"
+    "copiedLinkMessage": "Property link copied to clipboard!",
+    "notFoundTitle": "Property Not Found",
+    "notFoundDesc": "Could not load property details"
   },
   "propertyContent": {
     "homeStoryTitle": "The Home Story",
@@ -2236,5 +2238,54 @@
         "tryAgain": "Try again"
       }
     }
+  },
+  "savedProperties": {
+    "title": "Saved Properties",
+    "savedCount_one": "You have {{count}} property saved to your collection.",
+    "savedCount_other": "You have {{count}} properties saved to your collection.",
+    "noSavedYet": "You haven't saved any properties yet.",
+    "noSavedTitle": "No Saved Properties",
+    "startExploringBeforeHeart": "Start exploring homes and tap the ",
+    "startExploringAfterHeart": " icon to save your favorites here.",
+    "exploreListings": "Explore Listings",
+    "save": "Save",
+    "saved": "Saved",
+    "removeFromFavorites": "Remove from favorites",
+    "saveToFavorites": "Save to favorites"
+  },
+  "propertyDetailsComponents": {
+    "addisAbaba": "Addis Ababa",
+    "wifi": "High-speed WiFi",
+    "parking": "Private Parking",
+    "security": "24/7 Security",
+    "garden": "Private Garden",
+    "sqm": "m²",
+    "new": "New",
+    "ownerCard": {
+      "host": "Host",
+      "meetHost": "Meet your host, {{name}}",
+      "verifiedOwner": "Verified Owner",
+      "newHost": "New Host",
+      "verifiedRating": "5.0 (Verified)",
+      "hostedBy": "Hosted by {{name}} on our platform. I believe in providing a home that offers peace and privacy. Always available to help you settle in.",
+      "verifiedOwnerDesc": "A verified property owner on our platform. Always available to help you settle in."
+    },
+    "mapSection": {
+      "title": "Location & Neighborhood",
+      "verifiedCoordinates": "Verified Coordinates",
+      "publicSchool": "Public School",
+      "shoppingMall": "Shopping Mall",
+      "hospital": "Hospital",
+      "neighborhoodDesc": "\"This neighborhood is known for its safety, quiet streets, and proximity to major international schools and shopping centers in {{address}}.\""
+    },
+    "reviews": {
+      "title": "Property Reviews",
+      "readAll": "Read all reviews",
+      "empty": "No reviews yet for this property.",
+      "anonymous": "Anonymous",
+      "reviewCount_one": "{{count}} review",
+      "reviewCount_other": "{{count}} reviews"
+    }
   }
 }
+

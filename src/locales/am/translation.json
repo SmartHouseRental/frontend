@@ -57,7 +57,9 @@
     "ratingsReviewsTitle": "ደረጃዎችና ግምገማዎች",
     "amenitiesTitle": "የቤት እንቅስቃሴዎች",
     "reviewCount": "{{count}} ግምገማዎች",
-    "copiedLinkMessage": "የንብረት አገናኝ ወደ ቅጅ ቦርድ ተቀምጧል!"
+    "copiedLinkMessage": "የንብረት አገናኝ ወደ ቅጅ ቦርድ ተቀምጧል!",
+    "notFoundTitle": "ንብረቱ አልተገኘም",
+    "notFoundDesc": "የንብረት ዝርዝሮችን መጫን አልተቻለም"
   },
   "propertyContent": {
     "homeStoryTitle": "የቤቱ ታሪክ",
@@ -2235,6 +2237,54 @@
         "failedLoad": "ግምገማዎችን መጫን አልተሳካም።",
         "tryAgain": "እንደገና ይሞክሩ"
       }
+    }
+  },
+  "savedProperties": {
+    "title": "የተቀመጡ ንብረቶች",
+    "savedCount_one": "በስብስብዎ ውስጥ {{count}} የተቀመጠ ንብረት አለዎት።",
+    "savedCount_other": "በስብስብዎ ውስጥ {{count}} የተቀመጡ ንብረቶች አሉዎት።",
+    "noSavedYet": "እስካሁን ምንም ንብረት አላስቀመጡም።",
+    "noSavedTitle": "የተቀመጡ ንብረቶች የሉም",
+    "startExploringBeforeHeart": "ቤቶችን መፈለግ ይጀምሩ እና ተወዳጆችዎን እዚህ ለማስቀመጥ የ ",
+    "startExploringAfterHeart": " ምልክት ይጫኑ።",
+    "exploreListings": "ዝርዝሮችን ያስሱ",
+    "save": "አስቀምጥ",
+    "saved": "ተቀምጧል",
+    "removeFromFavorites": "ከተመረጡት አስወግድ",
+    "saveToFavorites": "ከተመረጡት አስቀምጥ"
+  },
+  "propertyDetailsComponents": {
+    "addisAbaba": "አዲስ አበባ",
+    "wifi": "ባለከፍተኛ ፍጥነት ዋይፋይ (WiFi)",
+    "parking": "የግል የመኪና ማቆሚያ",
+    "security": "24/7 የደህንነት ጥበቃ",
+    "garden": "የግል የአትክልት ስፍራ",
+    "sqm": "ካሬ ሜትር",
+    "new": "አዲስ",
+    "ownerCard": {
+      "host": "አስተናጋጅ",
+      "meetHost": "አስተናጋጅዎን ያግኙ፣ {{name}}",
+      "verifiedOwner": "የተረጋገጠ ባለቤት",
+      "newHost": "አዲስ አስተናጋጅ",
+      "verifiedRating": "5.0 (የተረጋገጠ)",
+      "hostedBy": "በመድረካችን ላይ በ{{name}} የተስተናገደ። ሰላምና ግላዊነትን የሚሰጥ ቤት ማቅረብ አምናለሁ። እርስዎ እንዲላመዱ ለመርዳት ሁል ጊዜ ዝግጁ ነኝ።",
+      "verifiedOwnerDesc": "በመድረካችን ላይ የተረጋገጠ የንብረት ባለቤት። እርስዎ እንዲላመዱ ለመርዳት ሁል ጊዜ ዝግጁ ነኝ።"
+    },
+    "mapSection": {
+      "title": "አካባቢ እና ጎረቤት",
+      "verifiedCoordinates": "የተረጋገጡ መጋጠሚያዎች",
+      "publicSchool": "የመንግስት ትምህርት ቤት",
+      "shoppingMall": "የገበያ ማዕከል",
+      "hospital": "ሆስፒታል",
+      "neighborhoodDesc": "\"ይህ አካባቢ በደህንነቱ፣ በጸጥታው እና በ{{address}} ውስጥ ወደሚገኙ ዋና ዋና ዓለም አቀፍ ትምህርት ቤቶችና የገበያ ማዕከላት በቅርብ ርቀት በመገኘቱ ይታወቃል።\""
+    },
+    "reviews": {
+      "title": "የንብረት ግምገማዎች",
+      "readAll": "ሁሉንም ግምገማዎች ያንብቡ",
+      "empty": "ለዚህ ንብረት እስካሁን ምንም ግምገማዎች የሉም።",
+      "anonymous": "ስም-አልባ",
+      "reviewCount_one": "{{count}} ግምገማ",
+      "reviewCount_other": "{{count}} ግምገማዎች"
     }
   }
 }

@@ -94,7 +94,7 @@ export default function BookingCard({ property }) {
             <div className="flex items-center gap-1">
               <Star className="text-primary fill-primary h-4 w-4" />
               <span className="font-bold">
-                {statsData.averageRating ? Number(statsData.averageRating).toFixed(1) : 'New'}
+                {statsData.averageRating ? Number(statsData.averageRating).toFixed(1) : t('propertyDetailsComponents.new')}
               </span>
             </div>
           </div>

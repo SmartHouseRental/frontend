@@ -4,10 +4,10 @@ import { useLanguage } from '@/contexts/LanguageContext'
 export default function PropertyContent({ property }) {
   const { t } = useLanguage();
   const defaultAmenities = [
-    { icon: Wifi, title: "High-speed WiFi", desc: t('propertyContent.included') },
-    { icon: Car, title: "Private Parking", desc: t('propertyContent.included') },
-    { icon: ShieldCheck, title: "24/7 Security", desc: t('propertyContent.included') },
-    { icon: Trees, title: "Private Garden", desc: t('propertyContent.included') },
+    { icon: Wifi, title: t('propertyDetailsComponents.wifi'), desc: t('propertyContent.included') },
+    { icon: Car, title: t('propertyDetailsComponents.parking'), desc: t('propertyContent.included') },
+    { icon: ShieldCheck, title: t('propertyDetailsComponents.security'), desc: t('propertyContent.included') },
+    { icon: Trees, title: t('propertyDetailsComponents.garden'), desc: t('propertyContent.included') },
   ]
 
   const displayAmenities = property?.amenities?.length > 0

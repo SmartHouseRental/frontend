@@ -12,7 +12,7 @@ import Reviews from '@/features/property/components/Reviews';
 
 export default function PropertyDetails() {
   const { id } = useParams();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: rawProperty, isLoading, isError, error } = useProperty(id);
 
   const property = rawProperty ? adaptProperty(rawProperty, i18n.language) : null;
@@ -29,9 +29,9 @@ export default function PropertyDetails() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Property Not Found</h2>
+          <h2 className="text-2xl font-bold mb-2">{t('propertyDetail.notFoundTitle')}</h2>
           <p className="text-muted-foreground">
-            {error?.message || 'Could not load property details'}
+            {error?.message || t('propertyDetail.notFoundDesc')}
           </p>
         </div>
       </div>
