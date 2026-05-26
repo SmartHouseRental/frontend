@@ -1,8 +1,10 @@
 import { MapPin, Share2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import HeartButton from "@/features/favorites/components/HeartButton"
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export default function PropertyHero({ property }) {
+  const { t } = useLanguage();
 
   const images = property?.images && property.images.length > 0
     ? property.images
@@ -16,7 +18,7 @@ export default function PropertyHero({ property }) {
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
-    alert("Property link copied to clipboard!");
+    alert(t('propertyDetail.copiedLinkMessage'));
   };
 
   return (
@@ -27,11 +29,11 @@ export default function PropertyHero({ property }) {
         <div>
 
           <div className="text-sm text-muted-foreground mb-2">
-            Addis Ababa › {property?.category || "Property"} › {property?.title || "Property Details"}
+            Addis Ababa › {property?.category || t('property')} › {property?.title || t('propertyHero.propertyDetailsFallback')}
           </div>
 
           <h2 className="text-3xl font-extrabold">
-            {property?.title || "Property Details"}
+            {property?.title || t('propertyHero.propertyDetailsFallback')}
           </h2>
 
           <div className="flex items-center gap-2 mt-2 text-muted-foreground">
@@ -45,7 +47,7 @@ export default function PropertyHero({ property }) {
 
         <div className="flex gap-4">
           <Button variant="outline" className="gap-2 px-6 rounded-xl border-border/60 hover:bg-muted" onClick={handleShare}>
-            <Share2 size={16} /> Share
+            <Share2 size={16} /> {t('propertyHero.share')}
           </Button>
 
           <div className="relative">

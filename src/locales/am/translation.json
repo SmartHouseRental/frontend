@@ -49,12 +49,57 @@
   "noRentalsNearbyDesc": "ከአሁኑ ቦታዎ በ{{radius}} ኪ.ሜ. ውስጥ የሚገኙ ቤቶች አልተገኙም።",
   "exploreMoreAreas": "ተጨማሪ አካባቢዎችን ይመልከቱ",
   "retry": "እንደገና",
+  "propertyDetail": {
+    "failedLoadDetails": "የንብረት ዝርዝሮችን ማስገባት አልተቻለም",
+    "retryLoading": "እንደገና ይሞክሩ",
+    "genericLoadError": "የንብረት ዝርዝሮችን ሲያገኙ ስህተት ተከስቷል። እባክዎ እንደገና ይሞክሩ።",
+    "aboutTitle": "ስለዚህ ንብረት",
+    "ratingsReviewsTitle": "ደረጃዎችና ግምገማዎች",
+    "amenitiesTitle": "የቤት እንቅስቃሴዎች",
+    "reviewCount": "{{count}} ግምገማዎች",
+    "copiedLinkMessage": "የንብረት አገናኝ ወደ ቅጅ ቦርድ ተቀምጧል!"
+  },
+  "propertyContent": {
+    "homeStoryTitle": "የቤቱ ታሪክ",
+    "offersTitle": "ይህ ቤት ያቅርባል",
+    "included": "የተካተተ",
+    "familyFriendly": "ለቤተሰብ የሚስተናገድ",
+    "defaultDescription": "ይህ ንብረት በሚፈለጉት ቦታ የተገነባ እና ለኖሪዎቹ ምቹና ሽርሽር የተቋቋመ ነው። የህብረት ሕይወት ምርጥ ታሪክ ያስተምራል."
+  },
+  "propertyBooking": {
+    "scheduleVisit": "ጉብኝት ይያዙ",
+    "chatWithOwner": "ከባለቤት ጋር ይወያዩ",
+    "leaveReview": "ግምገማ ይቀርቡ",
+    "noChargeNotice": "እስካሁን ክፍያ አይከፈልም። እስከ ኪራይ አቅርቦት ድረስ ክፍያ አይከፈልም።",
+    "contactForPricing": "ለዋጋ እባክዎን ያናግሩ"
+  },
+  "propertyHero": {
+    "share": "አካፋፍል",
+    "propertyDetailsFallback": "የንብረት ዝርዝር"
+  },
+  "similarProperties": {
+    "title": "ተመሳሳይ ንብረቶች",
+    "subtitle": "ሌሎች ቤቶች የሚወዱት ናቸው",
+    "couldNotLoad": "ተመሳሳይ ንብረቶችን ማስገባት አልተቻለም",
+    "viewAll": "ሁሉንም ይመልከቱ"
+  },
+  "reviewModal": {
+    "title": "ግምገማ ይቀርቡ",
+    "description": "{{property}} ላይ ያለዎትን ተሞክሮ ያጋሩ",
+    "ratingLabel": "ግምገማ",
+    "reviewLabel": "የእርስዎ ግምገማ",
+    "reviewPlaceholder": "ይህን ቦታ ስለምን እንደምታስቡ ይጻፉ",
+    "cancel": "ተው",
+    "submitReview": "ግምገማ አቅርብ",
+    "submitting": "በመላክ ላይ..."
+  },
   "featuredTitle": "ተመራጭ የቤተሰብ ቤቶች",
   "featuredSubtitle": "ለምቾትና ለደህንነት የተመረጡ ቤቶች",
   "seeAllListings": "ሁሉንም ዝርዝሮች ይመልከቱ ->",
   "beds": "አልጋዎች",
   "baths": "መታጠቢያዎች",
   "perMonth": "/ወር",
+  "property": "ንብረት",
   "language": {
     "select": "ቋንቋ ይምረጡ",
     "english": "English",

@@ -14,7 +14,6 @@ import SimilarProperties from './SimilarProperties';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-    Video,
     BedDouble,
     Bath,
     Square,
@@ -27,7 +26,7 @@ import {
 
 export default function PropertyDetailContent() {
     const { id } = useParams();
-    const { locale } = useLanguage();
+    const { locale, t } = useLanguage();
     const { data: rawProperty, isLoading, isError, error } = useProperty(id);
 
     const property = rawProperty ? adaptProperty(rawProperty, locale) : null;
@@ -47,9 +46,9 @@ export default function PropertyDetailContent() {
                     <AlertCircle className="h-10 w-10 text-destructive" />
                 </div>
                 <div className="max-w-md space-y-2">
-                    <h3 className="text-xl font-bold">Failed to load property details</h3>
+                    <h3 className="text-xl font-bold">{t('propertyDetail.failedLoadDetails')}</h3>
                     <p className="text-muted-foreground">
-                        {error?.response?.data?.message || error?.message || 'We encountered an error while fetching the property details. Please try again.'}
+                        {error?.response?.data?.message || error?.message || t('propertyDetail.genericLoadError')}
                     </p>
                 </div>
                 <Button 
@@ -57,7 +56,7 @@ export default function PropertyDetailContent() {
                     onClick={() => window.location.reload()}
                     className="rounded-xl px-8"
                 >
-                    Retry Loading
+                    {t('propertyDetail.retryLoading')}
                 </Button>
             </div>
         );
@@ -68,10 +67,10 @@ export default function PropertyDetailContent() {
     // Parse location for the map
     const coords = parseLocation(property.location);
     
-    const title = property.title || "Property Details";
+    const title = property.title || t('propertyHero.propertyDetailsFallback');
     const address = property.address || "Addis Ababa, Ethiopia";
     const description = property.description || '';
-    const category = property.category || 'Property';
+    const category = property.category || t('property');
     const type = property.type || category;
     const priceValue = property.price || 0;
     const priceCurrency = property.currency || 'ETB';
@@ -96,8 +95,8 @@ export default function PropertyDetailContent() {
         priceStr: `${priceValue} ${priceCurrency}`,
         beds: property.bedrooms || 0,
         baths: property.bathrooms || 0,
-        size: `${areaValue} sqm`,
-        furnishing: property.furnishingStatus || 'Furnished',
+        size: `${areaValue} ${t('sqm')}`,
+        furnishing: property.furnishingStatus || t('propertyContent.familyFriendly'),
         amenities: property.amenities || [],
     };
 
@@ -108,13 +107,13 @@ export default function PropertyDetailContent() {
 
                 {/* Quick info tags */}
                 <div className="mb-8 flex flex-wrap gap-3">
-                    <InfoTag icon={Home} label={enrichedProperty.type || 'Villa'} />
-                    <InfoTag icon={BedDouble} label={`${enrichedProperty.beds} Beds`} />
-                    <InfoTag icon={Bath} label={`${enrichedProperty.baths} Baths`} />
+                    <InfoTag icon={Home} label={enrichedProperty.type || t('villa')} />
+                    <InfoTag icon={BedDouble} label={`${enrichedProperty.beds} ${t('beds')}`} />
+                    <InfoTag icon={Bath} label={`${enrichedProperty.baths} ${t('baths')}`} />
                     <InfoTag icon={Square} label={enrichedProperty.size} />
-                    <InfoTag icon={Armchair} label={enrichedProperty.furnishing || 'Furnished'} />
+                    <InfoTag icon={Armchair} label={enrichedProperty.furnishing || t('propertyContent.familyFriendly')} />
                     {enrichedProperty.rating && (
-                        <InfoTag icon={Star} label={`${enrichedProperty.rating} (${enrichedProperty.reviewCount} reviews)`} />
+                        <InfoTag icon={Star} label={`${enrichedProperty.rating} (${enrichedProperty.reviewCount} ${t('reviews')})`} />
                     )}
                 </div>
 
@@ -122,7 +121,7 @@ export default function PropertyDetailContent() {
                 {enrichedProperty.amenities && (
                     <div className="mb-8">
                         <h4 className="text-muted-foreground mb-3 text-xs font-bold uppercase tracking-wider">
-                            Amenities
+                            {t('propertyDetail.amenitiesTitle')}
                         </h4>
                         <div className="flex flex-wrap gap-2">
                             {enrichedProperty.amenities.map((amenity) => (
@@ -139,7 +138,7 @@ export default function PropertyDetailContent() {
                         {/* Description */}
                         {enrichedProperty.description && (
                             <section className="mb-12">
-                                <h3 className="mb-4 text-2xl font-bold">About This Property</h3>
+                                <h3 className="mb-4 text-2xl font-bold">{t('propertyDetail.aboutTitle')}</h3>
                                 <div className="text-muted-foreground leading-relaxed">
                                     {enrichedProperty.descriptionStr}
                                 </div>
@@ -159,7 +158,7 @@ export default function PropertyDetailContent() {
 
                 {/* Rating breakdown + Reviews */}
                 <section className="mb-12">
-                    <h3 className="mb-6 text-2xl font-bold">Ratings & Reviews</h3>
+                    <h3 className="mb-6 text-2xl font-bold">{t('propertyDetail.ratingsReviewsTitle')}</h3>
                     <RatingBreakdown
                         rating={enrichedProperty.rating || 4.8}
                         reviewCount={enrichedProperty.reviewCount || 42}

@@ -49,12 +49,57 @@
   "noRentalsNearbyDesc": "We could not find available properties within {{radius}} km of your location.",
   "exploreMoreAreas": "Explore more areas",
   "retry": "Retry",
+  "propertyDetail": {
+    "failedLoadDetails": "Failed to load property details",
+    "retryLoading": "Retry Loading",
+    "genericLoadError": "We encountered an error while fetching the property details. Please try again.",
+    "aboutTitle": "About This Property",
+    "ratingsReviewsTitle": "Ratings & Reviews",
+    "amenitiesTitle": "Amenities",
+    "reviewCount": "{{count}} reviews",
+    "copiedLinkMessage": "Property link copied to clipboard!"
+  },
+  "propertyContent": {
+    "homeStoryTitle": "The Home Story",
+    "offersTitle": "What this home offers",
+    "included": "Included",
+    "familyFriendly": "Family Friendly",
+    "defaultDescription": "This property is located in a prime area, offering comfort and style for its residents. Experience the best of living in this well-maintained residence."
+  },
+  "propertyBooking": {
+    "scheduleVisit": "Schedule a Visit",
+    "chatWithOwner": "Chat with Owner",
+    "leaveReview": "Leave a Review",
+    "noChargeNotice": "No charge yet. You won't be charged until you agree to a lease.",
+    "contactForPricing": "Contact for pricing"
+  },
+  "propertyHero": {
+    "share": "Share",
+    "propertyDetailsFallback": "Property Details"
+  },
+  "similarProperties": {
+    "title": "Similar Properties",
+    "subtitle": "Other homes you might love",
+    "couldNotLoad": "Could not load similar properties.",
+    "viewAll": "View All"
+  },
+  "reviewModal": {
+    "title": "Leave a Review",
+    "description": "Share your experience at {{property}}",
+    "ratingLabel": "Rating",
+    "reviewLabel": "Your Review",
+    "reviewPlaceholder": "What did you think of this place?",
+    "cancel": "Cancel",
+    "submitReview": "Submit Review",
+    "submitting": "Submitting..."
+  },
   "featuredTitle": "Featured Family Homes",
   "featuredSubtitle": "Hand-picked residences for comfort and security",
   "seeAllListings": "See all listings ->",
   "beds": "Beds",
   "baths": "Baths",
   "perMonth": "/mo",
+  "property": "Property",
   "language": {
     "select": "Select language",
     "english": "English",

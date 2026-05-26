@@ -10,7 +10,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function SimilarProperties({ currentId }) {
     const navigate = useNavigate();
-    const { locale } = useLanguage();
+    const { locale, t } = useLanguage();
     const { data: similar, isLoading, isError } = useSimilarProperties(currentId);
 
     if (isLoading) {
@@ -24,9 +24,9 @@ export default function SimilarProperties({ currentId }) {
     if (isError) {
         return (
             <div className="mt-16 flex flex-col items-center gap-3 border-t pt-12 text-center">
-                <p className="text-sm text-muted-foreground">Could not load similar properties.</p>
+                <p className="text-sm text-muted-foreground">{t('similarProperties.couldNotLoad')}</p>
                 <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
-                    Retry
+                    {t('retry')}
                 </Button>
             </div>
         );
@@ -38,14 +38,14 @@ export default function SimilarProperties({ currentId }) {
         <section className="mt-16 border-t pt-12">
             <div className="mb-8 flex items-end justify-between">
                 <div>
-                    <h3 className="mb-1 text-2xl font-bold">Similar Properties</h3>
+                    <h3 className="mb-1 text-2xl font-bold">{t('similarProperties.title')}</h3>
                     <p className="text-muted-foreground text-sm">
-                        Other homes you might love
+                        {t('similarProperties.subtitle')}
                     </p>
                 </div>
                 <Button variant="ghost" className="text-primary gap-1 font-bold" asChild>
                     <Link to="/explore">
-                        View All <ArrowRight className="h-4 w-4" />
+                        {t('similarProperties.viewAll')} <ArrowRight className="h-4 w-4" />
                     </Link>
                 </Button>
             </div>
@@ -81,7 +81,7 @@ export default function SimilarProperties({ currentId }) {
                                 )}
                                 <HeartButton property={p} className="absolute top-3 right-3 z-10" />
                                 <div className="absolute bottom-3 left-3 rounded-md bg-white/90 px-2.5 py-1 text-xs font-bold">
-                                    {priceValue} {priceCurrency} /mo
+                                    {priceValue} {priceCurrency} {t('perMonth')}
                                 </div>
                             </div>
 
@@ -98,7 +98,7 @@ export default function SimilarProperties({ currentId }) {
                                     <span className="flex items-center gap-1">
                                         <Bath className="h-3 w-3" /> {p.bathrooms}
                                     </span>
-                                    <span>{areaValue} sqm</span>
+                                    <span>{areaValue} {t('sqm')}</span>
                                 </div>
                             </CardContent>
                         </Card>
