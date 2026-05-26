@@ -7,8 +7,8 @@ import ReviewModal from './ReviewModal';
 import { usePropertyReviewStats } from '../hooks/useReviews';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useCreateConversation, useConversations } from '@/features/chat/hooks/useMessaging';
-import { getLocalizedText } from '@/lib/utils/i18n';
 import ScheduleVisitModal from '@/features/visits/components/ScheduleVisitModal';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function BookingCard({ property }) {
   const navigate = useNavigate();
@@ -18,13 +18,16 @@ export default function BookingCard({ property }) {
   const { isAuthenticated, user } = useAuth();
   const createConversation = useCreateConversation();
   const { data: conversations = [] } = useConversations();
+  const { t } = useLanguage();
 
   const propertyData = property || {};
 
   // Format price from API: { value: 35000, currency: "ETB" }
-  const displayPrice = property?.price
-    ? `${property.currency || 'ETB'} ${property.price.toLocaleString()} /month`
-    : 'Contact for pricing';
+  const displayPriceAmount = property?.price
+    ? `${property.currency || 'ETB'} ${property.price.toLocaleString()}`
+    : t('propertyBooking.contactForPricing');
+
+  const priceUnit = property?.price ? t('perMonth') : '';
 
   const { data: stats } = usePropertyReviewStats(property?.id);
   const statsData = stats || { averageRating: 0 };
@@ -70,7 +73,7 @@ export default function BookingCard({ property }) {
   const scheduleProperty = property?.id
     ? {
         id: property.id,
-        title: getLocalizedText(property.title, 'en') || 'Property',
+        title: property.titleStr || property.title || t('property'),
       }
     : null;
 
@@ -81,15 +84,17 @@ export default function BookingCard({ property }) {
           <div className="mb-6 flex justify-between">
             <div>
               <span className="text-primary text-3xl font-extrabold">
-                {displayPrice.split('/')[0].trim()}
+                {displayPriceAmount}
               </span>
-              <span className="text-muted-foreground text-sm"> / month</span>
+              {property?.price && (
+                <span className="text-muted-foreground text-sm"> {priceUnit}</span>
+              )}
             </div>
 
             <div className="flex items-center gap-1">
               <Star className="text-primary fill-primary h-4 w-4" />
               <span className="font-bold">
-                {statsData.averageRating ? Number(statsData.averageRating).toFixed(1) : 'New'}
+                {statsData.averageRating ? Number(statsData.averageRating).toFixed(1) : t('propertyDetailsComponents.new')}
               </span>
             </div>
           </div>
@@ -100,7 +105,7 @@ export default function BookingCard({ property }) {
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#D97745] py-6 font-bold text-white hover:bg-[#C96635]"
             >
               <CalendarDays className="h-5 w-5" />
-              Schedule a Visit
+              {t('propertyBooking.scheduleVisit')}
             </Button>
 
             <Button
@@ -109,7 +114,7 @@ export default function BookingCard({ property }) {
               onClick={handleChat}
             >
               <MessageCircle size={18} />
-              Chat with Owner
+              {t('propertyBooking.chatWithOwner')}
             </Button>
 
             <Button
@@ -124,12 +129,12 @@ export default function BookingCard({ property }) {
               }}
             >
               <Edit3 size={16} />
-              Leave a Review
+              {t('propertyBooking.leaveReview')}
             </Button>
           </div>
 
           <p className="text-muted-foreground mt-4 text-center text-[10px]">
-            No charge yet. You won't be charged until you agree to a lease.
+            {t('propertyBooking.noChargeNotice')}
           </p>
         </CardContent>
       </Card>

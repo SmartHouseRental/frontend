@@ -1,75 +1,74 @@
 import { Star, Quote } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { useTranslation } from 'react-i18next';
 
 const testimonials = [
     {
         name: 'Almaz Tesfaye',
-        role: 'Renter • Bole',
+        roleKey: 'landing.testimonials.items.almaz.role',
         rating: 5,
-        text: "We found the perfect home for our family within a week! The verification process gave us complete peace of mind. Our kids love the neighborhood.",
+        textKey: 'landing.testimonials.items.almaz.text',
         initial: 'A',
-        stay: '1 year tenant',
     },
     {
         name: 'Samuel Bekele',
-        role: 'Renter • Kazanchis',
+        roleKey: 'landing.testimonials.items.samuel.role',
         rating: 5,
-        text: "The AI-powered search understood exactly what we needed — a quiet place near schools with reliable internet. Bet-Connect delivered!",
+        textKey: 'landing.testimonials.items.samuel.text',
         initial: 'S',
-        stay: '8 months tenant',
     },
     {
         name: 'Hana Girma',
-        role: 'Property Owner',
+        roleKey: 'landing.testimonials.items.hana.role',
         rating: 4,
-        text: "Listing my property was incredibly simple. I had verified tenants reaching out within days. The platform handles everything professionally.",
+        textKey: 'landing.testimonials.items.hana.text',
         initial: 'H',
-        stay: '2 years hosting',
     },
     {
         name: 'Dawit Alem',
-        role: 'Renter • CMC',
+        roleKey: 'landing.testimonials.items.dawit.role',
         rating: 5,
-        text: "After trying many platforms, Bet-Connect was the only one where every listing was real and verified. No surprises, no scams. Just honest homes.",
+        textKey: 'landing.testimonials.items.dawit.text',
         initial: 'D',
-        stay: '6 months tenant',
     },
 ];
 
 export default function Testimonials() {
+    const { t } = useTranslation();
+
     return (
         <section className="px-6 py-20 lg:px-20">
             <div className="mx-auto max-w-7xl">
                 <div className="mb-12 text-center">
                     <div className="bg-primary/10 text-primary mb-4 inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest">
-                        What People Say
+                        {t('landing.testimonials.badge')}
                     </div>
                     <h2 className="mb-3 text-4xl font-extrabold">
-                        Trusted by <span className="text-primary">Families</span> Across Addis
+                        {t('landing.testimonials.titlePrefix')} <span className="text-primary">{t('landing.testimonials.titleAccent')}</span> {t('landing.testimonials.titleSuffix')}
                     </h2>
                     <p className="text-muted-foreground mx-auto max-w-2xl">
-                        Real stories from renters and owners who found their perfect match through Bet-Connect.
+                        {t('landing.testimonials.subtitle')}
                     </p>
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                    {testimonials.map((t) => (
+                    {testimonials.map((item) => (
                         <Card
-                            key={t.name}
+                            key={item.name}
                             className="group relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                         >
                             <CardContent className="p-6">
                                 <Quote className="text-primary/20 mb-4 h-8 w-8" />
 
                                 <p className="text-muted-foreground mb-6 text-sm leading-relaxed italic">
-                                    "{t.text}"
+                                    "{t(item.textKey)}"
                                 </p>
 
                                 <div className="mb-3 flex gap-0.5">
                                     {Array.from({ length: 5 }).map((_, i) => (
                                         <Star
                                             key={i}
-                                            className={`h-3.5 w-3.5 ${i < t.rating ? 'fill-primary text-primary' : 'text-muted'
+                                            className={`h-3.5 w-3.5 ${i < item.rating ? 'fill-primary text-primary' : 'text-muted'
                                                 }`}
                                         />
                                     ))}
@@ -77,11 +76,11 @@ export default function Testimonials() {
 
                                 <div className="flex items-center gap-3">
                                     <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold">
-                                        {t.initial}
+                                        {item.initial}
                                     </div>
                                     <div>
-                                        <p className="text-sm font-bold">{t.name}</p>
-                                        <p className="text-muted-foreground text-xs">{t.role}</p>
+                                        <p className="text-sm font-bold">{item.name}</p>
+                                        <p className="text-muted-foreground text-xs">{t(item.roleKey)}</p>
                                     </div>
                                 </div>
                             </CardContent>

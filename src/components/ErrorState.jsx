@@ -13,6 +13,7 @@ function ErrorState({
     title = 'Something went wrong',
     message = 'We couldn\'t load the data. Please check your connection and try again.',
     onRetry,
+    retryLabel = 'Try Again',
 }) {
     return (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 px-8 py-16 text-center">
@@ -28,7 +29,7 @@ function ErrorState({
                     onClick={onRetry}
                 >
                     <RefreshCw size={16} />
-                    Try Again
+                    {retryLabel}
                 </Button>
             )}
         </div>

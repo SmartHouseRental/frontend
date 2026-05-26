@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,6 +21,7 @@ export default function MessageHeader({
   onDeleteChat,
   className = '',
 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   if (!activeConv) return null;
@@ -70,7 +72,7 @@ export default function MessageHeader({
             canOpenProfile && 'cursor-pointer rounded-lg hover:bg-muted/50 transition-colors pr-2 -ml-1 pl-1 py-1',
             !canOpenProfile && 'cursor-default',
           )}
-          aria-label={canOpenProfile ? `View ${activeConv.name}'s profile` : undefined}
+          aria-label={canOpenProfile ? t('chat.viewProfile', { name: activeConv.name }) : undefined}
         >
           {activeConv.isAvatarImage ? (
             <img
@@ -95,7 +97,7 @@ export default function MessageHeader({
             </p>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5 truncate">
               {isTyping ? (
-                <span className="text-primary font-semibold animate-pulse">typing...</span>
+                <span className="text-primary font-semibold animate-pulse">{t('chat.typing')}</span>
               ) : (
                 <span>{activeConv.property}</span>
               )}
@@ -111,7 +113,7 @@ export default function MessageHeader({
               variant="ghost"
               size="icon"
               className="h-9 w-9 shrink-0 text-muted-foreground hover:text-foreground"
-              aria-label="Conversation options"
+              aria-label={t('chat.conversationOptions')}
             >
               <MoreVertical size={16} />
             </Button>
@@ -124,7 +126,7 @@ export default function MessageHeader({
                   className="text-destructive focus:text-destructive cursor-pointer"
                 >
                   <Flag className="mr-2 size-4" />
-                  Report Owner
+                  {t('chat.reportOwner')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
               </>
@@ -135,7 +137,7 @@ export default function MessageHeader({
                 className="text-destructive focus:text-destructive cursor-pointer"
               >
                 <Trash2 className="mr-2 size-4" />
-                Delete Chat
+                {t('chat.deleteChat')}
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>

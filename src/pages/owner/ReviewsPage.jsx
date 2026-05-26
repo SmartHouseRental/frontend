@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Star, MessageSquare, ThumbsUp, Send, X, ChevronDown, Loader2 } from 'lucide-react';
 import ErrorState from '@/components/ErrorState';
 import { getApiErrorMessage } from '@/lib/apiErrors';
+import { useTranslation } from 'react-i18next';
 import {
   useOwnerReviews,
   useOwnerReviewStats,
@@ -17,6 +18,7 @@ import {
 } from '@/features/reviews/utils/formatReview';
 
 function ReviewsPage() {
+  const { t } = useTranslation();
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState('');
   const [filterRating, setFilterRating] = useState('all');
@@ -98,8 +100,8 @@ function ReviewsPage() {
     return (
       <div className="scrollbar-hide h-screen overflow-y-auto p-8">
         <ErrorState
-          title="Failed to load reviews"
-          message={getApiErrorMessage(reviewsErrorObj || statsErrorObj, 'Unable to load your reviews.')}
+          title={t('owner.reviews.failed')}
+          message={getApiErrorMessage(reviewsErrorObj || statsErrorObj, t('owner.reviews.unableToLoad'))}
           onRetry={() => {
             refetchReviews();
             refetchStats();
@@ -113,31 +115,31 @@ function ReviewsPage() {
     <div className="scrollbar-hide h-screen overflow-y-auto p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Reviews Received</h1>
-          <p className="text-muted-foreground mt-1">See what renters are saying about your properties.</p>
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">{t('owner.reviews.title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('owner.reviews.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Select value={filterRating} onValueChange={setFilterRating}>
-            <SelectTrigger className="w-32"><SelectValue placeholder="Rating" /></SelectTrigger>
+            <SelectTrigger className="w-32"><SelectValue placeholder={t('owner.reviews.rating')} /></SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="all">All Stars</SelectItem>
-                <SelectItem value="5">5 Stars</SelectItem>
-                <SelectItem value="4">4 Stars</SelectItem>
-                <SelectItem value="3">3 Stars</SelectItem>
-                <SelectItem value="2">2 Stars</SelectItem>
-                <SelectItem value="1">1 Star</SelectItem>
+                <SelectItem value="all">{t('owner.reviews.starsOptions.all')}</SelectItem>
+                <SelectItem value="5">{t('owner.reviews.starsOptions.5')}</SelectItem>
+                <SelectItem value="4">{t('owner.reviews.starsOptions.4')}</SelectItem>
+                <SelectItem value="3">{t('owner.reviews.starsOptions.3')}</SelectItem>
+                <SelectItem value="2">{t('owner.reviews.starsOptions.2')}</SelectItem>
+                <SelectItem value="1">{t('owner.reviews.starsOptions.1')}</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-32"><SelectValue placeholder="Sort" /></SelectTrigger>
+            <SelectTrigger className="w-32"><SelectValue placeholder={t('owner.reviews.sort')} /></SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="newest">Newest</SelectItem>
-                <SelectItem value="oldest">Oldest</SelectItem>
-                <SelectItem value="highest">Highest</SelectItem>
-                <SelectItem value="lowest">Lowest</SelectItem>
+                <SelectItem value="newest">{t('owner.reviews.sortOptions.newest')}</SelectItem>
+                <SelectItem value="oldest">{t('owner.reviews.sortOptions.oldest')}</SelectItem>
+                <SelectItem value="highest">{t('owner.reviews.sortOptions.highest')}</SelectItem>
+                <SelectItem value="lowest">{t('owner.reviews.sortOptions.lowest')}</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -149,10 +151,10 @@ function ReviewsPage() {
           <CardContent className="flex flex-col items-center justify-center text-center py-6">
             <p className="text-5xl font-black text-foreground">{avgRating}</p>
             <RatingStars rating={Math.round(Number(avgRating))} size={20} />
-            <p className="text-xs text-muted-foreground mt-2 font-medium">{totalReviews} total reviews</p>
+            <p className="text-xs text-muted-foreground mt-2 font-medium">{t('owner.reviews.totalReviews', { count: totalReviews })}</p>
             <div className="mt-2 flex items-center gap-1">
               <ThumbsUp size={12} className="text-emerald-500" />
-              <span className="text-xs font-bold text-emerald-500">{positivePercentage}% positive</span>
+              <span className="text-xs font-bold text-emerald-500">{t('owner.reviews.positive', { percent: positivePercentage })}</span>
             </div>
           </CardContent>
         </Card>
@@ -184,7 +186,7 @@ function ReviewsPage() {
           <Card className="border-dashed">
             <CardContent className="text-center py-12">
               <Star size={32} className="mx-auto text-muted-foreground/20 mb-3" />
-              <p className="text-muted-foreground">No reviews match your filter</p>
+              <p className="text-muted-foreground">{t('owner.reviews.noReviews')}</p>
             </CardContent>
           </Card>
         ) : (
@@ -217,7 +219,7 @@ function ReviewsPage() {
                       {hasReply && (
                         <div className="mt-3 rounded-lg bg-primary/5 border border-primary/10 p-3">
                           <div className="flex items-center justify-between">
-                            <p className="text-xs font-bold text-primary">Your Reply</p>
+                            <p className="text-xs font-bold text-primary">{t('owner.reviews.yourReply')}</p>
                             <button type="button" onClick={() => setExpandedReply(expandedReply === reviewId ? null : reviewId)} className="text-xs text-muted-foreground hover:text-foreground">
                               <ChevronDown size={14} className={`transition-transform ${expandedReply === reviewId ? 'rotate-180' : ''}`} />
                             </button>
@@ -234,12 +236,12 @@ function ReviewsPage() {
                             value={replyText}
                             onChange={(e) => setReplyText(e.target.value)}
                             className="w-full h-20 rounded-lg border border-border bg-background p-3 text-sm outline-none resize-none focus:ring-2 focus:ring-primary/20"
-                            placeholder="Write your reply to this review..."
+                            placeholder={t('owner.reviews.writeReply')}
                             autoFocus
                           />
                           <div className="flex items-center justify-end gap-2 mt-2">
                             <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => { setReplyingTo(null); setReplyText(''); }} disabled={replyMutation.isPending}>
-                              <X size={12} className="mr-1" /> Cancel
+                              <X size={12} className="mr-1" /> {t('owner.reviews.cancel')}
                             </Button>
                             <Button
                               size="sm"
@@ -248,7 +250,7 @@ function ReviewsPage() {
                               disabled={!replyText.trim() || replyMutation.isPending}
                             >
                               {replyMutation.isPending ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
-                              Send Reply
+                              {t('owner.reviews.sendReply')}
                             </Button>
                           </div>
                         </div>
@@ -257,11 +259,11 @@ function ReviewsPage() {
                       <div className="flex items-center gap-3 mt-4">
                         {hasReply ? (
                           <span className="text-xs text-emerald-600 flex items-center gap-1 font-medium">
-                            <MessageSquare size={12} /> Replied
+                            <MessageSquare size={12} /> {t('owner.reviews.replied')}
                           </span>
                         ) : replyingTo !== reviewId ? (
                           <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={() => setReplyingTo(reviewId)}>
-                            <MessageSquare size={12} /> Reply
+                            <MessageSquare size={12} /> {t('owner.reviews.reply')}
                           </Button>
                         ) : null}
                       </div>

@@ -24,9 +24,9 @@ import {
     Eye,
     FileText,
     Download,
-    ClipboardCheck,
     Clock,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
 import {
@@ -40,6 +40,7 @@ import EmptyState from '@/components/EmptyState';
 import DataTablePagination from '@/components/DataTablePagination';
 
 function PendingVerificationsPage() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
@@ -67,16 +68,16 @@ function PendingVerificationsPage() {
             <div className="flex items-end justify-between">
                 <div>
                     <h2 className="text-3xl font-extrabold tracking-tight">
-                        Pending Verifications
+                        {t('adminPendingVerifications.title')}
                     </h2>
                     <p className="text-muted-foreground mt-1">
-                        Review and approve owner document submissions for platform access.
+                        {t('adminPendingVerifications.subtitle')}
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-bold text-amber-700">
                         <Clock size={16} />
-                        <span>{pendingOwners.length} Awaiting Review</span>
+                        <span>{t('adminPendingVerifications.awaitingReview', { count: pendingOwners.length })}</span>
                     </div>
                 </div>
             </div>
@@ -84,19 +85,19 @@ function PendingVerificationsPage() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <Card className="border-0 border-l-4 border-amber-400 p-5">
                     <p className="text-muted-foreground text-sm font-semibold uppercase tracking-wider">
-                        Pending Review
+                        {t('adminPendingVerifications.summary.pendingReview')}
                     </p>
                     <p className="mt-1 text-2xl font-extrabold text-amber-600">{pendingOwners.length}</p>
                 </Card>
                 <Card className="border-0 border-l-4 border-emerald-400 p-5">
                     <p className="text-muted-foreground text-sm font-semibold uppercase tracking-wider">
-                        Approved This Week
+                        {t('adminPendingVerifications.summary.approvedThisWeek')}
                     </p>
                     <p className="mt-1 text-2xl font-extrabold text-emerald-600">12</p>
                 </Card>
                 <Card className="border-0 border-l-4 border-rose-400 p-5">
                     <p className="text-muted-foreground text-sm font-semibold uppercase tracking-wider">
-                        Rejected This Week
+                        {t('adminPendingVerifications.summary.rejectedThisWeek')}
                     </p>
                     <p className="mt-1 text-2xl font-extrabold text-rose-600">3</p>
                 </Card>
@@ -108,7 +109,7 @@ function PendingVerificationsPage() {
                         <Search size={18} />
                     </span>
                     <Input
-                        placeholder="Search by name, email, or ID..."
+                        placeholder={t('adminPendingVerifications.searchPlaceholder')}
                         type="text"
                         className="pl-10"
                         value={search}
@@ -120,27 +121,27 @@ function PendingVerificationsPage() {
                 </div>
                 <Button variant="outline" className="gap-2">
                     <Download size={16} />
-                    Export
+                    {t('adminPendingVerifications.export')}
                 </Button>
             </Card>
 
             {isLoading ? (
               <TableSkeleton rows={6} columns={6} />
             ) : isError ? (
-              <ErrorState title="Failed to load pending verifications" onRetry={refetch} />
+              <ErrorState title={t('adminPendingVerifications.errorTitle')} onRetry={refetch} />
             ) : pendingOwners.length === 0 ? (
-              <EmptyState title="No pending verifications" description="All submissions are up to date." />
+              <EmptyState title={t('adminPendingVerifications.emptyTitle')} description={t('adminPendingVerifications.emptyDescription')} />
             ) : (
             <Card className="gap-0 overflow-hidden p-0">
                 <Table className="w-full min-w-full border-collapse text-left">
                     <TableHeader className="bg-muted/30 w-full">
                         <TableRow>
-                            <TableHead className="px-6 py-4">Owner</TableHead>
-                            <TableHead className="px-6 py-4">Contact</TableHead>
-                            <TableHead className="px-6 py-4">Submitted</TableHead>
-                            <TableHead className="px-6 py-4">Waiting</TableHead>
-                            <TableHead className="px-6 py-4">Documents</TableHead>
-                            <TableHead className="px-4 py-4">Actions</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminPendingVerifications.table.owner')}</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminPendingVerifications.table.contact')}</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminPendingVerifications.table.submitted')}</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminPendingVerifications.table.waiting')}</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminPendingVerifications.table.documents')}</TableHead>
+                            <TableHead className="px-4 py-4">{t('adminPendingVerifications.table.actions')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -182,7 +183,7 @@ function PendingVerificationsPage() {
                                                 : 'bg-emerald-100 text-emerald-700'
                                             }`}
                                     >
-                                        {owner.daysWaiting} days
+                                        {t('adminPendingVerifications.days', { count: owner.daysWaiting })}
                                     </span>
                                 </TableCell>
                                 <TableCell className="px-6 py-4">
@@ -207,11 +208,11 @@ function PendingVerificationsPage() {
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuItem className="cursor-pointer">
                                                 <Eye className="mr-2 h-4 w-4" />
-                                                <span>View Documents</span>
+                                                <span>{t('adminPendingVerifications.actions.viewDocuments')}</span>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem className="cursor-pointer">
                                                 <FileText className="mr-2 h-4 w-4" />
-                                                <span>View Profile</span>
+                                                <span>{t('adminPendingVerifications.actions.viewProfile')}</span>
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
@@ -219,14 +220,14 @@ function PendingVerificationsPage() {
                                               onClick={() => onResolve(owner.id, 'approved')}
                                             >
                                                 <CheckCircle2 className="mr-2 h-4 w-4" />
-                                                <span>Approve & Verify</span>
+                                                <span>{t('adminPendingVerifications.actions.approveAndVerify')}</span>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
                                               className="cursor-pointer text-rose-600 focus:text-rose-600"
                                               onClick={() => onResolve(owner.id, 'rejected')}
                                             >
                                                 <XCircle className="mr-2 h-4 w-4" />
-                                                <span>Reject Documents</span>
+                                                <span>{t('adminPendingVerifications.actions.rejectDocuments')}</span>
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
@@ -240,7 +241,9 @@ function PendingVerificationsPage() {
                   totalPages={meta.totalPages || 1}
                   totalItems={meta.total || 0}
                   itemsPerPage={meta.limit || 20}
-                  itemLabel="owners"
+                  itemLabel={t('adminPendingVerifications.pagination.itemLabel')}
+                  showingLabel={t('adminPendingVerifications.pagination.showing')}
+                  ofLabel={t('adminPendingVerifications.pagination.of')}
                   onPageChange={setPage}
                 />
             </Card>

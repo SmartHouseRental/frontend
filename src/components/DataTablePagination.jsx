@@ -18,6 +18,8 @@ function DataTablePagination({
     totalItems = 0,
     itemsPerPage = 6,
     itemLabel = 'items',
+    showingLabel = 'Showing',
+    ofLabel = 'of',
     onPageChange,
 }) {
     const startItem = (currentPage - 1) * itemsPerPage + 1;
@@ -42,7 +44,7 @@ function DataTablePagination({
     return (
         <div className="flex items-center justify-between border-t border-border bg-muted/20 px-6 py-4">
             <span className="text-muted-foreground text-xs font-medium">
-                Showing {startItem}-{endItem} of {totalItems.toLocaleString()} {itemLabel}
+                {showingLabel} {startItem}-{endItem} {ofLabel} {totalItems.toLocaleString()} {itemLabel}
             </span>
             <div className="flex items-center gap-1">
                 <button

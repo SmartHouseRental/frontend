@@ -16,15 +16,13 @@ import {
     Send,
     CheckCircle2,
     Clock,
-    AlertTriangle,
-    FileText,
     Handshake,
-    Home,
     Users,
     MessageCircle,
     Shield,
 } from 'lucide-react';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAdminBroadcastNotification, useAdminNotifications } from '@/features/admin/hooks/useAdmin';
 import { getAdminListItems } from '@/features/admin/adminSanitize';
 import ErrorState from '@/components/ErrorState';
@@ -32,6 +30,7 @@ import EmptyState from '@/components/EmptyState';
 import TableSkeleton from '@/components/TableSkeleton';
 
 function NotificationsPage() {
+    const { t } = useTranslation();
     const [broadcastTarget, setBroadcastTarget] = useState('');
     const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
@@ -70,19 +69,18 @@ function NotificationsPage() {
     return (
         <div className="space-y-8 p-8">
             <div>
-                <h2 className="text-3xl font-extrabold tracking-tight">Notifications</h2>
+                <h2 className="text-3xl font-extrabold tracking-tight">{t('adminNotifications.title')}</h2>
                 <p className="text-muted-foreground mt-1">
-                    Manage platform notifications and send broadcasts to users.
+                    {t('adminNotifications.subtitle')}
                 </p>
             </div>
 
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                {/* Notifications List */}
                 <div className="space-y-4 lg:col-span-2">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-bold">Recent Notifications</h3>
+                        <h3 className="text-lg font-bold">{t('adminNotifications.recentNotifications')}</h3>
                         <Button variant="outline" size="sm" className="text-xs">
-                            Mark All as Read
+                            {t('adminNotifications.markAllAsRead')}
                         </Button>
                     </div>
 
@@ -90,9 +88,13 @@ function NotificationsPage() {
                         {isLoading ? (
                           <TableSkeleton rows={4} columns={1} showHeader={false} />
                         ) : isError ? (
-                          <ErrorState title="Failed to load notifications" onRetry={refetch} />
+                          <ErrorState
+                            title={t('adminNotifications.errorTitle')}
+                            onRetry={refetch}
+                            retryLabel={t('tryAgain')}
+                          />
                         ) : notifications.length === 0 ? (
-                          <EmptyState title="No notifications yet" description="Recent platform notifications will appear here." />
+                          <EmptyState title={t('adminNotifications.emptyTitle')} description={t('adminNotifications.emptyDescription')} />
                         ) : notifications.map((notification) => {
                             const meta = typeMeta[notification.type] || {
                               icon: Bell,
@@ -138,7 +140,6 @@ function NotificationsPage() {
                     </div>
                 </div>
 
-                {/* Broadcast Panel */}
                 <div className="space-y-6">
                     <Card className="border-primary/20">
                         <CardHeader className="pb-4">
@@ -147,9 +148,9 @@ function NotificationsPage() {
                                     <Send size={18} />
                                 </div>
                                 <div>
-                                    <h3 className="text-base font-bold">Send Broadcast</h3>
+                                    <h3 className="text-base font-bold">{t('adminNotifications.broadcast.title')}</h3>
                                     <p className="text-muted-foreground text-xs">
-                                        Notify users platform-wide
+                                        {t('adminNotifications.broadcast.description')}
                                     </p>
                                 </div>
                             </div>
@@ -157,22 +158,22 @@ function NotificationsPage() {
                         <CardContent className="space-y-4">
                             <div>
                                 <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                    Target Audience
+                                    {t('adminNotifications.broadcast.audienceLabel')}
                                 </label>
                                 <Select onValueChange={setBroadcastTarget} value={broadcastTarget}>
                                     <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select audience" />
+                                        <SelectValue placeholder={t('adminNotifications.broadcast.placeholderAudience')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
                                             <SelectItem value="all">
                                                 <span className="flex items-center gap-2">
-                                                    <Users size={14} /> All Users
+                                                    <Users size={14} /> {t('adminNotifications.audiences.all')}
                                                 </span>
                                             </SelectItem>
-                                            <SelectItem value="renters">Renters Only</SelectItem>
-                                            <SelectItem value="owners">Owners Only</SelectItem>
-                                            <SelectItem value="verified_owners">Verified Owners</SelectItem>
+                                            <SelectItem value="renters">{t('adminNotifications.audiences.renters')}</SelectItem>
+                                            <SelectItem value="owners">{t('adminNotifications.audiences.owners')}</SelectItem>
+                                            <SelectItem value="verified_owners">{t('adminNotifications.audiences.verifiedOwners')}</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -180,10 +181,10 @@ function NotificationsPage() {
 
                             <div>
                                 <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                    Notification Title
+                                    {t('adminNotifications.broadcast.titleLabel')}
                                 </label>
                                 <Input
-                                  placeholder="e.g. Platform Maintenance Notice"
+                                  placeholder={t('adminNotifications.broadcast.titlePlaceholder')}
                                   value={title}
                                   onChange={(e) => setTitle(e.target.value)}
                                 />
@@ -191,10 +192,10 @@ function NotificationsPage() {
 
                             <div>
                                 <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                    Message
+                                    {t('adminNotifications.broadcast.messageLabel')}
                                 </label>
                                 <Textarea
-                                    placeholder="Write your broadcast message..."
+                                    placeholder={t('adminNotifications.broadcast.messagePlaceholder')}
                                     className="min-h-[120px] resize-none"
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
@@ -203,33 +204,32 @@ function NotificationsPage() {
 
                             <Button className="w-full gap-2" onClick={sendBroadcast}>
                                 <Send size={16} />
-                                Send Broadcast
+                                {t('adminNotifications.broadcast.sendButton')}
                             </Button>
                         </CardContent>
                     </Card>
 
-                    {/* Quick Stats */}
                     <Card className="p-5">
                         <h4 className="text-muted-foreground mb-4 text-xs font-bold uppercase tracking-wider">
-                            Notification Stats
+                            {t('adminNotifications.stats.title')}
                         </h4>
                         <div className="space-y-3">
                             <div className="flex items-center justify-between text-sm">
-                                <span className="text-muted-foreground">Unread</span>
+                                <span className="text-muted-foreground">{t('adminNotifications.stats.unread')}</span>
                                 <span className="font-bold text-amber-600">
                                     {stats.unread}
                                 </span>
                             </div>
                             <div className="flex items-center justify-between text-sm">
-                                <span className="text-muted-foreground">Today</span>
+                                <span className="text-muted-foreground">{t('adminNotifications.stats.today')}</span>
                                 <span className="font-bold">{stats.today}</span>
                             </div>
                             <div className="flex items-center justify-between text-sm">
-                                <span className="text-muted-foreground">This Week</span>
+                                <span className="text-muted-foreground">{t('adminNotifications.stats.thisWeek')}</span>
                                 <span className="font-bold">32</span>
                             </div>
                             <div className="flex items-center justify-between text-sm">
-                                <span className="text-muted-foreground">Broadcasts Sent</span>
+                                <span className="text-muted-foreground">{t('adminNotifications.stats.broadcastsSent')}</span>
                                 <span className="font-bold">4</span>
                             </div>
                         </div>

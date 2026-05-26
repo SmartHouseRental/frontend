@@ -4,6 +4,7 @@ import ErrorState from '@/components/ErrorState';
 import { getApiErrorMessage } from '@/lib/apiErrors';
 import { useProfile } from '@/features/profile/hooks/useProfile';
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { PersonalInfoForm } from '@/features/profile/components/PersonalInfoForm';
 import { VerificationForm } from '@/features/profile/components/VerificationForm';
@@ -15,6 +16,9 @@ function ProfilePage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const activeTab = searchParams.get('tab') || 'profile';
+  const { t } = useTranslation();
+  const pageTitle = t('owner.profile.title');
+  const pageSubtitle = t('owner.profile.subtitle');
 
   const { data: profileResponse, isLoading, isError, error, refetch } = useProfile();
   const profile = profileResponse?.data;
@@ -27,8 +31,9 @@ function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-screen flex-col items-center justify-center gap-3">
         <Loader2 className="animate-spin text-primary" size={32} />
+        <p className="text-sm text-muted-foreground">{t('owner.profile.loading')}</p>
       </div>
     );
   }
@@ -37,8 +42,8 @@ function ProfilePage() {
     return (
       <div className="scrollbar-hide h-screen overflow-y-auto p-8">
         <ErrorState
-          title="Failed to load profile"
-          message={getApiErrorMessage(error, 'Unable to load your profile and settings.')}
+          title={t('owner.profile.failed')}
+          message={getApiErrorMessage(error, t('owner.profile.unableToLoad'))}
           onRetry={() => refetch()}
         />
       </div>
@@ -49,10 +54,10 @@ function ProfilePage() {
     <div className="scrollbar-hide h-screen space-y-6 overflow-y-auto p-8">
       <div>
         <h1 className="text-foreground text-3xl font-extrabold tracking-tight">
-          Profile & Settings
+          {pageTitle}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Manage your personal info, security, and preferences.
+          {pageSubtitle}
         </p>
       </div>
 
@@ -63,11 +68,11 @@ function ProfilePage() {
         className="w-full"
       >
         <TabsList className="bg-muted/50">
-          <TabsTrigger value="profile">Personal Info</TabsTrigger>
-          <TabsTrigger value="verification">Verification</TabsTrigger>
-          <TabsTrigger value="payment">Payment Details</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
+          <TabsTrigger value="profile">{t('owner.profile.personalInfo')}</TabsTrigger>
+          <TabsTrigger value="verification">{t('owner.profile.verification')}</TabsTrigger>
+          <TabsTrigger value="payment">{t('owner.profile.paymentDetails')}</TabsTrigger>
+          <TabsTrigger value="notifications">{t('owner.profile.notifications')}</TabsTrigger>
+          <TabsTrigger value="security">{t('owner.profile.security')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile" className="mt-6 space-y-6">

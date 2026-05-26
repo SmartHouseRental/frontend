@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Clock, Shield, Send, CheckCircle2, Loader2 } from 'lucide-react';
 import ErrorState from '@/components/ErrorState';
 import { getApiErrorMessage } from '@/lib/apiErrors';
+import { useTranslation } from 'react-i18next';
 import { useOwnerReports, useSubmitOwnerReportResponse } from '@/features/reports/hooks/useOwnerReports';
 import { REPORT_STATUS_COLORS, REPORT_STATUS_LABELS } from '@/features/reports/constants';
 
@@ -24,9 +25,9 @@ function formatReportDate(dateStr) {
   });
 }
 
-function formatTargetLabel(report) {
-  if (report.targetType === 'user') return 'Report against your account';
-  return 'Report against your property';
+function formatTargetLabel(report, t) {
+  if (report.targetType === 'user') return t('owner.reports.againstAccount');
+  return t('owner.reports.againstProperty');
 }
 
 function canRespond(status) {
@@ -34,6 +35,7 @@ function canRespond(status) {
 }
 
 function ReportsPage() {
+  const { t } = useTranslation();
   const { data, isLoading, isError, error, refetch } = useOwnerReports({ limit: 50 });
   const submitMutation = useSubmitOwnerReportResponse();
 
@@ -69,8 +71,8 @@ function ReportsPage() {
     return (
       <div className="scrollbar-hide h-screen overflow-y-auto p-8">
         <ErrorState
-          title="Failed to load reports"
-          message={getApiErrorMessage(error, 'Unable to load reports filed against you.')}
+          title={t('owner.reports.failed')}
+          message={getApiErrorMessage(error, t('owner.reports.unableToLoad'))}
           onRetry={() => refetch()}
         />
       </div>
@@ -81,16 +83,16 @@ function ReportsPage() {
     <div className="scrollbar-hide h-screen overflow-y-auto p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Reports Against Me</h1>
-          <p className="text-muted-foreground mt-1">View and respond to reports filed against you or your properties.</p>
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">{t('owner.reports.title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('owner.reports.subtitle')}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
-          { label: 'Total Reports', value: stats.total, icon: AlertTriangle, bg: 'bg-amber-500/10', text: 'text-amber-500' },
-          { label: 'Open', value: stats.open, icon: Clock, bg: 'bg-rose-500/10', text: 'text-rose-500', valueColor: 'text-rose-600' },
-          { label: 'Resolved', value: stats.resolved, icon: Shield, bg: 'bg-emerald-500/10', text: 'text-emerald-500', valueColor: 'text-emerald-600' },
+          { label: t('owner.reports.total'), value: stats.total, icon: AlertTriangle, bg: 'bg-amber-500/10', text: 'text-amber-500' },
+          { label: t('owner.reports.open'), value: stats.open, icon: Clock, bg: 'bg-rose-500/10', text: 'text-rose-500', valueColor: 'text-rose-600' },
+          { label: t('owner.reports.resolved'), value: stats.resolved, icon: Shield, bg: 'bg-emerald-500/10', text: 'text-emerald-500', valueColor: 'text-emerald-600' },
         ].map((s) => {
           const Icon = s.icon;
           return (
@@ -114,13 +116,15 @@ function ReportsPage() {
           <Card className="border-dashed">
             <CardContent className="text-center py-12">
               <Shield size={32} className="mx-auto text-muted-foreground/20 mb-3" />
-              <p className="text-muted-foreground">No reports filed against you</p>
+              <p className="text-muted-foreground">{t('owner.reports.noReports')}</p>
             </CardContent>
           </Card>
         ) : (
           reports.map((report) => {
             const isExpanded = expandedId === report.id;
-            const statusLabel = REPORT_STATUS_LABELS[report.status] || report.status;
+            const statusLabel = t(`owner.reports.statuses.${report.status}`, {
+              defaultValue: REPORT_STATUS_LABELS[report.status] || report.status,
+            });
             const statusColor = REPORT_STATUS_COLORS[report.status] || 'bg-slate-100 text-slate-600';
             const isSubmitting = submitMutation.isPending && submitMutation.variables?.reportId === report.id;
 
@@ -143,10 +147,10 @@ function ReportsPage() {
                         </div>
                         <p className="text-xs text-muted-foreground">{formatReportDate(report.createdAt)}</p>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">{formatTargetLabel(report)} • {report.id}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{formatTargetLabel(report, t)} • {report.id}</p>
                       <p className="text-sm text-muted-foreground leading-relaxed mt-2">{report.description}</p>
                       <p className="text-[10px] text-muted-foreground mt-2">
-                        Reported by: <span className="font-semibold">{formatReporterName(report.reportedBy)}</span>
+                        {t('owner.reports.reportedBy', { name: formatReporterName(report.reportedBy) })}
                       </p>
                     </div>
                   </button>
@@ -156,7 +160,7 @@ function ReportsPage() {
                       {report.ownerResponse && (
                         <div className="rounded-lg bg-emerald-50 border border-emerald-100 p-4">
                           <p className="text-xs font-bold text-emerald-700 mb-1 flex items-center gap-1">
-                            <CheckCircle2 size={12} /> Your Response
+                            <CheckCircle2 size={12} /> {t('owner.reports.yourResponse')}
                           </p>
                           <p className="text-sm text-foreground">{report.ownerResponse}</p>
                         </div>
@@ -164,12 +168,12 @@ function ReportsPage() {
 
                       {canRespond(report.status) && !report.ownerResponse && (
                         <div>
-                          <p className="text-xs font-bold text-foreground mb-2">Submit Your Response</p>
+                          <p className="text-xs font-bold text-foreground mb-2">{t('owner.reports.submitYourResponse')}</p>
                           <textarea
                             value={responseTexts[report.id] || ''}
                             onChange={(e) => setResponseTexts((prev) => ({ ...prev, [report.id]: e.target.value }))}
                             className="w-full h-24 rounded-lg border border-border bg-muted/30 p-3 text-sm outline-none resize-none focus:ring-2 focus:ring-primary/20"
-                            placeholder="Explain your side of the situation (minimum 10 characters)..."
+                            placeholder={t('owner.reports.explainSide')}
                           />
                           <div className="flex justify-end mt-2">
                             <Button
@@ -184,11 +188,11 @@ function ReportsPage() {
                             >
                               {isSubmitting ? (
                                 <>
-                                  <Loader2 size={12} className="animate-spin" /> Submitting...
+                                  <Loader2 size={12} className="animate-spin" /> {t('owner.reports.submitting')}
                                 </>
                               ) : (
                                 <>
-                                  <Send size={12} /> Submit Response
+                                  <Send size={12} /> {t('owner.reports.submitResponse')}
                                 </>
                               )}
                             </Button>
@@ -198,13 +202,13 @@ function ReportsPage() {
 
                       {report.status === 'resolved' && (
                         <p className="text-xs text-emerald-600 font-medium flex items-center gap-1">
-                          <CheckCircle2 size={12} /> This report has been resolved
+                          <CheckCircle2 size={12} /> {t('owner.reports.resolvedStatus')}
                         </p>
                       )}
 
                       {report.status === 'dismissed' && (
                         <p className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                          <CheckCircle2 size={12} /> This report was dismissed
+                          <CheckCircle2 size={12} /> {t('owner.reports.dismissedStatus')}
                         </p>
                       )}
                     </div>

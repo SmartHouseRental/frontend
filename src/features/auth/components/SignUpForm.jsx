@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Link, useNavigate } from 'react-router';
 import { Mail, Lock, User, Phone, ChevronLeft, Eye, EyeOff } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +21,7 @@ const registerSchema = z.object({
 });
 
 export function SignUpForm() {
+    const { t } = useTranslation();
     const [role, setRole] = useState('renter'); // Default role
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
@@ -54,7 +56,7 @@ export function SignUpForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-400">
             <div className="space-y-3">
                 <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
-                    I am joining as a...
+                    {t('auth.iAmJoiningAs')}
                 </label>
                 <RadioGroup
                     value={role}
@@ -69,7 +71,7 @@ export function SignUpForm() {
                             }`}
                     >
                         <RadioGroupItem value="renter" id="renter" className="h-4 w-4" />
-                        <span className={`text-sm font-bold ${role === 'renter' ? 'text-primary' : 'text-foreground'}`}>Renter</span>
+                        <span className={`text-sm font-bold ${role === 'renter' ? 'text-primary' : 'text-foreground'}`}>{t('auth.renter')}</span>
                     </label>
 
                     <label
@@ -80,7 +82,7 @@ export function SignUpForm() {
                             }`}
                     >
                         <RadioGroupItem value="owner" id="owner" className="h-4 w-4" />
-                        <span className={`text-sm font-bold ${role === 'owner' ? 'text-primary' : 'text-foreground'}`}>Owner</span>
+                        <span className={`text-sm font-bold ${role === 'owner' ? 'text-primary' : 'text-foreground'}`}>{t('auth.owner')}</span>
                     </label>
                 </RadioGroup>
             </div>
@@ -88,7 +90,7 @@ export function SignUpForm() {
             <div className="grid gap-5 sm:grid-cols-2">
                 <div className="space-y-2 col-span-2 sm:col-span-1">
                     <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="first_name">
-                        First Name
+                        {t('auth.firstName')}
                     </label>
                     <div className="relative group">
                         <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
@@ -104,7 +106,7 @@ export function SignUpForm() {
 
                 <div className="space-y-2 col-span-2 sm:col-span-1">
                     <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="last_name">
-                        Last Name
+                        {t('auth.lastName')}
                     </label>
                     <div className="relative group">
                         <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
@@ -120,7 +122,7 @@ export function SignUpForm() {
 
                 <div className="space-y-2 col-span-2 sm:col-span-1">
                     <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="email">
-                        Email Address
+                        {t('auth.emailAddress')}
                     </label>
                     <div className="relative group">
                         <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
@@ -137,7 +139,7 @@ export function SignUpForm() {
 
                 <div className="space-y-2 col-span-2 sm:col-span-1">
                     <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="phone">
-                        Phone Number
+                        {t('auth.phoneNumber')}
                     </label>
                     <div className="relative group">
                         <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
@@ -154,7 +156,7 @@ export function SignUpForm() {
 
                 <div className="space-y-2 col-span-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="password">
-                        Password
+                        {t('auth.password')}
                     </label>
                     <div className="relative group">
                         <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
@@ -173,14 +175,14 @@ export function SignUpForm() {
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                     </div>
-                    <p className="text-[11px] text-muted-foreground ml-1 mt-1 font-medium">At least 8 characters long with an uppercase letter</p>
+                    <p className="text-[11px] text-muted-foreground ml-1 mt-1 font-medium">{t('auth.passwordHint')}</p>
                     {errors.password && <p className="text-destructive text-xs ml-1">{errors.password.message}</p>}
                 </div>
             </div>
 
             <div className="pt-2">
                 <Button type="submit" className="w-full h-14 rounded-xl font-bold shadow-lg shadow-primary/20 text-[16px]" disabled={registerMutation.isPending}>
-                    {registerMutation.isPending ? 'Creating Account...' : 'Create Account'}
+                    {registerMutation.isPending ? t('auth.creatingAccount') : t('auth.createAccount')}
                     {!registerMutation.isPending && <ChevronLeft className="ml-2 rotate-180" size={18} />}
                 </Button>
             </div>

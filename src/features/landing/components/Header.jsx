@@ -1,27 +1,17 @@
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Home, Globe, User, Check } from 'lucide-react';
+import { Home, User } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useLogout } from '@/features/auth/hooks/useLogout';
 import { useLanguage } from '@/contexts/LanguageContext';
-
-const LANGUAGE_OPTIONS = [
-  { value: 'en', label: 'English' },
-  { value: 'am', label: 'አማርኛ' },
-];
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Header() {
   const { isAuthenticated, user } = useAuth();
   const isRenter = user?.role?.toLowerCase() === 'renter';
   const logoutMutation = useLogout();
   const location = useLocation();
-  const { locale, setLocale, t } = useLanguage();
+  const { t } = useLanguage();
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -34,7 +24,7 @@ export default function Header() {
           <div className="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-lg transition-transform group-hover:rotate-6">
             <Home className="h-5 w-5" />
           </div>
-          <h1 className="from-primary to-primary/70 bg-gradient-to-r bg-clip-text text-2xl font-extrabold tracking-tight text-transparent">
+          <h1 className="from-primary to-primary/70 bg-linear-to-r bg-clip-text text-2xl font-extrabold tracking-tight text-transparent">
             Bet-Connect
           </h1>
         </Link>
@@ -74,35 +64,7 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                type="button"
-                className="text-muted-foreground hover:text-primary rounded-full"
-                aria-label="Select language"
-              >
-                <Globe className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-[160px]">
-              {LANGUAGE_OPTIONS.map((option) => (
-                <DropdownMenuItem
-                  key={option.value}
-                  className="cursor-pointer font-medium"
-                  onClick={() => setLocale(option.value)}
-                >
-                  <span className="flex flex-1 items-center justify-between gap-3">
-                    {option.label}
-                    {locale === option.value && (
-                      <Check className="h-4 w-4 text-primary shrink-0" />
-                    )}
-                  </span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <LanguageSwitcher />
 
           {isAuthenticated && isRenter && (
             <Link to="/renter">

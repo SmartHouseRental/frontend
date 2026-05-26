@@ -1,15 +1,17 @@
 import { BedDouble, Bath, Square, Users, Wifi, Car, ShieldCheck, Trees } from "lucide-react"
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export default function PropertyContent({ property }) {
+  const { t } = useLanguage();
   const defaultAmenities = [
-    { icon: Wifi, title: "High-speed WiFi", desc: "Dedicated fiber line" },
-    { icon: Car, title: "Private Parking", desc: "Space for 2 cars" },
-    { icon: ShieldCheck, title: "24/7 Security", desc: "Gated community" },
-    { icon: Trees, title: "Private Garden", desc: "Lush outdoor area" },
+    { icon: Wifi, title: t('propertyDetailsComponents.wifi'), desc: t('propertyContent.included') },
+    { icon: Car, title: t('propertyDetailsComponents.parking'), desc: t('propertyContent.included') },
+    { icon: ShieldCheck, title: t('propertyDetailsComponents.security'), desc: t('propertyContent.included') },
+    { icon: Trees, title: t('propertyDetailsComponents.garden'), desc: t('propertyContent.included') },
   ]
 
   const displayAmenities = property?.amenities?.length > 0
-    ? property.amenities.map(a => ({ icon: ShieldCheck, title: a, desc: "Included" }))
+    ? property.amenities.map(a => ({ icon: ShieldCheck, title: a, desc: t('propertyContent.included') }))
     : defaultAmenities;
 
   return (
@@ -18,39 +20,39 @@ export default function PropertyContent({ property }) {
       <div className="flex flex-wrap gap-6 py-6 border-y mb-8">
         <div className="flex items-center gap-2">
           <BedDouble className="text-primary"/>
-          <span className="font-semibold">{property?.bedrooms || 0} Bedrooms</span>
+          <span className="font-semibold">{property?.bedrooms || 0} {t('beds')}</span>
         </div>
 
         <div className="flex items-center gap-2">
           <Bath className="text-primary"/>
-          <span className="font-semibold">{property?.bathrooms || 0} Bathrooms</span>
+          <span className="font-semibold">{property?.bathrooms || 0} {t('baths')}</span>
         </div>
 
         <div className="flex items-center gap-2">
           <Square className="text-primary"/>
-          <span className="font-semibold">{property?.area || 0} {property?.areaUnit || 'sqm'}</span>
+          <span className="font-semibold">{property?.area || 0} {property?.areaUnit || t('sqm')}</span>
         </div>
 
         <div className="flex items-center gap-2">
           <Users className="text-primary"/>
-          <span className="font-semibold">{property?.furnishingStatus || 'Family Friendly'}</span>
+          <span className="font-semibold">{property?.furnishingStatus || t('propertyContent.familyFriendly')}</span>
         </div>
       </div>
 
       {/* Home story / Description */}
       <section className="mb-12">
         <h3 className="text-2xl font-bold mb-4">
-          The Home Story
+          {t('propertyContent.homeStoryTitle')}
         </h3>
         <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-          {property?.description || "This property is located in a prime area, offering comfort and style for its residents. Experience the best of living in this well-maintained residence."}
+          {property?.description || t('propertyContent.defaultDescription')}
         </p>
       </section>
 
       {/* Amenities */}
       <section className="mb-12">
         <h3 className="text-xl font-bold mb-6">
-          What this home offers
+          {t('propertyContent.offersTitle')}
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {displayAmenities.map((a, i) => (

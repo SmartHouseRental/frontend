@@ -1,0 +1,2291 @@
+{
+  "welcome": "Welcome",
+  "home": "Home",
+  "login": "Login",
+  "signup": "Sign Up",
+  "dashboard": "Dashboard",
+  "explore": "Explore",
+  "saved": "Saved",
+  "messages": "Messages",
+  "chat": {
+    "loadingChats": "Loading chats...",
+    "unreadCount_one": "{{count}} unread conversation",
+    "unreadCount_other": "{{count}} unread conversations",
+    "allCaughtUp": "All caught up!",
+    "searchConversations": "Search conversations...",
+    "noConversationsFound": "No conversations found",
+    "selectConversation": "Select a Conversation",
+    "selectConversationDescription": "Choose a conversation from the sidebar, or start a new chat from any property listing.",
+    "chatHistory": "Chat History",
+    "typeMessage": "Type your message...",
+    "attachFile": "Attach file",
+    "uploadImage": "Upload image",
+    "conversationOptions": "Conversation options",
+    "reportOwner": "Report Owner",
+    "deleteChat": "Delete chat",
+    "deleteChatTitle": "Delete chat?",
+    "deleteChatDescription": "This removes your conversation with {{subjectName}} from your inbox. You can start a new chat later from a property listing.",
+    "cancel": "Cancel",
+    "deleting": "Deleting…",
+    "typing": "typing...",
+    "viewProfile": "View {{name}}'s profile",
+    "closeDialog": "Close"
+  },
+  "about": "About",
+  "contact": "Contact",
+  "logout": "Logout",
+  "loggingOut": "Logging out...",
+  "nearMe": "Near Me",
+  "nearMeSubtitle": "Available rentals within {{radius}} km of your current location",
+  "findingLocation": "Finding your location",
+  "findingLocationDesc": "Allow location access when prompted so we can show rentals near you.",
+  "locationPermissionNeeded": "Location permission needed",
+  "locationUnavailable": "Location unavailable",
+  "tryAgain": "Try again",
+  "browseAllListings": "Browse all listings",
+  "refreshLocation": "Refresh location",
+  "failedNearby": "Failed to load nearby homes",
+  "noRentalsNearby": "No rentals nearby",
+  "noRentalsNearbyDesc": "We could not find available properties within {{radius}} km of your location.",
+  "exploreMoreAreas": "Explore more areas",
+  "retry": "Retry",
+  "propertyDetail": {
+    "failedLoadDetails": "Failed to load property details",
+    "retryLoading": "Retry Loading",
+    "genericLoadError": "We encountered an error while fetching the property details. Please try again.",
+    "aboutTitle": "About This Property",
+    "ratingsReviewsTitle": "Ratings & Reviews",
+    "amenitiesTitle": "Amenities",
+    "reviewCount": "{{count}} reviews",
+    "copiedLinkMessage": "Property link copied to clipboard!",
+    "notFoundTitle": "Property Not Found",
+    "notFoundDesc": "Could not load property details"
+  },
+  "propertyContent": {
+    "homeStoryTitle": "The Home Story",
+    "offersTitle": "What this home offers",
+    "included": "Included",
+    "familyFriendly": "Family Friendly",
+    "defaultDescription": "This property is located in a prime area, offering comfort and style for its residents. Experience the best of living in this well-maintained residence."
+  },
+  "propertyBooking": {
+    "scheduleVisit": "Schedule a Visit",
+    "chatWithOwner": "Chat with Owner",
+    "leaveReview": "Leave a Review",
+    "noChargeNotice": "No charge yet. You won't be charged until you agree to a lease.",
+    "contactForPricing": "Contact for pricing"
+  },
+  "propertyHero": {
+    "share": "Share",
+    "propertyDetailsFallback": "Property Details"
+  },
+  "similarProperties": {
+    "title": "Similar Properties",
+    "subtitle": "Other homes you might love",
+    "couldNotLoad": "Could not load similar properties.",
+    "viewAll": "View All"
+  },
+  "reviewModal": {
+    "title": "Leave a Review",
+    "description": "Share your experience at {{property}}",
+    "ratingLabel": "Rating",
+    "reviewLabel": "Your Review",
+    "reviewPlaceholder": "What did you think of this place?",
+    "cancel": "Cancel",
+    "submitReview": "Submit Review",
+    "submitting": "Submitting..."
+  },
+  "featuredTitle": "Featured Family Homes",
+  "featuredSubtitle": "Hand-picked residences for comfort and security",
+  "seeAllListings": "See all listings ->",
+  "beds": "Beds",
+  "baths": "Baths",
+  "perMonth": "/mo",
+  "property": "Property",
+  "language": {
+    "select": "Select language",
+    "english": "English",
+    "amharic": "አማርኛ"
+  },
+  "auth": {
+    "backToHome": "Back to Home",
+    "home": "Home",
+    "signIn": "Sign In",
+    "signInIntro": "Enter your credentials to securely access your account.",
+    "forgotPassword": "Forgot Password?",
+    "loginSecurely": "Login securely",
+    "signingIn": "Signing In...",
+    "orContinueWith": "Or continue with",
+    "googleAccount": "Google Account",
+    "welcomeBackTo": "Welcome Back to",
+    "loginHeroDesc": "Log in to manage your properties, sign agreements, and find your next perfect home.",
+    "dontHaveAccount": "Don't have an account?",
+    "createAnAccount": "Create an account",
+    "joinCommunity": "Join the community",
+    "signupIntro": "Complete your details to get started with SmartHouseRental.",
+    "alreadyHaveAccount": "Already have an account?",
+    "loginInstead": "Log in instead",
+    "iAmJoiningAs": "I am joining as a...",
+    "renter": "Renter",
+    "owner": "Owner",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "emailAddress": "Email Address",
+    "phoneNumber": "Phone Number",
+    "password": "Password",
+    "passwordHint": "At least 8 characters long with an uppercase letter",
+    "createAccount": "Create Account",
+    "creatingAccount": "Creating Account..."
+  },
+  "sidebar": {
+    "main": "Main",
+    "adminSection": "Admin",
+    "adminControl": "Admin Control",
+    "ownerPortal": "Owner Portal",
+    "renterDashboard": "Renter Dashboard",
+    "userManagement": "User Management",
+    "properties": "Properties",
+    "agreements": "Agreements",
+    "reports": "Reports",
+    "reviews": "Reviews",
+    "pendingVerifications": "Pending Verifications",
+    "notifications": "Notifications",
+    "analytics": "Analytics",
+    "auditLogs": "Audit Logs",
+    "settings": "Settings",
+    "myProperties": "My Properties",
+    "appointments": "Appointments",
+    "reportsAgainstMe": "Reports Against Me",
+    "payments": "Payments",
+    "profileAndSettings": "Profile & Settings",
+    "helpAndSupport": "Help & Support",
+    "myAppointments": "My Appointments",
+    "managePropertyVisits": "Manage property visits",
+    "myAgreements": "My Agreements",
+    "offersDepositsPayments": "Offers, deposits & payments",
+    "myReviews": "My Reviews",
+    "yourFeedbackHistory": "Your feedback history",
+    "systemAlertsUpdates": "System alerts and updates",
+    "personalizeAccount": "Personalize your account"
+  },
+  "header": {
+    "ownerDashboard": "Owner Dashboard",
+    "overview": "Overview",
+    "detail": "Detail",
+    "edit": "Edit",
+    "propertyDetail": "Property Detail",
+    "createAgreement": "Create Agreement",
+    "agreementDetail": "Agreement Detail",
+    "paymentHistory": "Payment History",
+    "agreementDetails": "Agreement details",
+    "myAccount": "My Account",
+    "profile": "Profile",
+    "signOut": "Sign Out",
+    "signingOut": "Signing out...",
+    "switchToLightMode": "Switch to light mode",
+    "switchToDarkMode": "Switch to dark mode",
+    "noNotificationsYet": "No notifications yet",
+    "viewAllNotifications": "View all notifications",
+    "new": "new",
+    "newPropertySubmission": "New Property Submission",
+    "awaitingReview": "Horizon Peak Villa is awaiting review.",
+    "urgentReport": "Urgent Report",
+    "fraudReportFiled": "A new fraud report has been filed.",
+    "toggleTheme": "Toggle theme",
+    "systemManager": "System Manager"
+  },
+  "adminOverview": {
+    "title": "Dashboard Overview",
+    "subtitle": "Real-time platform metrics and system control center.",
+    "updatedAt": "Updated {{time}}",
+    "notAvailable": "N/A",
+    "errorTitle": "Failed to load overview",
+    "errorFallback": "Something went wrong",
+    "stats": {
+      "totalUsers": "Total Users",
+      "activeListings": "Active Listings",
+      "pendingVerifications": "Pending Verifications",
+      "actionNeeded": "Action Needed",
+      "activeAgreements": "Active Agreements",
+      "totalReports": "Total Reports"
+    },
+    "chart": {
+      "title": "User Growth",
+      "currentPeriod": "Current Period",
+      "previousPeriod": "Previous Period",
+      "monthly": "Monthly",
+      "weekly": "Weekly",
+      "noData": "No growth data for this period."
+    },
+    "activity": {
+      "title": "Recent Activity",
+      "viewAll": "View All",
+      "empty": "No recent activity",
+      "emptyDescription": "No admin activity was found yet."
+    },
+    "listingsByArea": {
+      "title": "Listings by Area",
+      "empty": "No area data"
+    },
+    "payment": {
+      "title": "Payment Success",
+      "collection": "Collection"
+    },
+    "recentProperties": {
+      "title": "Recently Submitted Properties",
+      "subtitle": "Review new listings awaiting platform approval.",
+      "viewQueue": "View Full Queue",
+      "preview": "Preview",
+      "propertyName": "Property Name",
+      "owner": "Owner",
+      "location": "Location",
+      "status": "Status",
+      "dateSubmitted": "Date Submitted",
+      "actions": "Actions",
+      "idLabel": "ID: {{id}}…",
+      "reviewDetails": "Review Details",
+      "viewDetails": "View Property Details",
+      "approveProperty": "Approve Property",
+      "rejectProperty": "Reject Property",
+      "empty": "No pending properties to review."
+    }
+  },
+  "adminAnalytics": {
+    "title": "Platform Analytics",
+    "subtitle": "Comprehensive statistics and insights across the Smart House Rental platform.",
+    "errorTitle": "Failed to load analytics",
+    "errorFallback": "Something went wrong",
+    "cards": {
+      "totalUsers": "Total Users",
+      "activeListings": "Active Listings",
+      "appointments": "Appointments",
+      "messages": "Messages",
+      "unreadNotifications": "Unread Notifications",
+      "auditLogs": "Audit Logs"
+    },
+    "breakdowns": {
+      "users": "Renters: {{renters}} • Owners: {{owners}} • Verified Owners: {{verifiedOwners}}",
+      "properties": "Available: {{available}} • Pending: {{pending}} • Rented: {{rented}}",
+      "appointments": "Pending: {{pending}} • Accepted: {{accepted}}",
+      "messages": "Conversations: {{conversations}} • New In Range: {{newMessagesInRange}}",
+      "notifications": "Total notifications: {{total}}",
+      "auditLogs": "New in range: {{newInRange}}"
+    },
+    "trendCharts": {
+      "title": "Trend charts",
+      "description": "Registration and property-type breakdown charts are not returned by {{endpoint}}. Use the Dashboard User Growth chart for registration trends.",
+      "docs": "See {{path}} for optional dedicated chart endpoints."
+    }
+  },
+  "adminAuditLogs": {
+    "title": "Audit Logs",
+    "subtitle": "Track all administrative actions and sensitive system events.",
+    "exportLogs": "Export Logs",
+    "searchPlaceholder": "Search by admin, action, or target...",
+    "filters": {
+      "actionTypePlaceholder": "Action Type",
+      "severityPlaceholder": "Severity",
+      "allActions": "All Actions",
+      "all": "All"
+    },
+    "actionTypes": {
+      "userSuspended": "User Suspended",
+      "propertyApproved": "Property Approved",
+      "propertyRejected": "Property Rejected",
+      "reportResolved": "Report Resolved",
+      "documentsVerified": "Documents Verified",
+      "agreementTerminated": "Agreement Terminated"
+    },
+    "severities": {
+      "high": "High",
+      "warning": "Warning",
+      "normal": "Normal"
+    },
+    "systemActor": "System",
+    "noDetails": "No details",
+    "errorTitle": "Failed to load audit logs",
+    "emptyTitle": "No audit logs found",
+    "emptyDescription": "Try changing search filters.",
+    "table": {
+      "timestamp": "Timestamp",
+      "admin": "Admin",
+      "action": "Action",
+      "target": "Target",
+      "details": "Details",
+      "severity": "Severity"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemLabel": "entries"
+    }
+  },
+  "adminNotifications": {
+    "title": "Notifications",
+    "subtitle": "Manage platform notifications and send broadcasts to users.",
+    "recentNotifications": "Recent Notifications",
+    "markAllAsRead": "Mark All as Read",
+    "errorTitle": "Failed to load notifications",
+    "emptyTitle": "No notifications yet",
+    "emptyDescription": "Recent platform notifications will appear here.",
+    "audiences": {
+      "all": "All Users",
+      "renters": "Renters Only",
+      "owners": "Owners Only",
+      "verifiedOwners": "Verified Owners"
+    },
+    "broadcast": {
+      "title": "Send Broadcast",
+      "description": "Notify users platform-wide",
+      "audienceLabel": "Target Audience",
+      "titleLabel": "Notification Title",
+      "messageLabel": "Message",
+      "placeholderAudience": "Select audience",
+      "titlePlaceholder": "e.g. Platform Maintenance Notice",
+      "messagePlaceholder": "Write your broadcast message...",
+      "sendButton": "Send Broadcast"
+    },
+    "stats": {
+      "title": "Notification Stats",
+      "unread": "Unread",
+      "today": "Today",
+      "thisWeek": "This Week",
+      "broadcastsSent": "Broadcasts Sent"
+    }
+  },
+  "adminPendingVerifications": {
+    "title": "Pending Verifications",
+    "subtitle": "Review and approve owner document submissions for platform access.",
+    "awaitingReview": "{{count}} Awaiting Review",
+    "summary": {
+      "pendingReview": "Pending Review",
+      "approvedThisWeek": "Approved This Week",
+      "rejectedThisWeek": "Rejected This Week"
+    },
+    "searchPlaceholder": "Search by name, email, or ID...",
+    "export": "Export",
+    "errorTitle": "Failed to load pending verifications",
+    "emptyTitle": "No pending verifications",
+    "emptyDescription": "All submissions are up to date.",
+    "table": {
+      "owner": "Owner",
+      "contact": "Contact",
+      "submitted": "Submitted",
+      "waiting": "Waiting",
+      "documents": "Documents",
+      "actions": "Actions"
+    },
+    "actions": {
+      "viewDocuments": "View Documents",
+      "viewProfile": "View Profile",
+      "approveAndVerify": "Approve & Verify",
+      "rejectDocuments": "Reject Documents"
+    },
+    "days": "{{count}} days",
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemLabel": "owners"
+    }
+  },
+  "adminReviews": {
+    "title": "Reviews",
+    "description": "Moderate user reviews and ratings across the platform.",
+    "totalReviews": "{{count}} total reviews",
+    "searchPlaceholder": "Search by reviewer, property, or comment...",
+    "filters": {
+      "status": "Status",
+      "rating": "Rating",
+      "type": "Type",
+      "all": "All",
+      "allRatings": "All Ratings",
+      "stars5": "5 Stars",
+      "stars4": "4+ Stars",
+      "stars3": "3+ Stars",
+      "stars2": "2+ Stars",
+      "stars1": "1 Star",
+      "allTypes": "All Types",
+      "property": "Property",
+      "owner": "Owner"
+    },
+    "statuses": {
+      "published": "Published",
+      "flagged": "Flagged",
+      "removed": "Removed"
+    },
+    "table": {
+      "reviewer": "Reviewer",
+      "target": "Target",
+      "rating": "Rating",
+      "comment": "Comment",
+      "status": "Status",
+      "date": "Date",
+      "actions": "Actions"
+    },
+    "actions": {
+      "flagReview": "Flag Review",
+      "removeReview": "Remove Review"
+    },
+    "unknownReviewer": "Unknown",
+    "errorTitle": "Failed to load reviews",
+    "emptyTitle": "No reviews found",
+    "emptyDescription": "Try changing current filters.",
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemLabel": "reviews"
+    }
+  },
+  "adminSettings": {
+    "title": "Platform Settings",
+    "subtitle": "Configure platform behavior, verification rules, and email settings.",
+    "buttons": {
+      "resetToDefaults": "Reset to Defaults",
+      "saveChanges": "Save Changes"
+    },
+    "sections": {
+      "general": {
+        "title": "General Settings",
+        "description": "Core platform configuration"
+      },
+      "verificationRules": {
+        "title": "Verification Rules",
+        "description": "Owner verification workflow"
+      },
+      "emailConfiguration": {
+        "title": "Email Configuration",
+        "description": "SMTP and notification emails"
+      },
+      "rateLimits": {
+        "title": "Rate Limits & Security",
+        "description": "API and authentication limits"
+      }
+    },
+    "fields": {
+      "platformName": "Platform Name",
+      "supportEmail": "Support Email",
+      "defaultLanguage": "Default Language",
+      "maxOwnerEdits": "Max Owner Edits Per Property",
+      "requiredDocuments": "Required Documents",
+      "smtpHost": "SMTP Host",
+      "smtpPort": "SMTP Port",
+      "tls": "TLS",
+      "fromEmail": "From Email",
+      "otpExpiration": "OTP Expiration (minutes)",
+      "maxOtpResendAttempts": "Max OTP Resend Attempts",
+      "reviewDeletionWindow": "Review Deletion Window (days)",
+      "maxLoginAttempts": "Max Login Attempts"
+    },
+    "languages": {
+      "english": "English",
+      "amharic": "Amharic (አማርኛ)"
+    },
+    "toggles": {
+      "maintenanceMode": "Enable maintenance mode",
+      "allowNewRegistrations": "Allow new registrations",
+      "requireOtp": "Require email OTP verification",
+      "requireDocumentUpload": "Require document upload for owners",
+      "autoApproveVerifiedOwners": "Auto-approve properties from verified owners",
+      "sendEmailOnPropertyApproval": "Send email on property approval",
+      "sendEmailOnAgreementStatusChange": "Send email on agreement status change",
+      "enableIpRateLimiting": "Enable IP-based rate limiting",
+      "requireStrongPasswords": "Require strong passwords"
+    },
+    "documents": {
+      "nationalId": "National ID",
+      "businessLicense": "Business License",
+      "propertyTitleDeed": "Property Title Deed",
+      "taxCertificate": "Tax Certificate"
+    },
+    "options": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    }
+  },
+  "adminUsers": {
+    "title": "User Management",
+    "subtitle": "Manage platform users, roles, and account status",
+    "addUser": "Add User",
+    "searchPlaceholder": "Search users by name, email, or ID...",
+    "filters": {
+      "role": "Role",
+      "status": "Status",
+      "allRoles": "All Roles",
+      "allStatuses": "All Statuses",
+      "renter": "Renter",
+      "owner": "Owner",
+      "admin": "Admin",
+      "active": "Active",
+      "suspended": "Suspended",
+      "pending": "Pending"
+    },
+    "roles": {
+      "renter": "Renter",
+      "owner": "Owner",
+      "admin": "Admin"
+    },
+    "statuses": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "pending": "Pending"
+    },
+    "verificationStates": {
+      "verified": "Verified",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "resubmit": "Resubmit"
+    },
+    "table": {
+      "avatar": "Avatar",
+      "nameEmail": "Name/Email",
+      "role": "Role",
+      "verification": "Verification",
+      "status": "Status",
+      "joinedDate": "Joined Date",
+      "actions": "Actions"
+    },
+    "actions": {
+      "viewProfile": "View Profile",
+      "verifyDocuments": "Verify Documents",
+      "suspendUser": "Suspend User",
+      "reactivateUser": "Reactivate User"
+    },
+    "errors": {
+      "failedToLoadUsers": "Failed to load users"
+    },
+    "empty": {
+      "title": "No users found",
+      "description": "Try adjusting filters or search."
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemLabel": "users"
+    }
+  },
+  "adminUserDetail": {
+    "adminControlPanel": "Admin Control Panel",
+    "account": "Account",
+    "email": "Email",
+    "verified": "Verified",
+    "notVerified": "Not Verified",
+    "verify": "Verify",
+    "unverify": "Unverify",
+    "suspend": "Suspend",
+    "sendNotification": "Send Notification",
+    "roles": {
+      "renter": "Renter",
+      "owner": "Owner",
+      "admin": "Admin"
+    },
+    "statuses": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "pending": "Pending"
+    },
+    "verificationStates": {
+      "verified": "Verified",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "resubmit": "Resubmit"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "reports": "Reports",
+      "verificationDocuments": "Verification Documents",
+      "properties": "Properties"
+    },
+    "overview": {
+      "role": "Role",
+      "platformRole": "Platform role",
+      "account": "Account",
+      "memberSince": "Member since {{date}}",
+      "verification": "Verification",
+      "emailVerified": "Email verified",
+      "emailNotVerified": "Email not verified",
+      "personalDetails": "Personal Details",
+      "fullName": "Full Name",
+      "emailAddress": "Email Address",
+      "phoneNumber": "Phone Number",
+      "userId": "User ID",
+      "registrationDate": "Registration Date",
+      "lastUpdated": "Last Updated"
+    },
+    "reports": {
+      "emptyTitle": "No reports",
+      "emptyDescription": "No reports filed by or against this user.",
+      "defaultReport": "Report"
+    },
+    "verification": {
+      "emptyTitle": "No verification documents",
+      "emptyDescription": "This user has not submitted verification documents yet.",
+      "submission": "Verification submission",
+      "submitted": "Submitted {{date}}",
+      "note": "Note:",
+      "approve": "Approve",
+      "reject": "Reject",
+      "view": "View",
+      "document": "Document",
+      "noFiles": "No document files attached to this submission.",
+      "labels": {
+        "nationalIdFront": "National ID (Front)",
+        "nationalIdBack": "National ID (Back)",
+        "livePhoto": "Live verification photo"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "under_review": "Under Review",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      }
+    },
+    "properties": {
+      "emptyTitle": "No properties",
+      "emptyDescription": "This owner has no listings matching their profile.",
+      "monthlyRent": "Monthly rent",
+      "edits": "Edits {{current}}/{{total}}",
+      "untitled": "Untitled",
+      "noAddress": "No address"
+    }
+  },
+  "adminProperties": {
+    "title": "Property Management",
+    "subtitle": "Review, approve, and manage rental listings.",
+    "statsError": "Could not load property statistics right now.",
+    "retry": "Retry",
+    "summary": {
+      "available": "Available",
+      "pendingReview": "Pending review",
+      "rented": "Rented",
+      "totalListings": "Total listings"
+    },
+    "searchPlaceholder": "Search by title, owner, or ID",
+    "filters": {
+      "type": "Type",
+      "allTypes": "All types",
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "filter": "Filter"
+    },
+    "empty": {
+      "title": "No properties found",
+      "description": "No listings match the current filters."
+    },
+    "noImage": "NO IMAGE",
+    "table": {
+      "property": "Property",
+      "owner": "Owner",
+      "type": "Type",
+      "price": "Price",
+      "status": "Status",
+      "edits": "Edits",
+      "actions": "Actions"
+    },
+    "actions": {
+      "viewDetails": "View details",
+      "approve": "Approve",
+      "reject": "Reject",
+      "softDelete": "Soft delete"
+    },
+    "notes": {
+      "rejectedByAdmin": "Rejected by admin"
+    },
+    "errors": {
+      "failedLoadProperties": "Failed to load properties"
+    },
+    "fallbacks": {
+      "untitledProperty": "Untitled property"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemLabel": "properties"
+    },
+    "statuses": {
+      "AVAILABLE": "Available",
+      "PENDING": "Pending review",
+      "RENTED": "Rented",
+      "UNAVAILABLE": "Unavailable",
+      "MAINTENANCE": "Maintenance",
+      "RESTRICTED": "Restricted"
+    },
+    "categoryOptions": {
+      "apartment": "Apartment",
+      "villa": "Villa",
+      "condominium": "Condominium",
+      "service": "Service",
+      "compound": "Compound"
+    }
+  },
+  "adminPropertyDetail": {
+    "title": "Property Details",
+    "subtitle": "Admin listing review",
+    "errors": {
+      "failedLoadPropertyDetails": "Failed to load property details"
+    },
+    "gallery": {
+      "zoom": "Zoom",
+      "previous": "Previous",
+      "next": "Next",
+      "thumbnailAlt": "Thumbnail {{index}}",
+      "noImageAlt": "Property image"
+    },
+    "map": {
+      "loading": "Loading map…",
+      "unavailable": "Map preview unavailable — no coordinates on this listing."
+    },
+    "propertyInfo": {
+      "propertyFallback": "Property",
+      "addressUnavailable": "Address not available",
+      "monthlyRent": "Monthly rent",
+      "listed": "Listed {{date}}",
+      "views": "{{count}} views",
+      "reviews": "{{rating}} ({{count}} reviews)",
+      "location": "Location",
+      "description": "Description",
+      "noDescription": "No description available",
+      "specifications": "Specifications",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "listingId": "Listing ID",
+      "viewsLabel": "Views",
+      "amenities": "Amenities",
+      "owner": "Owner",
+      "recently": "Recently"
+    },
+    "reviews": {
+      "title": "Reviews ({{count}})",
+      "average": "{{rating}} avg",
+      "loading": "Loading reviews…",
+      "emptyTitle": "No reviews yet",
+      "emptyDescription": "This property has no published reviews."
+    }
+  },
+  "adminAgreements": {
+    "title": "Agreements",
+    "subtitle": "Manage rental agreements between owners and renters",
+    "statsError": "Could not load agreement summary.",
+    "retry": "Retry",
+    "searchPlaceholder": "Search by ID, property, renter, or owner...",
+    "filters": {
+      "status": "Status",
+      "payment": "Payment",
+      "all": "All",
+      "filter": "Filter"
+    },
+    "summary": {
+      "active": "Active",
+      "pending": "Pending",
+      "draft": "Draft",
+      "terminated": "Terminated"
+    },
+    "summaryDescriptions": {
+      "active": "Completed agreements",
+      "pending": "Sent or awaiting payment",
+      "terminated": "Ended or cancelled"
+    },
+    "empty": {
+      "title": "No agreements found",
+      "description": "Try another filter or search."
+    },
+    "table": {
+      "id": "ID",
+      "property": "Property",
+      "parties": "Parties",
+      "rent": "Rent",
+      "duration": "Duration",
+      "status": "Status",
+      "payment": "Payment",
+      "actions": "Actions"
+    },
+    "actions": {
+      "viewAgreement": "View Agreement",
+      "viewContract": "View Contract"
+    },
+    "payment": {
+      "confirmed": "Confirmed",
+      "proofUploaded": "Proof Uploaded",
+      "pending": "Pending"
+    },
+    "durationTo": "to {{date}}",
+    "fallbacks": {
+      "unknownProperty": "Unknown property",
+      "renter": "Renter",
+      "owner": "Owner"
+    },
+    "errors": {
+      "failedLoadAgreements": "Failed to load agreements"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemLabel": "agreements"
+    },
+    "statuses": {
+      "draft": "Draft",
+      "sent": "Sent",
+      "payment_pending": "Payment Pending",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled",
+      "terminated": "Terminated",
+      "expired": "Expired"
+    }
+  },
+  "adminAgreementDetail": {
+    "title": "Agreement Details",
+    "propertyFallback": "Property",
+    "propertyIdFallback": "Property {{id}}",
+    "cardLabels": {
+      "renter": "Renter / ተከራይ",
+      "owner": "Owner / አከራይ"
+    },
+    "fallbacks": {
+      "renter": "Renter",
+      "owner": "Owner"
+    },
+    "badges": {
+      "verifiedIdentity": "Verified Identity",
+      "verifiedOwner": "Verified Owner"
+    },
+    "linkedProperty": "Linked Property",
+    "viewProperty": "View property",
+    "coreLeaseTerms": "Core Lease Terms",
+    "monthlyRentLabel": "Monthly Rent / ወርሃዊ ኪራይ",
+    "statusLabel": "Status",
+    "lifecycleStatus": "Current lifecycle status",
+    "leasePeriod": "Lease period",
+    "currencyLabel": "Currency: {{currency}}",
+    "updateStatus": {
+      "label": "Update status",
+      "placeholder": "Select status"
+    },
+    "errors": {
+      "failedLoadAgreementDetails": "Failed to load agreement details"
+    },
+    "paymentPurposes": {
+      "security_deposit": "Security deposit",
+      "rent": "Rent",
+      "maintenance": "Maintenance"
+    },
+    "paymentStatuses": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "success": "Success",
+      "failed": "Failed",
+      "expired": "Expired"
+    },
+    "payments": {
+      "title": "Payment summary",
+      "description": "Aggregated from {{endpoint}}",
+      "failedLoad": "Failed to load payment summary",
+      "noSummary": "No payment summary available.",
+      "history": "Payment history",
+      "noPayments": "No payment records for this agreement yet.",
+      "proof": "Proof",
+      "proofImageAlt": "Payment proof",
+      "view": "View",
+      "created": "Created {{date}}",
+      "paid": "Paid {{date}}",
+      "ref": "Ref: {{ref}}",
+      "notAvailable": "—",
+      "failedPayments": "One or more payments on this agreement have failed.",
+      "paymentCount": "Payments",
+      "totalPaid": "Total paid",
+      "outstanding": "Outstanding",
+      "deposit": "Deposit (ETB)",
+      "monthlyRent": "Monthly rent",
+      "agreementStatus": "Agreement status",
+      "byPaymentStatus": "By payment status",
+      "latestPayment": "Latest payment"
+    },
+    "statuses": {
+      "draft": "Draft",
+      "sent": "Sent",
+      "payment_pending": "Payment Pending",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled",
+      "terminated": "Terminated",
+      "expired": "Expired"
+    }
+  },
+  "adminReports": {
+    "title": "Reports",
+    "subtitle": "Review and manage platform reports",
+    "searchPlaceholder": "Search by ID, reporter, or target...",
+    "filters": {
+      "status": "Status",
+      "reason": "Reason",
+      "allStatuses": "All statuses",
+      "filter": "Filter"
+    },
+    "reasonOptions": {
+      "all": "All reasons",
+      "fraud": "Fraud",
+      "falseAdvertising": "False Advertising",
+      "inappropriateBehavior": "Inappropriate",
+      "spam": "Spam",
+      "other": "Other"
+    },
+    "empty": {
+      "title": "No reports found",
+      "description": "Try adjusting filters."
+    },
+    "errors": {
+      "failedLoadReports": "Failed to load reports"
+    },
+    "table": {
+      "id": "ID",
+      "reporter": "Reporter",
+      "reportedUser": "Reported User",
+      "reason": "Reason",
+      "status": "Status",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "actions": {
+      "investigate": "Investigate",
+      "resolve": "Resolve Report",
+      "dismiss": "Dismiss Report"
+    },
+    "fallbacks": {
+      "unknownReporter": "Unknown Reporter",
+      "targetType": "target"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemLabel": "reports"
+    },
+    "statuses": {
+      "open": "Open",
+      "in_review": "In Review",
+      "resolved": "Resolved",
+      "dismissed": "Dismissed"
+    }
+  },
+  "adminReportDetail": {
+    "title": "Report #{{id}}",
+    "breadcrumb": {
+      "investigations": "Investigations",
+      "fraudReports": "Fraud Reports"
+    },
+    "filedOn": "Filed on {{date}}",
+    "submittedOn": "Submitted {{date}}",
+    "errors": {
+      "failedLoadReportDetails": "Failed to load report details"
+    },
+    "reporterLabel": "Reporter",
+    "reporterUnknown": "Unknown reporter",
+    "reportedTarget": "Reported {{type}}",
+    "targetTypes": {
+      "property": "property",
+      "user": "user",
+      "agreement": "agreement",
+      "unknown": "target"
+    },
+    "category": {
+      "badge": "FRAUD",
+      "fallback": "Report"
+    },
+    "evidence": "Evidence",
+    "evidenceImageAlt": "Evidence {{index}}",
+    "riskAssessmentEmpty": "Risk assessment could not be computed for this report subject.",
+    "updateStatus": {
+      "label": "Update Investigation Status"
+    },
+    "actions": {
+      "resolve": "Resolve Report",
+      "dismiss": "Dismiss Report"
+    },
+    "statuses": {
+      "open": "Open",
+      "in_review": "In Review",
+      "resolved": "Resolved",
+      "dismissed": "Dismissed"
+    }
+  },
+  "landing": {
+    "hero": {
+      "title": "Find Your Perfect",
+      "titleAccent": "Family Home",
+      "subtitle": "Verified, family-oriented long stays.",
+      "cityPlaceholder": "City...",
+      "priceRangePlaceholder": "Price Range",
+      "bedroomsPlaceholder": "Bedrooms",
+      "search": "Search"
+    },
+    "featured": {
+      "error": "Could not load featured listings at this time."
+    },
+    "nearby": {
+      "retryLoadError": "Could not load nearby properties. Please try again."
+    },
+    "howItWorks": {
+      "title": "The Journey to Your New Home",
+      "step1": {
+        "title": "1. Search & Filter",
+        "desc": "Browse curated family-ready homes."
+      },
+      "step2": {
+        "title": "2. Schedule a Visit",
+        "desc": "Book a physical or virtual tour."
+      },
+      "step3": {
+        "title": "3. Move In Securely",
+        "desc": "Seamless contracts and secure handovers."
+      }
+    },
+    "benefits": {
+      "badge": "Why Choose Beten",
+      "title": "Trust & Technology For Your Family's Comfort",
+      "feature1": {
+        "title": "Verified Listings",
+        "desc": "Every property is physically visited and verified."
+      },
+      "feature2": {
+        "title": "AI-Powered Long Stays",
+        "desc": "Smart matching for long-term living."
+      },
+      "feature3": {
+        "title": "24/7 Support",
+        "desc": "Dedicated team ready to assist."
+      }
+    },
+    "testimonials": {
+      "badge": "What People Say",
+      "titlePrefix": "Trusted by",
+      "titleAccent": "Families",
+      "titleSuffix": "Across Addis",
+      "subtitle": "Real stories from renters and owners who found their perfect match through Bet-Connect.",
+      "items": {
+        "almaz": {
+          "role": "Renter • Bole",
+          "text": "We found the perfect home for our family within a week! The verification process gave us complete peace of mind. Our kids love the neighborhood."
+        },
+        "samuel": {
+          "role": "Renter • Kazanchis",
+          "text": "The AI-powered search understood exactly what we needed — a quiet place near schools with reliable internet. Bet-Connect delivered!"
+        },
+        "hana": {
+          "role": "Property Owner",
+          "text": "Listing my property was incredibly simple. I had verified tenants reaching out within days. The platform handles everything professionally."
+        },
+        "dawit": {
+          "role": "Renter • CMC",
+          "text": "After trying many platforms, Bet-Connect was the only one where every listing was real and verified. No surprises, no scams. Just honest homes."
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to Find Your Family's Next Home?",
+      "subtitle": "Join thousands of families who have found verified, safe, and comfortable homes through Bet-Connect. Start your journey today.",
+      "browseHomes": "Browse Homes",
+      "listYourProperty": "List Your Property"
+    },
+    "map": {
+      "propertyDetails": "Property Details",
+      "liveListings": "Live Listings",
+      "availableAcross": "Available Across",
+      "addisAbaba": "Addis Ababa",
+      "addisAbabaEthiopia": "Addis Ababa, Ethiopia",
+      "subtitle": "Finding a home is easier when you can see the neighborhood. Explore our verified listings in prime locations.",
+      "exploreFullMap": "Explore Full Map",
+      "locations": {
+        "boleAtlas": "Bole Atlas",
+        "oldAirport": "Old Airport",
+        "sarbet": "Sarbet",
+        "kazanchis": "Kazanchis",
+        "cmc": "CMC",
+        "ayat": "Ayat"
+      }
+    },
+    "footer": {
+      "brandDescription": "Redefining rentals for families in Ethiopia by providing secure, verified, and comfortable long-stay homes.",
+      "platform": {
+        "title": "Platform",
+        "findHouse": "Find a House",
+        "listProperty": "List Property",
+        "howItWorks": "How it Works"
+      },
+      "company": {
+        "title": "Company",
+        "aboutUs": "About Us",
+        "contact": "Contact",
+        "support": "Support"
+      },
+      "newsletter": {
+        "title": "Newsletter",
+        "emailPlaceholder": "Email address",
+        "join": "Join"
+      },
+      "copyright": "© 2024 Bet-Connect. All rights reserved.",
+      "legal": {
+        "privacyPolicy": "Privacy Policy",
+        "termsOfService": "Terms of Service",
+        "cookiePolicy": "Cookie Policy"
+      }
+    }
+  },
+  "explorePage": {
+    "search": {
+      "placeholder": "Try \"3 bedroom villa in Bole near schools\"",
+      "aiPowered": "AI-powered",
+      "button": "Search"
+    },
+    "activeFilters": {
+      "title": "Active Filters:",
+      "removeFilterAria": "Remove {{filter}} filter",
+      "clearAll": "Clear All",
+      "search": "Search",
+      "type": "Type",
+      "budget": "Budget",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "any": "Any"
+    },
+    "sort": {
+      "label": "Sort by:",
+      "gridView": "Grid View",
+      "mapView": "Map View",
+      "options": {
+        "newestListings": "Newest Listings",
+        "priceLowToHigh": "Price: Low to High",
+        "priceHighToLow": "Price: High to Low"
+      }
+    },
+    "filters": {
+      "title": "Filters",
+      "clearAll": "Clear All",
+      "propertyType": "Property Type",
+      "monthlyBudget": "Monthly Budget",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "showResults": "Show Results"
+    },
+    "categories": {
+      "allTypes": "All Types",
+      "apartment": "Apartment",
+      "villa": "Villa",
+      "condominium": "Condominium",
+      "serviceApartment": "Service Apartment",
+      "privateCompound": "Private Compound"
+    },
+    "listings": {
+      "propertyDetailsFallback": "Property Details",
+      "defaultAddress": "Addis Ababa, Ethiopia",
+      "sqm": "sqm",
+      "available": "Available",
+      "propertyLabel": "Property",
+      "emptyTitle": "No properties found",
+      "emptyDescription": "Try adjusting your filters to find more properties.",
+      "errorTitle": "Failed to load properties",
+      "errorDescription": "We encountered an error while fetching listings. Please try again.",
+      "retry": "Retry",
+      "showing": "Showing",
+      "of": "of"
+    },
+    "card": {
+      "perMonth": "/ month",
+      "beds": "Beds",
+      "baths": "Baths"
+    }
+  },
+  "aboutPage": {
+    "hero": {
+      "titlePrefix": "Redefining",
+      "titleAccent": "Family Living",
+      "titleSuffix": "in Ethiopia",
+      "subtitle": "Bet-Connect is the leading platform for families to find secure, comfortable, and verified long-stay rentals across Addis Ababa and beyond.",
+      "exploreListings": "Explore Listings",
+      "contactUs": "Contact Us"
+    },
+    "mission": {
+      "title": "Our Mission",
+      "description1": "Our mission is to create a seamless bridge between property owners and families seeking long-term homes. We believe that finding a home should be a joyful experience, not a stressful one.",
+      "description2": "By leveraging technology and human trust, we ensure every listing on our platform belongs to the \"Excellence\" category-verified for security, amenities, and family comfort.",
+      "stats": {
+        "verifiedHomes": "Verified Homes",
+        "happyFamilies": "Happy Families",
+        "secureProfile": "Secure Profile",
+        "topRated": "Top Rated",
+        "customerSupport": "Customer Support"
+      }
+    },
+    "values": {
+      "title": "Core Values",
+      "subtitle": "The principles that guide us every day in building the future of Ethiopian rentals.",
+      "items": {
+        "trustFirst": {
+          "title": "Trust First",
+          "desc": "Every owner and every property is manually verified by our team before they appear on your screen."
+        },
+        "familyCentric": {
+          "title": "Family Centric",
+          "desc": "We focus exclusively on long-stay rentals that offer the space and security families need to thrive."
+        },
+        "innovation": {
+          "title": "Innovation",
+          "desc": "Continuous improvement of our digital platform to make renting as easy as ordering a cup of coffee."
+        }
+      }
+    },
+    "cta": {
+      "titleLine1": "Ready to find your",
+      "titleLine2": "next forever home?",
+      "startSearching": "Start Searching"
+    }
+  },
+  "contactPage": {
+    "hero": {
+      "titlePrefix": "Get in",
+      "titleAccent": "Touch",
+      "subtitle": "Have questions about a listing or want to partner with us? Our team is here to help you find the perfect family home."
+    },
+    "info": {
+      "title": "Contact Information",
+      "emailUs": "Email Us",
+      "callUs": "Call Us",
+      "hours": "Mon-Fri: 8:00 AM - 6:00 PM",
+      "officeLocation": "Office Location",
+      "responsePrefix": "Typical response time:",
+      "responseTime": "Under 2 hours",
+      "viewOnGoogleMaps": "View on Google Maps"
+    },
+    "form": {
+      "title": "Send us a Message",
+      "fullNameLabel": "Full Name",
+      "fullNamePlaceholder": "Abebe Bikila",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "abebe@example.com",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "+251 911...",
+      "subjectLabel": "Subject",
+      "subjectPlaceholder": "Inquiry about pricing",
+      "messageLabel": "Your Message",
+      "messagePlaceholder": "How can we help you?",
+      "sendMessage": "Send Message",
+      "privacyPrefix": "By submitting this form, you agree to our",
+      "privacyPolicy": "Privacy Policy"
+    }
+  },
+  "user": {
+    "propertyOwner": "Property Owner",
+    "owner": "Owner"
+  },
+  "owner": {
+    "overview": {
+      "errors": {
+        "failedLoadDashboard": "Failed to load dashboard.",
+        "temporarilyUnavailable": "Dashboard temporarily unavailable",
+        "couldNotLoad": "Could not load dashboard",
+        "schemaSync": "The server needs the latest backend deployment. Other pages may work with limited data until then."
+      },
+      "partialWarning": "Some dashboard sections could not be loaded (agreements or payments may be updating). Figures shown may be incomplete.",
+      "welcome": "Welcome back, {{name}}",
+      "ownerFallback": "Owner",
+      "subtitle": "Here's what's happening with your properties today.",
+      "addProperty": "Add Property",
+      "cancel": "Cancel",
+      "viewAll": "View All",
+      "periods": {
+        "monthly": "Monthly",
+        "weekly": "Weekly"
+      },
+      "quickActions": {
+        "addProperty": {
+          "title": "Add New Property",
+          "desc": "List a new rental property"
+        },
+        "appointments": {
+          "title": "View Appointments",
+          "desc": "{{count}} pending confirmations",
+          "desc_one": "{{count}} pending confirmation"
+        },
+        "agreements": {
+          "title": "Manage Agreements",
+          "descPending": "Review pending contracts",
+          "descDefault": "View rental agreements"
+        },
+        "notifications": {
+          "title": "Notifications",
+          "desc": "{{count}} unread alerts",
+          "desc_one": "{{count}} unread alert"
+        }
+      },
+      "kpis": {
+        "activeListings": "Active Listings",
+        "totalViews": "Total Views",
+        "appointments": "Appointments",
+        "pending": "Pending",
+        "pendingAgreements": "Pending Agreements",
+        "actionNeeded": "Action Needed",
+        "revenue": "Revenue",
+        "thisMonth": "This month"
+      },
+      "revenue": {
+        "title": "Revenue Overview",
+        "thisPeriod": "This Period",
+        "totalRevenue": "Total Revenue",
+        "avgPerProperty": "Avg per Property",
+        "pendingPayments": "Pending Payments",
+        "awaitingConfirmation": "{{count}} awaiting confirmation",
+        "awaitingConfirmation_one": "{{count}} awaiting confirmation"
+      },
+      "activity": {
+        "title": "Recent Activity",
+        "empty": "No recent activity"
+      },
+      "topProperties": {
+        "title": "Top Performing Properties",
+        "subtitle": "Your most viewed listings",
+        "empty": "No properties yet. Add your first listing to get started.",
+        "viewDetails": "View Details",
+        "viewAnalytics": "View Analytics",
+        "table": {
+          "property": "Property",
+          "views": "Views",
+          "inquiries": "Inquiries",
+          "status": "Status",
+          "rent": "Rent / Month",
+          "actions": "Actions"
+        }
+      }
+    },
+    "agreements": {
+      "title": "My Agreements",
+      "subtitle": "Create lease offers, track renter responses, and security deposits.",
+      "exportCsv": "Export CSV",
+      "newAgreement": "New agreement",
+      "propertyFallback": "Property",
+      "renterFallback": "Renter",
+      "searchPlaceholder": "Search property, renter, or ID…",
+      "statusPlaceholder": "Status",
+      "pagination": "Page {{page}} of {{totalPages}} · {{total}} total",
+      "errors": {
+        "failedLoad": "Could not load agreements.",
+        "unavailable": "Agreements unavailable",
+        "couldNotLoad": "Could not load agreements",
+        "schemaSync": "The production API is out of sync with the database. Redeploy the latest backend build, then refresh."
+      },
+      "stats": {
+        "total": "Total",
+        "completed": "Completed",
+        "inProgress": "In progress",
+        "actionNeeded": "Action needed"
+      },
+      "statusOptions": {
+        "all": "All statuses"
+      },
+      "statuses": {
+        "draft": "Draft",
+        "sent": "Sent",
+        "payment_pending": "Payment pending",
+        "completed": "Completed",
+        "rejected": "Rejected",
+        "cancelled": "Cancelled",
+        "terminated": "Terminated",
+        "expired": "Expired"
+      },
+      "empty": {
+        "title": "No agreements yet",
+        "description": "Create a lease offer for a renter who has visited one of your properties.",
+        "action": "Create agreement"
+      },
+      "table": {
+        "property": "Property",
+        "renter": "Renter",
+        "rent": "Rent",
+        "deposit": "Deposit (ETB)",
+        "status": "Status",
+        "created": "Created",
+        "actions": "Actions"
+      },
+      "actions": {
+        "viewDetails": "View details",
+        "sendOffer": "Send offer"
+      }
+    },
+    "agreementDetail": {
+      "fallbackTitle": "Agreement",
+      "statusBanner": "Agreement {{status}}",
+      "progress": "Progress",
+      "errors": {
+        "notFound": "Agreement not found",
+        "unavailable": "Agreements unavailable"
+      },
+      "actions": {
+        "sendOffer": "Send offer",
+        "editDraft": "Edit draft",
+        "cancel": "Cancel",
+        "confirmCancel": "Confirm cancel",
+        "back": "Back",
+        "terminate": "Terminate",
+        "confirmTerminate": "Confirm terminate"
+      },
+      "steps": {
+        "draft": "Draft",
+        "sent": "Sent",
+        "payment_pending": "Payment pending",
+        "completed": "Completed"
+      },
+      "terms": {
+        "title": "Terms snapshot",
+        "property": "Property",
+        "monthlyRent": "Monthly rent",
+        "securityDeposit": "Security deposit (ETB)",
+        "fxRate": "FX rate: {{rate}} at {{date}}",
+        "leasePeriod": "Lease period",
+        "offerExpires": "Offer expires",
+        "conditions": "Conditions",
+        "yourMessage": "Your message"
+      },
+      "languages": {
+        "english": "English",
+        "amharic": "Amharic"
+      },
+      "payment": {
+        "title": "Security deposit payment",
+        "failedLoad": "Payment details could not be loaded.",
+        "waitingForRenter": "Waiting for the renter to pay via Chapa.",
+        "notInitiated": "No deposit payment initiated yet.",
+        "paidAt": "Paid {{date}}",
+        "otherRecords": "+ {{count}} other payment records on file",
+        "otherRecords_one": "+ {{count}} other payment record on file",
+        "statuses": {
+          "pending": "Pending",
+          "processing": "Processing",
+          "success": "Paid",
+          "failed": "Failed",
+          "expired": "Expired"
+        }
+      },
+      "renter": {
+        "title": "Renter",
+        "fallback": "Renter",
+        "message": "Message renter",
+        "appointments": {
+          "title": "Appointments",
+          "subtitle": "Manage property visit requests and your schedule.",
+          "stats": {
+            "total": "Total",
+            "pending": "Pending",
+            "confirmed": "Confirmed",
+            "rejected": "Rejected"
+          },
+          "statuses": {
+            "PENDING": "Pending",
+            "ACCEPTED": "Confirmed",
+            "REJECTED": "Rejected",
+            "CANCELLED": "Cancelled"
+          },
+          "filters": {
+            "status": "Filter status",
+            "allStatuses": "All statuses"
+          },
+          "tabs": {
+            "upcoming": "Upcoming ({{count}})",
+            "past": "Past ({{count}})",
+            "all": "All ({{count}})"
+          },
+          "empty": {
+            "upcoming": "No upcoming appointments",
+            "past": "No past appointments",
+            "all": "No appointments yet"
+          },
+          "actions": {
+            "approve": "Approve",
+            "reject": "Reject",
+            "viewDetails": "View details",
+            "viewProperty": "View property",
+            "emailRenter": "Email renter",
+            "cancel": "Cancel",
+            "addOwnerNote": "Add owner note...",
+            "save": "Save",
+            "openMenu": "Open appointment menu",
+            "expand": "Expand appointment",
+            "collapse": "Collapse appointment"
+          },
+          "confirm": {
+            "approveQuestion": "Approve?",
+            "rejectQuestion": "Reject?",
+            "yes": "Yes",
+            "no": "No"
+          },
+          "errors": {
+            "failedLoad": "Failed to load appointments.",
+            "tryAgain": "Try again"
+          },
+          "detail": {
+            "close": "Close",
+            "title": "Appointment details",
+            "property": "Property",
+            "schedule": "Schedule",
+            "renter": "Renter",
+            "messageFromRenter": "Message from renter",
+            "createLeaseAgreement": "Create lease agreement",
+            "cancelAppointment": "Cancel appointment"
+          },
+          "fallbacks": {
+            "property": "Property",
+            "unknownRenter": "Unknown renter",
+            "renter": "Renter"
+          }
+        }
+      },
+      "timeline": {
+        "title": "Timeline",
+        "created": "Created",
+        "sent": "Sent",
+        "renterResponded": "Renter responded",
+        "activated": "Activated"
+      }
+    },
+    "addProperty": {
+      "successTitle": "Property Listed Successfully!",
+      "successDesc": "Your property has been submitted. As a verified owner, your listing is automatically approved and now live.",
+      "addAnother": "Add Another Property",
+      "viewMyProperties": "View My Properties",
+      "verificationRequired": "Verification Required",
+      "docStatusUnderReview": "Your documents are currently under review. You will be able to list properties once your verification is approved.",
+      "docStatusRejected": "Your documents are currently rejected. You will be able to list properties once your verification is approved.",
+      "docStatusProcessed": "Your documents are currently being processed. You will be able to list properties once your verification is approved.",
+      "needUpload": "You need to upload verification documents before you can list properties on the platform.",
+      "viewVerificationStatus": "View Verification Status",
+      "uploadDocuments": "Upload Documents",
+      "goToDashboard": "Go to Dashboard",
+      "addNewProperty": "Add New Property",
+      "listNewProperty": "List a new rental property on the platform."
+    },
+    "appointments": {
+      "title": "Appointments",
+      "subtitle": "Manage property visit requests and your schedule.",
+      "stats": {
+        "total": "Total",
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "rejected": "Rejected"
+      },
+      "statuses": {
+        "PENDING": "Pending",
+        "ACCEPTED": "Confirmed",
+        "REJECTED": "Rejected",
+        "CANCELLED": "Cancelled"
+      },
+      "filters": {
+        "status": "Filter status",
+        "allStatuses": "All statuses"
+      },
+      "tabs": {
+        "upcoming": "Upcoming ({{count}})",
+        "past": "Past ({{count}})",
+        "all": "All ({{count}})"
+      },
+      "empty": {
+        "upcoming": "No upcoming appointments",
+        "past": "No past appointments",
+        "all": "No appointments yet"
+      },
+      "actions": {
+        "approve": "Approve",
+        "reject": "Reject",
+        "viewDetails": "View details",
+        "viewProperty": "View property",
+        "emailRenter": "Email renter",
+        "cancel": "Cancel",
+        "addOwnerNote": "Add owner note...",
+        "save": "Save",
+        "openMenu": "Open appointment menu",
+        "expand": "Expand appointment",
+        "collapse": "Collapse appointment"
+      },
+      "confirm": {
+        "approveQuestion": "Approve?",
+        "rejectQuestion": "Reject?",
+        "yes": "Yes",
+        "no": "No"
+      },
+      "errors": {
+        "failedLoad": "Failed to load appointments.",
+        "tryAgain": "Try again"
+      },
+      "detail": {
+        "close": "Close",
+        "title": "Appointment details",
+        "property": "Property",
+        "schedule": "Schedule",
+        "renter": "Renter",
+        "messageFromRenter": "Message from renter",
+        "createLeaseAgreement": "Create lease agreement",
+        "cancelAppointment": "Cancel appointment"
+      },
+      "fallbacks": {
+        "property": "Property",
+        "unknownRenter": "Unknown renter",
+        "renter": "Renter"
+      }
+    },
+    "editProperty": {
+      "notFound": "Property not found",
+      "title": "Edit Property",
+      "idLabel": "Property ID: #{{id}}"
+    },
+    "notifications": {
+      "toastHidden": "Notification hidden from view",
+      "toastNoReadClear": "No read notifications to clear",
+      "toastCleared": "Read notifications cleared from view",
+      "loading": "Loading notifications...",
+      "failed": "Failed to load notifications",
+      "unableToLoad": "Unable to load your notifications.",
+      "tryAgain": "Try again",
+      "subtitle": "Stay updated on your property activities."
+    },
+    "profile": {
+      "failed": "Failed to load profile",
+      "unableToLoad": "Unable to load your profile and settings.",
+      "title": "Profile & Settings",
+      "subtitle": "Manage your personal info, security, and preferences.",
+      "personalInfo": "Personal Info",
+      "verification": "Verification",
+      "paymentDetails": "Payment Details",
+      "notifications": "Notifications",
+      "security": "Security"
+    },
+    "analytics": {
+      "title": "Analytics & Insights",
+      "subtitle": "Track performance and trends across your properties.",
+      "export": "Export",
+      "periods": {
+        "monthly": "Monthly",
+        "weekly": "Weekly",
+        "yearly": "Yearly"
+      },
+      "kpi": {
+        "totalViews": "Total Views",
+        "bookingRate": "Booking Rate",
+        "revenue": "Revenue",
+        "occupancyRate": "Occupancy Rate"
+      },
+      "viewsOverTime": "Views Over Time",
+      "vsLastPeriod": "+24% vs last period",
+      "revenueTrends": "Revenue Trends",
+      "growth": "+15% growth",
+      "topPerforming": "Top Performing Properties",
+      "table": {
+        "num": "#",
+        "property": "Property",
+        "views": "Views",
+        "bookingRate": "Booking Rate",
+        "revenue": "Revenue",
+        "actions": "Actions"
+      },
+      "menu": {
+        "viewDetails": "View Details",
+        "detailedStats": "Detailed Stats"
+      }
+    },
+    "helpSupport": {
+      "title": "Help & Support",
+      "subtitle": "Get help or submit a support ticket to the admin team.",
+      "submitNew": "Submit New Ticket",
+      "ticketSubmitted": "Ticket Submitted!",
+      "respondWithin": "We'll respond within 24 hours.",
+      "subject": "Subject",
+      "category": "Category",
+      "description": "Description",
+      "subjectPlaceholder": "Brief description of your issue",
+      "selectCategory": "Select category",
+      "technicalIssue": "Technical Issue",
+      "payments": "Payments",
+      "account": "Account",
+      "properties": "Properties",
+      "agreements": "Agreements",
+      "other": "Other",
+      "descPlaceholder": "Describe your issue in detail...",
+      "charCount": "{{length}}/500 characters",
+      "submitting": "Submitting...",
+      "submitTicket": "Submit Ticket",
+      "myTickets": "My Tickets ({{count}})",
+      "searchPlaceholder": "Search tickets...",
+      "noTickets": "No tickets found",
+      "hideChat": "Hide Chat",
+      "viewChat": "View Chat",
+      "markResolved": "Mark Resolved",
+      "closeTicket": "Close Ticket",
+      "replyPlaceholder": "Reply to this ticket...",
+      "faq": "Frequently Asked Questions",
+      "you": "You",
+      "justNow": "Just now",
+      "admin": "Admin",
+      "open": "Open",
+      "resolved": "Resolved",
+      "inProgress": "In Progress"
+    },
+    "myProperties": {
+      "title": "My Properties",
+      "subtitle": "Manage and track all your rental listings.",
+      "addProperty": "Add Property",
+      "stats": {
+        "totalProperties": "Total Properties",
+        "available": "Available",
+        "rented": "Rented",
+        "totalViews": "Total Views",
+        "thisMonth": "+2 this month",
+        "vsLastMonth": "+24% vs last month"
+      },
+      "filters": {
+        "searchPlaceholder": "Search by name, location, or ID...",
+        "status": "Status",
+        "type": "Type",
+        "allStatuses": "All Statuses",
+        "available": "Available",
+        "rented": "Rented",
+        "maintenance": "Maintenance",
+        "allTypes": "All Types",
+        "villa": "Villa",
+        "apartment": "Apartment",
+        "house": "House",
+        "studio": "Studio",
+        "penthouse": "Penthouse"
+      },
+      "resultsFound": "{{count}} properties found",
+      "resultFound": "{{count}} property found",
+      "forQuery": " for \"{{query}}\"",
+      "clearFilters": "Clear Filters",
+      "table": {
+        "property": "Property",
+        "type": "Type",
+        "rent": "Rent",
+        "status": "Status",
+        "views": "Views",
+        "actions": "Actions"
+      },
+      "noProperties": "No properties match your filters",
+      "menu": {
+        "viewDetails": "View Details",
+        "editProperty": "Edit Property",
+        "delete": "Delete"
+      },
+      "confirmDelete": {
+        "title": "Confirm Delete",
+        "desc": "Are you sure you want to delete \"{{title}}\"? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Yes, Delete"
+      },
+      "showing": "Showing {{start}}-{{end}} of {{total}}",
+      "beds": "Beds",
+      "baths": "Baths",
+      "view": "View",
+      "cancel": "Cancel"
+    },
+    "paymentHistory": {
+      "failed": "Failed to load payments",
+      "unableToLoad": "Unable to load payment history.",
+      "title": "Payment History",
+      "subtitle": "Track all payments received from your rental agreements.",
+      "export": "Export",
+      "totalReceived": "Total Received",
+      "actionNeeded": "Action Needed",
+      "pendingConfirmation": "Pending Confirmation",
+      "thisMonth": "This Month",
+      "searchPlaceholder": "Search by ID, renter, or property...",
+      "clear": "Clear",
+      "status": "Status",
+      "refreshFailed": "Could not refresh payments.",
+      "retry": "Retry",
+      "table": {
+        "paymentId": "Payment ID",
+        "property": "Property",
+        "renter": "Renter",
+        "amount": "Amount",
+        "date": "Date",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "noPayments": "No payments found",
+      "viewProof": "View Proof",
+      "confirmPayment": "Confirm Payment",
+      "showing": "Showing {{start}}-{{end}} of {{total}}"
+    },
+    "propertyDetail": {
+      "failed": "Failed to load property details",
+      "noEdits": "No edits left",
+      "editsLeft": "{{count}} edit left",
+      "editsLeft_plural": "{{count}} edits left",
+      "tabs": {
+        "details": "Details",
+        "media": "Media ({{count}})",
+        "stats": "Performance",
+        "appointments": "Appointments"
+      },
+      "noImages": "No images available",
+      "monthlyRent": "Monthly Rent",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "area": "Area",
+      "reviewsCount": "({{count}} reviews)",
+      "reviewsCount_one": "({{count}} review)",
+      "quickStats": "Quick Stats",
+      "totalViews": "Total Views",
+      "revenue": "Revenue",
+      "description": "Description",
+      "noDescription": "No description available.",
+      "propertyPhotos": "Property Photos ({{count}})",
+      "uploadPhotos": "Upload Photos",
+      "cover": "Cover",
+      "addPhoto": "Add Photo",
+      "statsCard": {
+        "viewsThisMonth": "Views This Month",
+        "inquiryRate": "Inquiry Rate",
+        "avgTimeOnPage": "Avg. Time on Page"
+      },
+      "viewsOverTime": "Views Over Time",
+      "weeks": {
+        "week1": "Week 1",
+        "week2": "Week 2",
+        "week3": "Week 3",
+        "week4": "Week 4"
+      }
+    },
+    "reports": {
+      "failed": "Failed to load reports",
+      "unableToLoad": "Unable to load reports filed against you.",
+      "title": "Reports Against Me",
+      "subtitle": "View and respond to reports filed against you or your properties.",
+      "total": "Total Reports",
+      "open": "Open",
+      "resolved": "Resolved",
+      "statuses": {
+        "open": "Open",
+        "in_review": "Under Review",
+        "resolved": "Resolved",
+        "dismissed": "Dismissed"
+      },
+      "noReports": "No reports filed against you",
+      "reportedBy": "Reported by: {{name}}",
+      "yourResponse": "Your Response",
+      "submitYourResponse": "Submit Your Response",
+      "explainSide": "Explain your side of the situation (minimum 10 characters)...",
+      "submitting": "Submitting...",
+      "submitResponse": "Submit Response",
+      "resolvedStatus": "This report has been resolved",
+      "dismissedStatus": "This report was dismissed",
+      "againstAccount": "Report against your account",
+      "againstProperty": "Report against your property"
+    },
+    "reviews": {
+      "failed": "Failed to load reviews",
+      "unableToLoad": "Unable to load your reviews.",
+      "title": "Reviews Received",
+      "subtitle": "See what renters are saying about your properties.",
+      "rating": "Rating",
+      "sort": "Sort",
+      "starsOptions": {
+        "all": "All Stars",
+        "5": "5 Stars",
+        "4": "4 Stars",
+        "3": "3 Stars",
+        "2": "2 Stars",
+        "1": "1 Star"
+      },
+      "sortOptions": {
+        "newest": "Newest",
+        "oldest": "Oldest",
+        "highest": "Highest",
+        "lowest": "Lowest"
+      },
+      "totalReviews": "{{count}} total reviews",
+      "totalReviews_one": "{{count}} total review",
+      "positive": "{{percent}}% positive",
+      "noReviews": "No reviews match your filter",
+      "yourReply": "Your Reply",
+      "writeReply": "Write your reply to this review...",
+      "cancel": "Cancel",
+      "sendReply": "Send Reply",
+      "replied": "Replied",
+      "reply": "Reply"
+    }
+  },
+  "renter": {
+    "appointments": {
+      "title": "My Appointments",
+      "subtitle": "Track and manage your scheduled property visits.",
+      "errors": {
+        "failedLoad": "Failed to load appointments.",
+        "tryAgain": "Try again"
+      },
+      "labels": {
+        "na": "N/A"
+      },
+      "statuses": {
+        "confirmed": "Confirmed",
+        "declined": "Declined",
+        "cancelled": "Cancelled",
+        "pending": "Pending"
+      },
+      "actions": {
+        "reschedule": "Reschedule",
+        "cancelVisit": "Cancel Visit",
+        "browseProperties": "Browse Properties",
+        "goBack": "Go Back",
+        "confirmCancellation": "Confirm Cancellation"
+      },
+      "tabs": {
+        "upcoming": "Upcoming",
+        "past": "Past"
+      },
+      "empty": {
+        "upcoming": "No upcoming appointments",
+        "description": "Explore homes and schedule visits to find your perfect place.",
+        "past": "No past appointments found"
+      },
+      "modal": {
+        "title": "Cancel Visit",
+        "description": "Are you sure you want to cancel your scheduled visit for {{property}}? This action cannot be undone.",
+        "propertyFallback": "this property"
+      }
+    },
+    "paymentReturn": {
+      "verifyingTitle": "Verifying Payment...",
+      "verifyingDescription": "Please wait while we verify your transaction status with Chapa.",
+      "successTitle": "Payment Successful!",
+      "successDescription": "Your security deposit has been processed successfully. Your lease agreement is now active.",
+      "viewAgreement": "View Agreement",
+      "pendingTitle": "Payment Pending",
+      "pendingDescription": "Your transaction status is still being processed. It will be updated shortly.",
+      "failedTitle": "Payment Failed",
+      "failedDescription": "Your transaction could not be processed. Please try again or contact support.",
+      "failedMissingRef": "Invalid transaction reference. Please check your payment history.",
+      "backToAgreement": "Back to Agreement",
+      "myAgreements": "My Agreements",
+      "invalidTitle": "Invalid Reference",
+      "invalidDescription": "No transaction reference was provided in the return URL.",
+      "allAgreements": "Back to all agreements"
+    },
+    "agreements": {
+      "title": "My Agreements",
+      "subtitle": "Review offers, manage security deposits, and view active leases.",
+      "tabs": {
+        "agreements": "Lease Agreements",
+        "payments": "Payment History"
+      },
+      "statuses": {
+        "all": "All",
+        "draft": "Draft",
+        "sent": "Offer Received",
+        "payment_pending": "Payment Pending",
+        "completed": "Active",
+        "rejected": "Declined",
+        "cancelled": "Cancelled",
+        "terminated": "Terminated",
+        "expired": "Expired"
+      },
+      "errors": {
+        "failedLoad": "Failed to load agreements.",
+        "tryAgain": "Try again"
+      },
+      "empty": {
+        "title": "No agreements yet",
+        "all": "You do not have any lease agreements on file.",
+        "filtered": "No lease agreements match the selected status."
+      },
+      "labels": {
+        "perMonth": "/ month",
+        "owner": "Owner",
+        "leaseStart": "Start Date",
+        "deposit": "Security Deposit (ETB)",
+        "viewDetails": "View Details"
+      }
+    },
+    "payments": {
+      "filterPlaceholder": "Filter by status",
+      "statuses": {
+        "all": "All Statuses",
+        "pending": "Pending",
+        "processing": "Processing",
+        "success": "Paid",
+        "failed": "Failed",
+        "expired": "Expired"
+      },
+      "providers": {
+        "manual": "Bank Transfer",
+        "chapa": "Chapa (Card/Telebirr)"
+      },
+      "errors": {
+        "failedLoad": "Failed to load payments.",
+        "tryAgain": "Try again"
+      },
+      "actions": {
+        "updating": "Updating...",
+        "viewAgreement": "View Agreement",
+        "uploadProof": "Upload Proof"
+      },
+      "empty": {
+        "title": "No payments yet",
+        "description": "Your payment history will appear here once transactions are recorded."
+      },
+      "proof": {
+        "invalidType": "Please upload an image (JPG/PNG) or PDF file.",
+        "tooLarge": "File size must be under 5MB."
+      }
+    },
+    "agreementDetail": {
+      "actions": {
+        "leaseActiveTitle": "Lease Agreement Active",
+        "leaseActiveDescription": "Congratulations! Your lease agreement became active on{{date}}.",
+        "title": "Required Action",
+        "offerExpired": "This offer has expired.",
+        "acceptOffer": "Accept Offer & Proceed",
+        "decline": "Decline Offer",
+        "declineOfferQuestion": "Decline this offer?",
+        "optionalReason": "Optionally explain why you are declining (e.g. rent is too high)...",
+        "back": "Back",
+        "confirmDecline": "Confirm Decline",
+        "payDepositHelp": "To complete the agreement, please pay the security deposit of {{amount}}.",
+        "paySecurityDeposit": "Pay Security Deposit",
+        "cancelAgreement": "Cancel Offer",
+        "cancelAgreementQuestion": "Cancel this offer?",
+        "optionalReasonShort": "Optionally explain why...",
+        "confirmCancel": "Confirm Cancel",
+        "offerExpires": "Offer expires: {{date}}",
+        "noPayments": "No payments recorded yet."
+      },
+      "statusBanner": "Agreement {{status}}",
+      "errors": {
+        "failedLoad": "Failed to load agreement details.",
+        "retry": "Retry",
+        "backToAgreements": "Back to Agreements"
+      },
+      "leaseTerms": "Lease Terms",
+      "monthlyRent": "Monthly Rent",
+      "securityDeposit": "Security Deposit",
+      "start": "Start",
+      "end": "End",
+      "leaseTermsNote": "Standard tenant guidelines and terms apply.",
+      "messageFromOwner": "Message from Owner",
+      "payments": "Payments",
+      "propertyOwner": "Property Owner",
+      "ownerHost": "Owner / Host",
+      "timeline": "Timeline",
+      "sentLabel": "Sent Date",
+      "responseLabel": "Response Date",
+      "activatedLabel": "Activation Date"
+    },
+    "scheduleVisit": {
+      "propertyFallback": "Property Details",
+      "propertyTypeFallback": "Property Type",
+      "browseProperties": "Browse Properties",
+      "backTo": "Back to {{property}}",
+      "title": "Schedule a Visit",
+      "description": "Book a convenient physical or virtual tour slot to view {{property}}.",
+      "selectDate": "Select Date",
+      "selectTime": "Select Time Slot",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "noEndTimes": "Select a start time first",
+      "noEndTimesAvailable": "No end time slots available",
+      "visitRange": "Visit range selected: {{start}} to {{end}}",
+      "notesForOwner": "Notes for the owner (optional)",
+      "rescheduleReason": "Reason for rescheduling",
+      "reschedulePlaceholder": "Explain why you are rescheduling your visit...",
+      "placeholder": "Introduce yourself and suggest any specific preferences for your visit...",
+      "scheduling": "Scheduling slot...",
+      "confirmScheduling": "Confirm Visit Booking",
+      "info": "The owner will receive your request and notify you once confirmed.",
+      "beds": "Beds",
+      "baths": "Baths",
+      "owner": "Owner",
+      "propertyOwnerFallback": "Property Owner",
+      "visitPolicyTitle": "Visit Booking Policy",
+      "visitPolicy": "Visits can be cancelled or rescheduled up to 2 hours before the start time. Please respect the owner's availability.",
+      "availability": {
+        "loadError": "Could not check availability. Please try again."
+      },
+      "fieldErrors": {
+        "date": "Please select a date",
+        "time": "Please select a start time",
+        "endTime": "Please select an end time"
+      }
+    },
+    "notifications": {
+      "toastHidden": "Notification hidden from view",
+      "toastNoReadClear": "No read notifications to clear",
+      "toastCleared": "Read notifications cleared from view",
+      "loading": "Loading notifications...",
+      "failed": "Failed to load notifications",
+      "unableToLoad": "Unable to load your notifications.",
+      "tryAgain": "Try again",
+      "title": "My Notifications",
+      "subtitle": "Stay updated on your lease offers, visits, and payments.",
+      "tabs": {
+        "all": "All",
+        "appointment": "Visits",
+        "agreement": "Leases",
+        "payment": "Payments",
+        "message": "Messages",
+        "system": "System"
+      },
+      "markAsRead": "Mark as read",
+      "hideFromView": "Hide notification",
+      "markReadAndHide": "Mark read and hide",
+      "markAllRead": "Mark all as read",
+      "clearRead": "Clear read",
+      "youHaveUnread": "You have {{count}} unread notification",
+      "youHaveUnread_plural": "You have {{count}} unread notifications",
+      "noNotificationsYet": "No notifications yet",
+      "noCategoryNotifications": "No new notifications in {{category}}"
+    },
+    "profile": {
+      "title": "Profile & Settings",
+      "subtitle": "Manage your renter profile, security, and options.",
+      "errors": {
+        "failedLoad": "Failed to load profile.",
+        "tryAgain": "Try again",
+        "unableToLoad": "Unable to load your profile details.",
+        "profileEmpty": "Renter profile data is empty."
+      },
+      "toast": {
+        "avatarType": "Only JPEG and PNG images are allowed.",
+        "avatarSize": "Image size must be under 5MB.",
+        "nameHint": "Name must be at least 2 characters.",
+        "passwordMismatch": "New passwords do not match."
+      },
+      "defaultName": "Renter User",
+      "tabs": {
+        "general": "General Settings",
+        "security": "Security Settings"
+      },
+      "changePhoto": "Change photo",
+      "savePhoto": "Save Photo",
+      "emailVerified": "Email Verified",
+      "emailUnverified": "Email Unverified",
+      "personalInfo": {
+        "title": "Personal Information",
+        "cancel": "Cancel",
+        "save": "Save Changes",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "phone": "Phone Number",
+        "bio": "Bio / About Me",
+        "noBio": "No bio entered yet.",
+        "phoneHint": "Enter phone in international format (e.g. +251...)"
+      },
+      "location": {
+        "title": "My Location",
+        "noLocation": "No location set",
+        "label": "City / Neighborhood",
+        "placeholder": "e.g. Bole, Addis Ababa"
+      },
+      "preferences": {
+        "title": "System Preferences",
+        "language": "Interface Language",
+        "languageOptions": {
+          "en": "English",
+          "am": "አማርኛ (Amharic)",
+          "or": "Afaan Oromoo",
+          "ti": "ትግርኛ (Tigrinya)"
+        },
+        "emailNotifications": "Email Notification Updates",
+        "preferredLanguage": "Preferred Interface Language",
+        "chooseUpdates": "Choose which events you want to receive email alerts for:",
+        "options": {
+          "appointments": "Visit Booking Updates",
+          "agreements": "Lease Agreement Activity",
+          "payments": "Payment Receipts",
+          "reviews": "Review Notifications",
+          "reports": "System Security Reports",
+          "system": "Platform Maintenance Announcements"
+        }
+      },
+      "security": {
+        "title": "Change Password",
+        "description": "Ensure your account is secure by using a strong password.",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm New Password",
+        "savePassword": "Update Password",
+        "hidePassword": "Hide password",
+        "showPassword": "Show password"
+      }
+    },
+    "reviews": {
+      "title": "My Reviews",
+      "subtitle": "View and manage feedback you have left for properties.",
+      "empty": "You have not submitted any property reviews yet.",
+      "actions": {
+        "editReview": "Edit review",
+        "deleteReview": "Delete review"
+      },
+      "modal": {
+        "editTitle": "Edit Your Review",
+        "rating": "Your Rating",
+        "feedback": "Review Feedback",
+        "placeholder": "Write your honest feedback about this home...",
+        "cancel": "Cancel",
+        "saving": "Saving changes...",
+        "saveChanges": "Save Changes",
+        "deleteTitle": "Delete Review?",
+        "deleteDescription": "This review will be permanently deleted from the property page.",
+        "deletePrompt": "Are you sure you want to delete your review for {{property}}?",
+        "deleteInfo": "This action cannot be undone.",
+        "keepReview": "Keep Review",
+        "deleting": "Deleting...",
+        "deleteReview": "Yes, Delete"
+      },
+      "errors": {
+        "failedLoad": "Failed to load reviews.",
+        "tryAgain": "Try again"
+      }
+    }
+  },
+  "savedProperties": {
+    "title": "Saved Properties",
+    "savedCount_one": "You have {{count}} property saved to your collection.",
+    "savedCount_other": "You have {{count}} properties saved to your collection.",
+    "noSavedYet": "You haven't saved any properties yet.",
+    "noSavedTitle": "No Saved Properties",
+    "startExploringBeforeHeart": "Start exploring homes and tap the ",
+    "startExploringAfterHeart": " icon to save your favorites here.",
+    "exploreListings": "Explore Listings",
+    "save": "Save",
+    "saved": "Saved",
+    "removeFromFavorites": "Remove from favorites",
+    "saveToFavorites": "Save to favorites"
+  },
+  "propertyDetailsComponents": {
+    "addisAbaba": "Addis Ababa",
+    "wifi": "High-speed WiFi",
+    "parking": "Private Parking",
+    "security": "24/7 Security",
+    "garden": "Private Garden",
+    "sqm": "m²",
+    "new": "New",
+    "ownerCard": {
+      "host": "Host",
+      "meetHost": "Meet your host, {{name}}",
+      "verifiedOwner": "Verified Owner",
+      "newHost": "New Host",
+      "verifiedRating": "5.0 (Verified)",
+      "hostedBy": "Hosted by {{name}} on our platform. I believe in providing a home that offers peace and privacy. Always available to help you settle in.",
+      "verifiedOwnerDesc": "A verified property owner on our platform. Always available to help you settle in."
+    },
+    "mapSection": {
+      "title": "Location & Neighborhood",
+      "verifiedCoordinates": "Verified Coordinates",
+      "publicSchool": "Public School",
+      "shoppingMall": "Shopping Mall",
+      "hospital": "Hospital",
+      "neighborhoodDesc": "\"This neighborhood is known for its safety, quiet streets, and proximity to major international schools and shopping centers in {{address}}.\""
+    },
+    "reviews": {
+      "title": "Property Reviews",
+      "readAll": "Read all reviews",
+      "empty": "No reviews yet for this property.",
+      "anonymous": "Anonymous",
+      "reviewCount_one": "{{count}} review",
+      "reviewCount_other": "{{count}} reviews"
+    }
+  }
+}
+

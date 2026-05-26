@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useNavigate, useLocation } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Calendar, Clock, MessageSquare, MapPin, Star, Home, Info, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -21,13 +22,6 @@ import {
   parseTimeStr,
 } from '../../visits/utils/availability';
 
-const formSchema = z.object({
-  date: z.string().min(1, 'Please select a date'),
-  time: z.string().min(1, 'Please select a start time'),
-  endTime: z.string().min(1, 'Please select an end time'),
-  message: z.string().optional(),
-});
-
 const getLocalizedStr = (field) => {
   if (!field) return '';
   if (typeof field === 'object') return field.en || field.am || '';
@@ -35,16 +29,28 @@ const getLocalizedStr = (field) => {
 };
 
 export default function ScheduleVisitForm({ property }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [selectedEndTime, setSelectedEndTime] = useState('');
 
-  const propertyTitle = property.titleStr || getLocalizedStr(property.title) || 'Property Details';
+  const propertyTitle = property.titleStr || getLocalizedStr(property.title) || t('renter.scheduleVisit.propertyFallback');
   const propertyAddress = property.addressStr || getLocalizedStr(property.address) || property.location || '';
-  const propertyType = property.typeStr || getLocalizedStr(property.type) || 'Villa';
+  const propertyType = property.typeStr || getLocalizedStr(property.type) || t('renter.scheduleVisit.propertyTypeFallback');
   const propertyPrice = property.priceStr || (typeof property.price === 'object' ? (property.price?.value ?? '') : (property.price ?? ''));
+
+  const formSchema = useMemo(
+    () =>
+      z.object({
+        date: z.string().min(1, t('renter.scheduleVisit.fieldErrors.date')),
+        time: z.string().min(1, t('renter.scheduleVisit.fieldErrors.time')),
+        endTime: z.string().min(1, t('renter.scheduleVisit.fieldErrors.endTime')),
+        message: z.string().optional(),
+      }),
+    [t],
+  );
 
   const {
     register,
@@ -118,9 +124,9 @@ export default function ScheduleVisitForm({ property }) {
 
   useEffect(() => {
     if (isAvailabilityError) {
-      toast.error('Could not load appointment availability. Some slots may be inaccurate.');
+      toast.error(t('renter.scheduleVisit.availability.loadError'));
     }
-  }, [isAvailabilityError]);
+  }, [isAvailabilityError, t]);
 
   const { unavailableTimesPerDate, fullyBlockedDates } = useMemo(
     () => computeBusySlotMap(busySlots, timeSlots),
@@ -195,7 +201,7 @@ export default function ScheduleVisitForm({ property }) {
       endsAt.setHours(endH, endM, 0, 0);
 
       if (visitRangeConflicts(busySlots, startsAt, endsAt)) {
-        toast.error('This time slot is no longer available. Please choose another time.');
+        toast.error(t('renter.scheduleVisit.availability.loadError'));
         refetchAvailability();
         return;
       }
@@ -222,7 +228,7 @@ export default function ScheduleVisitForm({ property }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Calendar className="text-primary h-5 w-5" />
-              <h3 className="text-lg font-semibold">Select a Date</h3>
+              <h3 className="text-lg font-semibold">{t('renter.scheduleVisit.selectDate')}</h3>
             </div>
             <div className="flex items-center gap-4">
               <button 
@@ -301,12 +307,12 @@ export default function ScheduleVisitForm({ property }) {
         <section className="space-y-6">
           <div className="flex items-center gap-2">
             <Clock className="text-primary h-5 w-5" />
-            <h3 className="text-lg font-semibold">Select Visit Time</h3>
+            <h3 className="text-lg font-semibold">{t('renter.scheduleVisit.selectTime')}</h3>
           </div>
 
           {/* Start Time */}
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Start Time</p>
+            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">{t('renter.scheduleVisit.startTime')}</p>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {timeSlots.map((time) => {
                 const isUnavailable = unavailableTimesPerDate[selectedDate]?.includes(time);
@@ -337,12 +343,12 @@ export default function ScheduleVisitForm({ property }) {
           {/* End Time — only shown after start time is selected */}
           <div className="space-y-3">
             <p className={cn("text-sm font-semibold uppercase tracking-wide", selectedTime ? "text-muted-foreground" : "text-muted-foreground/40")}>
-              End Time
+              {t('renter.scheduleVisit.endTime')}
             </p>
             {!selectedTime ? (
-              <p className="text-sm text-muted-foreground/60 italic">Please select a start time first.</p>
+              <p className="text-sm text-muted-foreground/60 italic">{t('renter.scheduleVisit.noEndTimes')}</p>
             ) : availableEndSlots.length === 0 ? (
-              <p className="text-sm text-destructive/80 italic">No end times available after the selected start time.</p>
+              <p className="text-sm text-destructive/80 italic">{t('renter.scheduleVisit.noEndTimesAvailable')}</p>
             ) : (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {availableEndSlots.map((time) => {
@@ -375,7 +381,7 @@ export default function ScheduleVisitForm({ property }) {
           {selectedTime && selectedEndTime && (
             <div className="flex items-center gap-2 rounded-xl bg-primary/5 border border-primary/20 px-4 py-2.5 text-sm font-semibold text-primary w-fit">
               <Clock className="h-4 w-4" />
-              Visit: {selectedTime} → {selectedEndTime}
+              {t('renter.scheduleVisit.visitRange', { start: selectedTime, end: selectedEndTime })}
             </div>
           )}
         </section>
@@ -385,14 +391,14 @@ export default function ScheduleVisitForm({ property }) {
           <div className="flex items-center gap-2">
             <MessageSquare className="text-primary h-5 w-5" />
             <h3 className="text-lg font-semibold">
-              {location.state?.fromReschedule ? 'Reason for Rescheduling' : 'Notes for the Owner (Optional)'}
+              {location.state?.fromReschedule ? t('renter.scheduleVisit.rescheduleReason') : t('renter.scheduleVisit.notesForOwner')}
             </h3>
           </div>
           <Textarea
             {...register('message')}
-            placeholder={location.state?.fromReschedule 
-              ? "Please let the owner know why you're rescheduling..." 
-              : "Introduce yourself or ask any specific questions about the visit..."}
+            placeholder={location.state?.fromReschedule
+              ? t('renter.scheduleVisit.reschedulePlaceholder')
+              : t('renter.scheduleVisit.placeholder')}
             className="min-h-[120px] resize-none rounded-xl"
           />
         </section>
@@ -404,11 +410,11 @@ export default function ScheduleVisitForm({ property }) {
             className="w-full rounded-xl py-6 text-lg font-bold shadow-lg transition-transform hover:scale-[1.01] active:scale-[0.99]"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Scheduling...' : 'Confirm Scheduling'}
+            {isSubmitting ? t('renter.scheduleVisit.scheduling') : t('renter.scheduleVisit.confirmScheduling')}
           </Button>
           <p className="text-muted-foreground mt-4 flex items-center justify-center gap-2 text-center text-xs">
             <Info className="h-3 w-3" />
-            The owner will be notified of your request and can confirm or suggest a new time.
+            {t('renter.scheduleVisit.info')}
           </p>
         </div>
       </div>
@@ -447,20 +453,20 @@ export default function ScheduleVisitForm({ property }) {
                  </div>
                  {property.beds && (
                    <div className="bg-muted/50 flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold">
-                      <span className="font-bold">{property.beds}</span> Beds
+                      <span className="font-bold">{property.beds}</span> {t('renter.scheduleVisit.beds')}
                    </div>
                  )}
                  {property.baths && (
                    <div className="bg-muted/50 flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold">
-                      <span className="font-bold">{property.baths}</span> Baths
+                      <span className="font-bold">{property.baths}</span> {t('renter.scheduleVisit.baths')}
                    </div>
                  )}
               </div>
 
               <div className="border-border/50 mt-6 border-t pt-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Owner</span>
-                  <span className="font-semibold">{property.ownerName || 'Property Owner'}</span>
+                  <span className="text-muted-foreground">{t('renter.scheduleVisit.owner')}</span>
+                  <span className="font-semibold">{property.ownerName || t('renter.scheduleVisit.propertyOwnerFallback')}</span>
                 </div>
               </div>
             </CardContent>
@@ -469,10 +475,10 @@ export default function ScheduleVisitForm({ property }) {
           <div className="mt-6 rounded-2xl bg-amber-50 p-4 ring-1 ring-amber-100 dark:bg-amber-900/10 dark:ring-amber-900/30">
             <h4 className="flex items-center gap-2 text-sm font-bold text-amber-800 dark:text-amber-400">
               <Calendar className="h-4 w-4" />
-              Visit Policy
+              {t('renter.scheduleVisit.visitPolicyTitle')}
             </h4>
             <p className="mt-2 text-xs leading-relaxed text-amber-700/80 dark:text-amber-400/60">
-              Visits are free of charge. Please ensure you arrive on time. If you need to cancel, please do so at least 2 hours in advance.
+              {t('renter.scheduleVisit.visitPolicy')}
             </p>
           </div>
         </div>

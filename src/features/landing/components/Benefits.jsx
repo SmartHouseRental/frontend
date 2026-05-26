@@ -3,39 +3,42 @@ import {
   Brain,
   Headset
 } from "lucide-react"
+import { useTranslation } from 'react-i18next';
 
 export default function Benefits() {
+  const { t } = useTranslation();
+
   return (
     <section className="py-20 px-6 lg:px-20">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 items-center">
 
         <div className="lg:w-1/2 space-y-8">
           <div className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">
-            Why Choose Beten
+            {t('landing.benefits.badge')}
           </div>
 
           <h2 className="text-5xl font-extrabold leading-tight">
-            Trust & Technology For Your Family's Comfort
+            {t('landing.benefits.title')}
           </h2>
 
           <div className="space-y-6">
 
             <Feature
               icon={<ShieldCheck className="h-6 w-6 text-primary" />}
-              title="Verified Listings"
-              desc="Every property is physically visited and verified."
+              title={t('landing.benefits.feature1.title')}
+              desc={t('landing.benefits.feature1.desc')}
             />
 
             <Feature
               icon={<Brain className="h-6 w-6 text-primary" />}
-              title="AI-Powered Long Stays"
-              desc="Smart matching for long-term living."
+              title={t('landing.benefits.feature2.title')}
+              desc={t('landing.benefits.feature2.desc')}
             />
 
             <Feature
               icon={<Headset className="h-6 w-6 text-primary" />}
-              title="24/7 Support"
-              desc="Dedicated team ready to assist."
+              title={t('landing.benefits.feature3.title')}
+              desc={t('landing.benefits.feature3.desc')}
             />
           </div>
         </div>

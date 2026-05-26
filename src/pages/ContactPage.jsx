@@ -2,18 +2,21 @@ import { Mail, Phone, MapPin, Send, MessageSquare, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useTranslation } from 'react-i18next';
 
 export default function ContactPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col w-full">
       {/* Header Section */}
       <section className="py-20 px-6 lg:px-20 bg-background text-center">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">
-            Get in <span className="text-primary">Touch</span>
+            {t('contactPage.hero.titlePrefix')} <span className="text-primary">{t('contactPage.hero.titleAccent')}</span>
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Have questions about a listing or want to partner with us? Our team is here to help you find the perfect family home.
+            {t('contactPage.hero.subtitle')}
           </p>
         </div>
       </section>
@@ -27,7 +30,7 @@ export default function ContactPage() {
             <div className="bg-card p-8 rounded-3xl border border-border shadow-sm">
               <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
                 <MessageSquare className="w-6 h-6 text-primary" />
-                Contact Information
+                {t('contactPage.info.title')}
               </h2>
               
               <div className="space-y-6">
@@ -36,7 +39,7 @@ export default function ContactPage() {
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider mb-1">Email Us</p>
+                    <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider mb-1">{t('contactPage.info.emailUs')}</p>
                     <p className="font-bold text-lg">hello@bet-connect.com</p>
                   </div>
                 </div>
@@ -46,9 +49,9 @@ export default function ContactPage() {
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider mb-1">Call Us</p>
+                    <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider mb-1">{t('contactPage.info.callUs')}</p>
                     <p className="font-bold text-lg">+251 911 234 567</p>
-                    <p className="text-sm text-muted-foreground mt-1">Mon-Fri: 8:00 AM - 6:00 PM</p>
+                    <p className="text-sm text-muted-foreground mt-1">{t('contactPage.info.hours')}</p>
                   </div>
                 </div>
 
@@ -57,7 +60,7 @@ export default function ContactPage() {
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider mb-1">Office Location</p>
+                    <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider mb-1">{t('contactPage.info.officeLocation')}</p>
                     <p className="font-bold text-lg">Bole, Medhanialem Street</p>
                     <p className="text-sm text-muted-foreground mt-1">Addis Ababa, Ethiopia</p>
                   </div>
@@ -67,7 +70,7 @@ export default function ContactPage() {
               <div className="mt-10 pt-8 border-t border-border">
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <Clock className="w-4 h-4" />
-                  <p>Typical response time: <span className="font-bold text-foreground">Under 2 hours</span></p>
+                  <p>{t('contactPage.info.responsePrefix')} <span className="font-bold text-foreground">{t('contactPage.info.responseTime')}</span></p>
                 </div>
               </div>
             </div>
@@ -80,53 +83,53 @@ export default function ContactPage() {
               />
               <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/10 transition-colors" />
               <Button variant="secondary" size="sm" className="relative z-10 rounded-full font-bold shadow-xl">
-                View on Google Maps
+                {t('contactPage.info.viewOnGoogleMaps')}
               </Button>
             </div>
           </div>
 
           {/* Contact Form */}
           <div className="lg:col-span-3 bg-card rounded-[2rem] p-8 md:p-12 border border-border shadow-xl shadow-primary/5">
-            <h2 className="text-2xl font-bold mb-8">Send us a Message</h2>
+            <h2 className="text-2xl font-bold mb-8">{t('contactPage.form.title')}</h2>
             
             <form className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold ml-1">Full Name</label>
-                  <Input placeholder="Abebe Bikila" className="h-12 rounded-xl border-border/60 bg-muted/30 focus:bg-background transition-colors" />
+                  <label className="text-sm font-semibold ml-1">{t('contactPage.form.fullNameLabel')}</label>
+                  <Input placeholder={t('contactPage.form.fullNamePlaceholder')} className="h-12 rounded-xl border-border/60 bg-muted/30 focus:bg-background transition-colors" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold ml-1">Email Address</label>
-                  <Input type="email" placeholder="abebe@example.com" className="h-12 rounded-xl border-border/60 bg-muted/30 focus:bg-background transition-colors" />
+                  <label className="text-sm font-semibold ml-1">{t('contactPage.form.emailLabel')}</label>
+                  <Input type="email" placeholder={t('contactPage.form.emailPlaceholder')} className="h-12 rounded-xl border-border/60 bg-muted/30 focus:bg-background transition-colors" />
                 </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold ml-1">Phone Number</label>
-                  <Input placeholder="+251 911..." className="h-12 rounded-xl border-border/60 bg-muted/30 focus:bg-background transition-colors" />
+                  <label className="text-sm font-semibold ml-1">{t('contactPage.form.phoneLabel')}</label>
+                  <Input placeholder={t('contactPage.form.phonePlaceholder')} className="h-12 rounded-xl border-border/60 bg-muted/30 focus:bg-background transition-colors" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold ml-1">Subject</label>
-                  <Input placeholder="Inquiry about pricing" className="h-12 rounded-xl border-border/60 bg-muted/30 focus:bg-background transition-colors" />
+                  <label className="text-sm font-semibold ml-1">{t('contactPage.form.subjectLabel')}</label>
+                  <Input placeholder={t('contactPage.form.subjectPlaceholder')} className="h-12 rounded-xl border-border/60 bg-muted/30 focus:bg-background transition-colors" />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-semibold ml-1">Your Message</label>
+                <label className="text-sm font-semibold ml-1">{t('contactPage.form.messageLabel')}</label>
                 <Textarea 
-                  placeholder="How can we help you?" 
+                  placeholder={t('contactPage.form.messagePlaceholder')} 
                   className="min-h-[160px] rounded-2xl border-border/60 bg-muted/30 focus:bg-background transition-colors resize-none p-4" 
                 />
               </div>
 
               <div className="pt-4">
                 <Button className="w-full h-14 rounded-2xl font-bold text-lg shadow-lg shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center gap-3">
-                  Send Message
+                  {t('contactPage.form.sendMessage')}
                   <Send className="w-5 h-5" />
                 </Button>
                 <p className="text-center text-xs text-muted-foreground mt-4">
-                  By submitting this form, you agree to our <button type="button" className="underline hover:text-primary">Privacy Policy</button>.
+                  {t('contactPage.form.privacyPrefix')} <button type="button" className="underline hover:text-primary">{t('contactPage.form.privacyPolicy')}</button>.
                 </p>
               </div>
             </form>

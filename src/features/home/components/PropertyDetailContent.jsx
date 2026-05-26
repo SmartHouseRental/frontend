@@ -1,7 +1,7 @@
 import { useParams } from 'react-router';
 import { useProperty } from '@/features/property/hooks/useProperty';
+import { adaptProperty } from '@/features/property/utils/propertyAdapter';
 import { parseLocation } from '@/lib/utils';
-import { getLocalizedField } from '@/lib/i18n/getLocalizedField';
 import { useLanguage } from '@/contexts/LanguageContext';
 import PropertyHero from '@/features/property/components/PropertyHero';
 import PropertyContent from '@/features/property/components/PropertyContent';
@@ -14,7 +14,6 @@ import SimilarProperties from './SimilarProperties';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-    Video,
     BedDouble,
     Bath,
     Square,
@@ -27,8 +26,10 @@ import {
 
 export default function PropertyDetailContent() {
     const { id } = useParams();
-    const { locale } = useLanguage();
-    const { data: property, isLoading, isError, error } = useProperty(id);
+    const { locale, t } = useLanguage();
+    const { data: rawProperty, isLoading, isError, error } = useProperty(id);
+
+    const property = rawProperty ? adaptProperty(rawProperty, locale) : null;
 
     if (isLoading) {
         return (
@@ -45,9 +46,9 @@ export default function PropertyDetailContent() {
                     <AlertCircle className="h-10 w-10 text-destructive" />
                 </div>
                 <div className="max-w-md space-y-2">
-                    <h3 className="text-xl font-bold">Failed to load property details</h3>
+                    <h3 className="text-xl font-bold">{t('propertyDetail.failedLoadDetails')}</h3>
                     <p className="text-muted-foreground">
-                        {error?.response?.data?.message || error?.message || 'We encountered an error while fetching the property details. Please try again.'}
+                        {error?.response?.data?.message || error?.message || t('propertyDetail.genericLoadError')}
                     </p>
                 </div>
                 <Button 
@@ -55,7 +56,7 @@ export default function PropertyDetailContent() {
                     onClick={() => window.location.reload()}
                     className="rounded-xl px-8"
                 >
-                    Retry Loading
+                    {t('propertyDetail.retryLoading')}
                 </Button>
             </div>
         );
@@ -66,40 +67,37 @@ export default function PropertyDetailContent() {
     // Parse location for the map
     const coords = parseLocation(property.location);
     
-    // Extract values from new nested objects
-    const title = getLocalizedField(property.title, locale);
-    const address = getLocalizedField(property.address, locale);
-    const description = getLocalizedField(property.description, locale);
-    const category = getLocalizedField(property.category, locale);
-    const type = getLocalizedField(property.type, locale) || category;
-    const priceValue = (property.price && typeof property.price === 'object') ? property.price.value : property.price;
-    const priceCurrency = (property.price && typeof property.price === 'object') ? (property.price.currency || 'ETB') : 'ETB';
-    const areaValue = (property.area && typeof property.area === 'object') ? property.area.value : property.area;
+    const title = property.title || t('propertyHero.propertyDetailsFallback');
+    const address = property.address || "Addis Ababa, Ethiopia";
+    const description = property.description || '';
+    const category = property.category || t('property');
+    const type = property.type || category;
+    const priceValue = property.price || 0;
+    const priceCurrency = property.currency || 'ETB';
+    const areaValue = property.area || 0;
 
     const enrichedProperty = {
         ...property,
-        // Override localized JSON fields with extracted strings so child components
-        // always receive plain strings/numbers — never {en, am} objects.
-        title: title || "Property Details",
-        description: description || '',
-        address: address || property.location || "Addis Ababa, Ethiopia",
-        category: category || 'Property',
-        type: type || 'Villa',
-        price: priceValue || 0,
+        title,
+        description,
+        address,
+        category,
+        type,
+        price: priceValue,
         currency: priceCurrency,
-        area: areaValue || 0,
-        // Convenience string aliases used by some child components
+        area: areaValue,
         lat: coords?.lat || 9.0128,
         lng: coords?.lng || 38.7508,
-        titleStr: title || "Property Details",
-        addressStr: address || property.location || "Addis Ababa, Ethiopia",
+        titleStr: title,
+        addressStr: address,
         descriptionStr: description,
-        typeStr: type || 'Villa',
+        typeStr: type,
         priceStr: `${priceValue} ${priceCurrency}`,
-        beds: property.bedrooms,
-        baths: property.bathrooms,
-        size: `${areaValue} sqm`,
-        furnishing: property.furnishingType,
+        beds: property.bedrooms || 0,
+        baths: property.bathrooms || 0,
+        size: `${areaValue} ${t('sqm')}`,
+        furnishing: property.furnishingStatus || t('propertyContent.familyFriendly'),
+        amenities: property.amenities || [],
     };
 
     return (
@@ -109,13 +107,13 @@ export default function PropertyDetailContent() {
 
                 {/* Quick info tags */}
                 <div className="mb-8 flex flex-wrap gap-3">
-                    <InfoTag icon={Home} label={enrichedProperty.type || 'Villa'} />
-                    <InfoTag icon={BedDouble} label={`${enrichedProperty.beds} Beds`} />
-                    <InfoTag icon={Bath} label={`${enrichedProperty.baths} Baths`} />
+                    <InfoTag icon={Home} label={enrichedProperty.type || t('villa')} />
+                    <InfoTag icon={BedDouble} label={`${enrichedProperty.beds} ${t('beds')}`} />
+                    <InfoTag icon={Bath} label={`${enrichedProperty.baths} ${t('baths')}`} />
                     <InfoTag icon={Square} label={enrichedProperty.size} />
-                    <InfoTag icon={Armchair} label={enrichedProperty.furnishing || 'Furnished'} />
+                    <InfoTag icon={Armchair} label={enrichedProperty.furnishing || t('propertyContent.familyFriendly')} />
                     {enrichedProperty.rating && (
-                        <InfoTag icon={Star} label={`${enrichedProperty.rating} (${enrichedProperty.reviewCount} reviews)`} />
+                        <InfoTag icon={Star} label={`${enrichedProperty.rating} (${enrichedProperty.reviewCount} ${t('reviews')})`} />
                     )}
                 </div>
 
@@ -123,7 +121,7 @@ export default function PropertyDetailContent() {
                 {enrichedProperty.amenities && (
                     <div className="mb-8">
                         <h4 className="text-muted-foreground mb-3 text-xs font-bold uppercase tracking-wider">
-                            Amenities
+                            {t('propertyDetail.amenitiesTitle')}
                         </h4>
                         <div className="flex flex-wrap gap-2">
                             {enrichedProperty.amenities.map((amenity) => (
@@ -140,7 +138,7 @@ export default function PropertyDetailContent() {
                         {/* Description */}
                         {enrichedProperty.description && (
                             <section className="mb-12">
-                                <h3 className="mb-4 text-2xl font-bold">About This Property</h3>
+                                <h3 className="mb-4 text-2xl font-bold">{t('propertyDetail.aboutTitle')}</h3>
                                 <div className="text-muted-foreground leading-relaxed">
                                     {enrichedProperty.descriptionStr}
                                 </div>
@@ -160,7 +158,7 @@ export default function PropertyDetailContent() {
 
                 {/* Rating breakdown + Reviews */}
                 <section className="mb-12">
-                    <h3 className="mb-6 text-2xl font-bold">Ratings & Reviews</h3>
+                    <h3 className="mb-6 text-2xl font-bold">{t('propertyDetail.ratingsReviewsTitle')}</h3>
                     <RatingBreakdown
                         rating={enrichedProperty.rating || 4.8}
                         reviewCount={enrichedProperty.reviewCount || 42}
@@ -178,10 +176,12 @@ export default function PropertyDetailContent() {
     );
 }
 
-function InfoTag({ icon: Icon, label }) {
+function InfoTag({ icon, label }) {
+    const IconComponent = icon;
+
     return (
         <div className="bg-muted/50 text-foreground flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold">
-            <Icon className="text-primary h-3.5 w-3.5" />
+            <IconComponent className="text-primary h-3.5 w-3.5" />
             {label}
         </div>
     );

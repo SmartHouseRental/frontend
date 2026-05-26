@@ -34,6 +34,7 @@ import {
   useViewPaymentProof,
 } from '@/features/payments/hooks/useOwnerPayments';
 import { canOwnerConfirmPayment, isPendingConfirmationStatus } from '@/features/payments/utils';
+import { useTranslation } from 'react-i18next';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -41,6 +42,7 @@ function PaymentHistoryPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const { t } = useTranslation();
 
   const apiParams = useMemo(() => {
     const params = {
@@ -134,8 +136,8 @@ function PaymentHistoryPage() {
     return (
       <div className="scrollbar-hide h-screen overflow-y-auto p-8">
         <ErrorState
-          title="Failed to load payments"
-          message={getApiErrorMessage(paymentsErrorObj || summaryErrorObj, 'Unable to load payment history.')}
+          title={t('owner.paymentHistory.failed')}
+          message={getApiErrorMessage(paymentsErrorObj || summaryErrorObj, t('owner.paymentHistory.unableToLoad'))}
           onRetry={() => {
             refetchPayments();
             refetchSummary();
@@ -153,8 +155,8 @@ function PaymentHistoryPage() {
     <div className="scrollbar-hide h-screen overflow-y-auto p-8 space-y-6">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Payment History</h1>
-          <p className="text-muted-foreground mt-1">Track all payments received from your rental agreements.</p>
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">{t('owner.paymentHistory.title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('owner.paymentHistory.subtitle')}</p>
         </div>
         <Button
           variant="outline"
@@ -163,7 +165,7 @@ function PaymentHistoryPage() {
           disabled={exportMutation.isPending}
         >
           {exportMutation.isPending ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
-          Export
+          {t('owner.paymentHistory.export')}
         </Button>
       </div>
 
@@ -173,7 +175,7 @@ function PaymentHistoryPage() {
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10">
               <DollarSign size={20} className="text-emerald-500" />
             </div>
-            <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mt-3">Total Received</p>
+            <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mt-3">{t('owner.paymentHistory.totalReceived')}</p>
             <h3 className="text-2xl font-black mt-1">{formatCurrency(stats.totalReceived, 'ETB')}</h3>
           </CardContent>
         </Card>
@@ -184,10 +186,10 @@ function PaymentHistoryPage() {
                 <Clock size={20} className="text-amber-500" />
               </div>
               {stats.pendingAmount > 0 && (
-                <span className="text-xs font-bold text-amber-500 animate-pulse">Action Needed</span>
+                <span className="text-xs font-bold text-amber-500 animate-pulse">{t('owner.paymentHistory.actionNeeded')}</span>
               )}
             </div>
-            <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mt-3">Pending Confirmation</p>
+            <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mt-3">{t('owner.paymentHistory.pendingConfirmation')}</p>
             <h3 className="text-2xl font-black mt-1 text-amber-600">{formatCurrency(stats.pendingAmount, 'ETB')}</h3>
           </CardContent>
         </Card>
@@ -196,7 +198,7 @@ function PaymentHistoryPage() {
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
               <CheckCircle2 size={20} className="text-primary" />
             </div>
-            <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mt-3">This Month</p>
+            <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mt-3">{t('owner.paymentHistory.thisMonth')}</p>
             <h3 className="text-2xl font-black mt-1 text-primary">{formatCurrency(stats.thisMonth, 'ETB')}</h3>
           </CardContent>
         </Card>
@@ -207,7 +209,7 @@ function PaymentHistoryPage() {
           <Search size={16} className="absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground" />
           <Input
             className="pl-10"
-            placeholder="Search by ID, renter, or property..."
+            placeholder={t('owner.paymentHistory.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -223,7 +225,7 @@ function PaymentHistoryPage() {
               setCurrentPage(1);
             }}
           >
-            <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectTrigger className="w-36"><SelectValue placeholder={t('owner.paymentHistory.status')} /></SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 {OWNER_PAYMENT_STATUS_FILTERS.map((option) => (
@@ -243,7 +245,7 @@ function PaymentHistoryPage() {
                 setCurrentPage(1);
               }}
             >
-              Clear
+              {t('owner.paymentHistory.clear')}
             </Button>
           )}
         </div>
@@ -257,29 +259,29 @@ function PaymentHistoryPage() {
         )}
         {paymentsError && paymentsData && (
           <div className="border-b border-destructive/20 bg-destructive/5 px-6 py-3 text-sm text-destructive">
-            {getApiErrorMessage(paymentsErrorObj, 'Could not refresh payments.')}
+            {getApiErrorMessage(paymentsErrorObj, t('owner.paymentHistory.refreshFailed'))}
             <Button variant="link" className="ml-2 h-auto p-0 text-destructive" onClick={() => refetchPayments()}>
-              Retry
+              {t('owner.paymentHistory.retry')}
             </Button>
           </div>
         )}
         <Table className="w-full min-w-full text-left">
           <TableHeader className="bg-muted/30">
             <TableRow>
-              <TableHead className="px-6 py-4">Payment ID</TableHead>
-              <TableHead className="px-6 py-4">Property</TableHead>
-              <TableHead className="px-6 py-4">Renter</TableHead>
-              <TableHead className="px-6 py-4">Amount</TableHead>
-              <TableHead className="px-6 py-4">Date</TableHead>
-              <TableHead className="px-6 py-4">Status</TableHead>
-              <TableHead className="px-6 py-4">Actions</TableHead>
+              <TableHead className="px-6 py-4">{t('owner.paymentHistory.table.paymentId')}</TableHead>
+              <TableHead className="px-6 py-4">{t('owner.paymentHistory.table.property')}</TableHead>
+              <TableHead className="px-6 py-4">{t('owner.paymentHistory.table.renter')}</TableHead>
+              <TableHead className="px-6 py-4">{t('owner.paymentHistory.table.amount')}</TableHead>
+              <TableHead className="px-6 py-4">{t('owner.paymentHistory.table.date')}</TableHead>
+              <TableHead className="px-6 py-4">{t('owner.paymentHistory.table.status')}</TableHead>
+              <TableHead className="px-6 py-4">{t('owner.paymentHistory.table.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginated.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
-                  No payments found
+                  {t('owner.paymentHistory.noPayments')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -323,7 +325,7 @@ function PaymentHistoryPage() {
                             onClick={() => handleViewProof(payment)}
                             disabled={proofMutation.isPending}
                           >
-                            <ExternalLink size={14} /> View Proof
+                            <ExternalLink size={14} /> {t('owner.paymentHistory.viewProof')}
                           </DropdownMenuItem>
                           {showConfirm && (
                             <DropdownMenuItem
@@ -336,7 +338,7 @@ function PaymentHistoryPage() {
                               ) : (
                                 <CheckCircle2 size={14} />
                               )}
-                              Confirm Payment
+                              {t('owner.paymentHistory.confirmPayment')}
                             </DropdownMenuItem>
                           )}
                         </DropdownMenuContent>
@@ -351,8 +353,11 @@ function PaymentHistoryPage() {
         {totalPages > 1 && (
           <div className="flex items-center justify-between border-t border-border bg-muted/20 px-6 py-4">
             <p className="text-muted-foreground text-xs font-medium">
-              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}-
-              {Math.min(currentPage * ITEMS_PER_PAGE, total)} of {total}
+              {t('owner.paymentHistory.showing', {
+                start: (currentPage - 1) * ITEMS_PER_PAGE + 1,
+                end: Math.min(currentPage * ITEMS_PER_PAGE, total),
+                total
+              })}
             </p>
             <div className="flex items-center gap-2">
               <button

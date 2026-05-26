@@ -10,7 +10,6 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import {
-    Settings as SettingsIcon,
     Mail,
     Shield,
     Clock,
@@ -18,6 +17,7 @@ import {
     Save,
     RotateCcw,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 function ToggleSwitch({ defaultChecked = false, label }) {
     return (
@@ -33,29 +33,30 @@ function ToggleSwitch({ defaultChecked = false, label }) {
 }
 
 function SettingsPage() {
+    const { t } = useTranslation();
+
     return (
         <div className="space-y-8 p-8">
             <div className="flex items-end justify-between">
                 <div>
-                    <h2 className="text-3xl font-extrabold tracking-tight">Platform Settings</h2>
+                    <h2 className="text-3xl font-extrabold tracking-tight">{t('adminSettings.title')}</h2>
                     <p className="text-muted-foreground mt-1">
-                        Configure platform behavior, verification rules, and email settings.
+                        {t('adminSettings.subtitle')}
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
                     <Button variant="outline" className="gap-2">
                         <RotateCcw size={16} />
-                        Reset to Defaults
+                        {t('adminSettings.buttons.resetToDefaults')}
                     </Button>
                     <Button className="gap-2">
                         <Save size={16} />
-                        Save Changes
+                        {t('adminSettings.buttons.saveChanges')}
                     </Button>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                {/* General Settings */}
                 <Card>
                     <CardHeader className="pb-4">
                         <div className="flex items-center gap-2">
@@ -63,27 +64,27 @@ function SettingsPage() {
                                 <Globe size={18} />
                             </div>
                             <div>
-                                <h3 className="text-base font-bold">General Settings</h3>
-                                <p className="text-muted-foreground text-xs">Core platform configuration</p>
+                                <h3 className="text-base font-bold">{t('adminSettings.sections.general.title')}</h3>
+                                <p className="text-muted-foreground text-xs">{t('adminSettings.sections.general.description')}</p>
                             </div>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-5">
                         <div>
                             <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                Platform Name
+                                {t('adminSettings.fields.platformName')}
                             </label>
                             <Input defaultValue="Smart House Rental" />
                         </div>
                         <div>
                             <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                Support Email
+                                {t('adminSettings.fields.supportEmail')}
                             </label>
                             <Input defaultValue="support@smarthouserent.et" />
                         </div>
                         <div>
                             <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                Default Language
+                                {t('adminSettings.fields.defaultLanguage')}
                             </label>
                             <Select defaultValue="en">
                                 <SelectTrigger className="w-full">
@@ -91,18 +92,17 @@ function SettingsPage() {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectItem value="en">English</SelectItem>
-                                        <SelectItem value="am">Amharic (አማርኛ)</SelectItem>
+                                        <SelectItem value="en">{t('adminSettings.languages.english')}</SelectItem>
+                                        <SelectItem value="am">{t('adminSettings.languages.amharic')}</SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
                         </div>
-                        <ToggleSwitch defaultChecked label="Enable maintenance mode" />
-                        <ToggleSwitch defaultChecked={true} label="Allow new registrations" />
+                        <ToggleSwitch defaultChecked label={t('adminSettings.toggles.maintenanceMode')} />
+                        <ToggleSwitch defaultChecked={true} label={t('adminSettings.toggles.allowNewRegistrations')} />
                     </CardContent>
                 </Card>
 
-                {/* Verification Rules */}
                 <Card>
                     <CardHeader className="pb-4">
                         <div className="flex items-center gap-2">
@@ -110,39 +110,38 @@ function SettingsPage() {
                                 <Shield size={18} />
                             </div>
                             <div>
-                                <h3 className="text-base font-bold">Verification Rules</h3>
-                                <p className="text-muted-foreground text-xs">Owner verification workflow</p>
+                                <h3 className="text-base font-bold">{t('adminSettings.sections.verificationRules.title')}</h3>
+                                <p className="text-muted-foreground text-xs">{t('adminSettings.sections.verificationRules.description')}</p>
                             </div>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-5">
-                        <ToggleSwitch defaultChecked={true} label="Require email OTP verification" />
-                        <ToggleSwitch defaultChecked={true} label="Require document upload for owners" />
+                        <ToggleSwitch defaultChecked={true} label={t('adminSettings.toggles.requireOtp')} />
+                        <ToggleSwitch defaultChecked={true} label={t('adminSettings.toggles.requireDocumentUpload')} />
                         <ToggleSwitch
                             defaultChecked={true}
-                            label="Auto-approve properties from verified owners"
+                            label={t('adminSettings.toggles.autoApproveVerifiedOwners')}
                         />
                         <div>
                             <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                Max Owner Edits Per Property
+                                {t('adminSettings.fields.maxOwnerEdits')}
                             </label>
                             <Input type="number" defaultValue="1" className="w-32" />
                         </div>
                         <div>
                             <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                Required Documents
+                                {t('adminSettings.fields.requiredDocuments')}
                             </label>
                             <div className="mt-2 space-y-2">
-                                <ToggleSwitch defaultChecked={true} label="National ID" />
-                                <ToggleSwitch defaultChecked={true} label="Business License" />
-                                <ToggleSwitch defaultChecked label="Property Title Deed" />
-                                <ToggleSwitch defaultChecked label="Tax Certificate" />
+                                <ToggleSwitch defaultChecked={true} label={t('adminSettings.documents.nationalId')} />
+                                <ToggleSwitch defaultChecked={true} label={t('adminSettings.documents.businessLicense')} />
+                                <ToggleSwitch defaultChecked label={t('adminSettings.documents.propertyTitleDeed')} />
+                                <ToggleSwitch defaultChecked label={t('adminSettings.documents.taxCertificate')} />
                             </div>
                         </div>
                     </CardContent>
                 </Card>
 
-                {/* Email Settings */}
                 <Card>
                     <CardHeader className="pb-4">
                         <div className="flex items-center gap-2">
@@ -150,28 +149,28 @@ function SettingsPage() {
                                 <Mail size={18} />
                             </div>
                             <div>
-                                <h3 className="text-base font-bold">Email Configuration</h3>
-                                <p className="text-muted-foreground text-xs">SMTP and notification emails</p>
+                                <h3 className="text-base font-bold">{t('adminSettings.sections.emailConfiguration.title')}</h3>
+                                <p className="text-muted-foreground text-xs">{t('adminSettings.sections.emailConfiguration.description')}</p>
                             </div>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-5">
                         <div>
                             <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                SMTP Host
+                                {t('adminSettings.fields.smtpHost')}
                             </label>
                             <Input defaultValue="smtp.gmail.com" />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                    SMTP Port
+                                    {t('adminSettings.fields.smtpPort')}
                                 </label>
                                 <Input defaultValue="587" />
                             </div>
                             <div>
                                 <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                    TLS
+                                    {t('adminSettings.fields.tls')}
                                 </label>
                                 <Select defaultValue="true">
                                     <SelectTrigger className="w-full">
@@ -179,8 +178,8 @@ function SettingsPage() {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectItem value="true">Enabled</SelectItem>
-                                            <SelectItem value="false">Disabled</SelectItem>
+                                            <SelectItem value="true">{t('adminSettings.options.enabled')}</SelectItem>
+                                            <SelectItem value="false">{t('adminSettings.options.disabled')}</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -188,16 +187,15 @@ function SettingsPage() {
                         </div>
                         <div>
                             <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                From Email
+                                {t('adminSettings.fields.fromEmail')}
                             </label>
                             <Input defaultValue="noreply@smarthouserent.et" />
                         </div>
-                        <ToggleSwitch defaultChecked={true} label="Send email on property approval" />
-                        <ToggleSwitch defaultChecked={true} label="Send email on agreement status change" />
+                        <ToggleSwitch defaultChecked={true} label={t('adminSettings.toggles.sendEmailOnPropertyApproval')} />
+                        <ToggleSwitch defaultChecked={true} label={t('adminSettings.toggles.sendEmailOnAgreementStatusChange')} />
                     </CardContent>
                 </Card>
 
-                {/* Rate Limits */}
                 <Card>
                     <CardHeader className="pb-4">
                         <div className="flex items-center gap-2">
@@ -205,38 +203,38 @@ function SettingsPage() {
                                 <Clock size={18} />
                             </div>
                             <div>
-                                <h3 className="text-base font-bold">Rate Limits & Security</h3>
-                                <p className="text-muted-foreground text-xs">API and authentication limits</p>
+                                <h3 className="text-base font-bold">{t('adminSettings.sections.rateLimits.title')}</h3>
+                                <p className="text-muted-foreground text-xs">{t('adminSettings.sections.rateLimits.description')}</p>
                             </div>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-5">
                         <div>
                             <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                OTP Expiration (minutes)
+                                {t('adminSettings.fields.otpExpiration')}
                             </label>
                             <Input type="number" defaultValue="10" className="w-32" />
                         </div>
                         <div>
                             <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                Max OTP Resend Attempts
+                                {t('adminSettings.fields.maxOtpResendAttempts')}
                             </label>
                             <Input type="number" defaultValue="3" className="w-32" />
                         </div>
                         <div>
                             <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                Review Deletion Window (days)
+                                {t('adminSettings.fields.reviewDeletionWindow')}
                             </label>
                             <Input type="number" defaultValue="7" className="w-32" />
                         </div>
                         <div>
                             <label className="text-muted-foreground mb-1.5 block text-xs font-bold uppercase tracking-wider">
-                                Max Login Attempts
+                                {t('adminSettings.fields.maxLoginAttempts')}
                             </label>
                             <Input type="number" defaultValue="5" className="w-32" />
                         </div>
-                        <ToggleSwitch defaultChecked label="Enable IP-based rate limiting" />
-                        <ToggleSwitch defaultChecked={true} label="Require strong passwords" />
+                        <ToggleSwitch defaultChecked label={t('adminSettings.toggles.enableIpRateLimiting')} />
+                        <ToggleSwitch defaultChecked={true} label={t('adminSettings.toggles.requireStrongPasswords')} />
                     </CardContent>
                 </Card>
             </div>

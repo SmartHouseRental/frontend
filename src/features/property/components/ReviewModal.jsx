@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Star, X } from "lucide-react";
 import { useCreateReview } from '../hooks/useReviews';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ReviewModal({ isOpen, onClose, property }) {
+  const { t } = useLanguage();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [hoveredRating, setHoveredRating] = useState(0);
@@ -35,9 +37,9 @@ export default function ReviewModal({ isOpen, onClose, property }) {
       >
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h2 className="text-2xl font-bold mb-1">Leave a Review</h2>
+            <h2 className="text-2xl font-bold mb-1">{t('reviewModal.title')}</h2>
             <p className="text-muted-foreground text-sm">
-              Share your experience at {property.titleStr || (typeof property.title === 'object' ? (property.title?.en || property.title?.am) : property.title) || 'this property'}
+              {t('reviewModal.description', { property: property.titleStr || (typeof property.title === 'object' ? (property.title?.en || property.title?.am) : property.title) || t('property') })}
             </p>
           </div>
           <button 
@@ -51,7 +53,7 @@ export default function ReviewModal({ isOpen, onClose, property }) {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-bold mb-3 uppercase tracking-wider text-muted-foreground">
-              Rating
+              {t('reviewModal.ratingLabel')}
             </label>
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -78,10 +80,10 @@ export default function ReviewModal({ isOpen, onClose, property }) {
 
           <div>
             <label className="block text-sm font-bold mb-3 uppercase tracking-wider text-muted-foreground">
-              Your Review
+              {t('reviewModal.reviewLabel')}
             </label>
             <Textarea
-              placeholder="What did you think of this place?"
+              placeholder={t('reviewModal.reviewPlaceholder')}
               className="min-h-[150px] rounded-2xl p-4 bg-muted/30 border-border/40 focus:ring-primary/20"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
@@ -96,14 +98,14 @@ export default function ReviewModal({ isOpen, onClose, property }) {
               className="flex-1 py-6 rounded-xl font-bold border-border/60"
               onClick={onClose}
             >
-              Cancel
+              {t('reviewModal.cancel')}
             </Button>
             <Button 
               type="submit" 
               className="flex-1 py-6 rounded-xl font-bold bg-[#D97745] hover:bg-[#C96635] shadow-lg shadow-[#D97745]/20"
               disabled={rating === 0 || createReviewMutation.isPending}
             >
-              {createReviewMutation.isPending ? "Submitting..." : "Submit Review"}
+              {createReviewMutation.isPending ? t('reviewModal.submitting') : t('reviewModal.submitReview')}
             </Button>
           </div>
         </form>

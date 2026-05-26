@@ -31,9 +31,9 @@ export default function FeaturedListings() {
   if (isError) {
     return (
       <div className="flex min-h-[300px] flex-col items-center justify-center gap-4 px-6 py-16 text-center">
-        <p className="text-muted-foreground">Could not load featured listings at this time.</p>
+        <p className="text-muted-foreground">{t('landing.featured.error')}</p>
         <Button variant="link" onClick={() => window.location.reload()} className="text-primary font-bold">
-          Try Again
+          {t('tryAgain')}
         </Button>
       </div>
     );
@@ -92,7 +92,7 @@ export default function FeaturedListings() {
                   <HeartButton property={home} className="absolute top-4 right-4 z-10" />
 
                   <div className="absolute bottom-4 left-4 rounded-md bg-white/90 px-3 py-1 text-sm font-bold">
-                    {price} {currency} /mo
+                    {price} {currency} {t('perMonth')}
                   </div>
                 </div>
 
@@ -100,7 +100,7 @@ export default function FeaturedListings() {
                   <h3 className="group-hover:text-primary mb-1 text-lg font-bold transition-colors line-clamp-1">
                     {title}
                   </h3>
-                  <p className="text-muted-foreground mb-4 text-sm line-clamp-1">{address || home.location || 'Addis Ababa, Ethiopia'}</p>
+                  <p className="text-muted-foreground mb-4 text-sm line-clamp-1">{address || home.location || t('landing.map.addisAbabaEthiopia')}</p>
 
                   <div className="text-muted-foreground flex gap-4 border-t pt-3 text-sm">
                     <span>

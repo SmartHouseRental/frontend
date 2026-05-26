@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import {
   applyFilterPatch,
   buildApiParams,
@@ -9,11 +10,12 @@ import {
 } from '../utils/propertyFilters';
 
 export function useExploreFilters() {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const filters = useMemo(() => parseExploreFilters(searchParams), [searchParams]);
   const apiParams = useMemo(() => buildApiParams(filters), [filters]);
-  const activeFilterChips = useMemo(() => getActiveFilterChips(filters), [filters]);
+  const activeFilterChips = useMemo(() => getActiveFilterChips(filters, t), [filters, t]);
 
   const applyFilters = useCallback(
     (patch) => {
@@ -29,11 +31,14 @@ export function useExploreFilters() {
   const removeFilterChip = useCallback(
     (id) => {
       if (id === 'q') {
-        setSearchParams((prev) => {
-          const next = new URLSearchParams(prev);
-          next.delete('q');
-          return next;
-        }, { replace: true });
+        setSearchParams(
+          (prev) => {
+            const next = new URLSearchParams(prev);
+            next.delete('q');
+            return next;
+          },
+          { replace: true },
+        );
         return;
       }
       if (id === 'price') {

@@ -1,4 +1,5 @@
 import { Star } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const dummyBreakdown = [
     { stars: 5, count: 28, percentage: 67 },
@@ -9,6 +10,8 @@ const dummyBreakdown = [
 ];
 
 export default function RatingBreakdown({ rating = 4.8, reviewCount = 42 }) {
+    const { t } = useLanguage();
+
     return (
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-12">
             {/* Overall score */}
@@ -23,7 +26,9 @@ export default function RatingBreakdown({ rating = 4.8, reviewCount = 42 }) {
                         />
                     ))}
                 </div>
-                <span className="text-muted-foreground text-sm">{reviewCount} reviews</span>
+                <span className="text-muted-foreground text-sm">
+                    {t('propertyDetail.reviewCount', { count: reviewCount })}
+                </span>
             </div>
 
             {/* Breakdown bars */}

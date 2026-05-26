@@ -33,8 +33,8 @@ import {
   Clock,
   EllipsisVertical,
   Eye,
-  XCircle,
   Loader2,
+  ChevronLeft,
   ChevronRight,
   Send,
   Download,
@@ -54,13 +54,16 @@ import {
   formatCurrency,
 } from '../utils';
 import { AGREEMENT_STATUS_OPTIONS } from '../constants';
+import { useTranslation } from 'react-i18next';
 
 export function OwnerAgreementsContent() {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [page, setPage] = useState(1);
   const limit = 10;
+  const locale = i18n.resolvedLanguage || i18n.language || 'en-US';
 
   const queryParams = useMemo(
     () => ({
@@ -103,14 +106,18 @@ export function OwnerAgreementsContent() {
   }
 
   if (isError) {
-    const errMsg = getApiErrorMessage(error, 'Could not load agreements.');
+    const errMsg = getApiErrorMessage(error, t('owner.agreements.errors.failedLoad'));
     return (
       <div className="p-8">
         <ErrorState
-          title={isSchemaSyncError(error) ? 'Agreements unavailable' : 'Could not load agreements'}
+          title={
+            isSchemaSyncError(error)
+              ? t('owner.agreements.errors.unavailable')
+              : t('owner.agreements.errors.couldNotLoad')
+          }
           message={
             isSchemaSyncError(error)
-              ? 'The production API is out of sync with the database. Redeploy the latest backend build (with Prisma generate), then refresh.'
+              ? t('owner.agreements.errors.schemaSync')
               : errMsg
           }
           onRetry={() => refetch()}
@@ -123,9 +130,11 @@ export function OwnerAgreementsContent() {
     <div className="scrollbar-hide h-screen space-y-6 overflow-y-auto p-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-foreground">My Agreements</h2>
+          <h2 className="text-3xl font-extrabold tracking-tight text-foreground">
+            {t('owner.agreements.title')}
+          </h2>
           <p className="mt-1 text-muted-foreground">
-            Create lease offers, track renter responses, and security deposits.
+            {t('owner.agreements.subtitle')}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 shrink-0">
@@ -140,12 +149,12 @@ export function OwnerAgreementsContent() {
             ) : (
               <Download size={16} />
             )}
-            Export CSV
+            {t('owner.agreements.exportCsv')}
           </Button>
           <Button asChild className="gap-2 shrink-0">
             <Link to="/owner/agreements/create">
               <Plus size={16} />
-              New agreement
+              {t('owner.agreements.newAgreement')}
             </Link>
           </Button>
         </div>
@@ -159,7 +168,9 @@ export function OwnerAgreementsContent() {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-sm font-medium text-muted-foreground">Total</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              {t('owner.agreements.stats.total')}
+            </p>
             <h3 className="mt-1 text-2xl font-extrabold">{stats.total}</h3>
           </CardContent>
         </Card>
@@ -170,7 +181,9 @@ export function OwnerAgreementsContent() {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-sm font-medium text-muted-foreground">Completed</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              {t('owner.agreements.stats.completed')}
+            </p>
             <h3 className="mt-1 text-2xl font-extrabold text-emerald-600">{stats.completed}</h3>
           </CardContent>
         </Card>
@@ -181,12 +194,14 @@ export function OwnerAgreementsContent() {
             </div>
             {stats.pending > 0 && (
               <span className="animate-pulse rounded bg-amber-500/10 px-2 py-1 text-xs font-bold text-amber-600">
-                Action needed
+                {t('owner.agreements.stats.actionNeeded')}
               </span>
             )}
           </CardHeader>
           <CardContent>
-            <p className="text-sm font-medium text-muted-foreground">In progress</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              {t('owner.agreements.stats.inProgress')}
+            </p>
             <h3 className="mt-1 text-2xl font-extrabold text-amber-600">{stats.pending}</h3>
           </CardContent>
         </Card>
@@ -200,7 +215,7 @@ export function OwnerAgreementsContent() {
           />
           <Input
             className="pl-10"
-            placeholder="Search property, renter, or ID…"
+            placeholder={t('owner.agreements.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -216,13 +231,15 @@ export function OwnerAgreementsContent() {
           }}
         >
           <SelectTrigger className="w-44">
-            <SelectValue placeholder="Status" />
+            <SelectValue placeholder={t('owner.agreements.statusPlaceholder')} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               {AGREEMENT_STATUS_OPTIONS.map((opt) => (
                 <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
+                  {opt.value === 'all'
+                    ? t('owner.agreements.statusOptions.all')
+                    : t(`owner.agreements.statuses.${opt.value}`, { defaultValue: opt.label })}
                 </SelectItem>
               ))}
             </SelectGroup>
@@ -234,9 +251,9 @@ export function OwnerAgreementsContent() {
         agreements.length === 0 ? (
           <EmptyState
             icon={Handshake}
-            title="No agreements yet"
-            description="Create a lease offer for a renter who has visited one of your properties."
-            actionLabel="Create agreement"
+            title={t('owner.agreements.empty.title')}
+            description={t('owner.agreements.empty.description')}
+            actionLabel={t('owner.agreements.empty.action')}
             onAction={() => navigate('/owner/agreements/create')}
           />
         ) : (
@@ -244,19 +261,26 @@ export function OwnerAgreementsContent() {
             <Table>
               <TableHeader className="bg-muted/30">
                 <TableRow>
-                  <TableHead className="px-4 py-3">Property</TableHead>
-                  <TableHead className="px-4 py-3">Renter</TableHead>
-                  <TableHead className="px-4 py-3">Rent</TableHead>
-                  <TableHead className="px-4 py-3">Deposit (ETB)</TableHead>
-                  <TableHead className="px-4 py-3">Status</TableHead>
-                  <TableHead className="px-4 py-3">Created</TableHead>
-                  <TableHead className="px-4 py-3 text-right">Actions</TableHead>
+                  <TableHead className="px-4 py-3">{t('owner.agreements.table.property')}</TableHead>
+                  <TableHead className="px-4 py-3">{t('owner.agreements.table.renter')}</TableHead>
+                  <TableHead className="px-4 py-3">{t('owner.agreements.table.rent')}</TableHead>
+                  <TableHead className="px-4 py-3">{t('owner.agreements.table.deposit')}</TableHead>
+                  <TableHead className="px-4 py-3">{t('owner.agreements.table.status')}</TableHead>
+                  <TableHead className="px-4 py-3">{t('owner.agreements.table.created')}</TableHead>
+                  <TableHead className="px-4 py-3 text-right">
+                    {t('owner.agreements.table.actions')}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedAgreements.map((a) => {
                   const image = getPropertyImage(a.property);
-                  const title = getLocalizedText(a.property?.title);
+                  const title = getLocalizedText(a.property?.title, locale);
+                  const renterName = getRenterDisplayName(a.renter);
+                  const displayRenterName =
+                    renterName === 'Unknown renter' || renterName === 'Renter'
+                      ? t('owner.agreements.renterFallback')
+                      : renterName;
                   return (
                     <TableRow key={a.id} className="hover:bg-muted/10">
                       <TableCell className="px-4 py-3">
@@ -272,7 +296,7 @@ export function OwnerAgreementsContent() {
                           </div>
                           <div>
                             <p className="text-sm font-bold text-foreground line-clamp-1">
-                              {title || 'Property'}
+                              {title || t('owner.agreements.propertyFallback')}
                             </p>
                             <p className="text-[10px] text-muted-foreground font-mono truncate max-w-[140px]">
                               {a.id.slice(0, 12)}…
@@ -281,7 +305,7 @@ export function OwnerAgreementsContent() {
                         </div>
                       </TableCell>
                       <TableCell className="px-4 py-3 text-sm font-medium">
-                        {getRenterDisplayName(a.renter)}
+                        {displayRenterName}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-sm font-bold">
                         {formatCurrency(a.monthlyRent, a.currency)}
@@ -293,7 +317,7 @@ export function OwnerAgreementsContent() {
                         <AgreementStatusBadge agreement={a} />
                       </TableCell>
                       <TableCell className="px-4 py-3 text-sm text-muted-foreground">
-                        {formatShortDate(a.createdAt)}
+                        {formatShortDate(a.createdAt, locale)}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-right">
                         <DropdownMenu>
@@ -308,7 +332,7 @@ export function OwnerAgreementsContent() {
                                 to={`/owner/agreements/${a.id}`}
                                 className="flex cursor-pointer items-center gap-2"
                               >
-                                <Eye size={14} /> View details
+                                <Eye size={14} /> {t('owner.agreements.actions.viewDetails')}
                               </Link>
                             </DropdownMenuItem>
                             {a.status === 'draft' && (
@@ -317,7 +341,7 @@ export function OwnerAgreementsContent() {
                                   to={`/owner/agreements/${a.id}`}
                                   className="flex cursor-pointer items-center gap-2"
                                 >
-                                  <Send size={14} /> Send offer
+                                  <Send size={14} /> {t('owner.agreements.actions.sendOffer')}
                                 </Link>
                               </DropdownMenuItem>
                             )}
@@ -333,7 +357,11 @@ export function OwnerAgreementsContent() {
             {totalPages > 1 && (
               <div className="flex items-center justify-between border-t border-border bg-muted/20 px-6 py-4">
                 <p className="text-xs font-medium text-muted-foreground">
-                  Page {page} of {totalPages} · {meta.total} total
+                  {t('owner.agreements.pagination', {
+                    page,
+                    totalPages,
+                    total: meta.total,
+                  })}
                 </p>
                 <div className="flex items-center gap-2">
                   <Button

@@ -1,13 +1,16 @@
+import { useTranslation } from 'react-i18next';
 import { Loader2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function DeleteChatDialog({
   isOpen,
-  subjectName = 'this conversation',
+  subjectName,
   isDeleting,
   onConfirm,
   onCancel,
 }) {
+  const { t } = useTranslation();
+
   if (!isOpen) return null;
 
   return (
@@ -15,7 +18,7 @@ export default function DeleteChatDialog({
       <button
         type="button"
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-        aria-label="Close"
+        aria-label={t('chat.closeDialog')}
         onClick={onCancel}
         disabled={isDeleting}
       />
@@ -25,15 +28,16 @@ export default function DeleteChatDialog({
         className="relative z-10 w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-xl"
       >
         <h2 id="delete-chat-title" className="text-lg font-bold text-foreground">
-          Delete chat?
+          {t('chat.deleteChatTitle')}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          This removes your conversation with {subjectName} from your inbox. You can start a
-          new chat later from a property listing.
+          {t('chat.deleteChatDescription', {
+            subjectName: subjectName || t('chat.deleteChatTitle'),
+          })}
         </p>
         <div className="mt-6 flex justify-end gap-3">
           <Button variant="outline" onClick={onCancel} disabled={isDeleting}>
-            Cancel
+            {t('chat.cancel')}
           </Button>
           <Button
             variant="destructive"
@@ -44,12 +48,12 @@ export default function DeleteChatDialog({
             {isDeleting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Deleting…
+                {t('chat.deleting')}
               </>
             ) : (
               <>
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete chat
+                {t('chat.deleteChat')}
               </>
             )}
           </Button>

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Home, Loader2 } from 'lucide-react';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useLocation, useNavigate } from 'react-router';
@@ -21,7 +22,8 @@ import ChatWindow from './ChatWindow';
 import MessageInput from './MessageInput';
 
 
-export default function SharedMessagesView({ role }) {
+export default function SharedMessagesView({ role, headerTitle }) {
+  const { t } = useTranslation();
   const { user, isAuthenticated } = useAuth();
   const currentUserId = user?.id;
   const location = useLocation();
@@ -230,12 +232,18 @@ export default function SharedMessagesView({ role }) {
     });
   };
 
+  const pageTitle = headerTitle || t('messages');
+  const unreadLabel =
+    totalUnread > 0
+      ? t('chat.unreadCount', { count: totalUnread })
+      : t('chat.allCaughtUp');
+
   if (isLoadingConversations) {
     return (
       <div className="flex h-full w-full items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">Loading chats...</p>
+          <p className="text-sm text-muted-foreground">{t('chat.loadingChats')}</p>
         </div>
       </div>
     );
@@ -247,12 +255,8 @@ export default function SharedMessagesView({ role }) {
       <div className="px-6 pt-6 pb-2 shrink-0">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-foreground">Messages</h1>
-            <p className="text-muted-foreground text-sm mt-0.5">
-              {totalUnread > 0
-                ? `${totalUnread} unread conversation${totalUnread > 1 ? 's' : ''}`
-                : 'All caught up!'}
-            </p>
+            <h1 className="text-2xl font-extrabold tracking-tight text-foreground">{pageTitle}</h1>
+            <p className="text-muted-foreground text-sm mt-0.5">{unreadLabel}</p>
           </div>
         </div>
       </div>
@@ -310,9 +314,9 @@ export default function SharedMessagesView({ role }) {
               <div className="bg-muted/60 dark:bg-muted/30 mb-6 flex size-24 items-center justify-center rounded-3xl">
                 <Home className="text-muted-foreground/60 h-10 w-10" />
               </div>
-              <h2 className="text-foreground/80 mb-2 text-xl font-bold">Select a Conversation</h2>
+              <h2 className="text-foreground/80 mb-2 text-xl font-bold">{t('chat.selectConversation')}</h2>
               <p className="text-muted-foreground max-w-sm text-sm">
-                Choose a conversation from the sidebar, or start a new chat from any property listing.
+                {t('chat.selectConversationDescription')}
               </p>
             </div>
           )}

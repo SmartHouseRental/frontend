@@ -1,8 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Home } from 'lucide-react';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 export default function CTASection() {
+    const { t } = useTranslation();
+
     return (
         <section className="px-6 py-20 lg:px-20">
             <div className="mx-auto max-w-7xl">
@@ -14,11 +17,10 @@ export default function CTASection() {
                     <div className="relative z-10 flex flex-col items-center gap-8 text-center lg:flex-row lg:text-left">
                         <div className="flex-1">
                             <h2 className="mb-4 text-3xl font-extrabold leading-tight md:text-4xl">
-                                Ready to Find Your Family's Next Home?
+                                {t('landing.cta.title')}
                             </h2>
                             <p className="max-w-lg text-white/80">
-                                Join thousands of families who have found verified, safe, and comfortable homes
-                                through Bet-Connect. Start your journey today.
+                                {t('landing.cta.subtitle')}
                             </p>
                         </div>
 
@@ -29,7 +31,7 @@ export default function CTASection() {
                                 className="h-14 gap-2 rounded-full bg-white px-8 text-lg font-bold text-[#A47551] shadow-xl transition-transform hover:scale-105 hover:bg-white/90"
                             >
                                 <Link to="/explore">
-                                    Browse Homes <ArrowRight className="h-5 w-5" />
+                                    {t('landing.cta.browseHomes')} <ArrowRight className="h-5 w-5" />
                                 </Link>
                             </Button>
 
@@ -40,7 +42,7 @@ export default function CTASection() {
                                 className="h-14 gap-2 rounded-full border-2 border-white/30 bg-transparent px-8 text-lg font-bold text-white backdrop-blur-sm transition-transform hover:scale-105 hover:border-white hover:bg-white/10"
                             >
                                 <Link to="/signup">
-                                    <Home className="h-5 w-5" /> List Your Property
+                                    <Home className="h-5 w-5" /> {t('landing.cta.listYourProperty')}
                                 </Link>
                             </Button>
                         </div>

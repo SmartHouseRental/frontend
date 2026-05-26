@@ -1,10 +1,12 @@
 import { Heart, Home, ArrowLeft, Loader2 } from 'lucide-react';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { useFavorites } from '@/features/favorites/hooks/useFavorites';
 import { PropertyCard } from '@/features/explore/components/PropertyCard';
 
 export default function SavedPropertiesPage() {
+  const { t, i18n } = useTranslation();
   const { data: favorites, isLoading, isError } = useFavorites();
 
   if (isLoading) {
@@ -16,6 +18,7 @@ export default function SavedPropertiesPage() {
   }
 
   const hasFavorites = favorites && favorites.length > 0;
+  const currentLang = i18n.language || 'en';
 
   return (
     <div className="min-h-screen">
@@ -28,12 +31,12 @@ export default function SavedPropertiesPage() {
                 <div className="flex size-12 items-center justify-center rounded-xl bg-[#D97745]/10">
                   <Heart className="h-6 w-6 fill-[#D97745] text-[#D97745]" />
                 </div>
-                <h1 className="text-3xl font-extrabold tracking-tight">Saved Properties</h1>
+                <h1 className="text-3xl font-extrabold tracking-tight">{t('savedProperties.title')}</h1>
               </div>
               <p className="text-muted-foreground ml-[60px]">
                 {hasFavorites 
-                  ? `You have ${favorites.length} properties saved to your collection.` 
-                  : "You haven't saved any properties yet."}
+                  ? t('savedProperties.savedCount', { count: favorites.length }) 
+                  : t('savedProperties.noSavedYet')}
               </p>
             </div>
           </div>
@@ -47,27 +50,28 @@ export default function SavedPropertiesPage() {
             <div className="bg-muted mb-6 flex size-24 items-center justify-center rounded-2xl">
               <Home className="text-muted-foreground h-10 w-10" />
             </div>
-            <h2 className="mb-2 text-xl font-bold">No Saved Properties</h2>
+            <h2 className="mb-2 text-xl font-bold">{t('savedProperties.noSavedTitle')}</h2>
             <p className="text-muted-foreground mb-8 max-w-md">
-              Start exploring homes and tap the <Heart className="inline h-4 w-4 text-[#D97745]" />{' '}
-              icon to save your favorites here.
+              {t('savedProperties.startExploringBeforeHeart')}
+              <Heart className="inline h-4 w-4 text-[#D97745]" />{' '}
+              {t('savedProperties.startExploringAfterHeart')}
             </p>
             <Link to="/explore">
               <Button className="bg-primary text-primary-foreground rounded-xl px-8 py-3 font-bold shadow-lg">
-                Explore Listings
+                {t('savedProperties.exploreListings')}
               </Button>
             </Link>
           </div>
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {favorites.map((p) => {
-              const title = (p.title && typeof p.title === 'object') ? (p.title.en || p.title.am) : p.title;
-              const address = (p.address && typeof p.address === 'object') ? (p.address.en || p.address.am) : (p.address || p.location || "Addis Ababa, Ethiopia");
+              const title = (p.title && typeof p.title === 'object') ? (p.title[currentLang] || p.title.en || p.title.am) : p.title;
+              const address = (p.address && typeof p.address === 'object') ? (p.address[currentLang] || p.address.en || p.address.am) : (p.address || p.location || "Addis Ababa, Ethiopia");
               const priceValue = (p.price && typeof p.price === 'object') ? p.price.value : p.price;
               const priceCurrency = (p.price && typeof p.price === 'object') ? (p.price.currency || 'ETB') : 'ETB';
               const areaValue = (p.area && typeof p.area === 'object') ? p.area.value : p.area;
-              const category = (p.category && typeof p.category === 'object') ? (p.category.en || p.category.am) : p.category;
-              const type = (p.type && typeof p.type === 'object') ? (p.type.en || p.type.am) : (p.type || category);
+              const category = (p.category && typeof p.category === 'object') ? (p.category[currentLang] || p.category.en || p.category.am) : p.category;
+              const type = (p.type && typeof p.type === 'object') ? (p.type[currentLang] || p.type.en || p.type.am) : (p.type || category);
               const image = p.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
 
               return (
@@ -96,3 +100,4 @@ export default function SavedPropertiesPage() {
     </div>
   );
 }
+

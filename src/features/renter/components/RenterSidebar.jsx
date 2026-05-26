@@ -14,46 +14,48 @@ import { cn } from '@/lib/utils';
 import { useLogout } from '@/features/auth/hooks/useLogout';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useNotifications, getUnreadCount } from '@/features/notifications/hooks/useNotifications';
+import { useTranslation } from 'react-i18next';
 import { Bell } from 'lucide-react';
 
-const menuItems = [
-  {
-    title: 'My Appointments',
-    icon: Calendar,
-    path: '/renter/appointments',
-    description: 'Manage property visits'
-  },
-  {
-    title: 'My Agreements',
-    icon: FileText,
-    path: '/renter/agreements',
-    description: 'Offers, deposits & payments'
-  },
-  {
-    title: 'My Reviews',
-    icon: Star,
-    path: '/renter/reviews',
-    description: 'Your feedback history'
-  },
-  {
-    title: 'Notifications',
-    icon: Bell,
-    path: '/renter/notifications',
-    description: 'System alerts and updates'
-  },
-  {
-    title: 'Profile & Settings',
-    icon: Settings,
-    path: '/renter/profile',
-    description: 'Personalize your account'
-  }
-];
-
 export default function RenterSidebar({ isOpen, onClose }) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const logoutMutation = useLogout();
   const { data: notifications = [] } = useNotifications();
   const unreadCount = getUnreadCount(notifications);
+
+  const menuItems = [
+    {
+      title: t('sidebar.myAppointments'),
+      icon: Calendar,
+      path: '/renter/appointments',
+      description: t('sidebar.managePropertyVisits'),
+    },
+    {
+      title: t('sidebar.myAgreements'),
+      icon: FileText,
+      path: '/renter/agreements',
+      description: t('sidebar.offersDepositsPayments'),
+    },
+    {
+      title: t('sidebar.myReviews'),
+      icon: Star,
+      path: '/renter/reviews',
+      description: t('sidebar.yourFeedbackHistory'),
+    },
+    {
+      title: t('sidebar.notifications'),
+      icon: Bell,
+      path: '/renter/notifications',
+      description: t('sidebar.systemAlertsUpdates'),
+    },
+    {
+      title: t('sidebar.profileAndSettings'),
+      icon: Settings,
+      path: '/renter/profile',
+      description: t('sidebar.personalizeAccount'),
+    },
+  ];
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -61,7 +63,7 @@ export default function RenterSidebar({ isOpen, onClose }) {
 
   const userName = user?.first_name || user?.last_name
     ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
-    : (user?.fullName || user?.name || 'Renter');
+    : (user?.fullName || user?.name || t('auth.renter'));
 
   return (
     <>
@@ -83,7 +85,7 @@ export default function RenterSidebar({ isOpen, onClose }) {
               <User className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="font-semibold text-foreground">Renter Dashboard</h3>
+              <h3 className="font-semibold text-foreground">{t('sidebar.renterDashboard')}</h3>
               <p className="text-xs text-muted-foreground font-medium tracking-tighter">{userName}</p>
             </div>
           </div>
@@ -111,7 +113,7 @@ export default function RenterSidebar({ isOpen, onClose }) {
                       <span className="text-sm">{item.title}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      {item.title === 'Notifications' && unreadCount > 0 && (
+                      {item.title === t('sidebar.notifications') && unreadCount > 0 && (
                         <span className={cn(
                           "flex h-5 items-center justify-center rounded-full px-2 text-[10px] font-bold transition-colors",
                           isActive 
@@ -137,7 +139,7 @@ export default function RenterSidebar({ isOpen, onClose }) {
             disabled={logoutMutation.isPending}
           >
             <LogOut className="h-5 w-5" />
-            <span className="text-sm">{logoutMutation.isPending ? 'Logging out...' : 'Logout'}</span>
+            <span className="text-sm">{logoutMutation.isPending ? t('loggingOut') : t('logout')}</span>
           </button>
         </div>
       </aside>

@@ -9,6 +9,7 @@ import {
 import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useTranslation } from 'react-i18next';
 import {
   Select,
   SelectContent,
@@ -19,16 +20,7 @@ import {
 import { useRenterPayments, useUploadPaymentProof } from '../payments/hooks/usePayments';
 import { PaymentStatusBadge } from '../agreements/statusBadge';
 
-const STATUS_FILTER_OPTIONS = [
-  { value: 'all', label: 'All statuses' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'processing', label: 'Processing' },
-  { value: 'success', label: 'Paid' },
-  { value: 'failed', label: 'Failed' },
-  { value: 'expired', label: 'Expired' },
-];
-
-function ProofUploadRow({ payment }) {
+function ProofUploadRow({ payment, t }) {
   const fileRef = useRef(null);
   const uploadMutation = useUploadPaymentProof();
   const [localError, setLocalError] = useState('');
@@ -42,11 +34,11 @@ function ProofUploadRow({ payment }) {
     if (!file) return;
     setLocalError('');
     if (!file.type.startsWith('image/') && file.type !== 'application/pdf') {
-      setLocalError('Upload a JPEG, PNG, or PDF file.');
+      setLocalError(t('renter.payments.proof.invalidType'));
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      setLocalError('File must be 5 MB or smaller.');
+      setLocalError(t('renter.payments.proof.tooLarge'));
       return;
     }
     try {
@@ -78,7 +70,7 @@ function ProofUploadRow({ payment }) {
         ) : (
           <Upload className="h-4 w-4 mr-2" />
         )}
-        Upload proof
+        {t('renter.payments.actions.uploadProof')}
       </Button>
       {localError && (
         <p className="text-xs text-destructive mt-2">{localError}</p>
@@ -88,6 +80,7 @@ function ProofUploadRow({ payment }) {
 }
 
 export default function RenterPaymentsList() {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
 
   const queryParams =
@@ -98,6 +91,25 @@ export default function RenterPaymentsList() {
   const { data, isLoading, isFetching, isError, error, refetch } = useRenterPayments(queryParams);
   const payments = data?.items ?? [];
   const isInitialLoad = isLoading && !data;
+
+  const statusFilterOptions = [
+    { value: 'all', label: t('renter.payments.statuses.all') },
+    { value: 'pending', label: t('renter.payments.statuses.pending') },
+    { value: 'processing', label: t('renter.payments.statuses.processing') },
+    { value: 'success', label: t('renter.payments.statuses.success') },
+    { value: 'failed', label: t('renter.payments.statuses.failed') },
+    { value: 'expired', label: t('renter.payments.statuses.expired') },
+  ];
+
+  const getPaymentStatusLabel = (status) =>
+    t(`renter.payments.statuses.${status}`, {
+      defaultValue: status,
+    });
+
+  const getProviderLabel = (provider) =>
+    t(`renter.payments.providers.${provider}`, {
+      defaultValue: provider,
+    });
 
   if (isInitialLoad) {
     return (
@@ -111,12 +123,14 @@ export default function RenterPaymentsList() {
     return (
       <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 text-center">
         <AlertCircle className="h-10 w-10 text-destructive" />
-        <p className="text-destructive font-medium">Failed to load payments</p>
+        <p className="text-destructive font-medium">
+          {t('renter.payments.errors.failedLoad')}
+        </p>
         <p className="text-muted-foreground text-sm max-w-md">
-          {error?.response?.data?.message || error?.message || 'Please try again.'}
+          {error?.response?.data?.message || error?.message || t('renter.payments.errors.tryAgain')}
         </p>
         <Button variant="outline" onClick={() => refetch()}>
-          Retry
+          {t('renter.payments.errors.tryAgain')}
         </Button>
       </div>
     );
@@ -127,10 +141,10 @@ export default function RenterPaymentsList() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-full sm:w-[200px]">
-            <SelectValue placeholder="Filter by status" />
+            <SelectValue placeholder={t('renter.payments.filterPlaceholder')} />
           </SelectTrigger>
           <SelectContent>
-            {STATUS_FILTER_OPTIONS.map((opt) => (
+            {statusFilterOptions.map((opt) => (
               <SelectItem key={opt.value} value={opt.value}>
                 {opt.label}
               </SelectItem>
@@ -143,17 +157,16 @@ export default function RenterPaymentsList() {
         {isFetching && (
           <div className="absolute right-0 top-0 z-10 flex items-center gap-2 text-xs text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin text-primary" />
-            <span className="sr-only">Updating list</span>
+            <span className="sr-only">{t('renter.payments.actions.updating')}</span>
           </div>
         )}
 
         {payments.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
             <CreditCard className="h-12 w-12 text-muted-foreground/50 mb-4" />
-            <h3 className="font-semibold text-lg">No payments yet</h3>
+            <h3 className="font-semibold text-lg">{t('renter.payments.empty.title')}</h3>
             <p className="text-muted-foreground text-sm mt-1 max-w-sm">
-              Payments for your rental agreements will appear here after you accept an offer
-              and pay a deposit.
+              {t('renter.payments.empty.description')}
             </p>
           </div>
         ) : (
@@ -165,7 +178,7 @@ export default function RenterPaymentsList() {
                     <div className="flex-1">
                       <p className="font-bold text-lg">{payment.propertyTitle}</p>
                       <p className="text-sm text-muted-foreground mt-0.5">
-                        {payment.purposeLabel} · {payment.provider === 'chapa' ? 'Chapa' : 'Manual'}
+                        {payment.purposeLabel} · {getProviderLabel(payment.provider)}
                       </p>
                       <p className="text-2xl font-bold text-primary mt-2">
                         {payment.displayAmount}
@@ -173,15 +186,15 @@ export default function RenterPaymentsList() {
                       <div className="mt-2">
                         <PaymentStatusBadge
                           status={payment.status}
-                          label={payment.statusLabel}
+                          label={getPaymentStatusLabel(payment.status)}
                         />
                       </div>
-                      <ProofUploadRow payment={payment} />
+                      <ProofUploadRow payment={payment} t={t} />
                     </div>
                     {payment.agreementId && (
                       <Link to={`/renter/agreements/${payment.agreementId}`}>
                         <Button variant="ghost" className="font-bold text-primary shrink-0">
-                          View agreement
+                          {t('renter.payments.actions.viewAgreement')}
                           <ChevronRight className="h-4 w-4 ml-1" />
                         </Button>
                       </Link>

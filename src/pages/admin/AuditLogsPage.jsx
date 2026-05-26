@@ -21,7 +21,6 @@ import {
     Search,
     Download,
     Filter,
-    ScrollText,
     ShieldCheck,
     UserX,
     CheckCircle2,
@@ -29,8 +28,8 @@ import {
     Home,
     FileText,
     AlertTriangle,
-    Eye,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { useAdminAuditLogs } from '@/features/admin/hooks/useAdmin';
 import { getAdminListItems } from '@/features/admin/adminSanitize';
@@ -46,6 +45,7 @@ const severityStyles = {
 };
 
 function AuditLogsPage() {
+    const { t } = useTranslation();
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
 
@@ -66,6 +66,21 @@ function AuditLogsPage() {
         .replace(/_/g, ' ')
         .replace(/\b\w/g, (char) => char.toUpperCase());
 
+    const actionTypeLabels = {
+      user_suspended: t('adminAuditLogs.actionTypes.userSuspended'),
+      property_approved: t('adminAuditLogs.actionTypes.propertyApproved'),
+      property_rejected: t('adminAuditLogs.actionTypes.propertyRejected'),
+      report_resolved: t('adminAuditLogs.actionTypes.reportResolved'),
+      documents_verified: t('adminAuditLogs.actionTypes.documentsVerified'),
+      agreement_terminated: t('adminAuditLogs.actionTypes.agreementTerminated'),
+    };
+
+    const severityLabels = {
+      high: t('adminAuditLogs.severities.high'),
+      warning: t('adminAuditLogs.severities.warning'),
+      normal: t('adminAuditLogs.severities.normal'),
+    };
+
     const getIconByEvent = (eventType = '') => {
       if (eventType.includes('SUSPEND') || eventType.includes('BAN')) return UserX;
       if (eventType.includes('APPROVE')) return CheckCircle2;
@@ -75,6 +90,8 @@ function AuditLogsPage() {
       if (eventType.includes('BROADCAST')) return Home;
       return FileText;
     };
+
+    const getActionLabel = (eventType = '') => actionTypeLabels[eventType] || toLabel(eventType);
 
     const toSeverity = (eventType = '') => {
       if (eventType.includes('DELETE') || eventType.includes('REJECT') || eventType.includes('SUSPEND')) return 'high';
@@ -86,14 +103,14 @@ function AuditLogsPage() {
         <div className="space-y-6 p-8">
             <div className="flex items-end justify-between">
                 <div>
-                    <h2 className="text-3xl font-extrabold tracking-tight">Audit Logs</h2>
+                    <h2 className="text-3xl font-extrabold tracking-tight">{t('adminAuditLogs.title')}</h2>
                     <p className="text-muted-foreground mt-1">
-                        Track all administrative actions and sensitive system events.
+                        {t('adminAuditLogs.subtitle')}
                     </p>
                 </div>
                 <Button variant="outline" className="gap-2">
                     <Download size={16} />
-                    Export Logs
+                    {t('adminAuditLogs.exportLogs')}
                 </Button>
             </div>
 
@@ -103,7 +120,7 @@ function AuditLogsPage() {
                         <Search size={18} />
                     </span>
                     <Input
-                        placeholder="Search by admin, action, or target..."
+                        placeholder={t('adminAuditLogs.searchPlaceholder')}
                         type="text"
                         className="pl-10"
                         value={search}
@@ -116,30 +133,30 @@ function AuditLogsPage() {
                 <div className="flex items-center gap-3">
                     <Select>
                         <SelectTrigger className="w-44">
-                            <SelectValue placeholder="Action Type" />
+                            <SelectValue placeholder={t('adminAuditLogs.filters.actionTypePlaceholder')} />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="all">All Actions</SelectItem>
-                                <SelectItem value="user_suspended">User Suspended</SelectItem>
-                                <SelectItem value="property_approved">Property Approved</SelectItem>
-                                <SelectItem value="property_rejected">Property Rejected</SelectItem>
-                                <SelectItem value="report_resolved">Report Resolved</SelectItem>
-                                <SelectItem value="documents_verified">Documents Verified</SelectItem>
-                                <SelectItem value="agreement_terminated">Agreement Terminated</SelectItem>
+                                <SelectItem value="all">{t('adminAuditLogs.filters.allActions')}</SelectItem>
+                                <SelectItem value="user_suspended">{t('adminAuditLogs.actionTypes.userSuspended')}</SelectItem>
+                                <SelectItem value="property_approved">{t('adminAuditLogs.actionTypes.propertyApproved')}</SelectItem>
+                                <SelectItem value="property_rejected">{t('adminAuditLogs.actionTypes.propertyRejected')}</SelectItem>
+                                <SelectItem value="report_resolved">{t('adminAuditLogs.actionTypes.reportResolved')}</SelectItem>
+                                <SelectItem value="documents_verified">{t('adminAuditLogs.actionTypes.documentsVerified')}</SelectItem>
+                                <SelectItem value="agreement_terminated">{t('adminAuditLogs.actionTypes.agreementTerminated')}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
                     <Select>
                         <SelectTrigger className="w-36">
-                            <SelectValue placeholder="Severity" />
+                            <SelectValue placeholder={t('adminAuditLogs.filters.severityPlaceholder')} />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="all">All</SelectItem>
-                                <SelectItem value="high">High</SelectItem>
-                                <SelectItem value="warning">Warning</SelectItem>
-                                <SelectItem value="normal">Normal</SelectItem>
+                                <SelectItem value="all">{t('adminAuditLogs.filters.all')}</SelectItem>
+                                <SelectItem value="high">{t('adminAuditLogs.severities.high')}</SelectItem>
+                                <SelectItem value="warning">{t('adminAuditLogs.severities.warning')}</SelectItem>
+                                <SelectItem value="normal">{t('adminAuditLogs.severities.normal')}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -152,20 +169,20 @@ function AuditLogsPage() {
             {isLoading ? (
               <TableSkeleton rows={8} columns={6} />
             ) : isError ? (
-              <ErrorState title="Failed to load audit logs" onRetry={refetch} />
+              <ErrorState title={t('adminAuditLogs.errorTitle')} onRetry={refetch} />
             ) : auditLogs.length === 0 ? (
-              <EmptyState title="No audit logs found" description="Try changing search filters." />
+              <EmptyState title={t('adminAuditLogs.emptyTitle')} description={t('adminAuditLogs.emptyDescription')} />
             ) : (
             <Card className="gap-0 overflow-hidden p-0">
                 <Table className="w-full min-w-full border-collapse text-left">
                     <TableHeader className="bg-muted/30 w-full">
                         <TableRow>
-                            <TableHead className="px-6 py-4">Timestamp</TableHead>
-                            <TableHead className="px-6 py-4">Admin</TableHead>
-                            <TableHead className="px-6 py-4">Action</TableHead>
-                            <TableHead className="px-6 py-4">Target</TableHead>
-                            <TableHead className="px-6 py-4">Details</TableHead>
-                            <TableHead className="px-4 py-4">Severity</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminAuditLogs.table.timestamp')}</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminAuditLogs.table.admin')}</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminAuditLogs.table.action')}</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminAuditLogs.table.target')}</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminAuditLogs.table.details')}</TableHead>
+                            <TableHead className="px-4 py-4">{t('adminAuditLogs.table.severity')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -174,7 +191,7 @@ function AuditLogsPage() {
                             const severity = toSeverity(log.eventType);
                             const actorName = log.actor
                               ? `${log.actor.first_name || ''} ${log.actor.last_name || ''}`.trim() || log.actor.email
-                              : 'System';
+                              : t('adminAuditLogs.systemActor');
                             return (
                                 <TableRow key={log.id} className="transition-colors hover:bg-muted/20">
                                     <TableCell className="px-6 py-4">
@@ -182,7 +199,7 @@ function AuditLogsPage() {
                                     </TableCell>
                                     <TableCell className="px-6 py-4">
                                         <span
-                                            className={`text-sm font-medium ${actorName === 'System' ? 'text-muted-foreground italic' : ''}`}
+                                            className={`text-sm font-medium ${actorName === t('adminAuditLogs.systemActor') ? 'text-muted-foreground italic' : ''}`}
                                         >
                                             {actorName}
                                         </span>
@@ -191,7 +208,7 @@ function AuditLogsPage() {
                                         <div className="flex items-center gap-2">
                                             <IconComp size={14} className="text-muted-foreground" />
                                             <span className="whitespace-nowrap text-sm font-semibold">
-                                                {toLabel(log.eventType)}
+                                                {getActionLabel(log.eventType)}
                                             </span>
                                         </div>
                                     </TableCell>
@@ -202,14 +219,14 @@ function AuditLogsPage() {
                                     </TableCell>
                                     <TableCell className="max-w-xs px-6 py-4">
                                         <p className="text-muted-foreground truncate text-xs">
-                                          {log.metadata ? JSON.stringify(log.metadata) : 'No details'}
+                                          {log.metadata ? JSON.stringify(log.metadata) : t('adminAuditLogs.noDetails')}
                                         </p>
                                     </TableCell>
                                     <TableCell className="px-4 py-4">
                                         <span
                                             className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${severityStyles[severity]}`}
                                         >
-                                            {severity}
+                                            {severityLabels[severity]}
                                         </span>
                                     </TableCell>
                                 </TableRow>
@@ -222,7 +239,9 @@ function AuditLogsPage() {
                   totalPages={meta.totalPages || 1}
                   totalItems={meta.total || 0}
                   itemsPerPage={meta.limit || 50}
-                  itemLabel="entries"
+                  itemLabel={t('adminAuditLogs.pagination.itemLabel')}
+                  showingLabel={t('adminAuditLogs.pagination.showing')}
+                  ofLabel={t('adminAuditLogs.pagination.of')}
                   onPageChange={setPage}
                 />
             </Card>

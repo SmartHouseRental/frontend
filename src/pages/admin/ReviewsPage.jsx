@@ -37,6 +37,7 @@ import {
     Star,
     MessageSquare,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import {
   useAdminDeleteReview,
@@ -66,6 +67,7 @@ function StarRating({ rating }) {
 }
 
 function ReviewsPage() {
+    const { t } = useTranslation();
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
@@ -88,27 +90,39 @@ function ReviewsPage() {
     const updateStatus = (id, status) => updateReviewStatus.mutate({ id, status });
     const removeReview = (id) => deleteReview.mutate({ id });
 
+    const translateReviewStatus = (status) => {
+      switch (status) {
+        case 'published':
+          return t('adminReviews.statuses.published');
+        case 'flagged':
+          return t('adminReviews.statuses.flagged');
+        case 'removed':
+          return t('adminReviews.statuses.removed');
+        default:
+          return status;
+      }
+    };
+
     return (
         <div className="space-y-6 p-8">
             <PageHeader
-                title="Reviews"
-                description="Moderate user reviews and ratings across the platform."
+                title={t('adminReviews.title')}
+                description={t('adminReviews.description')}
             >
                 <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm">
                     <MessageSquare size={14} className="text-muted-foreground" />
                     <span className="font-bold">{reviews.length}</span>
-                    <span className="text-muted-foreground">total reviews</span>
+                    <span className="text-muted-foreground">{t('adminReviews.totalReviews', { count: reviews.length })}</span>
                 </div>
             </PageHeader>
 
-            {/* Filters */}
             <Card className="flex flex-row flex-wrap items-center justify-between gap-4 px-6 py-4">
                 <div className="relative max-w-xl flex-1">
                     <span className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2">
                         <Search size={18} />
                     </span>
                     <Input
-                        placeholder="Search by reviewer, property, or comment..."
+                        placeholder={t('adminReviews.searchPlaceholder')}
                         type="text"
                         className="pl-10"
                         value={search}
@@ -121,41 +135,41 @@ function ReviewsPage() {
                 <div className="flex items-center gap-3">
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
                         <SelectTrigger className="w-36">
-                            <SelectValue placeholder="Status" />
+                            <SelectValue placeholder={t('adminReviews.filters.status')} />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="all">All</SelectItem>
-                                <SelectItem value="published">Published</SelectItem>
-                                <SelectItem value="flagged">Flagged</SelectItem>
-                                <SelectItem value="removed">Removed</SelectItem>
+                                <SelectItem value="all">{t('adminReviews.filters.all')}</SelectItem>
+                                <SelectItem value="published">{t('adminReviews.statuses.published')}</SelectItem>
+                                <SelectItem value="flagged">{t('adminReviews.statuses.flagged')}</SelectItem>
+                                <SelectItem value="removed">{t('adminReviews.statuses.removed')}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
                     <Select>
                         <SelectTrigger className="w-36">
-                            <SelectValue placeholder="Rating" />
+                            <SelectValue placeholder={t('adminReviews.filters.rating')} />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="all">All Ratings</SelectItem>
-                                <SelectItem value="5">5 Stars</SelectItem>
-                                <SelectItem value="4">4+ Stars</SelectItem>
-                                <SelectItem value="3">3+ Stars</SelectItem>
-                                <SelectItem value="2">2+ Stars</SelectItem>
-                                <SelectItem value="1">1 Star</SelectItem>
+                                <SelectItem value="all">{t('adminReviews.filters.allRatings')}</SelectItem>
+                                <SelectItem value="5">{t('adminReviews.filters.stars5')}</SelectItem>
+                                <SelectItem value="4">{t('adminReviews.filters.stars4')}</SelectItem>
+                                <SelectItem value="3">{t('adminReviews.filters.stars3')}</SelectItem>
+                                <SelectItem value="2">{t('adminReviews.filters.stars2')}</SelectItem>
+                                <SelectItem value="1">{t('adminReviews.filters.stars1')}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
                     <Select>
                         <SelectTrigger className="w-36">
-                            <SelectValue placeholder="Type" />
+                            <SelectValue placeholder={t('adminReviews.filters.type')} />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="all">All Types</SelectItem>
-                                <SelectItem value="property">Property</SelectItem>
-                                <SelectItem value="owner">Owner</SelectItem>
+                                <SelectItem value="all">{t('adminReviews.filters.allTypes')}</SelectItem>
+                                <SelectItem value="property">{t('adminReviews.filters.property')}</SelectItem>
+                                <SelectItem value="owner">{t('adminReviews.filters.owner')}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -165,32 +179,31 @@ function ReviewsPage() {
                 </div>
             </Card>
 
-            {/* Table */}
             {isLoading ? (
               <TableSkeleton rows={6} columns={7} />
             ) : isError ? (
-              <ErrorState title="Failed to load reviews" onRetry={refetch} />
+              <ErrorState title={t('adminReviews.errorTitle')} onRetry={refetch} />
             ) : reviewItems.length === 0 ? (
-              <EmptyState title="No reviews found" description="Try changing current filters." />
+              <EmptyState title={t('adminReviews.emptyTitle')} description={t('adminReviews.emptyDescription')} />
             ) : (
             <Card className="gap-0 overflow-hidden p-0">
                 <Table className="w-full min-w-full border-collapse text-left">
                     <TableHeader className="bg-muted/30 w-full">
                         <TableRow>
-                            <TableHead className="px-6 py-4">Reviewer</TableHead>
-                            <TableHead className="px-6 py-4">Target</TableHead>
-                            <TableHead className="px-6 py-4">Rating</TableHead>
-                            <TableHead className="px-6 py-4 max-w-xs">Comment</TableHead>
-                            <TableHead className="px-6 py-4">Status</TableHead>
-                            <TableHead className="px-6 py-4">Date</TableHead>
-                            <TableHead className="px-4 py-4">Actions</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminReviews.table.reviewer')}</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminReviews.table.target')}</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminReviews.table.rating')}</TableHead>
+                            <TableHead className="px-6 py-4 max-w-xs">{t('adminReviews.table.comment')}</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminReviews.table.status')}</TableHead>
+                            <TableHead className="px-6 py-4">{t('adminReviews.table.date')}</TableHead>
+                            <TableHead className="px-4 py-4">{t('adminReviews.table.actions')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {reviewItems.map((review) => {
                             const reviewerName = review.reviewer
                               ? `${review.reviewer.first_name || ''} ${review.reviewer.last_name || ''}`.trim() || review.reviewer.email
-                              : 'Unknown';
+                              : t('adminReviews.unknownReviewer');
                             const initials = reviewerName
                               .split(' ')
                               .filter(Boolean)
@@ -230,7 +243,7 @@ function ReviewsPage() {
                                     </p>
                                 </TableCell>
                                 <TableCell className="px-6 py-4">
-                                    <StatusBadge status={statusMeta.label} statusMap={{ [statusMeta.label]: statusMeta.style }} />
+                                    <StatusBadge status={translateReviewStatus(review.status)} statusMap={{ [translateReviewStatus(review.status)]: statusMeta.style }} />
                                 </TableCell>
                                 <TableCell className="text-muted-foreground px-6 py-4 text-sm">
                                     {new Date(review.createdAt).toLocaleDateString()}
@@ -249,7 +262,7 @@ function ReviewsPage() {
                                                   onClick={() => updateStatus(review.id, 'flagged')}
                                                 >
                                                     <Flag className="mr-2 h-4 w-4" />
-                                                    <span>Flag Review</span>
+                                                    <span>{t('adminReviews.actions.flagReview')}</span>
                                                 </DropdownMenuItem>
                                             )}
                                             {review.status !== 'removed' && (
@@ -257,7 +270,7 @@ function ReviewsPage() {
                                                     <DropdownMenuSeparator />
                                                     <DropdownMenuItem className="cursor-pointer text-rose-600 focus:text-rose-600">
                                                         <Trash2 className="mr-2 h-4 w-4" />
-                                                        <span onClick={() => removeReview(review.id)}>Remove Review</span>
+                                                        <span onClick={() => removeReview(review.id)}>{t('adminReviews.actions.removeReview')}</span>
                                                     </DropdownMenuItem>
                                                 </>
                                             )}
@@ -273,7 +286,9 @@ function ReviewsPage() {
                     totalPages={meta.totalPages || 1}
                     totalItems={meta.total || 0}
                     itemsPerPage={meta.limit || 20}
-                    itemLabel="reviews"
+                    itemLabel={t('adminReviews.pagination.itemLabel')}
+                    showingLabel={t('adminReviews.pagination.showing')}
+                    ofLabel={t('adminReviews.pagination.of')}
                     onPageChange={setPage}
                 />
             </Card>

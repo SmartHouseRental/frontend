@@ -14,11 +14,12 @@ import {
   LogOut,
   Home,
 } from 'lucide-react';
-import { NavLink, useNavigate } from 'react-router';
+import { NavLink } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { useLogout } from '@/features/auth/hooks/useLogout';
 
 function OwnerSidebar() {
-  const navigate = useNavigate();
+  const { t } = useTranslation();
   const logoutMutation = useLogout();
 
   const handleLogout = () => {
@@ -26,18 +27,18 @@ function OwnerSidebar() {
   };
 
   const navItems = [
-    { to: 'overview', label: 'Dashboard', Icon: LayoutDashboard, end: true },
-    { to: 'properties', label: 'My Properties', Icon: Building2 },
-    { to: 'appointments', label: 'Appointments', Icon: CalendarDays },
-    { to: 'agreements', label: 'Agreements', Icon: Handshake },
-    { to: 'messages', label: 'Messages', Icon: MessageCircle },
-    { to: 'reviews', label: 'Reviews', Icon: Star },
-    { to: 'notifications', label: 'Notifications', Icon: Bell },
-    { to: 'reports', label: 'Reports Against Me', Icon: AlertTriangle },
-    { to: 'analytics', label: 'Analytics', Icon: BarChart3 },
-    { to: 'payments', label: 'Payments', Icon: Wallet },
-    { to: 'profile', label: 'Profile & Settings', Icon: User },
-    { to: 'help', label: 'Help & Support', Icon: HelpCircle },
+    { to: 'overview', label: t('dashboard'), Icon: LayoutDashboard, end: true },
+    { to: 'properties', label: t('sidebar.myProperties'), Icon: Building2 },
+    { to: 'appointments', label: t('sidebar.appointments'), Icon: CalendarDays },
+    { to: 'agreements', label: t('sidebar.agreements'), Icon: Handshake },
+    { to: 'messages', label: t('messages'), Icon: MessageCircle },
+    { to: 'reviews', label: t('sidebar.reviews'), Icon: Star },
+    { to: 'notifications', label: t('sidebar.notifications'), Icon: Bell },
+    { to: 'reports', label: t('sidebar.reportsAgainstMe'), Icon: AlertTriangle },
+    { to: 'analytics', label: t('sidebar.analytics'), Icon: BarChart3 },
+    { to: 'payments', label: t('sidebar.payments'), Icon: Wallet },
+    { to: 'profile', label: t('sidebar.profileAndSettings'), Icon: User },
+    { to: 'help', label: t('sidebar.helpAndSupport'), Icon: HelpCircle },
   ];
 
   const getNavLinkClass = ({ isActive }) =>
@@ -56,7 +57,7 @@ function OwnerSidebar() {
         <div>
           <h1 className="text-lg leading-tight font-extrabold text-foreground">Smart House Rental</h1>
           <p className="text-primary text-[10px] tracking-widest uppercase font-semibold">
-            Owner Portal
+            {t('sidebar.ownerPortal')}
           </p>
         </div>
       </div>
@@ -82,13 +83,13 @@ function OwnerSidebar() {
           />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-foreground">Dawit Mekonnen</p>
-            <p className="truncate text-xs text-muted-foreground">Property Owner</p>
+            <p className="truncate text-xs text-muted-foreground">{t('user.propertyOwner')}</p>
           </div>
           <button
             onClick={handleLogout}
             disabled={logoutMutation.isPending}
             className="text-muted-foreground transition-colors hover:text-destructive disabled:opacity-50"
-            aria-label="Logout"
+            aria-label={t('logout')}
           >
             <LogOut size={18} />
           </button>

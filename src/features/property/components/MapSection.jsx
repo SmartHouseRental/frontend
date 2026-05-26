@@ -1,13 +1,16 @@
 import PropertyMap from "@/components/map/PropertyMap";
 import { MapPin, Info } from "lucide-react";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function MapSection({ property }) {
+  const { t } = useLanguage();
+
   if (!property) return null;
 
   const poiList = [
-    { label: "Public School", distance: "1.2km" },
-    { label: "Shopping Mall", distance: "800m" },
-    { label: "Hospital", distance: "2.5km" },
+    { label: t('propertyDetailsComponents.mapSection.publicSchool'), distance: "1.2km" },
+    { label: t('propertyDetailsComponents.mapSection.shoppingMall'), distance: "800m" },
+    { label: t('propertyDetailsComponents.mapSection.hospital'), distance: "2.5km" },
   ];
 
   // Get coordinates from location object or fallback
@@ -19,7 +22,7 @@ export default function MapSection({ property }) {
     <section className="mb-12">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-2xl font-bold mb-1">Location & Neighborhood</h3>
+          <h3 className="text-2xl font-bold mb-1">{t('propertyDetailsComponents.mapSection.title')}</h3>
           <p className="text-muted-foreground text-sm flex items-center gap-1">
             <MapPin className="w-3 h-3" />
             {address}
@@ -28,7 +31,7 @@ export default function MapSection({ property }) {
 
         <div className="hidden sm:flex items-center gap-2 text-xs font-semibold bg-primary/5 text-primary px-3 py-1.5 rounded-full border border-primary/10">
           <Info className="w-3 h-3" />
-          Verified Coordinates
+          {t('propertyDetailsComponents.mapSection.verifiedCoordinates')}
         </div>
       </div>
 
@@ -55,7 +58,7 @@ export default function MapSection({ property }) {
       </div>
 
       <p className="mt-6 text-sm text-muted-foreground leading-relaxed italic">
-        "This neighborhood is known for its safety, quiet streets, and proximity to major international schools and shopping centers in {address.split(',')[0]}."
+        {t('propertyDetailsComponents.mapSection.neighborhoodDesc', { address: address.split(',')[0] })}
       </p>
     </section>
   );

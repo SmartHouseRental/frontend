@@ -1,26 +1,55 @@
 import { Building2, Users, ShieldCheck, Heart, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 export default function AboutPage() {
+  const { t } = useTranslation();
+
+  const values = [
+    {
+      title: t('aboutPage.values.items.trustFirst.title'),
+      desc: t('aboutPage.values.items.trustFirst.desc'),
+      icon: ShieldCheck,
+    },
+    {
+      title: t('aboutPage.values.items.familyCentric.title'),
+      desc: t('aboutPage.values.items.familyCentric.desc'),
+      icon: Heart,
+    },
+    {
+      title: t('aboutPage.values.items.innovation.title'),
+      desc: t('aboutPage.values.items.innovation.desc'),
+      icon: Building2,
+    },
+  ];
+
+  const stats = [
+    { value: '1,200+', label: t('aboutPage.mission.stats.verifiedHomes'), icon: Building2 },
+    { value: '5,000+', label: t('aboutPage.mission.stats.happyFamilies'), icon: Users },
+    { value: '100%', label: t('aboutPage.mission.stats.secureProfile'), icon: ShieldCheck },
+    { value: t('aboutPage.mission.stats.topRated'), label: t('aboutPage.mission.stats.customerSupport'), icon: Heart },
+  ];
+
   return (
     <div className="flex w-full flex-col">
       {/* Hero Section */}
       <section className="bg-primary/5 relative overflow-hidden px-6 py-24 lg:px-20">
         <div className="relative z-10 mx-auto flex max-w-7xl flex-col items-center text-center">
           <h1 className="mb-8 text-4xl font-black tracking-tight md:text-6xl">
-            Redefining <span className="text-primary">Family Living</span> in Ethiopia
+            {t('aboutPage.hero.titlePrefix')}{' '}
+            <span className="text-primary">{t('aboutPage.hero.titleAccent')}</span>{' '}
+            {t('aboutPage.hero.titleSuffix')}
           </h1>
           <p className="text-muted-foreground mb-10 max-w-2xl text-lg">
-            Bet-Connect is the leading platform for families to find secure, comfortable, and
-            verified long-stay rentals across Addis Ababa and beyond.
+            {t('aboutPage.hero.subtitle')}
           </p>
           <div className="flex gap-4">
             <Button size="lg" asChild className="rounded-full px-8">
-              <Link to="/explore">Explore Listings</Link>
+              <Link to="/explore">{t('aboutPage.hero.exploreListings')}</Link>
             </Button>
             <Button size="lg" variant="outline" asChild className="rounded-full px-8">
-              <Link to="/contact">Contact Us</Link>
+              <Link to="/contact">{t('aboutPage.hero.contactUs')}</Link>
             </Button>
           </div>
         </div>
@@ -34,55 +63,29 @@ export default function AboutPage() {
       <section className="bg-background px-6 py-24 lg:px-20">
         <div className="mx-auto grid max-w-7xl items-center gap-16 md:grid-cols-2">
           <div>
-            <h2 className="mb-6 text-3xl font-bold">Our Mission</h2>
+            <h2 className="mb-6 text-3xl font-bold">{t('aboutPage.mission.title')}</h2>
             <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
-              Our mission is to create a seamless bridge between property owners and families
-              seeking long-term homes. We believe that finding a home should be a joyful experience,
-              not a stressful one.
+              {t('aboutPage.mission.description1')}
             </p>
             <p className="text-muted-foreground text-lg leading-relaxed">
-              By leveraging technology and human trust, we ensure every listing on our platform
-              belongs to the "Excellence" category—verified for security, amenities, and family
-              comfort.
+              {t('aboutPage.mission.description2')}
             </p>
           </div>
           <div className="grid grid-cols-2 gap-6">
-            <div className="bg-card border-border rounded-2xl border p-8 shadow-sm transition-shadow hover:shadow-md">
-              <div className="bg-primary/10 text-primary mb-4 flex size-12 items-center justify-center rounded-xl">
-                <Building2 className="h-6 w-6" />
+            {stats.map((stat, i) => (
+              <div
+                key={i}
+                className="bg-card border-border rounded-2xl border p-8 shadow-sm transition-shadow hover:shadow-md"
+              >
+                <div className="bg-primary/10 text-primary mb-4 flex size-12 items-center justify-center rounded-xl">
+                  <stat.icon className="h-6 w-6" />
+                </div>
+                <h3 className="mb-2 font-bold">{stat.value}</h3>
+                <p className="text-muted-foreground text-sm font-semibold tracking-widest uppercase">
+                  {stat.label}
+                </p>
               </div>
-              <h3 className="mb-2 font-bold">1,200+</h3>
-              <p className="text-muted-foreground text-sm font-semibold tracking-widest uppercase">
-                Verified Homes
-              </p>
-            </div>
-            <div className="bg-card border-border rounded-2xl border p-8 shadow-sm transition-shadow hover:shadow-md">
-              <div className="bg-primary/10 text-primary mb-4 flex size-12 items-center justify-center rounded-xl">
-                <Users className="h-6 w-6" />
-              </div>
-              <h3 className="mb-2 font-bold">5,000+</h3>
-              <p className="text-muted-foreground text-sm font-semibold tracking-widest uppercase">
-                Happy Families
-              </p>
-            </div>
-            <div className="bg-card border-border rounded-2xl border p-8 shadow-sm transition-shadow hover:shadow-md">
-              <div className="bg-primary/10 text-primary mb-4 flex size-12 items-center justify-center rounded-xl">
-                <ShieldCheck className="h-6 w-6" />
-              </div>
-              <h3 className="mb-2 font-bold">100%</h3>
-              <p className="text-muted-foreground text-sm font-semibold tracking-widest uppercase">
-                Secure Profile
-              </p>
-            </div>
-            <div className="bg-card border-border rounded-2xl border p-8 shadow-sm transition-shadow hover:shadow-md">
-              <div className="bg-primary/10 text-primary mb-4 flex size-12 items-center justify-center rounded-xl">
-                <Heart className="h-6 w-6" />
-              </div>
-              <h3 className="mb-2 font-bold">Top Rated</h3>
-              <p className="text-muted-foreground text-sm font-semibold tracking-widest uppercase">
-                Customer Support
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -90,29 +93,13 @@ export default function AboutPage() {
       {/* Values Section */}
       <section className="bg-muted/30 px-6 py-24 lg:px-20">
         <div className="mx-auto mb-16 max-w-7xl text-center">
-          <h2 className="mb-4 text-3xl font-bold">Core Values</h2>
+          <h2 className="mb-4 text-3xl font-bold">{t('aboutPage.values.title')}</h2>
           <p className="text-muted-foreground mx-auto max-w-xl">
-            The principles that guide us every day in building the future of Ethiopian rentals.
+            {t('aboutPage.values.subtitle')}
           </p>
         </div>
         <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-3">
-          {[
-            {
-              title: 'Trust First',
-              desc: 'Every owner and every property is manually verified by our team before they appear on your screen.',
-              icon: ShieldCheck,
-            },
-            {
-              title: 'Family Centric',
-              desc: 'We focus exclusively on long-stay rentals that offer the space and security families need to thrive.',
-              icon: Heart,
-            },
-            {
-              title: 'Innovation',
-              desc: 'Continuous improvement of our digital platform to make renting as easy as ordering a cup of coffee.',
-              icon: Building2,
-            },
-          ].map((value, i) => (
+          {values.map((value, i) => (
             <div
               key={i}
               className="bg-card border-border flex flex-col items-center rounded-3xl border p-8 text-center shadow-sm transition-all hover:-translate-y-1"
@@ -132,7 +119,7 @@ export default function AboutPage() {
         <div className="bg-primary text-primary-foreground relative mx-auto max-w-5xl overflow-hidden rounded-[3rem] p-12 text-center shadow-2xl md:p-20">
           <div className="relative z-10">
             <h2 className="mb-8 text-3xl leading-tight font-black md:text-5xl">
-              Ready to find your <br /> next forever home?
+              {t('aboutPage.cta.titleLine1')} <br /> {t('aboutPage.cta.titleLine2')}
             </h2>
             <Button
               size="lg"
@@ -141,7 +128,7 @@ export default function AboutPage() {
               className="group h-14 rounded-full px-10 text-lg font-bold transition-transform hover:scale-105"
             >
               <Link to="/explore" className="flex items-center gap-2">
-                Start Searching
+                {t('aboutPage.cta.startSearching')}
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>

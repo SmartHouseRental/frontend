@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ZoomIn,
   Home,
@@ -18,10 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate, useParams } from 'react-router';
 import { useAdminProperty } from '@/features/admin/hooks/useAdmin';
-import {
-  useAdminPropertyReviews,
-  useAdminPropertyReviewStats,
-} from '@/features/admin/hooks/useAdminPropertyReviews';
+import { useAdminPropertyReviews, useAdminPropertyReviewStats } from '@/features/admin/hooks/useAdminPropertyReviews';
 import { formatPersonName } from '@/features/admin/mappers';
 import EmptyState from '@/components/EmptyState';
 import {
@@ -46,7 +44,7 @@ function getPropertyCoordinates(property) {
   return null;
 }
 
-function GallerySection({ images, title }) {
+function GallerySection({ images, title, t }) {
   const primaryImage = images?.[0];
   const thumbnailImages = images?.slice(0, 4) || [];
 
@@ -55,28 +53,28 @@ function GallerySection({ images, title }) {
       <div className="group border-border/60 relative aspect-[16/10] overflow-hidden rounded-xl border bg-black shadow-md">
         <img
           src={primaryImage || 'https://via.placeholder.com/960x600?text=No+Image'}
-          alt={title || 'Property image'}
+          alt={title || t('adminPropertyDetail.gallery.noImageAlt')}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
         />
         <div className="absolute right-3 bottom-3 flex gap-2 opacity-90">
           <button
             type="button"
             className="flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md"
-            aria-label="Zoom"
+            aria-label={t('adminPropertyDetail.gallery.zoom')}
           >
             <ZoomIn className="h-4 w-4" />
           </button>
           <button
             type="button"
             className="flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md"
-            aria-label="Previous"
+            aria-label={t('adminPropertyDetail.gallery.previous')}
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
           <button
             type="button"
             className="flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md"
-            aria-label="Next"
+            aria-label={t('adminPropertyDetail.gallery.next')}
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -90,7 +88,11 @@ function GallerySection({ images, title }) {
               key={`thumb-${idx}`}
               className="border-border/60 relative h-16 w-24 shrink-0 overflow-hidden rounded-lg border"
             >
-              <img src={image} alt={`Thumbnail ${idx + 1}`} className="h-full w-full object-cover" />
+              <img
+                src={image}
+                alt={t('adminPropertyDetail.gallery.thumbnailAlt', { index: idx + 1 })}
+                className="h-full w-full object-cover"
+              />
             </div>
           ))}
         </div>
@@ -99,20 +101,25 @@ function GallerySection({ images, title }) {
   );
 }
 
-function PropertyInfoCard({ property, reviewStats }) {
+function PropertyInfoCard({ property, reviewStats, t }) {
   const statusMeta = getPropertyStatusMeta(property?.status);
-  const title = property.displayTitle ?? formatLocalizedText(property?.title, 'Property');
+  const title = property.displayTitle ?? formatLocalizedText(property?.title, t('adminPropertyDetail.propertyInfo.propertyFallback'));
   const address =
     property.displayAddress ??
-    formatLocalizedText(property?.address || property?.location, 'Address not available');
+    formatLocalizedText(property?.address || property?.location, t('adminPropertyDetail.propertyInfo.addressUnavailable'));
   const price = property.displayPrice ?? formatPropertyPrice(property?.price, '-');
   const categoryLabel =
-    property.categoryType ?? formatPropertyCategory(property?.category);
+    t(`adminProperties.categoryOptions.${String(property.categoryType || formatPropertyCategory(property?.category)).toLowerCase()}`, {
+      defaultValue: property.categoryType ?? formatPropertyCategory(property?.category),
+    });
   const avgRating = reviewStats?.averageRating ?? 0;
   const reviewCount = reviewStats?.totalReviews ?? 0;
   const listedAt = property?.createdAt
     ? new Date(property.createdAt).toLocaleDateString()
-    : 'Recently';
+    : t('adminPropertyDetail.propertyInfo.recently');
+  const statusLabel = t(`adminProperties.statuses.${property?.status}`, {
+    defaultValue: statusMeta.label,
+  });
 
   return (
     <Card className="border-border/60 shadow-sm">
@@ -123,7 +130,7 @@ function PropertyInfoCard({ property, reviewStats }) {
             className="border-green-200 bg-green-50 text-green-700 hover:bg-green-50"
           >
             <CheckCircle className="mr-1.5 h-3.5 w-3.5" />
-            {statusMeta.label}
+            {statusLabel}
           </Badge>
           <Badge variant="outline" className="border-blue-200 bg-blue-50 text-blue-700">
             <Home className="mr-1.5 h-3.5 w-3.5" />
@@ -141,23 +148,26 @@ function PropertyInfoCard({ property, reviewStats }) {
             <div className="text-muted-foreground flex flex-wrap items-center gap-4 text-xs">
               <span className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5" />
-                Listed {listedAt}
+                {t('adminPropertyDetail.propertyInfo.listed', { date: listedAt })}
               </span>
               <span className="flex items-center gap-1">
                 <Eye className="h-3.5 w-3.5" />
-                {property.viewCount ?? 0} views
+                {t('adminPropertyDetail.propertyInfo.views', { count: property.viewCount ?? 0 })}
               </span>
               {reviewCount > 0 && (
                 <span className="flex items-center gap-1">
                   <Star className="fill-amber-400 text-amber-400 h-3.5 w-3.5" />
-                  {avgRating.toFixed(1)} ({reviewCount} reviews)
+                  {t('adminPropertyDetail.propertyInfo.reviews', {
+                    rating: avgRating.toFixed(1),
+                    count: reviewCount,
+                  })}
                 </span>
               )}
             </div>
           </div>
           <div className="shrink-0 text-left sm:text-right">
             <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-wider">
-              Monthly rent
+              {t('adminPropertyDetail.propertyInfo.monthlyRent')}
             </p>
             <p className="text-primary text-2xl font-extrabold sm:text-3xl">{price}</p>
           </div>
@@ -167,14 +177,14 @@ function PropertyInfoCard({ property, reviewStats }) {
   );
 }
 
-function PropertyMapSection({ property, address }) {
+function PropertyMapSection({ property, address, t }) {
   const coords = getPropertyCoordinates(property);
 
   if (!coords) {
     return (
       <Card className="border-border/60 shadow-sm">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold">Location</CardTitle>
+          <CardTitle className="text-base font-semibold">{t('adminPropertyDetail.propertyInfo.location')}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground flex items-start gap-2 text-sm">
@@ -182,7 +192,7 @@ function PropertyMapSection({ property, address }) {
             {address}
           </p>
           <p className="text-muted-foreground mt-3 text-xs">
-            Map preview unavailable — no coordinates on this listing.
+            {t('adminPropertyDetail.map.unavailable')}
           </p>
         </CardContent>
       </Card>
@@ -201,7 +211,7 @@ function PropertyMapSection({ property, address }) {
   return (
     <Card className="border-border/60 overflow-hidden shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base font-semibold">Location</CardTitle>
+        <CardTitle className="text-base font-semibold">{t('adminPropertyDetail.propertyInfo.location')}</CardTitle>
         <p className="text-muted-foreground flex items-start gap-2 text-sm">
           <MapPin className="text-primary mt-0.5 h-4 w-4 shrink-0" />
           {address}
@@ -212,7 +222,7 @@ function PropertyMapSection({ property, address }) {
           <Suspense
             fallback={
               <div className="bg-muted/40 flex h-full items-center justify-center text-sm text-muted-foreground">
-                Loading map…
+                {t('adminPropertyDetail.map.loading')}
               </div>
             }
           >
@@ -229,14 +239,14 @@ function PropertyMapSection({ property, address }) {
   );
 }
 
-function DescriptionSection({ property }) {
+function DescriptionSection({ property, t }) {
   const description =
     property.displayDescription ??
-    formatLocalizedText(property?.description, 'No description available');
+    formatLocalizedText(property?.description, t('adminPropertyDetail.propertyInfo.noDescription'));
   return (
     <Card className="border-border/60 shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base font-semibold">Description</CardTitle>
+        <CardTitle className="text-base font-semibold">{t('adminPropertyDetail.propertyInfo.description')}</CardTitle>
       </CardHeader>
       <CardContent className="text-muted-foreground space-y-3 pt-0 text-sm leading-relaxed">
         <p>{description}</p>
@@ -245,11 +255,11 @@ function DescriptionSection({ property }) {
   );
 }
 
-function SpecificationsCard({ property }) {
+function SpecificationsCard({ property, t }) {
   return (
     <Card className="border-border/60 shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base font-semibold">Specifications</CardTitle>
+        <CardTitle className="text-base font-semibold">{t('adminPropertyDetail.propertyInfo.specifications')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 pt-0">
         <div className="grid grid-cols-2 gap-3">
@@ -257,32 +267,34 @@ function SpecificationsCard({ property }) {
             <Bed className="text-primary h-5 w-5" />
             <div>
               <p className="font-semibold">{property.bedrooms ?? '—'}</p>
-              <p className="text-muted-foreground text-xs">Bedrooms</p>
+              <p className="text-muted-foreground text-xs">{t('adminPropertyDetail.propertyInfo.bedrooms')}</p>
             </div>
           </div>
           <div className="bg-muted/30 flex items-center gap-3 rounded-lg border px-3 py-3">
             <Bath className="text-primary h-5 w-5" />
             <div>
               <p className="font-semibold">{property.bathrooms ?? '—'}</p>
-              <p className="text-muted-foreground text-xs">Bathrooms</p>
+              <p className="text-muted-foreground text-xs">{t('adminPropertyDetail.propertyInfo.bathrooms')}</p>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div>
-            <p className="text-muted-foreground text-xs">Listing ID</p>
+            <p className="text-muted-foreground text-xs">{t('adminPropertyDetail.propertyInfo.listingId')}</p>
             <p className="mt-0.5 truncate font-medium">{property.id}</p>
           </div>
           <div>
-            <p className="text-muted-foreground text-xs">Views</p>
+            <p className="text-muted-foreground text-xs">{t('adminPropertyDetail.propertyInfo.viewsLabel')}</p>
             <p className="text-primary mt-0.5 font-bold">{property.viewCount ?? 0}</p>
           </div>
         </div>
 
         {Array.isArray(property.amenities) && property.amenities.length > 0 && (
           <div>
-            <p className="text-muted-foreground mb-2 text-xs font-semibold uppercase">Amenities</p>
+            <p className="text-muted-foreground mb-2 text-xs font-semibold uppercase">
+              {t('adminPropertyDetail.propertyInfo.amenities')}
+            </p>
             <div className="flex flex-wrap gap-1.5">
               {property.amenities.map((item, idx) => (
                 <Badge key={`amenity-${idx}`} variant="secondary" className="text-xs font-normal">
@@ -297,12 +309,12 @@ function SpecificationsCard({ property }) {
   );
 }
 
-function OwnerCard({ property }) {
+function OwnerCard({ property, t }) {
   if (!property.owner) return null;
   return (
     <Card className="border-border/60 shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base font-semibold">Owner</CardTitle>
+        <CardTitle className="text-base font-semibold">{t('adminPropertyDetail.propertyInfo.owner')}</CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
         <p className="font-semibold">
@@ -319,7 +331,7 @@ function OwnerCard({ property }) {
   );
 }
 
-function PropertyReviewsSection({ propertyId }) {
+function PropertyReviewsSection({ propertyId, t }) {
   const { data: reviews = [], isLoading } = useAdminPropertyReviews(propertyId);
   const { data: stats } = useAdminPropertyReviewStats(propertyId);
 
@@ -329,21 +341,21 @@ function PropertyReviewsSection({ propertyId }) {
         <CardTitle className="flex items-center justify-between text-base font-semibold">
           <span className="flex items-center gap-2">
             <MessageSquare className="text-primary h-4 w-4" />
-            Reviews ({stats?.totalReviews ?? reviews.length})
+            {t('adminPropertyDetail.reviews.title', { count: stats?.totalReviews ?? reviews.length })}
           </span>
           {stats?.totalReviews > 0 && (
             <span className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
               <Star className="fill-amber-400 text-amber-400 h-3.5 w-3.5" />
-              {stats.averageRating.toFixed(1)} avg
+              {t('adminPropertyDetail.reviews.average', { rating: stats.averageRating.toFixed(1) })}
             </span>
           )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 pt-0">
         {isLoading ? (
-          <p className="text-muted-foreground text-sm">Loading reviews…</p>
+          <p className="text-muted-foreground text-sm">{t('adminPropertyDetail.reviews.loading')}</p>
         ) : reviews.length === 0 ? (
-          <EmptyState title="No reviews yet" description="This property has no published reviews." />
+          <EmptyState title={t('adminPropertyDetail.reviews.emptyTitle')} description={t('adminPropertyDetail.reviews.emptyDescription')} />
         ) : (
           reviews.map((review) => (
             <div key={review.id} className="rounded-lg border p-3">
@@ -376,6 +388,7 @@ function PropertyReviewsSection({ propertyId }) {
 }
 
 function PropertiesDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: property, isLoading, isError, refetch } = useAdminProperty(id);
@@ -395,7 +408,7 @@ function PropertiesDetailPage() {
     return (
       <main className="bg-background min-h-screen px-4 py-8">
         <div className="mx-auto max-w-5xl">
-          <ErrorState title="Failed to load property details" onRetry={refetch} />
+          <ErrorState title={t('adminPropertyDetail.errors.failedLoadPropertyDetails')} onRetry={refetch} />
         </div>
       </main>
     );
@@ -403,7 +416,7 @@ function PropertiesDetailPage() {
 
   const address =
     property.displayAddress ??
-    formatLocalizedText(property.address || property.location, 'Address not available');
+    formatLocalizedText(property.address || property.location, t('adminPropertyDetail.propertyInfo.addressUnavailable'));
 
   return (
     <main className="bg-background min-h-screen pb-12">
@@ -417,28 +430,29 @@ function PropertiesDetailPage() {
             <ChevronLeft className="h-5 w-5" />
           </button>
           <div>
-            <h1 className="text-lg font-bold tracking-tight sm:text-xl">Property Details</h1>
-            <p className="text-muted-foreground text-xs">Admin listing review</p>
+            <h1 className="text-lg font-bold tracking-tight sm:text-xl">{t('adminPropertyDetail.title')}</h1>
+            <p className="text-muted-foreground text-xs">{t('adminPropertyDetail.subtitle')}</p>
           </div>
         </div>
 
         <div className="space-y-5">
           <GallerySection
             images={property.images}
-            title={property.displayTitle ?? formatLocalizedText(property.title, 'Property')}
+            title={property.displayTitle ?? formatLocalizedText(property.title, t('adminPropertyDetail.propertyInfo.propertyFallback'))}
+            t={t}
           />
 
-          <PropertyInfoCard property={property} reviewStats={reviewStats} />
+          <PropertyInfoCard property={property} reviewStats={reviewStats} t={t} />
 
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
             <div className="space-y-5 lg:col-span-2">
-              <DescriptionSection property={property} />
-              <PropertyMapSection property={property} address={address} />
-              <PropertyReviewsSection propertyId={property.id} />
+              <DescriptionSection property={property} t={t} />
+              <PropertyMapSection property={property} address={address} t={t} />
+              <PropertyReviewsSection propertyId={property.id} t={t} />
             </div>
             <div className="space-y-5">
-              <SpecificationsCard property={property} />
-              <OwnerCard property={property} />
+              <SpecificationsCard property={property} t={t} />
+              <OwnerCard property={property} t={t} />
             </div>
           </div>
         </div>

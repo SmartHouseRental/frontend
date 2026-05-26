@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   ChevronLeft,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -28,6 +29,7 @@ import { getAgreementStatusMeta, formatLocalizedText } from '@/features/admin/ma
 import AgreementPaymentsSection from '@/features/admin/components/AgreementPaymentsSection';
 
 function AgreementDetailPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams();
   const { data: agreement, isLoading, isError, refetch } = useAdminAgreement(id);
@@ -35,6 +37,11 @@ function AgreementDetailPage() {
   const { data: renter } = useAdminResolvedUser(agreement?.renterId);
   const { data: owner } = useAdminResolvedUser(agreement?.ownerId);
   const { data: property } = useAdminResolvedProperty(agreement?.propertyId);
+
+  const translateAgreementStatus = (statusValue) =>
+    t(`adminAgreementDetail.statuses.${statusValue}`, {
+      defaultValue: getAgreementStatusMeta(statusValue).label,
+    });
 
   if (isLoading) {
     return (
@@ -47,7 +54,10 @@ function AgreementDetailPage() {
   if (isError || !agreement) {
     return (
       <main className="mx-auto flex max-w-[1440px] flex-col gap-6 px-6 py-8">
-        <ErrorState title="Failed to load agreement details" onRetry={refetch} />
+        <ErrorState
+          title={t('adminAgreementDetail.errors.failedLoadAgreementDetails')}
+          onRetry={refetch}
+        />
       </main>
     );
   }
@@ -55,8 +65,10 @@ function AgreementDetailPage() {
   const statusMeta = getAgreementStatusMeta(agreement.status);
   const formatDate = (value) => new Date(value).toLocaleDateString();
   const propertyTitle = property
-    ? formatLocalizedText(property.title, 'Property')
-    : `Property ${String(agreement.propertyId || '').slice(0, 8)}`;
+    ? formatLocalizedText(property.title, t('adminAgreementDetail.propertyFallback'))
+    : t('adminAgreementDetail.propertyIdFallback', {
+        id: String(agreement.propertyId || '').slice(0, 8),
+      });
   const propertyImage =
     Array.isArray(property?.images) && property.images.length > 0 ? property.images[0] : null;
 
@@ -70,7 +82,9 @@ function AgreementDetailPage() {
         >
           <ChevronLeft className="h-6 w-6" />
         </button>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Agreement Details</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          {t('adminAgreementDetail.title')}
+        </h1>
       </div>
 
       <div className="space-y-6">
@@ -81,8 +95,12 @@ function AgreementDetailPage() {
                 <User size={28} />
               </div>
               <div>
-                <p className="text-xs font-bold text-[#A47551] uppercase">Renter / ተከራይ</p>
-                <h3 className="text-lg font-bold">{renter?.displayName || 'Renter'}</h3>
+                <p className="text-xs font-bold text-[#A47551] uppercase">
+                  {t('adminAgreementDetail.cardLabels.renter')}
+                </p>
+                <h3 className="text-lg font-bold">
+                  {renter?.displayName || t('adminAgreementDetail.fallbacks.renter')}
+                </h3>
                 {renter?.email && (
                   <p className="text-muted-foreground text-xs">{renter.email}</p>
                 )}
@@ -91,7 +109,7 @@ function AgreementDetailPage() {
                   className="mt-1 border-green-200 bg-green-50 text-green-700"
                 >
                   <CheckCircle2 size={14} className="mr-1" />
-                  Verified Identity
+                  {t('adminAgreementDetail.badges.verifiedIdentity')}
                 </Badge>
               </div>
             </CardContent>
@@ -103,8 +121,12 @@ function AgreementDetailPage() {
                 <Building2 size={28} />
               </div>
               <div>
-                <p className="text-xs font-bold text-[#A47551] uppercase">Owner / አከራይ</p>
-                <h3 className="text-lg font-bold">{owner?.displayName || 'Owner'}</h3>
+                <p className="text-xs font-bold text-[#A47551] uppercase">
+                  {t('adminAgreementDetail.cardLabels.owner')}
+                </p>
+                <h3 className="text-lg font-bold">
+                  {owner?.displayName || t('adminAgreementDetail.fallbacks.owner')}
+                </h3>
                 {owner?.email && (
                   <p className="text-muted-foreground text-xs">{owner.email}</p>
                 )}
@@ -113,7 +135,7 @@ function AgreementDetailPage() {
                   className="mt-1 border-green-200 bg-green-50 text-green-700"
                 >
                   <CheckCircle2 size={14} className="mr-1" />
-                  Verified Owner
+                  {t('adminAgreementDetail.badges.verifiedOwner')}
                 </Badge>
               </div>
             </CardContent>
@@ -135,14 +157,16 @@ function AgreementDetailPage() {
                 )}
               </div>
               <div>
-                <p className="text-primary text-xs font-bold uppercase">Linked Property</p>
+                <p className="text-primary text-xs font-bold uppercase">
+                  {t('adminAgreementDetail.linkedProperty')}
+                </p>
                 <h3 className="text-base leading-tight font-bold">{propertyTitle}</h3>
                 <button
                   type="button"
                   className="text-primary mt-1 text-xs font-medium underline"
                   onClick={() => navigate(`/admin/properties/${agreement.propertyId}`)}
                 >
-                  View property
+                  {t('adminAgreementDetail.viewProperty')}
                 </button>
               </div>
             </CardContent>
@@ -155,12 +179,14 @@ function AgreementDetailPage() {
               <div className="space-y-4">
                 <h4 className="flex items-center gap-2 text-sm font-bold tracking-widest text-[#A47551] uppercase">
                   <Gavel size={18} />
-                  Core Lease Terms
+                  {t('adminAgreementDetail.coreLeaseTerms')}
                 </h4>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Card className="border-[#A47551]/10 bg-[#F5F0E6]/50">
                     <CardContent className="p-4">
-                      <p className="text-xs font-bold text-[#A47551]">Monthly Rent / ወርሃዊ ኪራይ</p>
+                      <p className="text-xs font-bold text-[#A47551]">
+                        {t('adminAgreementDetail.monthlyRentLabel')}
+                      </p>
                       <p className="text-primary text-2xl font-black">
                         {agreement.monthlyRent} <span className="text-sm">ETB</span>
                       </p>
@@ -168,10 +194,14 @@ function AgreementDetailPage() {
                   </Card>
                   <Card className="border-[#A47551]/10 bg-[#F5F0E6]/50">
                     <CardContent className="p-4">
-                      <p className="text-xs font-bold text-[#A47551]">Status</p>
-                      <p className="text-2xl font-black text-[#221610]">{statusMeta.label}</p>
+                      <p className="text-xs font-bold text-[#A47551]">
+                        {t('adminAgreementDetail.statusLabel')}
+                      </p>
+                      <p className="text-2xl font-black text-[#221610]">
+                        {translateAgreementStatus(agreement.status)}
+                      </p>
                       <p className="mt-1 text-[10px] font-medium text-[#A47551] uppercase">
-                        Current lifecycle status
+                        {t('adminAgreementDetail.lifecycleStatus')}
                       </p>
                     </CardContent>
                   </Card>
@@ -181,13 +211,15 @@ function AgreementDetailPage() {
               <div className="space-y-4">
                 <h4 className="flex items-center gap-2 text-sm font-bold tracking-widest text-[#A47551] uppercase">
                   <Receipt size={18} />
-                  Lease period
+                  {t('adminAgreementDetail.leasePeriod')}
                 </h4>
                 <p className="text-sm">
                   {formatDate(agreement.startDate)} — {formatDate(agreement.endDate)}
                 </p>
                 <p className="text-muted-foreground text-xs">
-                  Currency: {agreement.currency || 'ETB'}
+                  {t('adminAgreementDetail.currencyLabel', {
+                    currency: agreement.currency || 'ETB',
+                  })}
                 </p>
               </div>
             </div>
@@ -196,7 +228,7 @@ function AgreementDetailPage() {
 
             <div className="max-w-xs">
               <label className="mb-1.5 block text-[10px] font-black text-[#A47551] uppercase">
-                Update status
+                {t('adminAgreementDetail.updateStatus.label')}
               </label>
               <Select
                 defaultValue={agreement.status}
@@ -205,17 +237,23 @@ function AgreementDetailPage() {
                 }
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select status" />
+                  <SelectValue placeholder={t('adminAgreementDetail.updateStatus.placeholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="sent">Sent</SelectItem>
-                  <SelectItem value="payment_pending">Payment Pending</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                  <SelectItem value="terminated">Terminated</SelectItem>
-                  <SelectItem value="expired">Expired</SelectItem>
+                  {[
+                    'draft',
+                    'sent',
+                    'payment_pending',
+                    'completed',
+                    'rejected',
+                    'cancelled',
+                    'terminated',
+                    'expired',
+                  ].map((statusValue) => (
+                    <SelectItem key={statusValue} value={statusValue}>
+                      {translateAgreementStatus(statusValue)}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

@@ -1,6 +1,7 @@
 import { Heart } from "lucide-react";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { useFavorites, useToggleFavorite } from "../hooks/useFavorites";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +14,7 @@ import { cn } from "@/lib/utils";
 export default function HeartButton({ property, variant = "", showLabel = false, className = "" }) {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   const { data: favorites } = useFavorites();
   const toggleFavorite = useToggleFavorite();
@@ -52,7 +54,7 @@ export default function HeartButton({ property, variant = "", showLabel = false,
             : "text-foreground border-border/60 hover:bg-muted",
           className
         )}
-        aria-label={isSaved ? "Remove from favorites" : "Save to favorites"}
+        aria-label={isSaved ? t('savedProperties.removeFromFavorites') : t('savedProperties.saveToFavorites')}
       >
         <Heart
           className={cn(
@@ -63,7 +65,7 @@ export default function HeartButton({ property, variant = "", showLabel = false,
           )}
           strokeWidth={isSaved ? 2.5 : 2}
         />
-        {showLabel && <span>{isSaved ? "Saved" : "Save"}</span>}
+        {showLabel && <span>{isSaved ? t('savedProperties.saved') : t('savedProperties.save')}</span>}
       </button>
     );
   }
@@ -80,7 +82,7 @@ export default function HeartButton({ property, variant = "", showLabel = false,
           : "bg-white/20 backdrop-blur-sm hover:bg-white/40",
         className
       )}
-      aria-label={isSaved ? "Remove from favorites" : "Save to favorites"}
+      aria-label={isSaved ? t('savedProperties.removeFromFavorites') : t('savedProperties.saveToFavorites')}
     >
       <Heart
         className={cn(

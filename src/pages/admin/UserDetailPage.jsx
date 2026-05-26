@@ -1,14 +1,6 @@
 import { Card } from '@/components/ui/card';
-import {
-  MailCheck,
-  ChartBar,
-  Mail,
-  CircleUserRound,
-  MoveLeft,
-  ShieldBan,
-  ShieldCheck,
-  BadgeCheck,
-} from 'lucide-react';
+import { MailCheck, Mail, CircleUserRound, MoveLeft, ShieldBan, ShieldCheck, BadgeCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
 import UserDetailTabs from '@/features/user-managment/components/UserDetailTab';
@@ -26,6 +18,7 @@ import { getUserStatusMeta, getVerificationStateMeta } from '@/features/admin/ma
 
 function UserDetailPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { id } = useParams();
   const { data: user, isLoading, isError, refetch } = useAdminUser(id);
   const updateStatus = useAdminUpdateUserStatus();
@@ -43,7 +36,7 @@ function UserDetailPage() {
   if (isError || !user) {
     return (
       <div className="p-8">
-        <ErrorState title="Failed to load user" onRetry={refetch} />
+        <ErrorState title={t('adminUserDetail.errors.failedToLoadUser', { defaultValue: 'Failed to load user' })} onRetry={refetch} />
       </div>
     );
   }
@@ -52,6 +45,12 @@ function UserDetailPage() {
   const statusMeta = getUserStatusMeta(user.status);
   const verificationMeta = getVerificationStateMeta(user.verificationState);
   const isVerified = user.verificationState === 'verified';
+  const roleLabel = t(`adminUserDetail.roles.${user.role}`, { defaultValue: user.role });
+  const statusLabel = t(`adminUserDetail.statuses.${user.status}`, { defaultValue: statusMeta.label });
+  const verificationLabel = t(`adminUserDetail.verificationStates.${user.verificationState}`, {
+    defaultValue: verificationMeta.label,
+  });
+  const emailLabel = user.emailVerified ? t('adminUserDetail.verified') : t('adminUserDetail.notVerified');
 
   const handleToggleVerification = () => {
     const latestDoc = user.verificationDocs?.[0];
@@ -78,7 +77,7 @@ function UserDetailPage() {
         >
           <MoveLeft className="text-primary" />
         </button>
-        <h1 className="text-primary text-xl font-bold tracking-tight">Admin Control Panel</h1>
+        <h1 className="text-primary text-xl font-bold tracking-tight">{t('adminUserDetail.adminControlPanel')}</h1>
       </div>
 
       <div className="mx-auto mt-5 max-w-400">
@@ -97,10 +96,10 @@ function UserDetailPage() {
                 <div className="mb-2 flex flex-wrap items-center justify-center gap-3 md:justify-start">
                   <h2 className="text-primary text-3xl font-extrabold">{fullName}</h2>
                   <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ${verificationMeta.style}`}>
-                    <BadgeCheck /> {verificationMeta.label}
+                    <BadgeCheck /> {verificationLabel}
                   </span>
                   <span className="bg-primary/10 text-primary inline-flex items-center rounded-full px-3 py-1 text-xs font-bold">
-                    {user.role}
+                    {roleLabel}
                   </span>
                 </div>
                 <div className="text-primary/60 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-medium">
@@ -108,13 +107,13 @@ function UserDetailPage() {
                     <span>
                       <CircleUserRound size={16} />
                     </span>
-                    Account: <span className="ml-0.5 font-bold text-green-600">{statusMeta.label}</span>
+                    {t('adminUserDetail.account')}: <span className="ml-0.5 font-bold text-green-600">{statusLabel}</span>
                   </span>
                   <span className="flex items-center gap-1.5">
                     <span className="text-[18px]">
                       <MailCheck size={16} />
                     </span>
-                    Email: <span className="ml-0.5 font-bold text-green-600">{user.emailVerified ? 'Verified' : 'Not Verified'}</span>
+                    {t('adminUserDetail.email')}: <span className="ml-0.5 font-bold text-green-600">{emailLabel}</span>
                   </span>
                 </div>
               </div>
@@ -125,7 +124,7 @@ function UserDetailPage() {
                 onClick={handleToggleVerification}
               >
                 <ShieldCheck />
-                {isVerified ? 'Unverify' : 'Verify'}
+                {isVerified ? t('adminUserDetail.unverify') : t('adminUserDetail.verify')}
               </Button>
               <Button
                 className="bg-accent/10 text-accent hover:bg-accent/20 border-accent/20 inline-flex flex-1 items-center justify-center rounded-lg border px-5 py-2.5 font-bold transition-all lg:flex-none"
@@ -136,20 +135,20 @@ function UserDetailPage() {
                   })
                 }
               >
-                <ShieldBan /> Suspend
+                <ShieldBan /> {t('adminUserDetail.suspend')}
               </Button>
               <Button className="bg-primary shadow-primary/20 inline-flex flex-1 items-center justify-center rounded-lg px-5 py-2.5 font-bold text-white shadow-lg transition-all hover:brightness-110 lg:flex-none">
                 <span className="mr-2">
                   <Mail size={19} />
                 </span>
-                Send Notification
+                {t('adminUserDetail.sendNotification')}
               </Button>
             </div>
           </div>
         </Card>
 
         <div className="">
-          <UserDetailTabs user={user} />
+          <UserDetailTabs user={user} t={t} />
         </div>
       </div>
     </div>

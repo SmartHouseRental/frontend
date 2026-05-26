@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { useTranslation } from 'react-i18next';
 import {
   X,
   CalendarDays,
@@ -25,11 +26,15 @@ export function AppointmentDetailSheet({
   onCancel,
   isUpdating,
 }) {
+  const { t } = useTranslation();
   if (!appointment) return null;
 
   const canApprove = appointment.status === 'PENDING';
   const canCancel =
     appointment.status === 'PENDING' || appointment.status === 'ACCEPTED';
+  const statusLabel = t(`owner.appointments.statuses.${appointment.status}`, {
+    defaultValue: appointment.statusLabel,
+  });
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
@@ -37,22 +42,27 @@ export function AppointmentDetailSheet({
         type="button"
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
-        aria-label="Close"
+        aria-label={t('owner.appointments.detail.close')}
       />
       <Card className="relative z-10 flex h-full w-full max-w-md flex-col overflow-hidden rounded-none border-y-0 border-r-0 shadow-2xl">
         <CardHeader className="flex flex-row items-start justify-between space-y-0 border-b pb-4">
           <div>
             <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">
-              Appointment details
+              {t('owner.appointments.detail.title')}
             </p>
             <h3 className="text-foreground mt-1 text-xl font-bold">{appointment.renterName}</h3>
             <span
               className={`mt-2 inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${STATUS_STYLES[appointment.status]}`}
             >
-              {appointment.statusLabel}
+              {statusLabel}
             </span>
           </div>
-          <Button variant="ghost" size="icon" onClick={onClose}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            aria-label={t('owner.appointments.detail.close')}
+          >
             <X size={18} />
           </Button>
         </CardHeader>
@@ -67,19 +77,21 @@ export function AppointmentDetailSheet({
           )}
 
           <div className="space-y-3">
-            <h4 className="text-sm font-bold">Property</h4>
+            <h4 className="text-sm font-bold">{t('owner.appointments.detail.property')}</h4>
             <p className="font-semibold">{appointment.propertyTitle}</p>
             <p className="text-muted-foreground flex items-start gap-2 text-sm">
               <MapPin size={14} className="mt-0.5 shrink-0" />
               {appointment.propertyAddress || '—'}
             </p>
             <Button variant="outline" size="sm" asChild>
-              <Link to={`/owner/properties/${appointment.propertyId}`}>View property</Link>
+              <Link to={`/owner/properties/${appointment.propertyId}`}>
+                {t('owner.appointments.actions.viewProperty')}
+              </Link>
             </Button>
           </div>
 
           <div className="space-y-3">
-            <h4 className="text-sm font-bold">Schedule</h4>
+            <h4 className="text-sm font-bold">{t('owner.appointments.detail.schedule')}</h4>
             <p className="flex items-center gap-2 text-sm">
               <CalendarDays size={14} className="text-muted-foreground" />
               {appointment.displayDate}
@@ -91,7 +103,7 @@ export function AppointmentDetailSheet({
           </div>
 
           <div className="space-y-3">
-            <h4 className="text-sm font-bold">Renter</h4>
+            <h4 className="text-sm font-bold">{t('owner.appointments.detail.renter')}</h4>
             <p className="flex items-center gap-2 text-sm">
               <User size={14} className="text-muted-foreground" />
               {appointment.renterName}
@@ -119,7 +131,7 @@ export function AppointmentDetailSheet({
           {appointment.note && (
             <div className="bg-muted/50 rounded-xl p-4">
               <p className="text-muted-foreground mb-1 flex items-center gap-1 text-xs font-bold uppercase">
-                <MessageSquare size={12} /> Message from renter
+                <MessageSquare size={12} /> {t('owner.appointments.detail.messageFromRenter')}
               </p>
               <p className="text-sm">{appointment.note}</p>
             </div>
@@ -133,7 +145,7 @@ export function AppointmentDetailSheet({
                 to={`/owner/agreements/create?propertyId=${appointment.propertyId}&renterId=${appointment.renterId}&appointmentId=${appointment.id}`}
               >
                 <Handshake size={16} />
-                Create lease agreement
+                {t('owner.appointments.detail.createLeaseAgreement')}
               </Link>
             </Button>
           )}
@@ -145,7 +157,7 @@ export function AppointmentDetailSheet({
                 onClick={() => onAccept(appointment.id)}
               >
                 {isUpdating ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle2 size={16} />}
-                Approve
+                {t('owner.appointments.actions.approve')}
               </Button>
               <Button
                 variant="outline"
@@ -153,7 +165,7 @@ export function AppointmentDetailSheet({
                 disabled={isUpdating}
                 onClick={() => onReject(appointment.id)}
               >
-                <XCircle size={16} /> Reject
+                <XCircle size={16} /> {t('owner.appointments.actions.reject')}
               </Button>
             </div>
           )}
@@ -164,7 +176,7 @@ export function AppointmentDetailSheet({
               disabled={isUpdating}
               onClick={() => onCancel(appointment.id)}
             >
-              Cancel appointment
+              {t('owner.appointments.detail.cancelAppointment')}
             </Button>
           )}
         </div>

@@ -3,13 +3,13 @@
 export const DEFAULT_LIST_LIMIT = 12;
 export const DEFAULT_STATUS = 'AVAILABLE';
 
-export const PROPERTY_CATEGORY_OPTIONS = [
-  { value: 'all', label: 'All Types' },
-  { value: 'Apartment', label: 'Apartment' },
-  { value: 'Villa', label: 'Villa' },
-  { value: 'Condominium', label: 'Condominium' },
-  { value: 'Service Apartment', label: 'Service Apartment' },
-  { value: 'Private Compound', label: 'Private Compound' },
+const PROPERTY_CATEGORY_OPTIONS = [
+  { value: 'all', labelKey: 'explorePage.categories.allTypes' },
+  { value: 'Apartment', labelKey: 'explorePage.categories.apartment' },
+  { value: 'Villa', labelKey: 'explorePage.categories.villa' },
+  { value: 'Condominium', labelKey: 'explorePage.categories.condominium' },
+  { value: 'Service Apartment', labelKey: 'explorePage.categories.serviceApartment' },
+  { value: 'Private Compound', labelKey: 'explorePage.categories.privateCompound' },
 ];
 
 export const BEDROOM_OPTIONS = ['1', '2', '3', '4'];
@@ -20,10 +20,25 @@ export const PRICE_MIN_THOUSANDS = 5;
 export const PRICE_MAX_THOUSANDS = 200;
 export const PRICE_SLIDER_STEP_THOUSANDS = 5;
 
-export const SORT_OPTIONS = [
-  { value: 'newest', label: 'Newest Listings', sortBy: 'createdAt', order: 'desc' },
-  { value: 'low', label: 'Price: Low to High', sortBy: 'price', order: 'asc' },
-  { value: 'high', label: 'Price: High to Low', sortBy: 'price', order: 'desc' },
+const SORT_OPTIONS = [
+  {
+    value: 'newest',
+    labelKey: 'explorePage.sort.options.newestListings',
+    sortBy: 'createdAt',
+    order: 'desc',
+  },
+  {
+    value: 'low',
+    labelKey: 'explorePage.sort.options.priceLowToHigh',
+    sortBy: 'price',
+    order: 'asc',
+  },
+  {
+    value: 'high',
+    labelKey: 'explorePage.sort.options.priceHighToLow',
+    sortBy: 'price',
+    order: 'desc',
+  },
 ];
 
 const FILTER_PARAM_KEYS = ['category', 'minPrice', 'maxPrice', 'bedrooms', 'bathrooms'];
@@ -50,6 +65,20 @@ export function getSortOption(sortValue) {
     return SORT_OPTIONS[0];
   }
   return SORT_OPTIONS.find((o) => o.value === sortValue) || SORT_OPTIONS[0];
+}
+
+export function getSortOptions(t) {
+  return SORT_OPTIONS.map((option) => ({
+    ...option,
+    label: t(option.labelKey),
+  }));
+}
+
+export function getPropertyCategoryOptions(t) {
+  return PROPERTY_CATEGORY_OPTIONS.map((option) => ({
+    ...option,
+    label: t(option.labelKey),
+  }));
 }
 
 /** Read explore/search filter state from URL search params */
@@ -144,29 +173,51 @@ export function clearFilterParams(prev) {
 }
 
 /** Labels for active filter chips */
-export function getActiveFilterChips(filters) {
+export function getActiveFilterChips(filters, t) {
   const chips = [];
 
   if (filters.q) {
-    chips.push({ id: 'q', label: 'Search', value: filters.q });
+    chips.push({ id: 'q', label: t('explorePage.activeFilters.search'), value: filters.q });
   }
   if (filters.category) {
+    const categoryLabel =
+      getPropertyCategoryOptions(t).find((o) => o.value === filters.category)?.label ||
+      filters.category;
+
     chips.push({
       id: 'category',
-      label: 'Type',
-      value: PROPERTY_CATEGORY_OPTIONS.find((o) => o.value === filters.category)?.label || filters.category,
+      label: t('explorePage.activeFilters.type'),
+      value: categoryLabel,
     });
   }
   if (filters.minPrice != null || filters.maxPrice != null) {
-    const min = filters.minPrice != null ? `${filters.minPrice.toLocaleString()} ETB` : 'Any';
-    const max = filters.maxPrice != null ? `${filters.maxPrice.toLocaleString()} ETB` : 'Any';
-    chips.push({ id: 'price', label: 'Budget', value: `${min} – ${max}` });
+    const min =
+      filters.minPrice != null
+        ? `${filters.minPrice.toLocaleString()} ETB`
+        : t('explorePage.activeFilters.any');
+    const max =
+      filters.maxPrice != null
+        ? `${filters.maxPrice.toLocaleString()} ETB`
+        : t('explorePage.activeFilters.any');
+    chips.push({
+      id: 'price',
+      label: t('explorePage.activeFilters.budget'),
+      value: `${min} – ${max}`,
+    });
   }
   if (filters.bedrooms) {
-    chips.push({ id: 'bedrooms', label: 'Bedrooms', value: filters.bedrooms });
+    chips.push({
+      id: 'bedrooms',
+      label: t('explorePage.activeFilters.bedrooms'),
+      value: filters.bedrooms,
+    });
   }
   if (filters.bathrooms) {
-    chips.push({ id: 'bathrooms', label: 'Bathrooms', value: filters.bathrooms });
+    chips.push({
+      id: 'bathrooms',
+      label: t('explorePage.activeFilters.bathrooms'),
+      value: filters.bathrooms,
+    });
   }
 
   return chips;

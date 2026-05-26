@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -8,25 +9,28 @@ import { Button } from '@/components/ui/button';
 import { Lock, Save, Loader2, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useChangePassword } from '../hooks/useChangePassword';
 
-const passwordSchema = z.object({
-    currentPassword: z.string().min(1, 'Current password is required'),
-    newPassword: z.string().min(8, 'Password must be at least 8 characters')
-        .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
-        .regex(/[a-z]/, 'Must contain at least one lowercase letter')
-        .regex(/[0-9]/, 'Must contain at least one number')
-        .regex(/[^A-Za-z0-9]/, 'Must contain at least one special character'),
-    confirmPassword: z.string().min(1, 'Please confirm your new password'),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-}).refine((data) => data.newPassword !== data.currentPassword, {
-    message: "New password must be different from current password",
-    path: ['newPassword'],
-});
-
 export function SecurityForm() {
+    const { t } = useTranslation();
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
+
+    const passwordSchema = z.object({
+        currentPassword: z.string().min(1, t('owner.profile.securityForm.validation.currentPasswordRequired')),
+        newPassword: z
+            .string()
+            .min(8, t('owner.profile.securityForm.validation.newPasswordMin'))
+            .regex(/[A-Z]/, t('owner.profile.securityForm.validation.uppercase'))
+            .regex(/[a-z]/, t('owner.profile.securityForm.validation.lowercase'))
+            .regex(/[0-9]/, t('owner.profile.securityForm.validation.number'))
+            .regex(/[^A-Za-z0-9]/, t('owner.profile.securityForm.validation.special')),
+        confirmPassword: z.string().min(1, t('owner.profile.securityForm.validation.confirmPasswordRequired')),
+    }).refine((data) => data.newPassword === data.confirmPassword, {
+        message: t('owner.profile.securityForm.validation.passwordsDoNotMatch'),
+        path: ['confirmPassword'],
+    }).refine((data) => data.newPassword !== data.currentPassword, {
+        message: t('owner.profile.securityForm.validation.passwordMustDiffer'),
+        path: ['newPassword'],
+    });
 
     const { register, handleSubmit, formState: { errors }, reset, watch } = useForm({
         resolver: zodResolver(passwordSchema),
@@ -39,6 +43,12 @@ export function SecurityForm() {
 
     const changePasswordMutation = useChangePassword();
     const newPasswordValue = watch('newPassword');
+
+    const strengthKey = newPasswordValue.length >= 12
+        ? 'strong'
+        : newPasswordValue.length >= 8
+            ? 'medium'
+            : 'weak';
 
     const onSubmit = (data) => {
         changePasswordMutation.mutate({
@@ -53,18 +63,18 @@ export function SecurityForm() {
         <Card>
             <CardContent className="space-y-5 pt-6">
                 <h3 className="text-foreground flex items-center gap-2 font-bold">
-                    <Lock size={16} /> Change Password
+                    <Lock size={16} /> {t('owner.profile.securityForm.title')}
                 </h3>
                 <form onSubmit={handleSubmit(onSubmit)} className="max-w-md space-y-4">
                     <div>
                         <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-                            Current Password
+                            {t('owner.profile.securityForm.labels.currentPassword')}
                         </label>
                         <div className="relative mt-1.5">
                             <Input
                                 type={showCurrent ? 'text' : 'password'}
                                 className="pr-10"
-                                placeholder="Enter current password"
+                                placeholder={t('owner.profile.securityForm.placeholders.currentPassword')}
                                 {...register('currentPassword')}
                             />
                             <button
@@ -80,13 +90,13 @@ export function SecurityForm() {
 
                     <div>
                         <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-                            New Password
+                            {t('owner.profile.securityForm.labels.newPassword')}
                         </label>
                         <div className="relative mt-1.5">
                             <Input
                                 type={showNew ? 'text' : 'password'}
                                 className="pr-10"
-                                placeholder="Enter new password"
+                                placeholder={t('owner.profile.securityForm.placeholders.newPassword')}
                                 {...register('newPassword')}
                             />
                             <button
@@ -110,7 +120,7 @@ export function SecurityForm() {
                                     ></div>
                                 </div>
                                 <p className="text-muted-foreground mt-1 text-[10px]">
-                                    {newPasswordValue.length >= 12 ? 'Strong' : newPasswordValue.length >= 8 ? 'Medium' : 'Weak'} password
+                                    {t(`owner.profile.securityForm.strength.${strengthKey}`)} {t('owner.profile.securityForm.password')}
                                 </p>
                             </div>
                         )}
@@ -118,12 +128,12 @@ export function SecurityForm() {
 
                     <div>
                         <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-                            Confirm New Password
+                            {t('owner.profile.securityForm.labels.confirmPassword')}
                         </label>
                         <Input
                             type="password"
                             className="mt-1.5"
-                            placeholder="Confirm new password"
+                            placeholder={t('owner.profile.securityForm.placeholders.confirmPassword')}
                             {...register('confirmPassword')}
                         />
                         {errors.confirmPassword && (
@@ -136,11 +146,11 @@ export function SecurityForm() {
                     <Button className="gap-2" type="submit" disabled={changePasswordMutation.isPending}>
                         {changePasswordMutation.isPending ? (
                             <>
-                                <Loader2 size={14} className="animate-spin" /> Updating...
+                                <Loader2 size={14} className="animate-spin" /> {t('owner.profile.securityForm.updating')}
                             </>
                         ) : (
                             <>
-                                <Save size={14} /> Update Password
+                                <Save size={14} /> {t('owner.profile.securityForm.updatePassword')}
                             </>
                         )}
                     </Button>

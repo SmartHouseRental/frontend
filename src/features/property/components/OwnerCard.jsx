@@ -1,7 +1,7 @@
-import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Star, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 function resolveOwner(property) {
   const raw = property?.owner;
@@ -25,12 +25,13 @@ function resolveOwner(property) {
 
 export default function OwnerCard({ property }) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const owner = resolveOwner(property);
   const ownerId = owner.id;
 
   const ownerName = owner.first_name
     ? `${owner.first_name}${owner.last_name ? ` ${owner.last_name}` : ''}`
-    : 'Host';
+    : t('propertyDetailsComponents.ownerCard.host');
 
   const avatarSrc =
     owner.image ||
@@ -71,26 +72,26 @@ export default function OwnerCard({ property }) {
             className={`text-xl font-bold transition-colors ${ownerId ? 'hover:text-primary cursor-pointer' : ''}`}
             onClick={openProfile}
           >
-            Meet your host, {ownerName}
+            {t('propertyDetailsComponents.ownerCard.meetHost', { name: ownerName })}
           </h3>
-          <Badge variant="secondary">Verified Owner</Badge>
+          <Badge variant="secondary">{t('propertyDetailsComponents.ownerCard.verifiedOwner')}</Badge>
         </div>
 
         <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
           {owner.email
-            ? `Hosted by ${ownerName} on our platform. I believe in providing a home that offers peace and privacy. Always available to help you settle in.`
-            : 'A verified property owner on our platform. Always available to help you settle in.'}
+            ? t('propertyDetailsComponents.ownerCard.hostedBy', { name: ownerName })
+            : t('propertyDetailsComponents.ownerCard.verifiedOwnerDesc')}
         </p>
 
         <div className="flex items-center gap-6 text-sm font-semibold">
           <div className="flex items-center gap-1">
             <Star className="text-primary h-4 w-4" />
-            {property?.isVerified ? '5.0 (Verified)' : 'New Host'}
+            {property?.isVerified ? t('propertyDetailsComponents.ownerCard.verifiedRating') : t('propertyDetailsComponents.ownerCard.newHost')}
           </div>
 
           <div className="flex items-center gap-1">
             <CheckCircle className="text-primary h-4 w-4" />
-            Verified Owner
+            {t('propertyDetailsComponents.ownerCard.verifiedOwner')}
           </div>
         </div>
       </div>
