@@ -4,10 +4,12 @@
 export const adaptProperty = (property, lang = 'en') => {
   if (!property) return null;
 
+  const langCode = String(lang || 'en').split('-')[0];
+
   // Helper to extract localized value
   const getLocalized = (field, fallback = '') => {
     if (typeof field === 'object' && field !== null) {
-      return field[lang] || field['en'] || fallback;
+      return field[langCode] || field['en'] || fallback;
     }
     return field || fallback;
   };
@@ -35,10 +37,20 @@ export const adaptProperty = (property, lang = 'en') => {
     price: property.price?.value || 0,
     currency: property.price?.currency || 'ETB',
     furnishingStatus: property.furnishingStatus || '',
-    amenities: property.amenities || [],
+    amenities: (property.amenities || []).map(a => {
+      if (typeof a === 'object' && a !== null) {
+        return a[langCode] || a['en'] || '';
+      }
+      return String(a);
+    }).filter(Boolean),
 
     // Lease Terms
-    leaseTerms: property.leaseTerms || {},
+    leaseTerms: property.leaseTerms
+      ? {
+          ...property.leaseTerms,
+          conditions: getLocalized(property.leaseTerms.conditions, ''),
+        }
+      : {},
     availableFrom: property.availableFrom,
     minDuration: property.leaseTerms?.minDuration,
 

@@ -1,5 +1,3 @@
-import PropertyDetailContent from '@/features/home/components/PropertyDetailContent';
+import PropertyDetails from '@/pages/PropertyDetails';
 
-export default function PropertyDetailPage() {
-    return <PropertyDetailContent />;
-}
+export default PropertyDetails;

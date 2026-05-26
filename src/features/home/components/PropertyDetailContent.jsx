@@ -1,7 +1,7 @@
 import { useParams } from 'react-router';
 import { useProperty } from '@/features/property/hooks/useProperty';
+import { adaptProperty } from '@/features/property/utils/propertyAdapter';
 import { parseLocation } from '@/lib/utils';
-import { getLocalizedField } from '@/lib/i18n/getLocalizedField';
 import { useLanguage } from '@/contexts/LanguageContext';
 import PropertyHero from '@/features/property/components/PropertyHero';
 import PropertyContent from '@/features/property/components/PropertyContent';
@@ -28,7 +28,9 @@ import {
 export default function PropertyDetailContent() {
     const { id } = useParams();
     const { locale } = useLanguage();
-    const { data: property, isLoading, isError, error } = useProperty(id);
+    const { data: rawProperty, isLoading, isError, error } = useProperty(id);
+
+    const property = rawProperty ? adaptProperty(rawProperty, locale) : null;
 
     if (isLoading) {
         return (
@@ -66,40 +68,37 @@ export default function PropertyDetailContent() {
     // Parse location for the map
     const coords = parseLocation(property.location);
     
-    // Extract values from new nested objects
-    const title = getLocalizedField(property.title, locale);
-    const address = getLocalizedField(property.address, locale);
-    const description = getLocalizedField(property.description, locale);
-    const category = getLocalizedField(property.category, locale);
-    const type = getLocalizedField(property.type, locale) || category;
-    const priceValue = (property.price && typeof property.price === 'object') ? property.price.value : property.price;
-    const priceCurrency = (property.price && typeof property.price === 'object') ? (property.price.currency || 'ETB') : 'ETB';
-    const areaValue = (property.area && typeof property.area === 'object') ? property.area.value : property.area;
+    const title = property.title || "Property Details";
+    const address = property.address || "Addis Ababa, Ethiopia";
+    const description = property.description || '';
+    const category = property.category || 'Property';
+    const type = property.type || category;
+    const priceValue = property.price || 0;
+    const priceCurrency = property.currency || 'ETB';
+    const areaValue = property.area || 0;
 
     const enrichedProperty = {
         ...property,
-        // Override localized JSON fields with extracted strings so child components
-        // always receive plain strings/numbers — never {en, am} objects.
-        title: title || "Property Details",
-        description: description || '',
-        address: address || property.location || "Addis Ababa, Ethiopia",
-        category: category || 'Property',
-        type: type || 'Villa',
-        price: priceValue || 0,
+        title,
+        description,
+        address,
+        category,
+        type,
+        price: priceValue,
         currency: priceCurrency,
-        area: areaValue || 0,
-        // Convenience string aliases used by some child components
+        area: areaValue,
         lat: coords?.lat || 9.0128,
         lng: coords?.lng || 38.7508,
-        titleStr: title || "Property Details",
-        addressStr: address || property.location || "Addis Ababa, Ethiopia",
+        titleStr: title,
+        addressStr: address,
         descriptionStr: description,
-        typeStr: type || 'Villa',
+        typeStr: type,
         priceStr: `${priceValue} ${priceCurrency}`,
-        beds: property.bedrooms,
-        baths: property.bathrooms,
+        beds: property.bedrooms || 0,
+        baths: property.bathrooms || 0,
         size: `${areaValue} sqm`,
-        furnishing: property.furnishingType,
+        furnishing: property.furnishingStatus || 'Furnished',
+        amenities: property.amenities || [],
     };
 
     return (
@@ -178,10 +177,12 @@ export default function PropertyDetailContent() {
     );
 }
 
-function InfoTag({ icon: Icon, label }) {
+function InfoTag({ icon, label }) {
+    const IconComponent = icon;
+
     return (
         <div className="bg-muted/50 text-foreground flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold">
-            <Icon className="text-primary h-3.5 w-3.5" />
+            <IconComponent className="text-primary h-3.5 w-3.5" />
             {label}
         </div>
     );

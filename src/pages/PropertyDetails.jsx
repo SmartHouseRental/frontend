@@ -1,5 +1,6 @@
 import { useParams } from 'react-router';
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useProperty } from '@/features/property/hooks/useProperty';
 import { adaptProperty } from '@/features/property/utils/propertyAdapter';
 import PropertyHero from '@/features/property/components/PropertyHero';
@@ -11,9 +12,10 @@ import Reviews from '@/features/property/components/Reviews';
 
 export default function PropertyDetails() {
   const { id } = useParams();
+  const { i18n } = useTranslation();
   const { data: rawProperty, isLoading, isError, error } = useProperty(id);
 
-  const property = rawProperty ? adaptProperty(rawProperty) : null;
+  const property = rawProperty ? adaptProperty(rawProperty, i18n.language) : null;
 
   if (isLoading) {
     return (
