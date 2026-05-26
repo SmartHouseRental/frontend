@@ -269,6 +269,34 @@
         "na": "የለም"
       }
     },
+    "notifications": {
+      "toastHidden": "ማሳወቂያው ከእይታ ተደብቋል",
+      "toastNoReadClear": "የሚጸዳ የተነበበ ማሳወቂያ የለም",
+      "toastCleared": "የተነበቡ ማሳወቂያዎች ከእይታ ተጠርገዋል",
+      "loading": "ማሳወቂያዎችን በመጫን ላይ...",
+      "failed": "ማሳወቂያዎችን መጫን አልተሳካም",
+      "unableToLoad": "ማሳወቂያዎችዎን መጫን አልተቻለም።",
+      "tryAgain": "እንደገና ይሞክሩ",
+      "title": "ማሳወቂያዎች",
+      "subtitle": "በንብረትዎ እንቅስቃሴዎች ላይ ወቅታዊ መረጃ ያግኙ።",
+      "markAllRead": "ሁሉንም እንደተነበቡ ምልክት ያድርጉ",
+      "clearRead": "የተነበቡ አጥራ",
+      "youHaveUnread_one": "{{count}} ያልተነበበ ማሳወቂያ አለዎት",
+      "youHaveUnread_other": "{{count}} ያልተነበቡ ማሳወቂያዎች አሉዎት",
+      "noNotificationsYet": "እስካሁን ማሳወቂያዎች የሉም",
+      "noCategoryNotifications": "የ{{category}} ማሳወቂያዎች የሉም",
+      "markAsRead": "እንደተነበቡ ምልክት ያድርጉ",
+      "hideFromView": "ከእይታ ደብቅ",
+      "markReadAndHide": "እንደተነበቡ ምልክት ያድርጉ እና ደብቅ",
+      "tabs": {
+        "all": "ሁሉ",
+        "appointment": "ቀጠሮዎች",
+        "agreement": "አቀባበሎች",
+        "payment": "ክፍያዎች",
+        "message": "መልዕክቶች",
+        "system": "ስርዓት"
+      }
+    },
     "reviews": {
       "title": "የእኔ ግምገማዎች",
       "subtitle": "ያጋሩትን አስተያየት ያስተዳድሩ።",

@@ -269,6 +269,34 @@
         "na": "N/A"
       }
     },
+    "notifications": {
+      "toastHidden": "Notification hidden from view",
+      "toastNoReadClear": "No read notifications to clear",
+      "toastCleared": "Read notifications cleared from view",
+      "loading": "Loading notifications...",
+      "failed": "Failed to load notifications",
+      "unableToLoad": "Unable to load your notifications.",
+      "tryAgain": "Try again",
+      "title": "Notifications",
+      "subtitle": "Stay updated on your property activities.",
+      "markAllRead": "Mark all read",
+      "clearRead": "Clear read",
+      "youHaveUnread_one": "You have {{count}} unread notification",
+      "youHaveUnread_other": "You have {{count}} unread notifications",
+      "noNotificationsYet": "No notifications yet",
+      "noCategoryNotifications": "No {{category}} notifications",
+      "markAsRead": "Mark as read",
+      "hideFromView": "Hide from view",
+      "markReadAndHide": "Mark read and hide",
+      "tabs": {
+        "all": "All",
+        "appointment": "Appointments",
+        "agreement": "Agreements",
+        "payment": "Payments",
+        "message": "Messages",
+        "system": "System"
+      }
+    },
     "reviews": {
       "title": "My Reviews",
       "subtitle": "Manage the feedback you've shared.",
