@@ -24,4 +24,10 @@ export const renterApi = {
 
   /** PATCH /api/v1/profile/language — body: { language: 'en'|'am'|'or'|'ti' } */
   updateLanguage: (data) => axiosInstance.patch('/api/v1/profile/language', data),
+
+  /** GET /api/v1/renter/preferences — fetch renter search preferences */
+  getPreferences: () => axiosInstance.get('/api/v1/renter/preferences'),
+
+  /** PATCH /api/v1/renter/preferences — update renter search preferences */
+  updatePreferences: (data) => axiosInstance.patch('/api/v1/renter/preferences', data),
 };

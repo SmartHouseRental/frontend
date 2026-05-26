@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { renterApi } from '../api';
-import { renterKeys } from './useAgreements';
+import { renterKeys } from '../constants';
 import { toast } from 'sonner';
 
 const selectReviews = (response) => {
