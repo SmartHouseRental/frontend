@@ -38,6 +38,7 @@ import {
   NOTIFICATION_FIELDS,
 } from '../utils/profileMappers';
 import { getApiErrorMessage } from '../utils/apiErrors';
+import RenterSearchPreferencesCard from './RenterSearchPreferencesCard';
 
 function PasswordField({ label, name, value, onChange, show, onToggleShow, t }) {
   return (
@@ -584,6 +585,8 @@ export default function ProfileSettings() {
               )}
             </CardContent>
           </Card>
+
+          <RenterSearchPreferencesCard />
 
           {/* Preferences */}
           <Card className="border-none shadow-sm bg-card p-8">
