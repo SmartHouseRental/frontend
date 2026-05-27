@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tansta
 import { toast } from 'sonner';
 import { paymentsApi } from '../api';
 import { normalizePaymentRow, unwrapPaymentsData } from '../paymentMappers';
-import { renterKeys } from '../../hooks/useAgreements';
+import { renterKeys } from '../../constants';
 import { getApiErrorMessage } from '../../utils/apiErrors';
 
 export const paymentKeys = {

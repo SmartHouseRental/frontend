@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { renterApi } from '../api';
-import { renterKeys } from './useAgreements';
+import { renterKeys } from '../constants';
 import { authKeys } from '@/features/auth/constants';
 import { getApiErrorMessage } from '../utils/apiErrors';
 import { mergeRawProfilePatch } from '../utils/profileMappers';

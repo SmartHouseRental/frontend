@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tansta
 import { toast } from 'sonner';
 import { agreementsApi } from '../agreements/api';
 import { paymentsApi } from '../payments/api';
+import { renterKeys } from '../constants';
 import {
   extractAgreementList,
   extractAgreementDetail,
@@ -10,15 +11,7 @@ import {
 } from '../agreements/agreementMappers';
 import { getApiErrorMessage } from '../utils/apiErrors';
 
-export const renterKeys = {
-  all: ['renter'],
-  agreements: (filters = {}) => [...renterKeys.all, 'agreements', filters],
-  agreement: (id) => [...renterKeys.all, 'agreement', id],
-  depositStatus: (id) => [...renterKeys.all, 'deposit-status', id],
-  agreementPayments: (id) => [...renterKeys.all, 'agreement-payments', id],
-  reviews: () => [...renterKeys.all, 'reviews'],
-  profile: () => [...renterKeys.all, 'profile'],
-};
+export { renterKeys };
 
 function invalidateAgreementQueries(queryClient, id) {
   queryClient.invalidateQueries({ queryKey: [...renterKeys.all, 'agreements'] });
