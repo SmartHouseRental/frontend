@@ -33,15 +33,15 @@ import {
   Plus,
 } from 'lucide-react';
 import MapModal from '@/components/auth/MapModal';
+import {
+  PROPERTY_TYPE_OPTIONS,
+  amenitiesToFormValues,
+  areaUnitToFormValue,
+  categoryToFormValue,
+  furnishingToFormValue,
+} from '../utils/propertyFormUtils';
 
-const propertyTypes = [
-  { value: 'VILLA', label: 'Villa' },
-  { value: 'APARTMENT', label: 'Apartment' },
-  { value: 'CONDO', label: 'Condo' },
-  { value: 'STUDIO', label: 'Studio' },
-  { value: 'HOUSE', label: 'House' },
-  { value: 'PENTHOUSE', label: 'Penthouse' },
-];
+const propertyTypes = PROPERTY_TYPE_OPTIONS;
 
 const furnishingOptions = ['Fully Furnished', 'Semi-Furnished', 'Unfurnished'];
 
@@ -145,21 +145,21 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
         titleAm: titleMap.am || '',
         descriptionEn: descriptionMap.en || '',
         descriptionAm: descriptionMap.am || '',
-        category: property.category?.en || (typeof property.category === 'string' ? property.category : 'VILLA'),
+        category: categoryToFormValue(property.category),
         categoryAm: property.category?.am || '',
         price: (priceObj.value || property.price || '').toString(),
         currency: priceObj.currency || 'ETB',
         bedrooms: property.bedrooms ? property.bedrooms.toString() : '',
         bathrooms: property.bathrooms ? property.bathrooms.toString() : '',
         area: (areaObj.value || property.area || '').toString(),
-        areaUnit: areaObj.unit || 'm²',
+        areaUnit: areaUnitToFormValue(areaObj.unit),
         address: addressMap.en || property.address || '',
         addressAm: addressMap.am || '',
         location: typeof property.location === 'object' && property.location 
           ? `${property.location.lat},${property.location.lng}` 
           : property.location || '',
-        amenities: Array.isArray(property.amenities) ? property.amenities : [],
-        furnishingType: property.furnishingStatus || property.furnishingType || undefined,
+        amenities: amenitiesToFormValues(property.amenities),
+        furnishingType: furnishingToFormValue(property.furnishingStatus || property.furnishingType),
         leaseDuration: leaseTerms.minDuration ? String(leaseTerms.minDuration) : '',
         depositAmount: (secureDeposit.value || '').toString(),
         depositCurrency: secureDeposit.currency || 'ETB',
@@ -719,7 +719,9 @@ export function PropertyForm({ onSuccess, onCancel, property, isEditMode = false
                       {a}
                     </button>
                   ))}
-                  {amenities.filter(a => !amenityOptions.includes(a)).map((a) => (
+                  {amenities
+                    .filter((a) => typeof a === 'string' && !amenityOptions.includes(a))
+                    .map((a) => (
                     <button
                       key={a}
                       type="button"
