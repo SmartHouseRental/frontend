@@ -71,7 +71,7 @@ export default function RenterRecommendationsPage() {
                             className="group cursor-pointer overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                             onClick={() => navigate(`/property/${p.id}`)}
                         >
-                            <div className="relative h-48 overflow-hidden bg-slate-100">
+                            <div className="relative h-48 overflow-hidden bg-muted">
                                 <img
                                     src={image}
                                     alt={title}
@@ -83,7 +83,7 @@ export default function RenterRecommendationsPage() {
                                     </Badge>
                                 )}
                                 <HeartButton property={p} className="absolute top-3 right-3 z-10" />
-                                <div className="absolute bottom-3 left-3 rounded-md bg-white/95 px-2.5 py-1 text-xs font-bold shadow-sm backdrop-blur-sm">
+                                <div className="absolute bottom-3 left-3 rounded-md bg-card/95 px-2.5 py-1 text-xs font-bold shadow-sm backdrop-blur-sm">
                                     {priceValue} {priceCurrency} <span className="text-[10px] font-semibold text-muted-foreground">{t('perMonth', '/ mo')}</span>
                                 </div>
                             </div>

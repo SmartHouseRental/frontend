@@ -90,7 +90,7 @@ function ReportsPage() {
   const formatTime = (value) => new Date(value).toLocaleTimeString();
 
   return (
-    <div className="space-y-6 px-4 py-8">
+    <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-semibold">{t('adminReports.title')}</h2>
         <p className="text-muted-foreground text-sm">{t('adminReports.subtitle')}</p>

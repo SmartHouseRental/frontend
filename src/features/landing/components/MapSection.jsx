@@ -2,7 +2,7 @@ import PropertyMap from '@/components/map/PropertyMap';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router';
 import { useProperties } from '@/features/property/hooks/useProperties';
-import { parseLocation } from '@/lib/utils';
+import { parseLocation, cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -17,9 +17,9 @@ export default function MapSection() {
 
   const enrichedProperties = listings.map((p) => {
     const coords = parseLocation(p.location);
-    const title = (p.title && typeof p.title === 'object') ? (p.title.en || p.title.am) : p.title;
-    const price = (p.price && typeof p.price === 'object') ? p.price.value : p.price;
-    const currency = (p.price && typeof p.price === 'object') ? (p.price.currency || 'ETB') : 'ETB';
+    const title = p.title && typeof p.title === 'object' ? p.title.en || p.title.am : p.title;
+    const price = p.price && typeof p.price === 'object' ? p.price.value : p.price;
+    const currency = p.price && typeof p.price === 'object' ? p.price.currency || 'ETB' : 'ETB';
 
     return {
       ...p,
@@ -31,32 +31,40 @@ export default function MapSection() {
     };
   });
 
-  return (
-    <section className="bg-foreground text-background relative overflow-hidden rounded-t-[3rem] px-6 py-24 lg:px-20 -mx-6">
-      <div className="mx-auto flex flex-col items-center gap-16 lg:flex-row">
-        <div className="relative z-10 lg:w-1/3">
+  const locations = [
+    t('landing.map.locations.boleAtlas'),
+    t('landing.map.locations.oldAirport'),
+    t('landing.map.locations.sarbet'),
+    t('landing.map.locations.kazanchis'),
+    t('landing.map.locations.cmc'),
+    t('landing.map.locations.ayat'),
+  ];
 
-          <h2 className="mb-6 text-white/50 text-4xl leading-tight font-black md:text-5xl">
-            {t('landing.map.availableAcross')} <br /> <span className="text-white italic">{t('landing.map.addisAbaba')}</span>
+  return (
+    <section
+      className={cn(
+        'relative -mx-6 overflow-hidden rounded-t-[3rem] px-6 py-24 lg:px-20',
+        'border-t border-border bg-foreground text-background',
+        'dark:bg-secondary dark:text-foreground',
+      )}
+    >
+      <div className="relative z-10 mx-auto flex flex-col items-center gap-16 lg:flex-row">
+        <div className="lg:w-1/3">
+          <h2 className="mb-6 text-4xl leading-tight font-black opacity-50 md:text-5xl">
+            {t('landing.map.availableAcross')} <br />
+            <span className="italic opacity-100">{t('landing.map.addisAbaba')}</span>
           </h2>
-          <p className="text-white/60 mb-10 text-lg leading-relaxed">
+          <p className="mb-10 text-lg leading-relaxed opacity-60">
             {t('landing.map.subtitle')}
           </p>
 
           <div className="mb-10 grid grid-cols-2 gap-4">
-            {[
-              t('landing.map.locations.boleAtlas'),
-              t('landing.map.locations.oldAirport'),
-              t('landing.map.locations.sarbet'),
-              t('landing.map.locations.kazanchis'),
-              t('landing.map.locations.cmc'),
-              t('landing.map.locations.ayat'),
-            ].map((loc) => (
+            {locations.map((loc) => (
               <div
                 key={loc}
-                className="hover:text-white flex cursor-default items-center gap-2 text-sm font-medium transition-colors"
+                className="flex cursor-default items-center gap-2 text-sm font-medium opacity-70 transition-opacity hover:opacity-100"
               >
-                <div className="bg-white h-1.5 w-1.5 rounded-full" />
+                <div className="size-1.5 rounded-full bg-current" />
                 {loc}
               </div>
             ))}
@@ -65,16 +73,20 @@ export default function MapSection() {
           <Button
             size="lg"
             asChild
-            className="shadow-white/20 h-14 rounded-full px-8 text-lg font-bold shadow-xl transition-transform hover:scale-105"
+            className={cn(
+              'h-14 rounded-full px-8 text-lg font-bold shadow-xl transition-transform hover:scale-105',
+              'bg-background text-foreground shadow-background/20',
+              'dark:bg-primary dark:text-primary-foreground dark:shadow-none',
+            )}
           >
             <Link to="/explore?view=map">{t('landing.map.exploreFullMap')}</Link>
           </Button>
         </div>
 
-        <div className="h-125 w-full overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl ring-8 ring-white/5 lg:w-2/3 relative">
+        <div className="relative h-125 w-full overflow-hidden rounded-[2rem] border border-border shadow-2xl ring-8 ring-border/20 lg:w-2/3">
           {isLoading ? (
-            <div className="flex h-full w-full items-center justify-center bg-zinc-900/50">
-              <Loader2 className="h-8 w-8 animate-spin text-white" />
+            <div className="flex h-full w-full items-center justify-center bg-muted">
+              <Loader2 className="size-8 animate-spin text-muted-foreground" />
             </div>
           ) : (
             <PropertyMap properties={enrichedProperties} mode="preview" zoom={12} />
@@ -82,8 +94,10 @@ export default function MapSection() {
         </div>
       </div>
 
-      {/* Decorative background element */}
-      <div className="bg-white/10 absolute top-1/2 left-0 z-0 h-96 w-96 -translate-y-1/2 rounded-full blur-[120px]" />
+      <div
+        className="pointer-events-none absolute top-1/2 left-0 z-0 h-96 w-96 -translate-y-1/2 rounded-full bg-background/10 blur-[120px] dark:bg-foreground/5"
+        aria-hidden
+      />
     </section>
   );
 }

@@ -5,7 +5,7 @@ import {
   Settings,
   TableProperties,
   LayoutDashboard,
-  Building2,
+  Shield,
   ClipboardCheck,
   Bell,
   ScrollText,
@@ -15,9 +15,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { AppSidebar } from '@/components/design-system/AppSidebar';
-
-const DEFAULT_AVATAR =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuBWKDkeduEeZuHzT6W3ZOMblu3MgjqO8N6jZPH2fz0GKV7r2zzuDztbdpuj0A1Zt1OKticOnFwMa-LFAE5kSlJ1Rp8J619Y-c6ShG2WgXku0Kxhu5Osw9U0OhDciIrDnR3a9L3uYi9jBCORyrv9zhp-7umn6YZ8tMxe3ob62BkUeCkSYlpnAoVidLcqHVcievINEgNMl24C2op3jaZTXFlw0xk8rlIR9wpEsJuTQAYaNCvcY_GUtcYSIG3buan-rs1VL7JVTSanWSCX';
 
 function AdminSidebar() {
   const { t } = useTranslation();
@@ -48,19 +45,25 @@ function AdminSidebar() {
   ];
 
   const displayName =
-    user?.firstName && user?.lastName
-      ? `${user.firstName} ${user.lastName}`
-      : user?.firstName || user?.email || 'Administrator';
+    user?.first_name || user?.last_name
+      ? `${user?.first_name || ''} ${user?.last_name || ''}`.trim()
+      : user?.firstName && user?.lastName
+        ? `${user.firstName} ${user.lastName}`
+        : user?.fullName || user?.name || user?.email || t('header.systemManager');
+
+  const avatar =
+    user?.profilePicture || user?.avatar || user?.profile_picture || undefined;
 
   return (
     <AppSidebar
-      brand="SmartRent"
+      brand="Bet-Connect"
+      brandIcon={Shield}
       tagline={t('sidebar.adminControl')}
       navSections={navSections}
       basePath="/admin"
       userName={displayName}
-      userRole="Super Admin"
-      userAvatar={user?.profilePicture || user?.avatar || DEFAULT_AVATAR}
+      userRole={t('header.systemManager')}
+      userAvatar={avatar}
     />
   );
 }

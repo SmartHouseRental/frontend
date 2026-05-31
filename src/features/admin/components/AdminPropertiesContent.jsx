@@ -73,7 +73,7 @@ export function AdminPropertiesContent() {
   const meta = propertiesData?.data?.meta || { total: 0, page: 1, limit: 20, totalPages: 1 };
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6">
       <div className="flex items-end justify-between">
         <div>
           <h2 className="text-3xl font-semibold">Properties</h2>

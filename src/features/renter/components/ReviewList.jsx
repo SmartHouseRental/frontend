@@ -74,7 +74,7 @@ function EditReviewModal({ review, isOpen, onClose, t }) {
                     className={`transition-colors duration-200 ${
                       (hoveredRating || rating) >= star
                         ? 'fill-amber-400 text-amber-400'
-                        : 'text-slate-300'
+                        : 'text-muted-foreground/40'
                     }`}
                   />
                 </button>
@@ -237,13 +237,13 @@ export default function ReviewList() {
             const propertyTitle = getPropertyTitle(review.property);
 
             return (
-              <Card key={review.id} className="border-none shadow-sm bg-white overflow-hidden group">
+              <Card key={review.id} className="group overflow-hidden border border-border bg-card shadow-sm">
                 <CardContent className="p-0">
                   <div className="flex flex-col md:flex-row">
                     <div className="p-6 md:p-8 flex-1">
                       <div className="flex justify-between items-start mb-4 gap-4">
                         <div>
-                          <h3 className="text-lg font-bold text-slate-900 group-hover:text-primary transition-colors mb-1">
+                          <h3 className="mb-1 text-lg font-bold text-foreground transition-colors group-hover:text-primary">
                             {propertyTitle}
                           </h3>
                           <div className="flex items-center gap-1.5 text-muted-foreground text-xs font-medium uppercase tracking-wider">
@@ -252,12 +252,12 @@ export default function ReviewList() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                          <div className="flex items-center gap-1 bg-amber-50 px-3 py-1.5 rounded-full">
+                          <div className="flex items-center gap-1 rounded-full bg-amber-500/10 px-3 py-1.5">
                             {Array.from({ length: 5 }).map((_, i) => (
                               <Star
                                 key={i}
                                 className={`h-3.5 w-3.5 ${
-                                  i < review.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'
+                                  i < review.rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/40'
                                 }`}
                               />
                             ))}
@@ -282,7 +282,7 @@ export default function ReviewList() {
                           </Button>
                         </div>
                       </div>
-                      <div className="relative bg-slate-50/50 p-6 rounded-2xl border border-slate-100 italic text-slate-700 leading-relaxed text-sm">
+                      <div className="relative rounded-2xl border border-border bg-muted/30 p-6 text-sm leading-relaxed text-foreground/90 italic">
                         &ldquo;{review.comment || ''}&rdquo;
                       </div>
                     </div>

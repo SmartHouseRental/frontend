@@ -164,12 +164,12 @@ export default function NearMeSection() {
                   </Badge>
                 )}
                 {home.distance != null && (
-                  <Badge className="absolute top-4 right-14 bg-white/95 text-foreground text-xs font-semibold shadow-sm">
+                  <Badge className="absolute top-4 right-14 bg-white/95 text-black text-xs font-semibold shadow-sm">
                     {home.distance} km
                   </Badge>
                 )}
                 <HeartButton property={home} className="absolute top-4 right-4 z-10" />
-                <div className="absolute bottom-4 left-4 rounded-md bg-white/90 px-3 py-1 text-sm font-bold">
+                <div className="absolute bottom-4 left-4 rounded-md bg-white/90 text-black px-3 py-1 text-sm font-bold">
                   {priceValue} {priceCurrency} {t('perMonth')}
                 </div>
               </div>

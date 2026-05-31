@@ -38,7 +38,7 @@ export function LuxuryPropertyCard({
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
           {type && (
-            <span className="absolute top-4 left-4 rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold tracking-wide text-foreground uppercase backdrop-blur-sm">
+            <span className="absolute top-4 left-4 rounded-full text-black px-3 py-1 text-[11px] font-bold tracking-wide uppercase backdrop-blur-sm">
               {type}
             </span>
           )}
@@ -50,7 +50,7 @@ export function LuxuryPropertyCard({
           <Link
             to={`/property/${property.id}`}
             onClick={(e) => e.stopPropagation()}
-            className="absolute right-4 bottom-4 flex size-10 items-center justify-center rounded-full bg-white text-foreground opacity-0 shadow-lg transition-all duration-300 group-hover:opacity-100 hover:scale-110"
+            className="absolute right-4 bottom-4 flex size-10 items-center justify-center rounded-full bg-white text-black opacity-0 shadow-lg transition-all duration-300 group-hover:opacity-100 hover:scale-110"
             aria-label="View property"
           >
             <ArrowUpRight size={18} />

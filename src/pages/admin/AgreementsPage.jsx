@@ -85,7 +85,7 @@ function AgreementsPage() {
   const formatDate = (value) => new Date(value).toLocaleDateString();
 
   return (
-    <div className="space-y-6 px-4 py-8">
+    <div className="space-y-6">
       <div className="flex items-end justify-between">
         <div>
           <h2 className="text-3xl font-semibold">{t('adminAgreements.title')}</h2>

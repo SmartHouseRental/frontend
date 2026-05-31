@@ -7,16 +7,14 @@ import {
   LogOut,
   User,
   ChevronRight,
-  Heart,
-  MessageSquare,
-  Sparkles
+  Sparkles,
+  Bell,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLogout } from '@/features/auth/hooks/useLogout';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useNotifications, getUnreadCount } from '@/features/notifications/hooks/useNotifications';
 import { useTranslation } from 'react-i18next';
-import { Bell } from 'lucide-react';
 
 export default function RenterSidebar({ isOpen, onClose }) {
   const { t } = useTranslation();
@@ -68,32 +66,37 @@ export default function RenterSidebar({ isOpen, onClose }) {
     logoutMutation.mutate();
   };
 
-  const userName = user?.first_name || user?.last_name
-    ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
-    : (user?.fullName || user?.name || t('auth.renter'));
+  const userName =
+    user?.first_name || user?.last_name
+      ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+      : user?.fullName || user?.name || t('auth.renter');
+
+  const notificationsLabel = t('sidebar.notifications');
 
   return (
     <>
-      {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
           onClick={onClose}
+          aria-hidden
         />
       )}
 
-      <aside className={cn(
-        "fixed left-0 top-[73px] bottom-0 z-40 w-72 border-r bg-white flex flex-col overflow-y-auto transition-transform duration-300 lg:translate-x-0",
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      )}>
+      <aside
+        className={cn(
+          'fixed top-[73px] bottom-0 left-0 z-40 flex w-72 flex-col overflow-y-auto border-r border-border bg-card transition-transform duration-300 lg:translate-x-0',
+          isOpen ? 'translate-x-0' : '-translate-x-full',
+        )}
+      >
         <div className="p-6">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <User className="h-6 w-6" />
+          <div className="mb-8 flex items-center gap-3">
+            <div className="flex size-12 items-center justify-center rounded-full bg-muted text-foreground">
+              <User className="size-6" />
             </div>
             <div>
               <h3 className="font-semibold text-foreground">{t('sidebar.renterDashboard')}</h3>
-              <p className="text-xs text-muted-foreground font-medium tracking-tighter">{userName}</p>
+              <p className="text-xs font-medium tracking-tighter text-muted-foreground">{userName}</p>
             </div>
           </div>
 
@@ -103,34 +106,35 @@ export default function RenterSidebar({ isOpen, onClose }) {
                 key={item.path}
                 to={item.path}
                 onClick={onClose}
-                className={({ isActive }) => cn(
-                  "group flex items-center justify-between p-3 rounded-xl transition-all duration-200",
-                  isActive
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground font-medium"
-                )}
+                className={({ isActive }) =>
+                  cn(
+                    'group flex items-center justify-between rounded-xl p-3 transition-all duration-200',
+                    isActive
+                      ? 'bg-foreground text-background shadow-sm dark:bg-primary dark:text-primary-foreground'
+                      : 'font-medium text-muted-foreground hover:bg-muted hover:text-foreground',
+                  )
+                }
               >
                 {({ isActive }) => (
                   <>
                     <div className="flex items-center gap-3">
-                      <item.icon className={cn(
-                        "h-5 w-5 transition-transform group-hover:scale-110",
-                        "text-current"
-                      )} />
+                      <item.icon className="size-5 transition-transform group-hover:scale-110" />
                       <span className="text-sm">{item.title}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      {item.title === t('sidebar.notifications') && unreadCount > 0 && (
-                        <span className={cn(
-                          "flex h-5 items-center justify-center rounded-full px-2 text-[10px] font-bold transition-colors",
-                          isActive
-                            ? "bg-white text-primary"
-                            : "bg-primary text-primary-foreground"
-                        )}>
+                      {item.title === notificationsLabel && unreadCount > 0 && (
+                        <span
+                          className={cn(
+                            'flex h-5 items-center justify-center rounded-full px-2 text-[10px] font-bold',
+                            isActive
+                              ? 'bg-background text-foreground dark:bg-primary-foreground dark:text-primary'
+                              : 'bg-foreground text-background dark:bg-primary dark:text-primary-foreground',
+                          )}
+                        >
                           {unreadCount}
                         </span>
                       )}
-                      <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <ChevronRight className="size-4 opacity-0 transition-opacity group-hover:opacity-100" />
                     </div>
                   </>
                 )}
@@ -139,13 +143,14 @@ export default function RenterSidebar({ isOpen, onClose }) {
           </nav>
         </div>
 
-        <div className="mt-auto p-6 border-t bg-slate-50/50">
+        <div className="mt-auto border-t border-border bg-muted/30 p-6">
           <button
-            className="flex items-center gap-3 w-full p-3 text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-xl transition-all font-medium"
+            type="button"
+            className="flex w-full items-center gap-3 rounded-xl p-3 font-medium text-muted-foreground transition-all hover:bg-destructive/10 hover:text-destructive"
             onClick={handleLogout}
             disabled={logoutMutation.isPending}
           >
-            <LogOut className="h-5 w-5" />
+            <LogOut className="size-5" />
             <span className="text-sm">{logoutMutation.isPending ? t('loggingOut') : t('logout')}</span>
           </button>
         </div>

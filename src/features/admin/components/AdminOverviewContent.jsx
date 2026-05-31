@@ -95,7 +95,7 @@ function TrendBadge({ value, label }) {
 /* ───── skeleton loader ───── */
 function OverviewSkeleton() {
     return (
-        <div className="space-y-8 p-8 animate-pulse">
+        <div className="space-y-8 animate-pulse">
             <div className="h-8 w-60 rounded bg-muted" />
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -314,7 +314,7 @@ export default function AdminOverviewContent() {
         : '';
 
     return (
-        <div className="space-y-8 p-8">
+        <div className="space-y-8">
             {/* Header */}
             <div className="flex items-end justify-between">
                 <div>

@@ -22,7 +22,7 @@ export default function CTASection() {
           )}
         >
           <div
-            className="pointer-events-none absolute -top-24 -right-24 size-64 rounded-full bg-[#22C55E]/10 blur-3xl"
+            className="pointer-events-none absolute -top-24 -right-24 size-64 rounded-full bg-white/10 blur-3xl"
             aria-hidden
           />
           <div
@@ -32,10 +32,10 @@ export default function CTASection() {
 
           <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
             <div className="max-w-xl">
-              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+              <h2 className="text-white/80 text-3xl font-bold tracking-tight md:text-4xl">
                 {t('landing.cta.title')}
               </h2>
-              <p className="mt-4 max-w-lg text-sm leading-relaxed opacity-70 md:text-base">
+              <p className="mt-4 max-w-lg text-white/50 text-sm leading-relaxed opacity-70 md:text-base">
                 {t('landing.cta.subtitle')}
               </p>
             </div>

@@ -139,7 +139,7 @@ export default function RenterPreferencesWizardContent() {
   };
 
   return (
-    <div className="min-h-screen bg-muted/30 p-6 dark:bg-slate-950">
+    <div className="min-h-screen bg-background p-6">
       <div className="mx-auto max-w-2xl">
         <div className="mb-10 text-center">
           <h1 className="text-4xl font-black tracking-tight text-foreground">Find Your Perfect Home</h1>

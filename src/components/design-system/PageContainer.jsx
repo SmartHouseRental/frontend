@@ -7,7 +7,7 @@ export function PageContainer({ children, className, fullHeight = true }) {
   return (
     <div
       className={cn(
-        'animate-fade-in p-4 sm:p-6 lg:p-8',
+        'animate-fade-in ',
         fullHeight && 'scrollbar-hide min-h-[calc(100vh-4rem)] overflow-y-auto',
         className,
       )}

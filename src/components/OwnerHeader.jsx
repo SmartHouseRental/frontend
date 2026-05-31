@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router';
-import { Bell, MessageCircle, ChevronDown, LogOut, User, HelpCircle, Sun, Moon, Loader2 } from 'lucide-react';
+import { Bell, MessageCircle, ChevronDown, LogOut, User, HelpCircle, Sun, Moon, Loader2, Menu } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { useLogout } from '@/features/auth/hooks/useLogout';
 import { useNotifications, getUnreadCount } from '@/features/notifications/hooks/useNotifications';
@@ -17,7 +17,7 @@ import {
 
 const HEADER_NOTIFICATION_LIMIT = 5;
 
-function OwnerHeader() {
+function OwnerHeader({ onMobileMenuOpen }) {
     const { t } = useTranslation();
     const location = useLocation();
     const [notifOpen, setNotifOpen] = useState(false);
@@ -73,9 +73,17 @@ function OwnerHeader() {
     });
 
     return (
-        <header className="border-border/60 bg-card/95 sticky top-0 z-40 flex h-16 items-center justify-between border-b px-4 backdrop-blur-md sm:px-6 lg:pl-8 lg:pr-8">
-            {/* Breadcrumbs */}
-            <nav className="flex items-center pl-10 text-sm font-medium lg:pl-0">
+        <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-border bg-background/95 px-6 backdrop-blur-md lg:px-8">
+            <div className="flex min-w-0 flex-1 items-center gap-4">
+                <button
+                    type="button"
+                    onClick={onMobileMenuOpen}
+                    className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:hidden"
+                    aria-label="Open navigation"
+                >
+                    <Menu size={20} />
+                </button>
+                <nav className="flex min-w-0 items-center truncate text-sm font-medium">
                 {breadcrumbs.map((crumb, index) => (
                     <div key={index} className="flex items-center gap-2">
                         {index > 0 && <span className="text-muted-foreground/40 mx-1.5">›</span>}
@@ -89,8 +97,8 @@ function OwnerHeader() {
                     </div>
                 ))}
             </nav>
+            </div>
 
-            {/* Right Side */}
             <div className="flex items-center gap-2">
                 {/* Dark Mode Toggle */}
                 <button
