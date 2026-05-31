@@ -39,8 +39,8 @@ export function AppSidebar({
           collapsed && 'justify-center px-2',
         )}
       >
-        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#0A0A0A]">
-          <Building2 size={18} className="text-white" strokeWidth={2.5} />
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary">
+          <Building2 size={18} className="text-sidebar-primary-foreground" strokeWidth={2.5} />
         </div>
         {!collapsed && (
           <div className="min-w-0 flex-1">

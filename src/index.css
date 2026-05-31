@@ -125,45 +125,59 @@
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #fafaf9;
-  --card: #171717;
-  --card-foreground: #fafaf9;
-  --popover: #171717;
-  --popover-foreground: #fafaf9;
+  /* Luxury palette — soft charcoal, not deep black */
+  --luxury-black: #f4f4f5;
+  --luxury-black-secondary: #e4e4e7;
+  --luxury-surface: #3f3f46;
+  --luxury-bg: #1f1f22;
+  --luxury-card: #28282c;
+  --luxury-text: #f4f4f5;
+  --luxury-text-secondary: #a1a1aa;
+  --luxury-border: rgba(255, 255, 255, 0.1);
 
-  --primary: #fafaf9;
-  --primary-foreground: #0a0a0a;
+  --background: #1f1f22;
+  --foreground: #f4f4f5;
+  --card: #28282c;
+  --card-foreground: #f4f4f5;
+  --popover: #28282c;
+  --popover-foreground: #f4f4f5;
 
-  --secondary: #262626;
-  --secondary-foreground: #fafaf9;
+  --primary: #f4f4f5;
+  --primary-foreground: #1f1f22;
 
-  --muted: #262626;
-  --muted-foreground: #a3a3a3;
+  --secondary: #323238;
+  --secondary-foreground: #f4f4f5;
 
-  --accent: #262626;
-  --accent-foreground: #fafaf9;
+  --muted: #2e2e33;
+  --muted-foreground: #a1a1aa;
 
-  --surface: #262626;
+  --accent: #323238;
+  --accent-foreground: #f4f4f5;
 
-  --border: rgba(255, 255, 255, 0.08);
-  --input: rgba(255, 255, 255, 0.1);
-  --ring: #fafaf9;
+  --surface: #3a3a40;
 
-  --chart-1: #fafaf9;
-  --chart-2: #a3a3a3;
-  --chart-3: #737373;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: #d4d4d8;
+
+  --chart-1: #f4f4f5;
+  --chart-2: #a1a1aa;
+  --chart-3: #71717a;
   --chart-4: #22c55e;
-  --chart-5: #525252;
+  --chart-5: #52525b;
 
-  --sidebar: #0a0a0a;
-  --sidebar-foreground: #fafaf9;
+  --sidebar: #252528;
+  --sidebar-foreground: #f4f4f5;
   --sidebar-primary: #22c55e;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: rgba(255, 255, 255, 0.06);
-  --sidebar-accent-foreground: #fafaf9;
+  --sidebar-accent-foreground: #f4f4f5;
   --sidebar-border: rgba(255, 255, 255, 0.08);
   --sidebar-ring: #22c55e;
+
+  --shadow-luxury: 0 1px 3px 0 rgb(0 0 0 / 0.18), 0 1px 2px -1px rgb(0 0 0 / 0.14);
+  --shadow-luxury-md: 0 4px 16px -2px rgb(0 0 0 / 0.22);
+  --shadow-luxury-lg: 0 12px 40px -8px rgb(0 0 0 / 0.3);
 }
 
 @layer base {
@@ -206,11 +220,11 @@
   }
 
   .glass-luxury {
-    @apply border border-border/60 bg-white/90 backdrop-blur-xl;
+    @apply border border-border/60 bg-card/90 backdrop-blur-xl;
   }
 
   .gradient-primary {
-    background: #0a0a0a;
+    background: var(--foreground);
   }
 
   .text-gradient-primary {
@@ -308,6 +322,10 @@
 .chat-messages-scroll::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.12);
   border-radius: 10px;
+}
+
+.dark .chat-messages-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .grid-pattern {

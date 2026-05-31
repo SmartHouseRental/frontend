@@ -8,7 +8,7 @@ export default function MainLayout() {
   const isLanding = location.pathname === '/';
 
   return (
-    <div className={`flex min-h-screen flex-col ${isChat ? 'h-screen overflow-hidden' : ''}`}>
+    <div className={`flex min-h-screen flex-col bg-background ${isChat ? 'h-screen overflow-hidden' : ''}`}>
       <Header />
       <main className={`flex-1 ${isChat ? 'h-[calc(100vh-73px)] overflow-hidden' : ''}`}>
         <Outlet />

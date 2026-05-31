@@ -23,7 +23,7 @@ const registerSchema = z.object({
 
 const inputClass = (hasError) =>
     cn(
-        'h-12 rounded-2xl border-[#E5E5E5] bg-[#FAFAF9] pl-11 transition-colors focus:border-[#0A0A0A] focus:bg-white',
+        'h-12 rounded-2xl border-border bg-muted pl-11 transition-colors focus:border-ring focus:bg-background',
         hasError && 'border-destructive',
     );
 
@@ -61,7 +61,7 @@ export function SignUpForm() {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-3">
-                <label className="ml-1 text-sm font-medium text-[#737373]">
+                <label className="ml-1 text-sm font-medium text-muted-foreground">
                     {t('auth.iAmJoiningAs')}
                 </label>
                 <RadioGroup
@@ -74,12 +74,12 @@ export function SignUpForm() {
                         className={cn(
                             'flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 transition-all',
                             role === 'renter'
-                                ? 'border-[#0A0A0A] bg-[#FAFAF9]'
-                                : 'border-[#E5E5E5] bg-white hover:border-[#737373]',
+                                ? 'border-ring bg-muted'
+                                : 'border-border bg-background hover:border-muted-foreground',
                         )}
                     >
                         <RadioGroupItem value="renter" id="renter" className="size-4" />
-                        <span className={cn('text-sm font-semibold', role === 'renter' ? 'text-[#111111]' : 'text-[#737373]')}>
+                        <span className={cn('text-sm font-semibold', role === 'renter' ? 'text-foreground' : 'text-muted-foreground')}>
                             {t('auth.renter')}
                         </span>
                     </label>
@@ -89,12 +89,12 @@ export function SignUpForm() {
                         className={cn(
                             'flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 transition-all',
                             role === 'owner'
-                                ? 'border-[#0A0A0A] bg-[#FAFAF9]'
-                                : 'border-[#E5E5E5] bg-white hover:border-[#737373]',
+                                ? 'border-ring bg-muted'
+                                : 'border-border bg-background hover:border-muted-foreground',
                         )}
                     >
                         <RadioGroupItem value="owner" id="owner" className="size-4" />
-                        <span className={cn('text-sm font-semibold', role === 'owner' ? 'text-[#111111]' : 'text-[#737373]')}>
+                        <span className={cn('text-sm font-semibold', role === 'owner' ? 'text-foreground' : 'text-muted-foreground')}>
                             {t('auth.owner')}
                         </span>
                     </label>
@@ -103,11 +103,11 @@ export function SignUpForm() {
 
             <div className="grid gap-5 sm:grid-cols-2">
                 <div className="col-span-2 space-y-2 sm:col-span-1">
-                    <label className="ml-1 text-sm font-medium text-[#737373]" htmlFor="first_name">
+                    <label className="ml-1 text-sm font-medium text-muted-foreground" htmlFor="first_name">
                         {t('auth.firstName')}
                     </label>
                     <div className="group relative">
-                        <User className="absolute top-1/2 left-3.5 -translate-y-1/2 text-[#737373] transition-colors group-focus-within:text-[#111111]" size={18} />
+                        <User className="absolute top-1/2 left-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-foreground" size={18} />
                         <Input
                             id="first_name"
                             placeholder="John"
@@ -119,11 +119,11 @@ export function SignUpForm() {
                 </div>
 
                 <div className="col-span-2 space-y-2 sm:col-span-1">
-                    <label className="ml-1 text-sm font-medium text-[#737373]" htmlFor="last_name">
+                    <label className="ml-1 text-sm font-medium text-muted-foreground" htmlFor="last_name">
                         {t('auth.lastName')}
                     </label>
                     <div className="group relative">
-                        <User className="absolute top-1/2 left-3.5 -translate-y-1/2 text-[#737373] transition-colors group-focus-within:text-[#111111]" size={18} />
+                        <User className="absolute top-1/2 left-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-foreground" size={18} />
                         <Input
                             id="last_name"
                             placeholder="Doe"
@@ -135,11 +135,11 @@ export function SignUpForm() {
                 </div>
 
                 <div className="col-span-2 space-y-2 sm:col-span-1">
-                    <label className="ml-1 text-sm font-medium text-[#737373]" htmlFor="email">
+                    <label className="ml-1 text-sm font-medium text-muted-foreground" htmlFor="email">
                         {t('auth.emailAddress')}
                     </label>
                     <div className="group relative">
-                        <Mail className="absolute top-1/2 left-3.5 -translate-y-1/2 text-[#737373] transition-colors group-focus-within:text-[#111111]" size={18} />
+                        <Mail className="absolute top-1/2 left-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-foreground" size={18} />
                         <Input
                             id="email"
                             type="email"
@@ -152,11 +152,11 @@ export function SignUpForm() {
                 </div>
 
                 <div className="col-span-2 space-y-2 sm:col-span-1">
-                    <label className="ml-1 text-sm font-medium text-[#737373]" htmlFor="phone">
+                    <label className="ml-1 text-sm font-medium text-muted-foreground" htmlFor="phone">
                         {t('auth.phoneNumber')}
                     </label>
                     <div className="group relative">
-                        <Phone className="absolute top-1/2 left-3.5 -translate-y-1/2 text-[#737373] transition-colors group-focus-within:text-[#111111]" size={18} />
+                        <Phone className="absolute top-1/2 left-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-foreground" size={18} />
                         <Input
                             id="phone"
                             type="tel"
@@ -169,11 +169,11 @@ export function SignUpForm() {
                 </div>
 
                 <div className="col-span-2 space-y-2">
-                    <label className="ml-1 text-sm font-medium text-[#737373]" htmlFor="password">
+                    <label className="ml-1 text-sm font-medium text-muted-foreground" htmlFor="password">
                         {t('auth.password')}
                     </label>
                     <div className="group relative">
-                        <Lock className="absolute top-1/2 left-3.5 -translate-y-1/2 text-[#737373] transition-colors group-focus-within:text-[#111111]" size={18} />
+                        <Lock className="absolute top-1/2 left-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-foreground" size={18} />
                         <Input
                             id="password"
                             type={showPassword ? 'text' : 'password'}
@@ -184,19 +184,19 @@ export function SignUpForm() {
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute top-1/2 right-3.5 -translate-y-1/2 text-[#737373] transition-colors hover:text-[#111111]"
+                            className="absolute top-1/2 right-3.5 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
                         >
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                     </div>
-                    <p className="ml-1 text-[11px] font-medium text-[#737373]">{t('auth.passwordHint')}</p>
+                    <p className="ml-1 text-[11px] font-medium text-muted-foreground">{t('auth.passwordHint')}</p>
                     {errors.password && <p className="ml-1 text-xs text-destructive">{errors.password.message}</p>}
                 </div>
             </div>
 
             <Button
                 type="submit"
-                className="h-12 w-full rounded-full bg-[#0A0A0A] text-sm font-semibold text-white shadow-luxury-md transition-colors hover:bg-[#171717]"
+                className="h-12 w-full rounded-full text-sm font-semibold shadow-luxury-md"
                 disabled={registerMutation.isPending}
             >
                 {registerMutation.isPending ? t('auth.creatingAccount') : t('auth.createAccount')}

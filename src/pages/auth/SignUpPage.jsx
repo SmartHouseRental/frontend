@@ -14,7 +14,7 @@ function SignUpPage() {
   const isLatinLocale = (i18n.language || 'en').startsWith('en');
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#FAFAF9]">
+    <div className="flex h-screen overflow-hidden bg-background">
       <div className="relative hidden h-screen w-1/2 shrink-0 overflow-hidden lg:flex">
         <img
           src={SIGNUP_HERO_IMAGE}
@@ -72,7 +72,7 @@ function SignUpPage() {
         <div className="flex shrink-0 items-center justify-between px-6 pt-6 lg:justify-end lg:px-10 lg:pt-8">
           <Link
             to="/"
-            className="inline-flex items-center gap-1 text-sm font-medium text-[#737373] transition-colors hover:text-[#111111] lg:hidden"
+            className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground lg:hidden"
           >
             <ChevronLeft size={16} />
             {t('auth.home')}
@@ -88,37 +88,37 @@ function SignUpPage() {
             className="mx-auto flex w-full max-w-xl min-h-0 flex-1 flex-col"
           >
             <div className="mb-6 shrink-0">
-              <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-[#0A0A0A] lg:hidden">
-                <Building2 className="size-6 text-white" strokeWidth={2.5} />
+              <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-primary lg:hidden">
+                <Building2 className="size-6 text-primary-foreground" strokeWidth={2.5} />
               </div>
               <p
                 className={cn(
-                  'mb-2 inline-flex items-center gap-2 text-xs font-medium tracking-[0.2em] text-[#737373] lg:hidden',
+                  'mb-2 inline-flex items-center gap-2 text-xs font-medium tracking-[0.2em] text-muted-foreground lg:hidden',
                   isLatinLocale && 'uppercase',
                 )}
               >
                 <span className="size-1.5 rounded-full bg-[#22C55E]" aria-hidden />
                 Bet-Connect
               </p>
-              <h1 className="text-3xl font-bold tracking-tight text-[#111111]">
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">
                 {t('auth.joinCommunity')}
               </h1>
-              <p className="mt-2 text-sm leading-relaxed text-[#737373] md:text-base">
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground md:text-base">
                 {t('auth.signupIntro')}
               </p>
             </div>
 
-            <div className="min-h-0 flex-1 rounded-[24px] border border-[#E5E5E5] bg-white shadow-luxury">
-              <div className="p-6 ">
+            <div className="min-h-0 flex-1 overflow-y-auto rounded-[24px] border border-border bg-card shadow-luxury">
+              <div className="p-6 md:p-8">
                 <SignUpForm />
               </div>
             </div>
 
-            <p className="mt-6 shrink-0 text-center text-sm text-[#737373]">
+            <p className="mt-6 shrink-0 text-center text-sm text-muted-foreground">
               {t('auth.alreadyHaveAccount')}{' '}
               <Link
                 to="/login"
-                className="font-semibold text-[#111111] underline-offset-4 hover:underline"
+                className="font-semibold text-foreground underline-offset-4 hover:underline"
               >
                 {t('auth.loginInstead')}
               </Link>

@@ -15,7 +15,7 @@ function LoginPage() {
   const isLatinLocale = (i18n.language || 'en').startsWith('en');
 
   return (
-    <div className="flex min-h-screen bg-[#FAFAF9]">
+    <div className="flex min-h-screen bg-background">
       <div className="relative hidden w-1/2 overflow-hidden lg:flex">
         <img
           src={LOGIN_HERO_IMAGE}
@@ -66,7 +66,7 @@ function LoginPage() {
         <div className="flex items-center justify-between px-6 pt-6 lg:justify-end lg:px-10 lg:pt-8">
           <Link
             to="/"
-            className="inline-flex items-center gap-1 text-sm font-medium text-[#737373] transition-colors hover:text-[#111111] lg:hidden"
+            className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground lg:hidden"
           >
             <ChevronLeft size={16} />
             {t('auth.home')}
@@ -82,23 +82,23 @@ function LoginPage() {
             className="w-full max-w-md"
           >
             <div className="mb-8">
-              <h1 className="text-3xl font-bold tracking-tight text-[#111111]">
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">
                 {t('auth.signIn')}
               </h1>
-              <p className="mt-2 text-sm leading-relaxed text-[#737373] md:text-base">
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground md:text-base">
                 {t('auth.signInIntro')}
               </p>
             </div>
 
-            <div className="rounded-[24px] border border-[#E5E5E5] bg-white p-6 shadow-luxury md:p-8">
+            <div className="rounded-[24px] border border-border bg-card p-6 shadow-luxury md:p-8">
               <LoginForm />
 
               <div className="relative my-8">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[#E5E5E5]" />
+                  <div className="w-full border-t border-border" />
                 </div>
                 <div className="relative flex justify-center">
-                  <span className="bg-white px-3 text-xs font-medium tracking-wide text-[#737373] uppercase">
+                  <span className="bg-card px-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
                     {t('auth.orContinueWith')}
                   </span>
                 </div>
@@ -106,7 +106,7 @@ function LoginPage() {
 
               <Button
                 variant="outline"
-                className="h-12 w-full gap-3 rounded-full border-[#E5E5E5] bg-white font-semibold text-[#111111] shadow-sm transition-colors hover:bg-[#FAFAF9]"
+                className="h-12 w-full gap-3 rounded-full font-semibold shadow-sm"
                 type="button"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -131,11 +131,11 @@ function LoginPage() {
               </Button>
             </div>
 
-            <p className="mt-8 text-center text-sm text-[#737373]">
+            <p className="mt-8 text-center text-sm text-muted-foreground">
               {t('auth.dontHaveAccount')}{' '}
               <Link
                 to="/signup"
-                className="font-semibold text-[#111111] underline-offset-4 hover:underline"
+                className="font-semibold text-foreground underline-offset-4 hover:underline"
               >
                 {t('auth.createAnAccount')}
               </Link>
