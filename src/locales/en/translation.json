@@ -1212,6 +1212,8 @@
     "filters": {
       "title": "Filters",
       "clearAll": "Clear All",
+      "semanticSearch": "Smart Search",
+      "semanticSearchHint": "Describe what you want in plain language, e.g. cheap 2 bedroom near Bole with gym.",
       "propertyType": "Property Type",
       "monthlyBudget": "Monthly Budget",
       "bedrooms": "Bedrooms",

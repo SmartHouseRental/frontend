@@ -3,9 +3,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useTranslation } from 'react-i18next';
 import { getSortOptions } from "@/features/explore/utils/propertyFilters";
 
-export function SortBar({ viewMode, setViewMode, sort, onSortChange }) {
+export function SortBar({ viewMode, setViewMode, sort, onSortChange, sortDisabled = false }) {
   const { t } = useTranslation();
   const sortOptions = getSortOptions(t);
+  const isSortDisabled = sortDisabled || viewMode === 'map';
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card p-4 rounded-xl border">
@@ -14,9 +15,9 @@ export function SortBar({ viewMode, setViewMode, sort, onSortChange }) {
         <Select
           value={sort === 'views' ? 'newest' : sort}
           onValueChange={onSortChange}
-          disabled={viewMode === 'map'}
+          disabled={isSortDisabled}
         >
-          <SelectTrigger className="w-48" disabled={viewMode === 'map'}>
+          <SelectTrigger className="w-48" disabled={isSortDisabled}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

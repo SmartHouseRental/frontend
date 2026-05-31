@@ -1192,6 +1192,8 @@
     "filters": {
       "title": "ማጣሪያዎች",
       "clearAll": "ሁሉንም አጽዳ",
+      "semanticSearch": "ዘመናዊ ፍለጋ",
+      "semanticSearchHint": "የሚፈልጉትን በተለመደ ቋንቋ ይግለጹ፣ ለምሳሌ በቦሌ አቅራቢያ ርካሽ 2 መኝታ ቤት ከጂም ጋር።",
       "propertyType": "የንብረት አይነት",
       "monthlyBudget": "ወርሃዊ በጀት",
       "bedrooms": "መኝታ ቤቶች",

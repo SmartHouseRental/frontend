@@ -5,7 +5,9 @@ import { FilterSidebar } from '@/features/explore/components/FilterSidebar';
 import { SortBar } from '@/features/explore/components/SortBar';
 import { PropertyListingsSection } from '@/features/explore/components/PropertyListingsSection';
 import { useProperties } from '@/features/property/hooks/useProperties';
+import { useSemanticSearch } from '@/features/explore/hooks/useSemanticSearch';
 import { useExploreFilters } from '@/features/explore/hooks/useExploreFilters';
+import { buildSemanticSearchParams } from '@/features/explore/utils/propertyFilters';
 
 export default function ExplorePageContent() {
     const {
@@ -23,6 +25,11 @@ export default function ExplorePageContent() {
 
     const initialView = searchParams.get('view') === 'map' ? 'map' : 'grid';
     const [viewMode, setViewMode] = useState(initialView);
+    const hasSemanticQuery = Boolean(filters.q?.trim());
+    const semanticParams = useMemo(
+        () => buildSemanticSearchParams(filters),
+        [filters],
+    );
 
     const listApiParams = useMemo(() => {
         if (viewMode === 'map') {
@@ -32,6 +39,9 @@ export default function ExplorePageContent() {
         return apiParams;
     }, [apiParams, viewMode]);
 
+    const propertiesQuery = useProperties(listApiParams, { enabled: !hasSemanticQuery });
+    const semanticQuery = useSemanticSearch(semanticParams, hasSemanticQuery);
+
     const {
         data: propertiesData,
         isLoading,
@@ -39,7 +49,7 @@ export default function ExplorePageContent() {
         isError,
         error,
         refetch,
-    } = useProperties(listApiParams);
+    } = hasSemanticQuery ? semanticQuery : propertiesQuery;
 
     const properties = propertiesData?.data || [];
     const meta = propertiesData?.meta;
@@ -88,6 +98,7 @@ export default function ExplorePageContent() {
                         setViewMode={handleSetViewMode}
                         sort={filters.sort}
                         onSortChange={setSort}
+                        sortDisabled={hasSemanticQuery}
                     />
 
                     <PropertyListingsSection
