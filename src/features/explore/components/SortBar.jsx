@@ -36,7 +36,7 @@ export function SortBar({ viewMode, setViewMode, sort, onSortChange, sortDisable
           onClick={() => setViewMode("grid")}
           className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${
             viewMode === "grid" 
-              ? "bg-white shadow-sm text-primary" 
+              ? " bg-white text-black shadow-sm" 
               : "text-muted-foreground hover:text-foreground"
           }`}
         >
@@ -49,7 +49,7 @@ export function SortBar({ viewMode, setViewMode, sort, onSortChange, sortDisable
           onClick={() => setViewMode("map")}
           className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${
             viewMode === "map" 
-              ? "bg-white shadow-sm text-primary" 
+              ? "bg-white text-black shadow-sm" 
               : "text-muted-foreground hover:text-foreground"
           }`}
         >

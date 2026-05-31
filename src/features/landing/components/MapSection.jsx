@@ -50,7 +50,7 @@ export default function MapSection() {
     >
       <div className="relative z-10 mx-auto flex flex-col items-center gap-16 lg:flex-row">
         <div className="lg:w-1/3">
-          <h2 className="mb-6 text-4xl leading-tight font-black opacity-50 md:text-5xl">
+          <h2 className="mb-6 text-4xl text-white leading-tight font-black opacity-50 md:text-5xl">
             {t('landing.map.availableAcross')} <br />
             <span className="italic opacity-100">{t('landing.map.addisAbaba')}</span>
           </h2>
