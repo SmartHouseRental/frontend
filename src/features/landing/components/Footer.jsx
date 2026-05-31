@@ -19,12 +19,12 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-foreground text-background border-t border-white/5 px-6 pt-20 pb-10 lg:px-20">
-      <div className="mx-auto max-w-7xl">
+    <footer className="bg-foreground text-background border-t border-white/5 px-2 md:px-4 lg:px-5 pt-20 pb-10">
+      <div className="mx-auto">
         <div className="mb-16 grid gap-12 md:grid-cols-4">
           <div>
-            <h2 className="text-primary mb-4 text-xl font-extrabold">Bet-Connect</h2>
-            <p className="text-background/50 text-sm leading-relaxed">
+            <h2 className="text-white mb-4 text-xl font-extrabold">Bet-Connect</h2>
+            <p className="text-white/50 text-sm leading-relaxed">
               {t('landing.footer.brandDescription')}
             </p>
           </div>
@@ -40,7 +40,7 @@ export default function Footer() {
           />
 
           <div>
-            <h4 className="text-primary mb-6 text-xs font-bold tracking-widest uppercase">
+            <h4 className="text-white mb-6 text-xs font-bold tracking-widest uppercase">
               {t('landing.footer.newsletter.title')}
             </h4>
             <div className="flex gap-2">
@@ -75,11 +75,11 @@ export default function Footer() {
 function FooterCol({ title, items }) {
   return (
     <div>
-      <h4 className="text-primary mb-6 text-xs font-bold tracking-widest uppercase">{title}</h4>
-      <ul className="text-background/60 space-y-4 text-sm">
+      <h4 className="text-white mb-6 text-xs font-bold tracking-widest uppercase">{title}</h4>
+      <ul className="text-white/50 space-y-4 text-sm">
         {items.map((item, i) => (
           <li key={i}>
-            <Link to={item.path} className="hover:text-background cursor-pointer transition-colors">
+            <Link to={item.path} className="hover:text-white cursor-pointer transition-colors">
               {item.label}
             </Link>
           </li>

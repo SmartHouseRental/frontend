@@ -73,9 +73,9 @@ function OwnerHeader() {
     });
 
     return (
-        <header className="border-border bg-card sticky top-0 z-40 flex h-16 items-center justify-between border-b px-8">
+        <header className="border-border/60 bg-card/95 sticky top-0 z-40 flex h-16 items-center justify-between border-b px-4 backdrop-blur-md sm:px-6 lg:pl-8 lg:pr-8">
             {/* Breadcrumbs */}
-            <nav className="flex items-center text-sm font-medium">
+            <nav className="flex items-center pl-10 text-sm font-medium lg:pl-0">
                 {breadcrumbs.map((crumb, index) => (
                     <div key={index} className="flex items-center gap-2">
                         {index > 0 && <span className="text-muted-foreground/40 mx-1.5">›</span>}
@@ -163,7 +163,7 @@ function OwnerHeader() {
                 {/* Messages */}
                 <Link to="/owner/messages" className="relative rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground">
                     <MessageCircle size={18} />
-                    <span className="absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-500 px-1 text-[9px] font-bold text-white">
+                    <span className="absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#22C55E] px-1 text-[9px] font-bold text-white">
                         3
                     </span>
                 </Link>

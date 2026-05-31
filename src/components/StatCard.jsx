@@ -1,28 +1,15 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 /**
- * Stat card with accent left border and optional trend indicator.
- *
- * @param {object} props
- * @param {string} props.title - Stat label
- * @param {string|number} props.value - Main value
- * @param {string} [props.borderColor] - Border color class (e.g. 'border-blue-400')
- * @param {React.ElementType} [props.icon] - Lucide icon component
- * @param {string} [props.iconBg] - Icon background class (e.g. 'bg-blue-50 text-blue-600')
- * @param {string} [props.change] - Change percentage (e.g. '+12%')
- * @param {'up'|'down'} [props.trend] - Trend direction
- * @param {string} [props.subtitle] - Small text below value
- * @param {string} [props.actionLabel] - Label shown instead of trend (e.g. 'Action Needed')
- * @param {string} [props.actionColor] - Color class for action label
- * @param {function} [props.onClick] - Click handler (makes card clickable)
- * @param {string} [props.className] - Additional classes
+ * Enterprise stat card with accent left border and optional trend indicator.
  */
 function StatCard({
   title,
   value,
-  borderColor = 'border-primary',
+  borderColor = 'border-l-primary',
   icon: Icon,
   iconBg = 'bg-primary/10 text-primary',
   change,
@@ -32,48 +19,59 @@ function StatCard({
   actionColor,
   onClick,
   className,
+  index = 0,
 }) {
   return (
-    <Card
-      className={cn(
-        'border-0 border-l-4',
-        borderColor,
-        onClick && 'cursor-pointer transition-shadow hover:shadow-md',
-        className,
-      )}
-      onClick={onClick}
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
     >
-      <CardHeader className="flex justify-between">
-        {Icon && (
-          <span className={cn('rounded-lg p-2', iconBg)}>
-            <Icon />
-          </span>
+      <Card
+        className={cn(
+          'border border-border/60 border-l-[3px] bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md',
+          borderColor,
+          onClick && 'cursor-pointer',
+          className,
         )}
-        {change && trend && (
-          <span
-            className={cn(
-              'flex items-center gap-1 text-xs font-bold',
-              trend === 'up' ? 'text-emerald-500' : 'text-rose-500',
+        onClick={onClick}
+      >
+        <CardContent className="p-5">
+          <div className="flex items-start justify-between gap-3">
+            {Icon && (
+              <span className={cn('flex size-10 items-center justify-center rounded-lg', iconBg)}>
+                <Icon size={18} strokeWidth={2} />
+              </span>
             )}
-          >
-            {trend === 'up' ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-            {change}
-          </span>
-        )}
-        {actionLabel && (
-          <span className={cn('flex items-center gap-1 text-xs font-bold', actionColor)}>
-            {actionLabel}
-          </span>
-        )}
-      </CardHeader>
-      <CardContent>
-        <p className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
-          {title}
-        </p>
-        <h3 className="mt-1 text-3xl font-bold">{value}</h3>
-        {subtitle && <p className="text-muted-foreground mt-2 text-[11px]">{subtitle}</p>}
-      </CardContent>
-    </Card>
+            <div className="min-w-0 flex-1">
+              <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                {title}
+              </p>
+              <h3 className="text-foreground mt-1 text-2xl font-bold tabular-nums">{value}</h3>
+              {subtitle && (
+                <p className="text-muted-foreground mt-0.5 text-xs">{subtitle}</p>
+              )}
+            </div>
+            {change && trend && (
+              <span
+                className={cn(
+                  'inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-semibold',
+                  trend === 'up'
+                    ? 'bg-emerald-500/10 text-emerald-600'
+                    : 'bg-red-500/10 text-red-600',
+                )}
+              >
+                {trend === 'up' ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                {change}
+              </span>
+            )}
+            {actionLabel && (
+              <span className={cn('text-xs font-semibold', actionColor)}>{actionLabel}</span>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 

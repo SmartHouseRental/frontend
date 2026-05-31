@@ -10,7 +10,7 @@ export default function Benefits() {
 
   return (
     <section className="py-20 px-6 lg:px-20">
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 items-center">
+      <div className="mx-auto flex flex-col lg:flex-row gap-16 items-center">
 
         <div className="lg:w-1/2 space-y-8">
           <div className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">

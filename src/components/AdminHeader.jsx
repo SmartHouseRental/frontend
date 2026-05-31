@@ -74,9 +74,9 @@ function AdminHeader() {
   });
 
   return (
-    <header className="border-border bg-sidebar sticky top-0 z-40 flex h-19.5 items-center justify-between border-b px-8">
+    <header className="border-border/60 bg-card/95 sticky top-0 z-40 flex h-16 items-center justify-between border-b px-4 backdrop-blur-md sm:px-6 lg:pl-8 lg:pr-8">
       <div className="flex flex-1 items-center gap-6">
-        <nav className="flex items-center text-sm font-medium">
+        <nav className="flex items-center pl-10 text-sm font-medium lg:pl-0">
           {breadcrumbs.map((crumb, index) => {
             let crumbClass = 'text-muted-foreground hover:text-foreground transition-colors';
 
@@ -127,7 +127,7 @@ function AdminHeader() {
               </DropdownMenuItem>
             </div>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="justify-center text-center font-bold text-blue-600">
+            <DropdownMenuItem className="justify-center text-center font-bold text-[#22C55E]">
               {t('header.viewAllNotifications')}
             </DropdownMenuItem>
           </DropdownMenuContent>

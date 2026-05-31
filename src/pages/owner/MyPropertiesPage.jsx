@@ -1,14 +1,13 @@
 import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Link } from 'react-router';
 import {
-    Search, Plus, Eye, Edit, Trash2, Building2, MapPin,
-    ChevronLeft, ChevronRight, LayoutGrid, List,
-    TrendingUp, BedDouble, Home, DollarSign, Filter,
+    Plus, Eye, Edit, Trash2, Building2, MapPin,
+    ChevronLeft, ChevronRight,
+    TrendingUp, BedDouble, Home, DollarSign,
     MoreVertical, Loader2, ShieldAlert, ArrowRight,
 } from 'lucide-react';
 import {
@@ -17,6 +16,14 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+    PageContainer,
+    PageHeader,
+    KpiCard,
+    DataTableToolbar,
+    PropertyCard,
+    PropertyStatusBadge,
+} from '@/components/design-system';
 import { useMyProperties } from '@/features/properties/hooks/useMyProperties';
 import { useDeleteProperty } from '@/features/properties/hooks/useDeleteProperty';
 import VerificationBanner from '@/components/VerificationBanner';
@@ -26,10 +33,10 @@ import { getLocalizedText } from '@/lib/utils/i18n';
 import { useTranslation } from 'react-i18next';
 
 const statusColors = {
-    AVAILABLE: 'bg-emerald-100 text-emerald-700',
-    RENTED: 'bg-blue-100 text-blue-700',
-    MAINTENANCE: 'bg-amber-100 text-amber-700',
-    UNAVAILABLE: 'bg-slate-100 text-slate-600',
+    AVAILABLE: 'bg-[#22C55E]/10 text-[#15803d] dark:text-[#22C55E]',
+    RENTED: 'bg-[#262626]/10 text-[#171717] dark:text-[#a3a3a3]',
+    MAINTENANCE: 'bg-amber-500/10 text-amber-700 dark:text-amber-400',
+    UNAVAILABLE: 'bg-slate-500/10 text-slate-600 dark:text-slate-400',
 };
 
 function MyPropertiesPage() {
@@ -100,85 +107,75 @@ function MyPropertiesPage() {
     }
 
     return (
-        <div className="scrollbar-hide h-screen overflow-y-auto p-8 space-y-6">
+        <PageContainer>
             <VerificationBanner verificationState={verificationState} />
 
-            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-                <div>
-                    <h1 className="text-3xl font-extrabold tracking-tight text-foreground">{t('owner.myProperties.title')}</h1>
-                    <p className="text-muted-foreground mt-1">{t('owner.myProperties.subtitle')}</p>
-                </div>
-                <Button onClick={handleAddProperty} className="gap-2 shadow-sm"><Plus size={16} /> {t('owner.myProperties.addProperty')}</Button>
-            </div>
+            <PageHeader
+                title={t('owner.myProperties.title')}
+                description={t('owner.myProperties.subtitle')}
+            >
+                <Button onClick={handleAddProperty} className="gap-2 shadow-sm">
+                    <Plus size={16} /> {t('owner.myProperties.addProperty')}
+                </Button>
+            </PageHeader>
 
-            {/* Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 {[
-                    { label: t('owner.myProperties.stats.totalProperties'), value: stats.total, icon: Building2, color: 'bg-primary/10 text-primary', change: t('owner.myProperties.stats.thisMonth') },
-                    { label: t('owner.myProperties.stats.available'), value: stats.available, icon: Home, color: 'bg-emerald-500/10 text-emerald-500' },
-                    { label: t('owner.myProperties.stats.rented'), value: stats.rented, icon: BedDouble, color: 'bg-blue-500/10 text-blue-500' },
-                    { label: t('owner.myProperties.stats.totalViews'), value: stats.totalViews.toLocaleString(), icon: TrendingUp, color: 'bg-amber-500/10 text-amber-500', change: t('owner.myProperties.stats.vsLastMonth') },
-                ].map((s) => {
-                    const Icon = s.icon;
-                    return (
-                        <Card key={s.label} className="border-0 hover:shadow-md transition-shadow">
-                            <CardHeader className="flex justify-between pb-2">
-                                <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${s.color}`}>
-                                    <Icon size={18} />
-                                </div>
-                                {s.change && <span className="text-xs text-emerald-500 font-bold flex items-center gap-0.5"><TrendingUp size={12} /> {s.change}</span>}
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider">{s.label}</p>
-                                <h3 className="mt-1 text-2xl font-extrabold">{s.value}</h3>
-                            </CardContent>
-                        </Card>
-                    );
-                })}
+                    { label: t('owner.myProperties.stats.totalProperties'), value: stats.total, icon: Building2, accent: 'primary', subtitle: t('owner.myProperties.stats.thisMonth') },
+                    { label: t('owner.myProperties.stats.available'), value: stats.available, icon: Home, accent: 'success' },
+                    { label: t('owner.myProperties.stats.rented'), value: stats.rented, icon: BedDouble, accent: 'indigo' },
+                    { label: t('owner.myProperties.stats.totalViews'), value: stats.totalViews.toLocaleString(), icon: TrendingUp, accent: 'warning', change: t('owner.myProperties.stats.vsLastMonth'), trend: 'up' },
+                ].map((s, i) => (
+                    <KpiCard
+                        key={s.label}
+                        title={s.label}
+                        value={s.value}
+                        subtitle={s.subtitle}
+                        icon={s.icon}
+                        accent={s.accent}
+                        change={s.change}
+                        trend={s.trend}
+                        index={i}
+                    />
+                ))}
             </div>
 
-            {/* Search & Filters */}
-            <Card className="flex-row flex-wrap items-center justify-between gap-4 p-4">
-                <div className="relative min-w-60 flex-1 max-w-lg">
-                    <Search size={16} className="absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                        className="pl-10"
-                        placeholder={t('owner.myProperties.filters.searchPlaceholder')}
-                        value={searchQuery}
-                        onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                    />
-                </div>
-                <div className="flex items-center gap-3">
-                    <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
-                        <SelectTrigger className="w-36"><SelectValue placeholder={t('owner.myProperties.filters.status')} /></SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem value="all">{t('owner.myProperties.filters.allStatuses')}</SelectItem>
-                                <SelectItem value="available">{t('owner.myProperties.filters.available')}</SelectItem>
-                                <SelectItem value="rented">{t('owner.myProperties.filters.rented')}</SelectItem>
-                                <SelectItem value="maintenance">{t('owner.myProperties.filters.maintenance')}</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                    <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v); setCurrentPage(1); }}>
-                        <SelectTrigger className="w-36"><SelectValue placeholder={t('owner.myProperties.filters.type')} /></SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem value="all">{t('owner.myProperties.filters.allTypes')}</SelectItem>
-                                <SelectItem value="villa">{t('owner.myProperties.filters.villa')}</SelectItem>
-                                <SelectItem value="apartment">{t('owner.myProperties.filters.apartment')}</SelectItem>
-                                <SelectItem value="house">{t('owner.myProperties.filters.house')}</SelectItem>
-                                <SelectItem value="studio">{t('owner.myProperties.filters.studio')}</SelectItem>
-                                <SelectItem value="penthouse">{t('owner.myProperties.filters.penthouse')}</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                    <div className="flex rounded-lg border border-border overflow-hidden">
-                        <button onClick={() => setViewMode('list')} className={`p-2 ${viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted'}`}><List size={16} /></button>
-                        <button onClick={() => setViewMode('grid')} className={`p-2 ${viewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted'}`}><LayoutGrid size={16} /></button>
-                    </div>
-                </div>
-            </Card>
+            <DataTableToolbar
+                searchValue={searchQuery}
+                onSearchChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                searchPlaceholder={t('owner.myProperties.filters.searchPlaceholder')}
+                onClearSearch={() => { setSearchQuery(''); setCurrentPage(1); }}
+                viewMode={viewMode}
+                onViewModeChange={setViewMode}
+                filters={
+                    <>
+                        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
+                            <SelectTrigger className="h-9 w-32"><SelectValue placeholder={t('owner.myProperties.filters.status')} /></SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="all">{t('owner.myProperties.filters.allStatuses')}</SelectItem>
+                                    <SelectItem value="available">{t('owner.myProperties.filters.available')}</SelectItem>
+                                    <SelectItem value="rented">{t('owner.myProperties.filters.rented')}</SelectItem>
+                                    <SelectItem value="maintenance">{t('owner.myProperties.filters.maintenance')}</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                        <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v); setCurrentPage(1); }}>
+                            <SelectTrigger className="h-9 w-32"><SelectValue placeholder={t('owner.myProperties.filters.type')} /></SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="all">{t('owner.myProperties.filters.allTypes')}</SelectItem>
+                                    <SelectItem value="villa">{t('owner.myProperties.filters.villa')}</SelectItem>
+                                    <SelectItem value="apartment">{t('owner.myProperties.filters.apartment')}</SelectItem>
+                                    <SelectItem value="house">{t('owner.myProperties.filters.house')}</SelectItem>
+                                    <SelectItem value="studio">{t('owner.myProperties.filters.studio')}</SelectItem>
+                                    <SelectItem value="penthouse">{t('owner.myProperties.filters.penthouse')}</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </>
+                }
+            />
 
             {/* Results count */}
             {searchQuery || statusFilter !== 'all' || typeFilter !== 'all' ? (
@@ -236,7 +233,7 @@ function MyPropertiesPage() {
                                         <TableCell className="px-6 py-4 text-sm font-medium">{getLocalizedText(p.category, preferredLanguage)}</TableCell>
                                         <TableCell className="px-6 py-4 text-sm font-bold text-primary">{p.price?.value} {p.price?.currency || 'ETB'}</TableCell>
                                         <TableCell className="px-6 py-4">
-                                            <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${statusColors[p.status]}`}>{p.status}</span>
+                                            <PropertyStatusBadge status={p.status} />
                                         </TableCell>
                                         <TableCell className="px-6 py-4">
                                             <span className="text-sm font-medium flex items-center gap-1"><Eye size={14} className="text-muted-foreground" /> {(p.viewCount || 0).toLocaleString()}</span>
@@ -315,45 +312,32 @@ function MyPropertiesPage() {
                 </Card>
             ) : (
                 /* Grid View */
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
                     {paginated.length === 0 ? (
                         <div className="col-span-full text-center py-12">
                             <p className="text-muted-foreground">{t('owner.myProperties.noProperties')}</p>
                         </div>
                     ) : (
-                        paginated.map((p) => (
-                            <Card key={p.id} className="overflow-hidden group hover:shadow-lg transition-all duration-300 p-0">
-                                <div className="relative h-48 overflow-hidden">
-                                    <img src={p.images?.[0]?.url || p.images?.[0]} alt={getLocalizedText(p.title, preferredLanguage)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                    <span className={`absolute top-3 right-3 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase shadow-sm ${statusColors[p.status]}`}>{p.status}</span>
-                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                                        <p className="text-white font-bold text-sm">{getLocalizedText(p.title, preferredLanguage)}</p>
-                                        <p className="text-white/70 text-xs flex items-center gap-1"><MapPin size={10} /> {getLocalizedText(p.address, preferredLanguage)}</p>
-                                    </div>
-                                </div>
-                                <CardContent className="p-4">
-                                    <div className="flex items-center justify-between mb-3">
-                                        <p className="text-lg font-extrabold text-primary">{p.price?.value} {p.price?.currency || 'ETB'}</p>
-                                        <span className="text-xs text-muted-foreground flex items-center gap-1"><Eye size={12} /> {(p.viewCount || 0).toLocaleString()}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
-                                        <span>{p.bedrooms} {t('owner.myProperties.beds')}</span>
-                                        <span className="text-border">•</span>
-                                        <span>{p.bathrooms} {t('owner.myProperties.baths')}</span>
-                                        <span className="text-border">•</span>
-                                        <span>{p.area?.value} {p.area?.unit || 'm²'}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <Link to={`/owner/properties/${p.id}`} className="flex-1">
-                                            <Button variant="outline" className="w-full gap-1 text-xs h-8"><Eye size={12} /> {t('owner.myProperties.view')}</Button>
-                                        </Link>
-                                        <Link to={`/owner/properties/edit/${p.id}`}>
-                                            <Button variant="outline" size="icon" className="h-8 w-8"><Edit size={12} /></Button>
-                                        </Link>
-                                        <Button variant="outline" size="icon" className="h-8 w-8 text-destructive border-destructive/30 hover:bg-destructive/5" onClick={() => handleDelete(p.id)}><Trash2 size={12} /></Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                        paginated.map((p, i) => (
+                            <PropertyCard
+                                key={p.id}
+                                id={p.id}
+                                title={getLocalizedText(p.title, preferredLanguage)}
+                                address={getLocalizedText(p.address, preferredLanguage)}
+                                image={p.images?.[0]?.url || p.images?.[0]}
+                                price={p.price?.value}
+                                currency={p.price?.currency || 'ETB'}
+                                status={p.status}
+                                bedrooms={p.bedrooms}
+                                bathrooms={p.bathrooms}
+                                area={p.area?.value}
+                                areaUnit={p.area?.unit || 'm²'}
+                                views={p.viewCount || 0}
+                                detailPath={`/owner/properties/${p.id}`}
+                                editPath={`/owner/properties/edit/${p.id}`}
+                                onDelete={() => setDeleteConfirm(p.id)}
+                                index={i}
+                            />
                         ))
                     )}
                 </div>
@@ -403,7 +387,7 @@ function MyPropertiesPage() {
                     </Card>
                 </div>
             )}
-        </div>
+        </PageContainer>
     );
 }
 

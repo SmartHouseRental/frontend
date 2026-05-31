@@ -2,14 +2,22 @@ import { lazy, Suspense, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { profileKeys } from '@/features/profile/constants';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import {
+  KpiCard,
+  AnalyticsCard,
+  ActivityFeed,
+  QuickActionCard,
+  PageContainer,
+  PeriodToggle,
+  PropertyStatusChart,
+} from '@/components/design-system';
 import {
   Building2,
   Eye,
   CalendarDays,
   FileText,
-  TrendingUp,
   DollarSign,
   Plus,
   ArrowRight,
@@ -41,49 +49,25 @@ const OwnerRevenueChart = lazy(() =>
 );
 import { verificationStateFromOverview } from '../utils/verification';
 
-const colorMap = {
-  primary: {
-    bg: 'bg-primary/10',
-    text: 'text-primary',
-    hoverBg: 'group-hover:bg-primary',
-    hoverText: 'group-hover:text-primary-foreground',
-    arrow: 'group-hover:text-primary',
-  },
-  'blue-500': {
-    bg: 'bg-blue-500/10',
-    text: 'text-blue-500',
-    hoverBg: 'group-hover:bg-blue-500',
-    hoverText: 'group-hover:text-white',
-    arrow: 'group-hover:text-blue-500',
-  },
-  'amber-500': {
-    bg: 'bg-amber-500/10',
-    text: 'text-amber-500',
-    hoverBg: 'group-hover:bg-amber-500',
-    hoverText: 'group-hover:text-white',
-    arrow: 'group-hover:text-amber-500',
-  },
-  'rose-500': {
-    bg: 'bg-rose-500/10',
-    text: 'text-rose-500',
-    hoverBg: 'group-hover:bg-rose-500',
-    hoverText: 'group-hover:text-white',
-    arrow: 'group-hover:text-rose-500',
-  },
+const quickActionColors = {
+  primary: 'primary',
+  'blue-500': 'indigo',
+  'amber-500': 'warning',
+  'rose-500': 'danger',
 };
 
-const kpiColorMap = {
-  primary: { icon: 'bg-primary/10 text-primary', change: 'text-emerald-500' },
-  'blue-500': { icon: 'bg-blue-400/10 text-blue-500', change: 'text-blue-500' },
-  'amber-500': { icon: 'bg-amber-400/10 text-amber-500', change: 'text-amber-500' },
-  'rose-500': { icon: 'bg-rose-400/10 text-rose-500', change: 'text-rose-500' },
-  'emerald-500': { icon: 'bg-emerald-400/10 text-emerald-500', change: 'text-emerald-500' },
+const kpiAccents = {
+  primary: 'primary',
+  'blue-500': 'indigo',
+  'amber-500': 'warning',
+  'rose-500': 'danger',
+  'emerald-500': 'success',
 };
 
 const activityIconMap = {
   appointment: { icon: CalendarDays, bgColor: 'bg-amber-100', iconColor: 'text-amber-600' },
   payment: { icon: DollarSign, bgColor: 'bg-emerald-100', iconColor: 'text-emerald-600' },
-  message: { icon: MessageCircle, bgColor: 'bg-blue-100', iconColor: 'text-blue-600' },
+  message: { icon: MessageCircle, bgColor: 'bg-[#F5F5F4]', iconColor: 'text-[#171717]' },
   system: { icon: Bell, bgColor: 'bg-slate-100', iconColor: 'text-slate-600' },
 };
 
@@ -218,6 +202,25 @@ export function OwnerOverviewContent() {
     : [];
 
   const topProperties = overview?.topPerformingProperties ?? [];
+
+  const propertyStatusData = (() => {
+    const counts = { Available: 0, Rented: 0, Maintenance: 0, Unavailable: 0 };
+    topProperties.forEach((p) => {
+      const key = (p.status || 'Available').replace(/^\w/, (c) => c.toUpperCase());
+      if (counts[key] !== undefined) counts[key] += 1;
+    });
+    if (kpis?.activeListings && topProperties.length === 0) {
+      counts.Available = kpis.activeListings;
+    }
+    return Object.entries(counts)
+      .filter(([, v]) => v > 0)
+      .map(([name, value]) => ({
+        name,
+        value,
+        color: { Available: '#22C55E', Rented: '#171717', Maintenance: '#eab308', Unavailable: '#737373' }[name],
+      }));
+  })();
+
   const visibleActivities = (overview?.recentActivity ?? []).map((a) => {
     const config = activityIconMap[a.type] || activityIconMap.system;
     return { ...a, ...config };
@@ -255,28 +258,26 @@ export function OwnerOverviewContent() {
   const layoutVerificationState = verificationStateFromOverview(overview);
 
   return (
-    <div className="scrollbar-hide h-screen space-y-8 overflow-y-auto p-8">
-      <div className="px-0">
-        <VerificationBanner verificationState={layoutVerificationState} />
-      </div>
+    <PageContainer>
+      <VerificationBanner verificationState={layoutVerificationState} />
 
       {overviewPartial && (
         <SchemaWarningBanner message={t('owner.overview.partialWarning')} />
       )}
 
-      <div className="flex items-end justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-foreground text-3xl font-black tracking-tight">
+          <h2 className="text-foreground text-2xl font-bold tracking-tight sm:text-3xl">
             {t('owner.overview.welcome', {
               name: profile?.firstName || t('owner.overview.ownerFallback'),
             })}
           </h2>
-          <p className="text-muted-foreground mt-1 font-medium">
+          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
             {t('owner.overview.subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="border-border bg-card text-muted-foreground hidden items-center gap-2 rounded-lg border px-4 py-2 text-sm lg:flex">
+          <div className="border-border/60 bg-card text-muted-foreground hidden items-center gap-2 rounded-lg border px-4 py-2 text-sm shadow-sm lg:flex">
             <Clock size={14} />
             <span>
               {new Date().toLocaleDateString(i18n.resolvedLanguage || i18n.language || undefined, {
@@ -293,109 +294,57 @@ export function OwnerOverviewContent() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
-        {kpiData.map((kpi) => {
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        {kpiData.map((kpi, i) => {
           const Icon = kpi.icon;
-          const colors = kpiColorMap[kpi.color];
           return (
-            <Card
+            <KpiCard
               key={kpi.label}
-              className={`group cursor-pointer border-0 border-l-4 transition-all duration-300 hover:shadow-lg ${kpi.borderColor}`}
-            >
-              <CardHeader className="flex justify-between pb-2">
-                <span
-                  className={`rounded-lg p-2 ${colors.icon} transition-transform group-hover:scale-110`}
-                >
-                  <Icon size={20} />
-                </span>
-                {kpi.change && (
-                  <span
-                    className={`flex items-center gap-1 text-xs font-bold ${kpi.changeType === 'alert' ? 'animate-pulse text-rose-500' : colors.change}`}
-                  >
-                    {kpi.changeType === 'up' && <TrendingUp size={14} />}
-                    {kpi.change}
-                  </span>
-                )}
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
-                  {kpi.label}
-                </p>
-                <h3 className="mt-1 text-2xl font-black">{kpi.value}</h3>
-                {kpi.sub && <p className="text-muted-foreground mt-0.5 text-xs">{kpi.sub}</p>}
-              </CardContent>
-            </Card>
+              title={kpi.label}
+              value={kpi.value}
+              subtitle={kpi.sub}
+              icon={Icon}
+              accent={kpiAccents[kpi.color] || 'primary'}
+              actionLabel={kpi.change}
+              actionColor={kpi.changeType === 'alert' ? 'text-red-500 animate-pulse' : undefined}
+              index={i}
+            />
           );
         })}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {quickActions.map((action) => {
-          const Icon = action.icon;
-          const colors = colorMap[action.color];
-          const content = (
-            <button
-              type="button"
-              onClick={action.isAddProperty ? handleAddProperty : undefined}
-              className="border-border bg-card group hover:border-primary/30 flex w-full items-center gap-4 rounded-xl border p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
-            >
-              <div
-                className={`flex h-12 w-12 items-center justify-center rounded-xl ${colors.bg} ${colors.text} ${colors.hoverBg} ${colors.hoverText} transition-all duration-300`}
-              >
-                <Icon size={22} />
-              </div>
-              <div className="flex-1 text-left">
-                <p className="text-foreground font-bold">{action.label}</p>
-                <p className="text-muted-foreground text-xs">{action.desc}</p>
-              </div>
-              <ArrowRight
-                size={16}
-                className={`text-muted-foreground ${colors.arrow} transition-all duration-300 group-hover:translate-x-1`}
-              />
-            </button>
-          );
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {quickActions.map((action, i) => (
+          <QuickActionCard
+            key={action.label}
+            label={action.label}
+            desc={action.desc}
+            icon={action.icon}
+            color={quickActionColors[action.color] || 'primary'}
+            to={action.isAddProperty ? undefined : `/owner/${action.to}`}
+            onClick={action.isAddProperty ? handleAddProperty : undefined}
+            index={i}
+          />
+        ))}
+      </div>
 
-          if (action.isAddProperty) {
-            return <div key={action.label}>{content}</div>;
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <AnalyticsCard
+          className="xl:col-span-2"
+          title={t('owner.overview.revenue.title')}
+          subtitle={t('owner.overview.revenue.thisPeriod')}
+          actions={
+            <PeriodToggle
+              periods={[
+                { value: 'monthly', label: t('owner.overview.periods.monthly') },
+                { value: 'weekly', label: t('owner.overview.periods.weekly') },
+              ]}
+              value={chartPeriod}
+              onChange={setChartPeriod}
+            />
           }
-
-          return (
-            <Link key={action.label} to={`/owner/${action.to}`}>
-              {content}
-            </Link>
-          );
-        })}
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="border-border bg-card rounded-2xl border p-6 shadow-sm lg:col-span-2">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h4 className="text-foreground text-lg font-bold">
-                {t('owner.overview.revenue.title')}
-              </h4>
-              <div className="mt-1 flex items-center gap-4">
-                <div className="flex items-center gap-1.5">
-                  <span className="bg-primary size-2 rounded-full"></span>
-                  <span className="text-muted-foreground text-xs font-medium">
-                    {t('owner.overview.revenue.thisPeriod')}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="bg-muted flex gap-1 rounded-lg p-0.5">
-              {['monthly', 'weekly'].map((p) => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => setChartPeriod(p)}
-                  className={`rounded-md px-3 py-1.5 text-xs font-bold capitalize transition-all ${chartPeriod === p ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                  {t(`owner.overview.periods.${p}`)}
-                </button>
-              ))}
-            </div>
-          </div>
+          contentClassName="space-y-6"
+        >
           <div className="h-56 w-full">
             <Suspense
               fallback={
@@ -410,12 +359,12 @@ export function OwnerOverviewContent() {
               />
             </Suspense>
           </div>
-          <div className="border-border mt-6 grid grid-cols-3 gap-4 border-t pt-4">
+          <div className="border-border/60 grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-3">
             <div>
               <p className="text-muted-foreground text-xs font-medium">
                 {t('owner.overview.revenue.totalRevenue')}
               </p>
-              <p className="text-foreground mt-0.5 text-lg font-black">
+              <p className="text-foreground mt-0.5 text-lg font-bold tabular-nums">
                 {formatCurrency(revenue?.totalThisMonth ?? 0, revenue?.currency)}
               </p>
             </div>
@@ -423,7 +372,7 @@ export function OwnerOverviewContent() {
               <p className="text-muted-foreground text-xs font-medium">
                 {t('owner.overview.revenue.avgPerProperty')}
               </p>
-              <p className="text-foreground mt-0.5 text-lg font-black">
+              <p className="text-foreground mt-0.5 text-lg font-bold tabular-nums">
                 {formatCurrency(revenue?.avgPerProperty ?? 0, revenue?.currency)}
               </p>
             </div>
@@ -431,7 +380,7 @@ export function OwnerOverviewContent() {
               <p className="text-muted-foreground text-xs font-medium">
                 {t('owner.overview.revenue.pendingPayments')}
               </p>
-              <p className="mt-0.5 text-lg font-black text-amber-600">
+              <p className="mt-0.5 text-lg font-bold text-amber-600 tabular-nums">
                 {formatCurrency(revenue?.pendingAmount ?? 0, revenue?.currency)}
               </p>
               <p className="text-muted-foreground mt-0.5 text-xs">
@@ -441,47 +390,73 @@ export function OwnerOverviewContent() {
               </p>
             </div>
           </div>
-        </div>
+        </AnalyticsCard>
 
-        <div className="border-border bg-card flex flex-col rounded-2xl border p-6 shadow-sm">
-          <div className="mb-5 flex items-center justify-between">
-            <h4 className="text-foreground text-lg font-bold">{t('owner.overview.activity.title')}</h4>
-            <Link to="/owner/notifications" className="text-primary text-xs font-bold hover:underline">
+        <AnalyticsCard
+          title={t('owner.overview.activity.title')}
+          actions={
+            <Link to="/owner/notifications" className="text-primary text-xs font-semibold hover:underline">
               {t('owner.overview.viewAll')}
             </Link>
-          </div>
-          <div className="flex-1 space-y-4 overflow-y-auto">
-            {visibleActivities.length === 0 ? (
-              <p className="text-muted-foreground py-4 text-center text-sm">
-                {t('owner.overview.activity.empty')}
-              </p>
-            ) : (
-              visibleActivities.map((a) => {
-                const Icon = a.icon;
-                return (
-                  <div
-                    key={a.id}
-                    className="hover:bg-muted/30 group -m-1.5 flex cursor-pointer items-start gap-3 rounded-lg p-1.5 transition-colors"
-                  >
-                    <div
-                      className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${a.bgColor} transition-transform group-hover:scale-110`}
-                    >
-                      <Icon size={14} className={a.iconColor} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-foreground text-sm font-semibold">{a.title}</p>
-                      <p className="text-muted-foreground truncate text-xs">{a.desc}</p>
-                      <p className="text-muted-foreground/60 mt-0.5 text-[10px]">{a.time}</p>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </div>
+          }
+          contentClassName="max-h-80 overflow-y-auto"
+        >
+          <ActivityFeed
+            items={visibleActivities}
+            emptyMessage={t('owner.overview.activity.empty')}
+          />
+        </AnalyticsCard>
       </div>
 
-      <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <AnalyticsCard
+          title={t('owner.overview.propertyStatus', { defaultValue: 'Property Status' })}
+          subtitle={t('owner.overview.propertyStatusDesc', { defaultValue: 'Distribution across your portfolio' })}
+        >
+          <PropertyStatusChart data={propertyStatusData} />
+        </AnalyticsCard>
+
+        <AnalyticsCard
+          title={t('owner.overview.maintenance', { defaultValue: 'Pending Requests' })}
+          subtitle={t('owner.overview.maintenanceDesc', { defaultValue: 'Appointments & agreements requiring action' })}
+        >
+          <div className="space-y-4">
+            {[
+              {
+                label: t('owner.overview.kpis.appointments'),
+                value: kpis?.pendingAppointments ?? 0,
+                color: 'bg-amber-500',
+                to: '/owner/appointments',
+              },
+              {
+                label: t('owner.overview.kpis.pendingAgreements'),
+                value: kpis?.pendingAgreements ?? 0,
+                color: 'bg-[#171717]',
+                to: '/owner/agreements',
+              },
+              {
+                label: t('owner.overview.quickActions.notifications.title'),
+                value: quickActionsMeta?.unreadNotifications ?? 0,
+                color: 'bg-primary',
+                to: '/owner/notifications',
+              },
+            ].map((item) => (
+              <Link
+                key={item.label}
+                to={item.to}
+                className="hover:bg-muted/40 flex items-center gap-4 rounded-lg border border-border/40 p-4 transition-colors"
+              >
+                <div className={`size-2 rounded-full ${item.color}`} />
+                <span className="text-muted-foreground flex-1 text-sm">{item.label}</span>
+                <span className="text-foreground text-lg font-bold tabular-nums">{item.value}</span>
+                <ArrowRight size={14} className="text-muted-foreground" />
+              </Link>
+            ))}
+          </div>
+        </AnalyticsCard>
+      </div>
+
+      <div className="overflow-hidden rounded-xl border border-border/60 bg-card shadow-sm">
         <div className="border-border flex items-center justify-between border-b p-6">
           <div>
             <h4 className="text-foreground text-lg font-bold">
@@ -651,6 +626,6 @@ export function OwnerOverviewContent() {
           </Card>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }

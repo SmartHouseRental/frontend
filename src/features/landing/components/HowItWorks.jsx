@@ -15,7 +15,7 @@ export default function HowItWorks() {
     <section className="bg-muted/30 py-20 px-6 lg:px-20 relative overflow-hidden">
       <div className="absolute inset-0 ethiopian-pattern" />
 
-      <div className="max-w-7xl mx-auto relative z-10 text-center">
+      <div className="mx-auto relative z-10 text-center">
         <h2 className="text-4xl font-extrabold mb-16">
           {t('landing.howItWorks.title')}
         </h2>
