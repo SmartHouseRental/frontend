@@ -1,4 +1,5 @@
 import { useParams } from 'react-router';
+import { useEffect } from 'react';
 import { useProperty } from '@/features/property/hooks/useProperty';
 import { adaptProperty } from '@/features/property/utils/propertyAdapter';
 import { parseLocation } from '@/lib/utils';
@@ -11,6 +12,7 @@ import MapSection from '@/features/property/components/MapSection';
 import Reviews from '@/features/property/components/Reviews';
 import RatingBreakdown from './RatingBreakdown';
 import SimilarProperties from './SimilarProperties';
+import { useTrackInteraction } from '@/features/recommendation/hooks/useRecommendations';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,8 +30,15 @@ export default function PropertyDetailContent() {
     const { id } = useParams();
     const { locale, t } = useLanguage();
     const { data: rawProperty, isLoading, isError, error } = useProperty(id);
+    const { mutate: trackInteraction } = useTrackInteraction();
 
     const property = rawProperty ? adaptProperty(rawProperty, locale) : null;
+
+    useEffect(() => {
+        if (id) {
+            trackInteraction({ propertyId: id, type: 'VIEW' });
+        }
+    }, [id, trackInteraction]);
 
     if (isLoading) {
         return (
@@ -51,8 +60,8 @@ export default function PropertyDetailContent() {
                         {error?.response?.data?.message || error?.message || t('propertyDetail.genericLoadError')}
                     </p>
                 </div>
-                <Button 
-                    variant="outline" 
+                <Button
+                    variant="outline"
                     onClick={() => window.location.reload()}
                     className="rounded-xl px-8"
                 >
@@ -66,7 +75,7 @@ export default function PropertyDetailContent() {
 
     // Parse location for the map
     const coords = parseLocation(property.location);
-    
+
     const title = property.title || t('propertyHero.propertyDetailsFallback');
     const address = property.address || "Addis Ababa, Ethiopia";
     const description = property.description || '';
