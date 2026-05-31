@@ -69,6 +69,7 @@ import RenterReviewsPage from './pages/renter/ReviewsPage';
 import RenterProfilePage from './pages/renter/ProfilePage';
 import ScheduleVisitPage from './pages/renter/ScheduleVisitPage';
 import RenterNotificationsPage from './pages/renter/NotificationsPage';
+import RenterRecommendationsPage from './pages/renter/RecommendationsPage';
 import { Toaster } from '@/components/ui/sonner';
 import ScrollToTop from './components/ScrollToTop';
 
@@ -547,7 +548,7 @@ function App() {
               }
             />
           </Route>
-          
+
           {/* Chapa return URL — must match backend FRONTEND_URL redirect */}
           <Route
             path="/agreements/payment/return"
@@ -565,6 +566,7 @@ function App() {
             </ProtectedRoute>
           }>
             <Route index element={<Navigate replace to="appointments" />} />
+            <Route path="recommendations" element={<RenterRecommendationsPage />} />
             <Route path="appointments" element={<AppointmentsPage />} />
             <Route path="agreements" element={<RenterAgreementsPage />} />
             <Route path="agreements/:id" element={<RenterAgreementDetailPage />} />

@@ -1,14 +1,15 @@
 import { NavLink } from 'react-router';
-import { 
-  Calendar, 
-  FileText, 
-  Star, 
-  Settings, 
-  LogOut, 
+import {
+  Calendar,
+  FileText,
+  Star,
+  Settings,
+  LogOut,
   User,
   ChevronRight,
   Heart,
-  MessageSquare
+  MessageSquare,
+  Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLogout } from '@/features/auth/hooks/useLogout';
@@ -25,6 +26,12 @@ export default function RenterSidebar({ isOpen, onClose }) {
   const unreadCount = getUnreadCount(notifications);
 
   const menuItems = [
+    {
+      title: t('sidebar.recommendations', 'For You'),
+      icon: Sparkles,
+      path: '/renter/recommendations',
+      description: t('sidebar.tailoredPropertySuggestions', 'Tailored Property Suggestions'),
+    },
     {
       title: t('sidebar.myAppointments'),
       icon: Calendar,
@@ -69,12 +76,12 @@ export default function RenterSidebar({ isOpen, onClose }) {
     <>
       {/* Mobile Overlay */}
       {isOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm lg:hidden" 
+        <div
+          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm lg:hidden"
           onClick={onClose}
         />
       )}
-      
+
       <aside className={cn(
         "fixed left-0 top-[73px] bottom-0 z-40 w-72 border-r bg-white flex flex-col overflow-y-auto transition-transform duration-300 lg:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
@@ -98,8 +105,8 @@ export default function RenterSidebar({ isOpen, onClose }) {
                 onClick={onClose}
                 className={({ isActive }) => cn(
                   "group flex items-center justify-between p-3 rounded-xl transition-all duration-200",
-                  isActive 
-                    ? "bg-primary text-primary-foreground shadow-md" 
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-md"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground font-medium"
                 )}
               >
@@ -116,8 +123,8 @@ export default function RenterSidebar({ isOpen, onClose }) {
                       {item.title === t('sidebar.notifications') && unreadCount > 0 && (
                         <span className={cn(
                           "flex h-5 items-center justify-center rounded-full px-2 text-[10px] font-bold transition-colors",
-                          isActive 
-                            ? "bg-white text-primary" 
+                          isActive
+                            ? "bg-white text-primary"
                             : "bg-primary text-primary-foreground"
                         )}>
                           {unreadCount}
@@ -133,7 +140,7 @@ export default function RenterSidebar({ isOpen, onClose }) {
         </div>
 
         <div className="mt-auto p-6 border-t bg-slate-50/50">
-          <button 
+          <button
             className="flex items-center gap-3 w-full p-3 text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-xl transition-all font-medium"
             onClick={handleLogout}
             disabled={logoutMutation.isPending}
