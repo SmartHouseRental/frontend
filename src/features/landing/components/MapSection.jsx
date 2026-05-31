@@ -32,7 +32,7 @@ export default function MapSection() {
   });
 
   return (
-    <section className="bg-foreground text-background relative overflow-hidden rounded-t-[3rem] px-6 py-24 lg:px-20">
+    <section className="bg-foreground text-background relative overflow-hidden rounded-t-[3rem] px-6 py-24 lg:px-20 -mx-6">
       <div className="mx-auto flex flex-col items-center gap-16 lg:flex-row">
         <div className="relative z-10 lg:w-1/3">
 

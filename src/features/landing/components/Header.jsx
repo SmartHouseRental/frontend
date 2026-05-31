@@ -8,6 +8,7 @@ import { useLogout } from '@/features/auth/hooks/useLogout';
 import { useLanguage } from '@/contexts/LanguageContext';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { cn } from '@/lib/utils';
+import { User } from 'lucide-react';
 
 export default function Header() {
   const { isAuthenticated, user } = useAuth();
@@ -104,9 +105,9 @@ export default function Header() {
             {isAuthenticated && isRenter && (
               <Link
                 to="/renter"
-                className="hidden rounded-full border border-[#E5E5E5] px-4 py-2 text-[13px] font-medium text-[#111111] transition-colors hover:bg-[#F5F5F4] sm:block"
+                className="hidden rounded-full border border-[#E5E5E5] p-3 text-[13px] font-medium text-[#111111] transition-colors hover:bg-[#F5F5F4] sm:block"
               >
-                Dashboard
+                <User size={16} />
               </Link>
             )}
 

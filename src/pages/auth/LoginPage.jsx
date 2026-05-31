@@ -45,7 +45,6 @@ function LoginPage() {
                 isLatinLocale && 'uppercase',
               )}
             >
-              <span className="size-1.5 rounded-full bg-[#22C55E]" aria-hidden />
               {t('auth.welcomeBackTo')}
             </p>
             <h2
