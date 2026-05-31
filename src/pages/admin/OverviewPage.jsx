@@ -11,7 +11,10 @@ import {
   UserPlus,
   Activity,
   XCircle,
+  BrainCircuit,
 } from 'lucide-react';
+import { toast } from 'sonner';
+import { adminApi } from '@/features/admin/api';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router';
 import { cn } from '@/lib/utils';
@@ -57,8 +60,8 @@ function OverviewPage() {
   const growthCurrent = data?.userGrowth?.currentPeriod || [];
   const lastUpdatedText = data?.lastUpdated
     ? t('adminOverview.updatedAt', {
-        time: new Date(data.lastUpdated).toLocaleTimeString(),
-      })
+      time: new Date(data.lastUpdated).toLocaleTimeString(),
+    })
     : t('adminOverview.notAvailable');
 
   return (
@@ -68,9 +71,28 @@ function OverviewPage() {
           <h2 className="text-3xl font-black tracking-tight text-foreground">{t('adminOverview.title')}</h2>
           <p className="text-muted-foreground mt-1 font-medium">{t('adminOverview.subtitle')}</p>
         </div>
-        <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm text-muted-foreground">
-          <Activity size={14} />
-          <span>{lastUpdatedText}</span>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={async () => {
+              try {
+                toast.loading(t('adminOverview.training.started', 'Initiating ML training...'), { id: 'train' });
+                await adminApi.triggerRecommendationTraining();
+                toast.success(t('adminOverview.training.success', 'Training started successfully!'), { id: 'train' });
+              } catch (err) {
+                toast.error(t('adminOverview.training.error', 'Failed to trigger training'), { id: 'train' });
+              }
+            }}
+            className="flex items-center gap-2"
+          >
+            <BrainCircuit size={16} />
+            {t('adminOverview.training.button', 'Retrain ML Model')}
+          </Button>
+          <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm text-muted-foreground">
+            <Activity size={14} />
+            <span>{lastUpdatedText}</span>
+          </div>
         </div>
       </div>
 
