@@ -8,7 +8,9 @@ import {
   YAxis,
 } from 'recharts';
 
-const CHART_STROKE = 'oklch(0.62 0.11 55)';
+const CHART_STROKE = '#0A0A0A';
+const CHART_GRID = '#E5E5E5';
+const CHART_TICK = '#737373';
 
 function formatTooltipValue(value, currency) {
   const num = Number(value) || 0;
@@ -29,15 +31,15 @@ export function OwnerRevenueChart({ data = [], currency = 'ETB' }) {
             <stop offset="100%" stopColor={CHART_STROKE} stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.9 0.01 90)" vertical={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID} vertical={false} />
         <XAxis
           dataKey="label"
-          tick={{ fontSize: 11, fill: 'oklch(0.55 0.02 80)' }}
+          tick={{ fontSize: 11, fill: CHART_TICK }}
           axisLine={false}
           tickLine={false}
         />
         <YAxis
-          tick={{ fontSize: 11, fill: 'oklch(0.55 0.02 80)' }}
+          tick={{ fontSize: 11, fill: CHART_TICK }}
           axisLine={false}
           tickLine={false}
           width={48}
@@ -48,7 +50,8 @@ export function OwnerRevenueChart({ data = [], currency = 'ETB' }) {
           labelStyle={{ fontWeight: 600 }}
           contentStyle={{
             borderRadius: 8,
-            border: '1px solid oklch(0.9 0.01 90)',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.07)',
             fontSize: 12,
           }}
         />

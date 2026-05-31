@@ -13,7 +13,7 @@ export default function RenterLayout() {
   useNotificationSocket();
 
   return (
-    <div className="min-h-screen bg-slate-50/30">
+    <div className="min-h-screen bg-background">
       <Header />
       
       {/* Mobile Menu Trigger */}

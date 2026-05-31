@@ -149,14 +149,14 @@ export default function NearMeSection() {
           return (
             <Card
               key={home.id}
-              className="group cursor-pointer overflow-hidden transition-all duration-300 hover:shadow-xl"
+              className="group cursor-pointer gap-0 overflow-hidden p-0 transition-all duration-300 hover:shadow-xl"
               onClick={() => navigate(`/property/${home.id}`)}
             >
               <div className="relative h-64 overflow-hidden">
                 <img
                   src={image}
                   alt={title}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="block h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 {type && (
                   <Badge className="bg-primary text-primary-foreground absolute top-4 left-4">
@@ -164,17 +164,17 @@ export default function NearMeSection() {
                   </Badge>
                 )}
                 {home.distance != null && (
-                  <Badge className="absolute top-4 right-14 bg-white/95 text-foreground text-xs font-semibold shadow-sm">
+                  <Badge className="absolute top-4 right-14 bg-white/95 text-black text-xs font-semibold shadow-sm">
                     {home.distance} km
                   </Badge>
                 )}
                 <HeartButton property={home} className="absolute top-4 right-4 z-10" />
-                <div className="absolute bottom-4 left-4 rounded-md bg-white/90 px-3 py-1 text-sm font-bold">
+                <div className="absolute bottom-4 left-4 rounded-md bg-white/90 text-black px-3 py-1 text-sm font-bold">
                   {priceValue} {priceCurrency} {t('perMonth')}
                 </div>
               </div>
 
-              <CardContent className="p-5">
+              <CardContent className="px-5 py-5">
                 <h3 className="group-hover:text-primary mb-1 text-lg font-bold transition-colors line-clamp-1">
                   {title}
                 </h3>
@@ -199,7 +199,7 @@ export default function NearMeSection() {
 
   return (
     <section className="px-6 py-16 lg:px-20 bg-muted/20">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto">
         <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="mb-2 text-3xl font-extrabold">{t('nearMe')}</h2>

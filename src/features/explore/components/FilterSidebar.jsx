@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
+import { Sparkles } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import {
   Select,
@@ -49,6 +51,7 @@ export function FilterSidebar({ filters, onApply, onClear }) {
 
   const handleClear = () => {
     const cleared = filtersToDraft({
+      q: "",
       category: "",
       minPriceThousands: PRICE_MIN_THOUSANDS,
       maxPriceThousands: PRICE_MAX_THOUSANDS,
@@ -74,6 +77,27 @@ export function FilterSidebar({ filters, onApply, onClear }) {
           >
             {t('explorePage.filters.clearAll')}
           </button>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-bold uppercase flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            {t('explorePage.filters.semanticSearch')}
+          </label>
+          <Input
+            value={draft.q}
+            onChange={(e) => setDraft((prev) => ({ ...prev, q: e.target.value }))}
+            placeholder={t('explorePage.search.placeholder')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleApply();
+              }
+            }}
+          />
+          <p className="text-muted-foreground text-xs">
+            {t('explorePage.filters.semanticSearchHint')}
+          </p>
         </div>
 
         <div className="flex flex-col gap-2">

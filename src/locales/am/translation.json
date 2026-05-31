@@ -1010,13 +1010,47 @@
     "hero": {
       "title": "ተስማሚ የሆነ",
       "titleAccent": "የቤተሰብ ቤት ያግኙ",
+      "headline": "ዛሬ ተስማሚ የሆነ ቤትዎን ያግኙ",
+      "eyebrow": "የክብር ንብረት አስተዳደር",
       "subtitle": "የተረጋገጡ እና ለቤተሰብ ተስማሚ የረጅም ጊዜ ቆይታዎች።",
+      "subtitleLong": "ለሕይወትዎ የተስማሚ የንብረት መፍትሄዎችን እናቀርባለን፣ በእያንዳንዱ ደረጃ በግል ተሞክሮ የልዩ ፍላጎትዎን እና ራዕይዎን በማሟላት።",
+      "exploreCta": "ንብረቶችን ይመልከቱ",
       "cityPlaceholder": "ከተማ...",
       "priceRangePlaceholder": "የዋጋ ክልል",
       "bedroomsPlaceholder": "መኝታ ቤቶች",
-      "search": "ፈልግ"
+      "search": "ፈልግ",
+      "featuredAgents": "10+ የተመረጡ ወኪሎች",
+      "rating": "5 / 5",
+      "imageAlt": "በሰማይ ስት ጥሩ ጊዜ የላቀ ዘመናዊ ቤት እና ገንዳ",
+      "stats": {
+        "projects": "የተመዘገቡ ንብረቶች",
+        "projectsValue": "200+",
+        "clients": "ደስተኛ ደንበኞች",
+        "clientsValue": "70+",
+        "value": "የፖርትፎሊዮ ዋጋ",
+        "valueAmount": "10M+",
+        "valuePrefix": "ETB "
+      }
+    },
+    "nav": {
+      "properties": "ንብረቶች",
+      "agents": "ወኪሎች",
+      "contactCta": "አሁን ያግኙን"
+    },
+    "search": {
+      "location": "ከተማ ወይም አካባቢ...",
+      "type": "የንብረት አይነት",
+      "price": "የዋጋ ክልል",
+      "beds": "መኝታ ቤቶች"
+    },
+    "ai": {
+      "badge": "በAI የተጎለበተ መዛመድ",
+      "title": "ለእርስዎ የተመከረ",
+      "subtitle": "የእኛ ብልጥ ምክር ስርዓት ምርጫዎችዎን፣ በጀትዎን እና የኑሮ ዘይቤዎን በመተንተን የሚወዷቸውን ንብረቶች ያቀርባል።",
+      "viewAll": "ሁሉንም መዛመዶች ይመልከቱ"
     },
     "featured": {
+      "badge": "የተመረጠ ስብስብ",
       "error": "የተመራጭ ዝርዝሮችን ማሳየት አልተቻለም።"
     },
     "nearby": {
@@ -1158,6 +1192,8 @@
     "filters": {
       "title": "ማጣሪያዎች",
       "clearAll": "ሁሉንም አጽዳ",
+      "semanticSearch": "ዘመናዊ ፍለጋ",
+      "semanticSearchHint": "የሚፈልጉትን በተለመደ ቋንቋ ይግለጹ፣ ለምሳሌ በቦሌ አቅራቢያ ርካሽ 2 መኝታ ቤት ከጂም ጋር።",
       "propertyType": "የንብረት አይነት",
       "monthlyBudget": "ወርሃዊ በጀት",
       "bedrooms": "መኝታ ቤቶች",
@@ -1901,12 +1937,12 @@
       "rating": "ደረጃ",
       "sort": "ደርድር",
       "starsOptions": {
-        "all": "ሁሉም ኮከቦች",
-        "5": "5 ኮከቦች",
-        "4": "4 ኮከቦች",
-        "3": "3 ኮከቦች",
+        "1": "1 ኮከብ",
         "2": "2 ኮከቦች",
-        "1": "1 ኮከብ"
+        "3": "3 ኮከቦች",
+        "4": "4 ኮከቦች",
+        "5": "5 ኮከቦች",
+        "all": "ሁሉም ኮከቦች"
       },
       "sortOptions": {
         "newest": "አዳዲስ",

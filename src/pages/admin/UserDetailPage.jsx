@@ -27,7 +27,7 @@ function UserDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8">
+      <div>
         <TableSkeleton rows={4} columns={2} showHeader={false} />
       </div>
     );
@@ -35,7 +35,7 @@ function UserDetailPage() {
 
   if (isError || !user) {
     return (
-      <div className="p-8">
+      <div>
         <ErrorState title={t('adminUserDetail.errors.failedToLoadUser', { defaultValue: 'Failed to load user' })} onRetry={refetch} />
       </div>
     );
@@ -69,7 +69,7 @@ function UserDetailPage() {
   };
 
   return (
-    <div className="p-8 pt-4">
+    <div className="space-y-6">
       <div className="flex items-center gap-4">
         <button
           onClick={() => navigate(-1)}

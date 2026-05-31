@@ -5,6 +5,7 @@ import { PropertyGrid } from '@/features/explore/components/PropertyGrid';
 import { SortBar } from '@/features/explore/components/SortBar';
 import PropertyMap from '@/components/map/PropertyMap';
 import { properties } from '@/lib/dummyData';
+import RecommendedProperties from '@/features/recommendation/components/RecommendedProperties';
 
 export default function Explore() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -33,6 +34,7 @@ export default function Explore() {
       </div>
 
       <section className="flex min-w-0 flex-1 flex-col gap-6">
+        <RecommendedProperties />
         <SortBar viewMode={viewMode} setViewMode={handleSetViewMode} />
 
         {viewMode === 'grid' ? (

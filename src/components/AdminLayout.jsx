@@ -1,16 +1,13 @@
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 import { Outlet } from 'react-router';
+import { DashboardShell } from '@/components/design-system/DashboardShell';
 
 function AdminLayout() {
   return (
-    <div className="bg-background font-display text-background-forground flex min-h-screen">
-      <AdminSidebar />
-      <main className="ml-72 flex-1">
-        <AdminHeader />
-        <Outlet />
-      </main>
-    </div>
+    <DashboardShell sidebar={<AdminSidebar />} header={<AdminHeader />}>
+      <Outlet />
+    </DashboardShell>
   );
 }
 

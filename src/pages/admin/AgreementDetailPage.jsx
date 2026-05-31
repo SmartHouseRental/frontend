@@ -73,7 +73,7 @@ function AgreementDetailPage() {
     Array.isArray(property?.images) && property.images.length > 0 ? property.images[0] : null;
 
   return (
-    <main className="mx-auto flex max-w-[1440px] flex-col gap-6 px-6 py-8">
+    <main className="mx-auto flex max-w-[1440px] flex-col gap-6">
       <div className="flex items-center gap-4">
         <button
           type="button"

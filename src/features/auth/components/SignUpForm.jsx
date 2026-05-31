@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Link, useNavigate } from 'react-router';
-import { Mail, Lock, User, Phone, ChevronLeft, Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router';
+import { Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 import { useRegister } from '../hooks/useRegister';
 
 const registerSchema = z.object({
@@ -20,9 +21,15 @@ const registerSchema = z.object({
         .regex(/[A-Z]/, 'Password must contain at least one uppercase letter'),
 });
 
+const inputClass = (hasError) =>
+    cn(
+        'h-12 rounded-2xl border-border bg-muted pl-11 transition-colors focus:border-ring focus:bg-background',
+        hasError && 'border-destructive',
+    );
+
 export function SignUpForm() {
     const { t } = useTranslation();
-    const [role, setRole] = useState('renter'); // Default role
+    const [role, setRole] = useState('renter');
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const registerMutation = useRegister();
@@ -43,7 +50,6 @@ export function SignUpForm() {
     });
 
     const onSubmit = (data) => {
-        // Add role into the payload
         const payload = { ...data, role };
         registerMutation.mutate(payload, {
             onSuccess: () => {
@@ -53,9 +59,9 @@ export function SignUpForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-400">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
+                <label className="ml-1 text-sm font-medium text-muted-foreground">
                     {t('auth.iAmJoiningAs')}
                 </label>
                 <RadioGroup
@@ -65,127 +71,136 @@ export function SignUpForm() {
                 >
                     <label
                         htmlFor="renter"
-                        className={`flex items-center gap-3 rounded-xl border-2 px-4 py-3 transition-all cursor-pointer ${role === 'renter'
-                            ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                            : 'border-border/60 bg-card hover:border-primary/40'
-                            }`}
+                        className={cn(
+                            'flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 transition-all',
+                            role === 'renter'
+                                ? 'border-ring bg-muted'
+                                : 'border-border bg-background hover:border-muted-foreground',
+                        )}
                     >
-                        <RadioGroupItem value="renter" id="renter" className="h-4 w-4" />
-                        <span className={`text-sm font-bold ${role === 'renter' ? 'text-primary' : 'text-foreground'}`}>{t('auth.renter')}</span>
+                        <RadioGroupItem value="renter" id="renter" className="size-4" />
+                        <span className={cn('text-sm font-semibold', role === 'renter' ? 'text-foreground' : 'text-muted-foreground')}>
+                            {t('auth.renter')}
+                        </span>
                     </label>
 
                     <label
                         htmlFor="owner"
-                        className={`flex items-center gap-3 rounded-xl border-2 px-4 py-3 transition-all cursor-pointer ${role === 'owner'
-                            ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                            : 'border-border/60 bg-card hover:border-primary/40'
-                            }`}
+                        className={cn(
+                            'flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 transition-all',
+                            role === 'owner'
+                                ? 'border-ring bg-muted'
+                                : 'border-border bg-background hover:border-muted-foreground',
+                        )}
                     >
-                        <RadioGroupItem value="owner" id="owner" className="h-4 w-4" />
-                        <span className={`text-sm font-bold ${role === 'owner' ? 'text-primary' : 'text-foreground'}`}>{t('auth.owner')}</span>
+                        <RadioGroupItem value="owner" id="owner" className="size-4" />
+                        <span className={cn('text-sm font-semibold', role === 'owner' ? 'text-foreground' : 'text-muted-foreground')}>
+                            {t('auth.owner')}
+                        </span>
                     </label>
                 </RadioGroup>
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2">
-                <div className="space-y-2 col-span-2 sm:col-span-1">
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="first_name">
+                <div className="col-span-2 space-y-2 sm:col-span-1">
+                    <label className="ml-1 text-sm font-medium text-muted-foreground" htmlFor="first_name">
                         {t('auth.firstName')}
                     </label>
-                    <div className="relative group">
-                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
+                    <div className="group relative">
+                        <User className="absolute top-1/2 left-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-foreground" size={18} />
                         <Input
                             id="first_name"
                             placeholder="John"
-                            className={`pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm ${errors.first_name ? 'border-destructive' : ''}`}
+                            className={inputClass(errors.first_name)}
                             {...register('first_name')}
                         />
                     </div>
-                    {errors.first_name && <p className="text-destructive text-xs ml-1">{errors.first_name.message}</p>}
+                    {errors.first_name && <p className="ml-1 text-xs text-destructive">{errors.first_name.message}</p>}
                 </div>
 
-                <div className="space-y-2 col-span-2 sm:col-span-1">
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="last_name">
+                <div className="col-span-2 space-y-2 sm:col-span-1">
+                    <label className="ml-1 text-sm font-medium text-muted-foreground" htmlFor="last_name">
                         {t('auth.lastName')}
                     </label>
-                    <div className="relative group">
-                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
+                    <div className="group relative">
+                        <User className="absolute top-1/2 left-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-foreground" size={18} />
                         <Input
                             id="last_name"
                             placeholder="Doe"
-                            className={`pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm ${errors.last_name ? 'border-destructive' : ''}`}
+                            className={inputClass(errors.last_name)}
                             {...register('last_name')}
                         />
                     </div>
-                    {errors.last_name && <p className="text-destructive text-xs ml-1">{errors.last_name.message}</p>}
+                    {errors.last_name && <p className="ml-1 text-xs text-destructive">{errors.last_name.message}</p>}
                 </div>
 
-                <div className="space-y-2 col-span-2 sm:col-span-1">
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="email">
+                <div className="col-span-2 space-y-2 sm:col-span-1">
+                    <label className="ml-1 text-sm font-medium text-muted-foreground" htmlFor="email">
                         {t('auth.emailAddress')}
                     </label>
-                    <div className="relative group">
-                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
+                    <div className="group relative">
+                        <Mail className="absolute top-1/2 left-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-foreground" size={18} />
                         <Input
                             id="email"
                             type="email"
                             placeholder="name@example.com"
-                            className={`pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm ${errors.email ? 'border-destructive' : ''}`}
+                            className={inputClass(errors.email)}
                             {...register('email')}
                         />
                     </div>
-                    {errors.email && <p className="text-destructive text-xs ml-1">{errors.email.message}</p>}
+                    {errors.email && <p className="ml-1 text-xs text-destructive">{errors.email.message}</p>}
                 </div>
 
-                <div className="space-y-2 col-span-2 sm:col-span-1">
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="phone">
+                <div className="col-span-2 space-y-2 sm:col-span-1">
+                    <label className="ml-1 text-sm font-medium text-muted-foreground" htmlFor="phone">
                         {t('auth.phoneNumber')}
                     </label>
-                    <div className="relative group">
-                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
+                    <div className="group relative">
+                        <Phone className="absolute top-1/2 left-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-foreground" size={18} />
                         <Input
                             id="phone"
                             type="tel"
                             placeholder="+251 911 234 567"
-                            className={`pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm ${errors.phone ? 'border-destructive' : ''}`}
+                            className={inputClass(errors.phone)}
                             {...register('phone')}
                         />
                     </div>
-                    {errors.phone && <p className="text-destructive text-xs ml-1">{errors.phone.message}</p>}
+                    {errors.phone && <p className="ml-1 text-xs text-destructive">{errors.phone.message}</p>}
                 </div>
 
-                <div className="space-y-2 col-span-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="password">
+                <div className="col-span-2 space-y-2">
+                    <label className="ml-1 text-sm font-medium text-muted-foreground" htmlFor="password">
                         {t('auth.password')}
                     </label>
-                    <div className="relative group">
-                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
+                    <div className="group relative">
+                        <Lock className="absolute top-1/2 left-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-foreground" size={18} />
                         <Input
                             id="password"
                             type={showPassword ? 'text' : 'password'}
                             placeholder="••••••••"
-                            className={`pl-11 pr-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm ${errors.password ? 'border-destructive' : ''}`}
+                            className={cn(inputClass(errors.password), 'pr-11')}
                             {...register('password')}
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                            className="absolute top-1/2 right-3.5 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
                         >
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                     </div>
-                    <p className="text-[11px] text-muted-foreground ml-1 mt-1 font-medium">{t('auth.passwordHint')}</p>
-                    {errors.password && <p className="text-destructive text-xs ml-1">{errors.password.message}</p>}
+                    <p className="ml-1 text-[11px] font-medium text-muted-foreground">{t('auth.passwordHint')}</p>
+                    {errors.password && <p className="ml-1 text-xs text-destructive">{errors.password.message}</p>}
                 </div>
             </div>
 
-            <div className="pt-2">
-                <Button type="submit" className="w-full h-14 rounded-xl font-bold shadow-lg shadow-primary/20 text-[16px]" disabled={registerMutation.isPending}>
-                    {registerMutation.isPending ? t('auth.creatingAccount') : t('auth.createAccount')}
-                    {!registerMutation.isPending && <ChevronLeft className="ml-2 rotate-180" size={18} />}
-                </Button>
-            </div>
+            <Button
+                type="submit"
+                className="h-12 w-full rounded-full text-sm font-semibold shadow-luxury-md"
+                disabled={registerMutation.isPending}
+            >
+                {registerMutation.isPending ? t('auth.creatingAccount') : t('auth.createAccount')}
+            </Button>
         </form>
     );
 }

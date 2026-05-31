@@ -41,7 +41,7 @@ const SORT_OPTIONS = [
   },
 ];
 
-const FILTER_PARAM_KEYS = ['category', 'minPrice', 'maxPrice', 'bedrooms', 'bathrooms'];
+const FILTER_PARAM_KEYS = ['category', 'minPrice', 'maxPrice', 'bedrooms', 'bathrooms', 'q'];
 
 function parsePositiveInt(value, fallback) {
   const n = parseInt(value, 10);
@@ -172,6 +172,19 @@ export function clearFilterParams(prev) {
   return next;
 }
 
+/** Map URL filter state to GET /search query params */
+export function buildSemanticSearchParams(filters, currency = 'ETB') {
+  const query = filters.q?.trim();
+  if (!query) return null;
+
+  return {
+    query,
+    page: filters.page,
+    limit: filters.limit,
+    currency,
+  };
+}
+
 /** Labels for active filter chips */
 export function getActiveFilterChips(filters, t) {
   const chips = [];
@@ -226,6 +239,7 @@ export function getActiveFilterChips(filters, t) {
 /** Draft shape used inside FilterSidebar before Apply */
 export function filtersToDraft(filters) {
   return {
+    q: filters.q || '',
     category: filters.category || 'all',
     minPriceThousands: filters.minPriceThousands,
     maxPriceThousands: filters.maxPriceThousands,
@@ -241,6 +255,7 @@ export function draftToFilterPatch(draft) {
   const atMax = maxThousands >= PRICE_MAX_THOUSANDS;
 
   return {
+    q: draft.q?.trim() || '',
     category: draft.category && draft.category !== 'all' ? draft.category : '',
     minPrice: atMin ? '' : minThousands * 1000,
     maxPrice: atMax ? '' : maxThousands * 1000,

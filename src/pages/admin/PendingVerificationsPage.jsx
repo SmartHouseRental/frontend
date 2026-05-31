@@ -64,7 +64,7 @@ function PendingVerificationsPage() {
     const formatDate = (value) => (value ? new Date(value).toLocaleDateString() : '-');
 
     return (
-        <div className="space-y-6 p-8">
+        <div className="space-y-6">
             <div className="flex items-end justify-between">
                 <div>
                     <h2 className="text-3xl font-extrabold tracking-tight">

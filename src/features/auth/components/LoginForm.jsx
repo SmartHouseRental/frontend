@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 import { useLogin } from '../hooks/useLogin';
 import { getRenterLoginRedirect } from '../utils/renterRedirect';
 
@@ -16,6 +17,12 @@ const loginSchema = z.object({
         .min(8, 'Password must be at least 8 characters')
         .regex(/[A-Z]/, 'Password must contain at least one uppercase letter'),
 });
+
+const inputClass = (hasError) =>
+    cn(
+        'h-12 rounded-2xl border-border bg-muted pl-11 transition-colors focus:border-ring focus:bg-background',
+        hasError && 'border-destructive',
+    );
 
 export function LoginForm() {
     const { t } = useTranslation();
@@ -55,52 +62,56 @@ export function LoginForm() {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="email">
+                <label className="ml-1 text-sm font-medium text-muted-foreground" htmlFor="email">
                     {t('auth.emailAddress')}
                 </label>
-                <div className="relative group">
-                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
+                <div className="group relative">
+                    <Mail className="absolute top-1/2 left-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-foreground" size={18} />
                     <Input
                         id="email"
                         type="email"
                         placeholder="name@example.com"
-                        className={`pl-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm ${errors.email ? 'border-destructive' : ''}`}
+                        className={inputClass(errors.email)}
                         {...register('email')}
                     />
                 </div>
-                {errors.email && <p className="text-destructive text-xs ml-1">{errors.email.message}</p>}
+                {errors.email && <p className="ml-1 text-xs text-destructive">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
-                <div className="flex items-center justify-between ml-1">
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground" htmlFor="password">
+                <div className="ml-1 flex items-center justify-between">
+                    <label className="text-sm font-medium text-muted-foreground" htmlFor="password">
                         {t('auth.password')}
                     </label>
-                    <Link to="/forgot-password" className="text-xs font-bold text-primary hover:text-primary/80 transition-colors">
+                    <Link to="/forgot-password" className="text-xs font-semibold text-foreground hover:underline">
                         {t('auth.forgotPassword')}
                     </Link>
                 </div>
-                <div className="relative group">
-                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" size={18} />
+                <div className="group relative">
+                    <Lock className="absolute top-1/2 left-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-foreground" size={18} />
                     <Input
                         id="password"
                         type={showPassword ? 'text' : 'password'}
                         placeholder="••••••••"
-                        className={`pl-11 pr-11 h-12 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors focus:bg-background border-border/60 focus:border-primary shadow-sm ${errors.password ? 'border-destructive' : ''}`}
+                        className={cn(inputClass(errors.password), 'pr-11')}
                         {...register('password')}
                     />
                     <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                        className="absolute top-1/2 right-3.5 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
                     >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                 </div>
-                {errors.password && <p className="text-destructive text-xs ml-1">{errors.password.message}</p>}
+                {errors.password && <p className="ml-1 text-xs text-destructive">{errors.password.message}</p>}
             </div>
 
-            <Button type="submit" className="w-full h-12 rounded-xl font-bold shadow-md text-[15px]" disabled={loginMutation.isPending}>
+            <Button
+                type="submit"
+                className="h-12 w-full rounded-full text-sm font-semibold shadow-luxury-md"
+                disabled={loginMutation.isPending}
+            >
                 {loginMutation.isPending ? t('auth.signingIn') : t('auth.loginSecurely')}
             </Button>
         </form>

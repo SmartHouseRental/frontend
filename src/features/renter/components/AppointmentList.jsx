@@ -102,7 +102,7 @@ export default function AppointmentList() {
     const propertyImage = getPropertyImageUrl(apt.property);
 
     return (
-      <Card key={apt.id} className="border-slate-200 hover:shadow-lg transition-all overflow-hidden">
+      <Card key={apt.id} className="overflow-hidden border-border transition-all hover:shadow-lg">
         <div className="flex flex-col sm:flex-row p-4 sm:p-5 gap-5">
           <div className="w-full sm:w-48 shrink-0">
             <div className="aspect-[4/3] w-full overflow-hidden rounded-xl">
@@ -126,11 +126,11 @@ export default function AppointmentList() {
             </div>
 
             <div className="flex gap-4 mt-2 text-sm font-medium">
-              <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-lg">
+              <div className="flex items-center gap-1.5 rounded-lg bg-muted px-3 py-1">
                 <CalendarIcon className="h-4 w-4 text-primary" />
                 <span>{formatDate(apt.startsAt)}</span>
               </div>
-              <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-lg">
+              <div className="flex items-center gap-1.5 rounded-lg bg-muted px-3 py-1">
                 <Clock className="h-4 w-4 text-primary" />
                 <span>{formatTime(apt.startsAt)}</span>
               </div>
@@ -179,9 +179,9 @@ export default function AppointmentList() {
       </div>
 
       <Tabs defaultValue="upcoming" className="w-full">
-        <TabsList className="bg-slate-100/80 p-1 rounded-xl mb-6">
-          <TabsTrigger value="upcoming" className="rounded-lg px-6 data-[state=active]:bg-white">{t('renter.appointments.tabs.upcoming')}</TabsTrigger>
-          <TabsTrigger value="past" className="rounded-lg px-6 data-[state=active]:bg-white">{t('renter.appointments.tabs.past')}</TabsTrigger>
+        <TabsList className="mb-6 rounded-xl bg-muted/80 p-1">
+          <TabsTrigger value="upcoming" className="rounded-lg px-6 data-[state=active]:bg-card">{t('renter.appointments.tabs.upcoming')}</TabsTrigger>
+          <TabsTrigger value="past" className="rounded-lg px-6 data-[state=active]:bg-card">{t('renter.appointments.tabs.past')}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="upcoming" className="space-y-4">
@@ -216,7 +216,7 @@ export default function AppointmentList() {
 
       {/* Cancellation Modal Overlay */}
       {cancellingApt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
           <Card className="w-full max-w-md animate-in fade-in zoom-in duration-200">
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-4 text-destructive">

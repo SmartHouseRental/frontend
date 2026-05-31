@@ -1,29 +1,27 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Link, useNavigate } from 'react-router';
-import HeartButton from '@/features/favorites/components/HeartButton';
+import { Link } from 'react-router';
+import { ArrowRight, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useProperties } from '@/features/property/hooks/useProperties';
 import { getPropertyCardFields } from '@/features/property/utils/propertyCardHelpers';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import LuxuryPropertyCard from './LuxuryPropertyCard';
 
 export default function FeaturedListings() {
-  const navigate = useNavigate();
   const { locale, t } = useLanguage();
   const { data: propertiesData, isLoading, isError } = useProperties({
     status: 'available',
     limit: 3,
     sortBy: 'createdAt',
-    order: 'desc'
+    order: 'desc',
   });
 
   const listings = propertiesData?.data || [];
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex min-h-[400px] items-center justify-center px-4">
+        <Loader2 className="text-primary size-8 animate-spin" />
       </div>
     );
   }
@@ -42,77 +40,66 @@ export default function FeaturedListings() {
   if (listings.length === 0) return null;
 
   return (
-    <section className="px-6 py-16 lg:px-20">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-10 flex items-end justify-between">
+    <section className="px-4 py-16 md:px-8 md:py-20 lg:px-12">
+      <div className="mx-auto">
+        <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="mb-2 text-3xl font-extrabold">{t('featuredTitle')}</h2>
-            <p className="text-muted-foreground">{t('featuredSubtitle')}</p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className="text-primary mb-2 text-xs font-bold tracking-[0.2em] uppercase"
+            >
+            </motion.p>
+            <motion.h2
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-foreground text-3xl font-bold tracking-tight md:text-4xl"
+            >
+              {t('featuredTitle')}
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.05 }}
+              className="text-muted-foreground mt-2"
+            >
+              {t('featuredSubtitle')}
+            </motion.p>
           </div>
           <Button
-            variant="ghost"
-            className="text-primary font-bold transition-all hover:translate-x-1"
+            variant="outline"
+            className="gap-2 self-start rounded-full"
             asChild
           >
-            <Link to="/explore">{t('seeAllListings')}</Link>
+            <Link to="/explore">
+              {t('seeAllListings')}
+              <ArrowRight size={16} />
+            </Link>
           </Button>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {listings.map((home) => {
-            const {
-              title,
-              address,
-              priceValue: price,
-              priceCurrency: currency,
-              areaValue: area,
-              type,
-              image,
-            } = getPropertyCardFields(home, locale);
-
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+          {listings.map((home, i) => {
+            const fields = getPropertyCardFields(home, locale);
             return (
-              <Card
+              <LuxuryPropertyCard
                 key={home.id}
-                className="group cursor-pointer overflow-hidden transition-all duration-300 hover:shadow-xl"
-                onClick={() => navigate(`/property/${home.id}`)}
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={image}
-                    alt={title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  {type && (
-                    <Badge className="bg-primary text-primary-foreground absolute top-4 left-4">
-                      {type}
-                    </Badge>
-                  )}
-
-                  {/* Heart button */}
-                  <HeartButton property={home} className="absolute top-4 right-4 z-10" />
-
-                  <div className="absolute bottom-4 left-4 rounded-md bg-white/90 px-3 py-1 text-sm font-bold">
-                    {price} {currency} {t('perMonth')}
-                  </div>
-                </div>
-
-                <CardContent className="p-5">
-                  <h3 className="group-hover:text-primary mb-1 text-lg font-bold transition-colors line-clamp-1">
-                    {title}
-                  </h3>
-                  <p className="text-muted-foreground mb-4 text-sm line-clamp-1">{address || home.location || t('landing.map.addisAbabaEthiopia')}</p>
-
-                  <div className="text-muted-foreground flex gap-4 border-t pt-3 text-sm">
-                    <span>
-                      {home.bedrooms} {t('beds')}
-                    </span>
-                    <span>
-                      {home.bathrooms} {t('baths')}
-                    </span>
-                    <span>{area} m²</span>
-                  </div>
-                </CardContent>
-              </Card>
+                property={home}
+                title={fields.title}
+                address={fields.address}
+                price={fields.priceValue}
+                currency={fields.priceCurrency}
+                image={fields.image}
+                bedrooms={home.bedrooms}
+                bathrooms={home.bathrooms}
+                area={fields.areaValue}
+                type={fields.type}
+                index={i}
+                perMonthLabel={` ${t('perMonth')}`}
+              />
             );
           })}
         </div>

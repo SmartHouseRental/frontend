@@ -50,7 +50,7 @@ function ProofUploadRow({ payment, t }) {
   };
 
   return (
-    <div className="mt-3 pt-3 border-t border-slate-100">
+    <div className="mt-3 border-t border-border pt-3">
       <input
         ref={fileRef}
         type="file"
@@ -162,7 +162,7 @@ export default function RenterPaymentsList() {
         )}
 
         {payments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 py-16 text-center">
             <CreditCard className="h-12 w-12 text-muted-foreground/50 mb-4" />
             <h3 className="font-semibold text-lg">{t('renter.payments.empty.title')}</h3>
             <p className="text-muted-foreground text-sm mt-1 max-w-sm">
@@ -172,7 +172,7 @@ export default function RenterPaymentsList() {
         ) : (
           <div className="grid gap-4">
             {payments.map((payment) => (
-              <Card key={payment.id} className="border-slate-200">
+              <Card key={payment.id} className="border-border">
                 <CardContent className="p-5">
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                     <div className="flex-1">

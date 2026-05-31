@@ -72,7 +72,7 @@ export default function AgreementPaymentReturnPage() {
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center p-6">
-      <Card className="max-w-md w-full border-slate-200 shadow-lg">
+      <Card className="w-full max-w-md border-border shadow-lg">
         <CardContent className="pt-10 pb-8 px-8 text-center space-y-6">
           {phase === 'verifying' && (
             <>

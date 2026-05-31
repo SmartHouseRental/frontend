@@ -85,7 +85,7 @@ function PropertiesPage() {
     rejectProperty.mutate({ id, reason: 'REJECTED_BY_ADMIN', note: t('adminProperties.notes.rejectedByAdmin') });
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6">
       <div className="flex items-end justify-between">
         <div>
           <h2 className="text-3xl font-semibold">{t('adminProperties.title')}</h2>

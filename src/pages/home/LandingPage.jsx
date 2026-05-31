@@ -1,5 +1,6 @@
-import Hero from '@/features/landing/components/Hero';
+import LandingShell from '@/features/landing/components/LandingShell';
 import FeaturedListings from '@/features/landing/components/FeaturedListings';
+import AIRecommendations from '@/features/landing/components/AIRecommendations';
 import NearMeSection from '@/features/landing/components/NearMeSection';
 import HowItWorks from '@/features/landing/components/HowItWorks';
 import Benefits from '@/features/landing/components/Benefits';
@@ -8,16 +9,16 @@ import Testimonials from '@/features/home/components/Testimonials';
 import CTASection from '@/features/home/components/CTASection';
 
 export default function LandingPage() {
-    return (
-        <div className="bg-background text-foreground">
-            <Hero />
-            <FeaturedListings />
-            <NearMeSection />
-            <HowItWorks />
-            <Testimonials />
-            <Benefits />
-            <CTASection />
-            <MapSection />
-        </div>
-    );
+  return (
+    <LandingShell>
+      <FeaturedListings />
+      <AIRecommendations />
+      <NearMeSection />
+      <HowItWorks />
+      <Testimonials />
+      <Benefits />
+      <CTASection />
+      <MapSection />
+    </LandingShell>
+  );
 }

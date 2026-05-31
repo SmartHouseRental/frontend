@@ -36,6 +36,7 @@ export const adminApi = {
 
   getNotifications: (params) => apiClient.get('/admin/notifications', { params }),
   broadcastNotification: (payload) => apiClient.post('/admin/notifications/broadcast', payload),
+  triggerRecommendationTraining: () => apiClient.post('/admin/recommendations/train'),
 
   getReviews: (params) => apiClient.get('/admin/reviews', { params }),
   updateReviewStatus: (id, payload) => apiClient.patch(`/admin/reviews/${id}/status`, payload),

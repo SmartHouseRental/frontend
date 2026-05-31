@@ -104,7 +104,7 @@ function ReviewsPage() {
     };
 
     return (
-        <div className="space-y-6 p-8">
+        <div className="space-y-6">
             <PageHeader
                 title={t('adminReviews.title')}
                 description={t('adminReviews.description')}

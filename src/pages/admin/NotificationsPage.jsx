@@ -67,7 +67,7 @@ function NotificationsPage() {
     };
 
     return (
-        <div className="space-y-8 p-8">
+        <div className="space-y-8">
             <div>
                 <h2 className="text-3xl font-extrabold tracking-tight">{t('adminNotifications.title')}</h2>
                 <p className="text-muted-foreground mt-1">

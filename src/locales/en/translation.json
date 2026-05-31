@@ -1030,13 +1030,47 @@
     "hero": {
       "title": "Find Your Perfect",
       "titleAccent": "Family Home",
+      "headline": "Find Your Perfect Home Today",
+      "eyebrow": "Premium Property Management",
       "subtitle": "Verified, family-oriented long stays.",
+      "subtitleLong": "We provide tailored real estate solutions, guiding you through every step with personalized experiences that meet your unique needs and aspirations.",
+      "exploreCta": "Explore Properties",
       "cityPlaceholder": "City...",
       "priceRangePlaceholder": "Price Range",
       "bedroomsPlaceholder": "Bedrooms",
-      "search": "Search"
+      "search": "Search",
+      "featuredAgents": "10+ Featured Agents",
+      "rating": "5 / 5",
+      "imageAlt": "Luxury modern home with pool at twilight",
+      "stats": {
+        "projects": "Properties Listed",
+        "projectsValue": "200+",
+        "clients": "Happy Clients",
+        "clientsValue": "70+",
+        "value": "Portfolio Value",
+        "valueAmount": "10M+",
+        "valuePrefix": "$"
+      }
+    },
+    "nav": {
+      "properties": "Properties",
+      "agents": "Agents",
+      "contactCta": "Contact Us Now"
+    },
+    "search": {
+      "location": "City or neighborhood...",
+      "type": "Property type",
+      "price": "Price range",
+      "beds": "Bedrooms"
+    },
+    "ai": {
+      "badge": "AI-Powered Matching",
+      "title": "Recommended For You",
+      "subtitle": "Our intelligent recommendation engine analyzes your preferences, budget, and lifestyle to surface properties you will love.",
+      "viewAll": "View all matches"
     },
     "featured": {
+      "badge": "Curated Collection",
       "error": "Could not load featured listings at this time."
     },
     "nearby": {
@@ -1178,6 +1212,8 @@
     "filters": {
       "title": "Filters",
       "clearAll": "Clear All",
+      "semanticSearch": "Smart Search",
+      "semanticSearchHint": "Describe what you want in plain language, e.g. cheap 2 bedroom near Bole with gym.",
       "propertyType": "Property Type",
       "monthlyBudget": "Monthly Budget",
       "bedrooms": "Bedrooms",

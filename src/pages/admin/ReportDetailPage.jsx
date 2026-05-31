@@ -183,7 +183,7 @@ export default function ReportDetailPage() {
 
           <Card className="overflow-hidden">
             <CardContent className="mt-0 border-0 p-0 focus-visible:ring-0">
-              <div className="space-y-8 p-8">
+              <div className="space-y-8">
                 <div className="flex items-center gap-3">
                   <Badge
                     variant="destructive"

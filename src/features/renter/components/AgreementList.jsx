@@ -83,7 +83,7 @@ export default function AgreementList() {
         )}
 
         {agreements.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 py-16 text-center">
             <FileText className="h-12 w-12 text-muted-foreground/50 mb-4" />
             <h3 className="font-semibold text-lg">{t('renter.agreements.empty.title')}</h3>
             <p className="text-muted-foreground text-sm mt-1 max-w-sm">
@@ -97,7 +97,7 @@ export default function AgreementList() {
             {agreements.map((agreement) => (
               <Card
                 key={agreement.id}
-                className="border-slate-200 hover:shadow-lg transition-all overflow-hidden"
+                className="overflow-hidden border-border transition-all hover:shadow-lg"
               >
                 <div className="flex flex-col sm:flex-row p-4 sm:p-5 gap-5">
                   <div className="w-full sm:w-56 lg:w-64 shrink-0">
@@ -136,7 +136,7 @@ export default function AgreementList() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 py-4 border-y border-slate-100">
+                      <div className="grid grid-cols-2 gap-4 border-y border-border py-4 sm:grid-cols-3">
                         <div className="space-y-1">
                           <p className="text-[10px] font-bold text-muted-foreground uppercase">
                             {t('renter.agreements.labels.owner')}

@@ -104,7 +104,7 @@ function ActionPanel({ agreement, id, t }) {
 
   if (['rejected', 'cancelled', 'terminated', 'expired'].includes(agreement.status)) {
     return (
-      <Card className="border-slate-200 bg-slate-50/80">
+      <Card className="border-border bg-muted/50">
         <CardContent className="pt-6 flex items-start gap-3">
           <Ban className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
           <div>
@@ -153,7 +153,7 @@ function ActionPanel({ agreement, id, t }) {
             </Button>
             <Button
               variant="outline"
-              className="font-bold flex-1 border-rose-200 text-rose-700 hover:bg-rose-50"
+              className="flex-1 border-destructive/30 font-bold text-destructive hover:bg-destructive/10"
               onClick={() => {
                 setShowReject((v) => !v);
                 setShowCancel(false);
@@ -167,8 +167,8 @@ function ActionPanel({ agreement, id, t }) {
         )}
 
         {showReject && agreement.canReject && (
-          <div className="space-y-3 rounded-lg border border-rose-100 bg-white p-4">
-            <p className="text-sm font-medium text-rose-900">{t('renter.agreementDetail.actions.declineOfferQuestion')}</p>
+          <div className="space-y-3 rounded-lg border border-destructive/20 bg-card p-4">
+            <p className="text-sm font-medium text-destructive">{t('renter.agreementDetail.actions.declineOfferQuestion')}</p>
             <Textarea
               placeholder={t('renter.agreementDetail.actions.optionalReason')}
               value={reason}
@@ -230,7 +230,7 @@ function ActionPanel({ agreement, id, t }) {
                 {t('renter.agreementDetail.actions.cancelAgreement')}
               </Button>
             ) : (
-              <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-4">
+              <div className="space-y-3 rounded-lg border border-border bg-card p-4">
                 <p className="text-sm font-medium">{t('renter.agreementDetail.actions.cancelAgreementQuestion')}</p>
                 <Textarea
                   placeholder={t('renter.agreementDetail.actions.optionalReasonShort')}
@@ -282,7 +282,7 @@ function PaymentsSection({ payments, t }) {
       {payments.map((payment) => (
         <div
           key={payment.id}
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg border border-slate-100 bg-slate-50/50"
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg border border-border bg-muted/30"
         >
           <div>
             <p className="font-semibold text-sm">{payment.purposeLabel}</p>
@@ -390,7 +390,7 @@ export default function AgreementDetailView() {
         <div className="lg:col-span-2 space-y-6">
           <ActionPanel agreement={agreement} id={id} t={t} />
 
-          <Card className="border-slate-200 overflow-hidden">
+          <Card className="border-border overflow-hidden">
             <div className="aspect-[21/9] sm:aspect-[2/1] w-full relative overflow-hidden">
               <SafeImage
                 src={agreement.propertyImage}
@@ -398,7 +398,7 @@ export default function AgreementDetailView() {
                 className="h-full w-full object-cover"
               />
             </div>
-            <CardHeader className="border-b bg-slate-50/50">
+            <CardHeader className="border-b bg-muted/30">
               <div className="flex items-start gap-4">
                 <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
                   <FileText className="h-6 w-6" />
@@ -414,8 +414,8 @@ export default function AgreementDetailView() {
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
               <div>
-                <h3 className="font-bold text-slate-900 mb-3">{t('renter.agreementDetail.leaseTerms')}</h3>
-                <ul className="space-y-3 text-sm text-slate-600">
+                <h3 className="font-bold text-foreground mb-3">{t('renter.agreementDetail.leaseTerms')}</h3>
+                <ul className="space-y-3 text-sm text-muted-foreground">
                   <li className="flex gap-3">
                     <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
                     {t('renter.agreementDetail.monthlyRent')}: {agreement.monthlyRentFormatted}
@@ -448,7 +448,7 @@ export default function AgreementDetailView() {
             </CardContent>
           </Card>
 
-          <Card className="border-slate-200">
+          <Card className="border-border">
             <CardHeader>
               <CardTitle className="text-lg font-bold flex items-center gap-2">
                 <CreditCard className="h-5 w-5 text-primary" />
@@ -462,31 +462,31 @@ export default function AgreementDetailView() {
         </div>
 
         <div className="space-y-6">
-          <Card className="border-slate-200 p-6">
+          <Card className="border-border p-6">
             <h4 className="font-bold mb-4 text-sm uppercase tracking-wider text-muted-foreground">
               {t('renter.agreementDetail.propertyOwner')}
             </h4>
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center">
-                <User className="h-6 w-6 text-slate-500" />
+              <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
+                <User className="h-6 w-6 text-muted-foreground" />
               </div>
               <div>
                 {agreement.ownerId ? (
                   <Link
                     to={`/profile/${agreement.ownerId}`}
-                    className="font-bold text-slate-900 hover:text-primary transition-colors"
+                    className="font-bold text-foreground hover:text-primary transition-colors"
                   >
                     {agreement.ownerName}
                   </Link>
                 ) : (
-                  <p className="font-bold text-slate-900">{agreement.ownerName}</p>
+                  <p className="font-bold text-foreground">{agreement.ownerName}</p>
                 )}
                 <p className="text-xs text-muted-foreground">{t('renter.agreementDetail.ownerHost')}</p>
               </div>
             </div>
           </Card>
 
-          <Card className="border-slate-200 p-6 text-sm space-y-3">
+          <Card className="border-border p-6 text-sm space-y-3">
             <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
               {t('renter.agreementDetail.timeline')}
             </h4>
